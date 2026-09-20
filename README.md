@@ -14,7 +14,8 @@ connectcv/
 │   │   │   ├── jobs.js       <-- Khoa: Tìm việc & so khớp JD
 │   │   │   ├── payment.js    <-- Khoa: Tạo mã VietQR nâng cấp Pro
 │   │   │   ├── cv.js         <-- Minh: AI tối ưu hóa CV chuẩn ATS
-│   │   │   └── interview.js  <-- Minh: AI phỏng vấn thử & Proposal
+│   │   │   ├── interview.js  <-- Minh: AI phỏng vấn thử & Proposal
+|   |   |   └── chatbot.js    <-- Minh: AI tư vấn, hổ trợ, hướng dẫn
 │   │   └── middlewares/
 │   │       ├── authMiddleware.js <-- Kiểm tra JWT Token đăng nhập
 │   │       └── checkRole.js      <-- Kiểm tra quyền (HR, Employer, isPro)
