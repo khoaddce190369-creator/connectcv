@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Bell, User, ChevronDown, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo.png';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,7 +29,11 @@ export default function Navbar() {
           {/* Logo and Desktop Nav */}
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-[#14a800]">CareerCopilot</span>
+              <img src={logo} alt="ConnectCV" className="h-8 w-8 mr-2" />
+              <span className="text-2xl font-bold">
+                <span className="text-[#2196F3]">Connect</span>
+                <span className="text-[#1976D2]">CV</span>
+              </span>
             </Link>
             <div className="hidden md:ml-8 md:flex md:space-x-4">
               {navLinks.map((link) => (
@@ -37,8 +42,8 @@ export default function Navbar() {
                   to={link.path}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive(link.path)
-                      ? 'text-[#14a800] bg-green-50'
-                      : 'text-gray-600 hover:text-[#14a800] hover:bg-gray-50'
+                      ? 'text-[#2196F3] bg-blue-50'
+                      : 'text-gray-600 hover:text-[#2196F3] hover:bg-gray-50'
                   }`}
                 >
                   {link.name}
@@ -51,7 +56,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
               <>
-                <button className="p-2 text-gray-500 hover:text-[#14a800] hover:bg-gray-100 rounded-full relative transition-colors">
+                <button className="p-2 text-gray-500 hover:text-[#2196F3] hover:bg-gray-100 rounded-full relative transition-colors">
                   <Bell className="h-5 w-5" />
                   <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
                 </button>
@@ -104,10 +109,10 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center space-x-4">
-                <Link to="/login" className="text-gray-600 hover:text-[#14a800] font-medium text-sm">
+                <Link to="/login" className="text-gray-600 hover:text-[#2196F3] font-medium text-sm">
                   Đăng Nhập
                 </Link>
-                <Link to="/register" className="bg-[#14a800] hover:bg-[#108a00] text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                <Link to="/register" className="bg-[#2196F3] hover:bg-[#1976D2] text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
                   Đăng Ký
                 </Link>
               </div>
@@ -118,7 +123,7 @@ export default function Navbar() {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#14a800]"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#2196F3]"
             >
               {isMobileMenuOpen ? (
                 <X className="block h-6 w-6" aria-hidden="true" />
@@ -141,8 +146,8 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`block px-3 py-2 rounded-md text-base font-medium ${
                   isActive(link.path)
-                    ? 'text-[#14a800] bg-green-50'
-                    : 'text-gray-900 hover:text-[#14a800] hover:bg-gray-50'
+                    ? 'text-[#2196F3] bg-blue-50'
+                    : 'text-gray-900 hover:text-[#2196F3] hover:bg-gray-50'
                 }`}
               >
                 {link.name}
@@ -159,18 +164,18 @@ export default function Navbar() {
                   <div className="text-base font-medium text-gray-800">{user?.name}</div>
                   <div className="text-sm font-medium text-gray-500">{user?.email || 'user@example.com'}</div>
                 </div>
-                <button className="ml-auto flex-shrink-0 bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#14a800]">
+                <button className="ml-auto flex-shrink-0 bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2196F3]">
                   <Bell className="h-6 w-6" />
                 </button>
               </div>
               <div className="mt-3 px-2 space-y-1">
-                <Link to="/profile" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-[#14a800]">
+                <Link to="/profile" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-[#2196F3]">
                   Hồ Sơ
                 </Link>
-                <Link to="/settings" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-[#14a800]">
+                <Link to="/settings" className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-[#2196F3]">
                   Cài Đặt
                 </Link>
-                <button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-[#14a800]">
+                <button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:bg-gray-50 hover:text-[#2196F3]">
                   Đăng Xuất
                 </button>
               </div>
@@ -180,7 +185,7 @@ export default function Navbar() {
               <Link to="/login" className="block w-full text-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50">
                 Đăng Nhập
               </Link>
-              <Link to="/register" className="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-[#14a800] hover:bg-[#108a00]">
+              <Link to="/register" className="block w-full text-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-[#2196F3] hover:bg-[#1976D2]">
                 Đăng Ký
               </Link>
             </div>

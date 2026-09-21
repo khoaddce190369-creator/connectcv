@@ -1,15 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Linkedin, Instagram, Globe, Github } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#001e00] text-gray-300 mt-auto">
+    <footer className="bg-[#1B3654] text-gray-300 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Column 1: About */}
           <div>
-            <h3 className="text-white text-lg font-semibold mb-4">Về CareerCopilot</h3>
+            <div className="flex items-center mb-4">
+              <img src={logo} alt="ConnectCV" className="h-8 w-8 mr-2" />
+              <span className="text-xl font-bold">
+                <span className="text-white">Connect</span>
+                <span className="text-blue-400">CV</span>
+              </span>
+            </div>
             <ul className="space-y-2 text-sm">
               <li><Link to="#" className="hover:text-white transition-colors">Về chúng tôi</Link></li>
               <li><Link to="#" className="hover:text-white transition-colors">Đội ngũ</Link></li>
@@ -86,7 +93,7 @@ export default function Footer() {
               <span>Tiếng Việt</span>
             </div>
             <span className="text-gray-600">|</span>
-            <p>&copy; {new Date().getFullYear()} CareerCopilot Global Inc.</p>
+            <p>&copy; {new Date().getFullYear()} ConnectCV Global Inc.</p>
           </div>
         </div>
       </div>

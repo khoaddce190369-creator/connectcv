@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, CheckCircle } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -18,11 +19,14 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex bg-gray-50">
       {/* Left Side - Info/Illustration (Hidden on Mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#001e00] to-primary-600 text-white p-12 flex-col justify-between">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#1B3654] to-blue-600 text-white p-12 flex-col justify-between">
         <div>
-          <Link to="/" className="text-3xl font-extrabold tracking-tight flex items-center gap-2">
-            <span className="bg-white text-primary-600 rounded p-1">AI</span>
-            Career Copilot
+          <Link to="/" className="flex items-center gap-2">
+            <img src={logo} alt="ConnectCV" className="h-10 w-10 bg-white rounded-md p-1" />
+            <span className="text-3xl font-extrabold tracking-tight">
+              <span className="text-white">Connect</span>
+              <span className="text-blue-300">CV</span>
+            </span>
           </Link>
           
           <div className="mt-20">
@@ -35,15 +39,15 @@ const LoginPage = () => {
             
             <div className="space-y-4">
               <div className="flex items-center">
-                <CheckCircle className="w-6 h-6 mr-3 text-primary-300" />
+                <CheckCircle className="w-6 h-6 mr-3 text-blue-300" />
                 <span className="text-lg">Smart AI Job Matching</span>
               </div>
               <div className="flex items-center">
-                <CheckCircle className="w-6 h-6 mr-3 text-primary-300" />
+                <CheckCircle className="w-6 h-6 mr-3 text-blue-300" />
                 <span className="text-lg">One-Click ATS CV Optimization</span>
               </div>
               <div className="flex items-center">
-                <CheckCircle className="w-6 h-6 mr-3 text-primary-300" />
+                <CheckCircle className="w-6 h-6 mr-3 text-blue-300" />
                 <span className="text-lg">Interactive Interview Coaching</span>
               </div>
             </div>
@@ -51,7 +55,7 @@ const LoginPage = () => {
         </div>
         
         <div className="text-sm opacity-70">
-          © {new Date().getFullYear()} AI Career Copilot. All rights reserved.
+          © {new Date().getFullYear()} ConnectCV. All rights reserved.
         </div>
       </div>
 
@@ -59,9 +63,12 @@ const LoginPage = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12">
         <div className="w-full max-w-md">
           <div className="lg:hidden mb-10 text-center">
-            <Link to="/" className="text-3xl font-extrabold tracking-tight text-gray-900 flex items-center justify-center gap-2">
-              <span className="bg-primary-500 text-white rounded p-1">AI</span>
-              Career Copilot
+            <Link to="/" className="flex items-center justify-center gap-2">
+              <img src={logo} alt="ConnectCV" className="h-10 w-10" />
+              <span className="text-3xl font-extrabold tracking-tight text-gray-900">
+                <span className="text-[#2196F3]">Connect</span>
+                <span className="text-[#1976D2]">CV</span>
+              </span>
             </Link>
           </div>
           
@@ -81,7 +88,7 @@ const LoginPage = () => {
                   id="email"
                   type="email"
                   required
-                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 focus:outline-none transition-colors"
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-colors"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -101,7 +108,7 @@ const LoginPage = () => {
                   id="password"
                   type="password"
                   required
-                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 focus:outline-none transition-colors"
+                  className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-colors"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -114,7 +121,7 @@ const LoginPage = () => {
                 <input
                   id="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                 />
@@ -124,7 +131,7 @@ const LoginPage = () => {
               </div>
               
               <div className="text-sm">
-                <Link to="/forgot-password" className="font-medium text-primary-600 hover:text-primary-500">
+                <Link to="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
                   Forgot password?
                 </Link>
               </div>
@@ -132,7 +139,7 @@ const LoginPage = () => {
             
             <button
               type="submit"
-              className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Sign In
             </button>
@@ -151,7 +158,7 @@ const LoginPage = () => {
             <div className="mt-6">
               <button
                 type="button"
-                className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+                className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -166,7 +173,7 @@ const LoginPage = () => {
           
           <p className="mt-10 text-center text-sm text-gray-600">
             Don't have an account?{' '}
-            <Link to="/register" className="font-bold text-primary-600 hover:text-primary-500">
+            <Link to="/register" className="font-bold text-blue-600 hover:text-blue-500">
               Sign Up
             </Link>
           </p>

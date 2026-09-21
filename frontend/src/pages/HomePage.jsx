@@ -289,7 +289,7 @@ const HomePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-[#001e00] to-primary-600 px-4 sm:px-6 lg:px-8 text-white">
+      <section className="py-20 bg-gradient-to-r from-[#1B3654] to-primary-600 px-4 sm:px-6 lg:px-8 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">Ready to accelerate your career?</h2>
           <p className="text-xl opacity-90 mb-10">Join thousands of professionals finding their dream jobs and getting hired faster with our AI tools.</p>

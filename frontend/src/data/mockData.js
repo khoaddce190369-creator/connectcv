@@ -273,7 +273,7 @@ export const testimonials = [
     id: 1,
     name: 'Tran Minh Duc',
     role: 'CEO, TechViet Solutions',
-    content: 'AI Career Copilot helped us find the perfect developer for our project. The AI matching system saved us weeks of manual screening.',
+    content: 'ConnectCV helped us find the perfect developer for our project. The AI matching system saved us weeks of manual screening.',
     rating: 5,
   },
   {
