@@ -1,13 +1,13 @@
-// [Main] Mount React DOM vào thẻ div#root — điểm khởi chạy ứng dụng React
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-
-function App() {
-  return <h1>ConnectCV Web Dashboard is running!</h1>;
-}
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App'
+import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>,
+)
