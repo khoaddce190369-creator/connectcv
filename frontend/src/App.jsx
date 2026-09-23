@@ -1,48 +1,32 @@
-import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
-// Pages
 import HomePage from './pages/HomePage';
-import FindJobsPage from './pages/FindJobsPage';
-import JobDetailPage from './pages/JobDetailPage';
-import DashboardPage from './pages/DashboardPage';
-import ProfilePage from './pages/ProfilePage';
-import LoginPage from './pages/LoginPage';
+import SocialFeedPage from './pages/SocialFeedPage';
+import JobPostingsPage from './pages/JobPostingsPage';
+import CandidatesPage from './pages/CandidatesPage';
 import InterviewPage from './pages/InterviewPage';
-import PostJobPage from './pages/PostJobPage';
-
-function AppContent() {
-  const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
-
-  return (
-    <div className="flex flex-col min-h-screen">
-      {!isLoginPage && <Navbar />}
-      <main className="flex-grow bg-gray-50">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/find-jobs" element={<FindJobsPage />} />
-          <Route path="/job/:id" element={<JobDetailPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/interview" element={<InterviewPage />} />
-          <Route path="/post-job" element={<PostJobPage />} />
-        </Routes>
-      </main>
-      {!isLoginPage && <Footer />}
-    </div>
-  );
-}
+import JobDetailPage from './pages/JobDetailPage';
 
 function App() {
+  const location = useLocation();
+  const isLanding = location.pathname === '/';
+  const isInterview = location.pathname === '/interview';
+
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <div className={isInterview ? 'h-screen flex flex-col overflow-hidden' : 'min-h-screen bg-slate-50 text-slate-800'}>
+      <Navbar variant={isLanding ? 'landing' : 'dashboard'} />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/social" element={<SocialFeedPage />} />
+        <Route path="/job-postings" element={<JobPostingsPage />} />
+        <Route path="/candidates" element={<CandidatesPage />} />
+        <Route path="/interview" element={<InterviewPage />} />
+        <Route path="/job/:id" element={<JobDetailPage />} />
+      </Routes>
+      {isLanding && <Footer />}
+    </div>
   );
 }
 

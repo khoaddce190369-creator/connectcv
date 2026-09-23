@@ -1,264 +1,236 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Heart, MapPin, CheckCircle2, Star, Clock, Briefcase, DollarSign, Calendar, ChevronRight, Share2, Flag, AlertCircle } from 'lucide-react';
-import { jobs } from '../data/mockData';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Search, Bell, Plus, Briefcase, ChevronDown, ArrowLeft, Heart, Zap, MapPin, CheckCircle, Clock } from 'lucide-react';
 
-const JobDetailPage = () => {
-  const { id } = useParams();
-  
-  // Find the job or use a default one for demo purposes if not found in mock data
-  const job = jobs.find(j => j.id === id) || jobs[0];
-
-  if (!job) {
-    return (
-      <div className="min-h-screen bg-gray-50 pt-24 flex items-center justify-center">
-        <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Job not found</h1>
-          <p className="text-gray-500 mb-6">The job you are looking for does not exist or has been removed.</p>
-          <Link to="/find-jobs" className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-            Back to Jobs
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const similarJobs = jobs.filter(j => j.category === job.category && j.id !== job.id).slice(0, 3);
+export default function JobDetailPage() {
+  const [activeTab, setActiveTab] = useState("Overview");
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Breadcrumb */}
-        <nav className="flex text-sm text-gray-500 mb-6 mt-4">
-          <Link to="/" className="hover:text-primary-600">Home</Link>
-          <ChevronRight className="w-4 h-4 mx-2" />
-          <Link to="/find-jobs" className="hover:text-primary-600">Find Jobs</Link>
-          <ChevronRight className="w-4 h-4 mx-2" />
-          <span className="text-gray-900 truncate max-w-[200px] sm:max-w-xs">{job.title}</span>
-        </nav>
+    <div className="bg-slate-50 text-slate-800 min-h-screen font-inter">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm bg-gradient-to-br from-blue-600 to-indigo-600">
+              <Briefcase className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-sora font-bold text-slate-900 text-lg tracking-tight">Connect<span className="text-blue-600">CV</span></span>
+          </Link>
+          <div className="flex-1 max-w-md hidden md:block">
+            <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3.5 py-2 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:bg-white transition-all">
+              <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <input type="text" placeholder="Tìm kiếm tin tuyển dụng, kỹ năng, vị trí..." className="bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none w-full" />
+            </div>
+          </div>
+          <div className="hidden md:flex items-center gap-6">
+            <Link to="/" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Find Work</Link>
+            <Link to="/candidates" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Hire a Designer</Link>
+            <Link to="/applications" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">For Businesses</Link>
+          </div>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <button className="relative p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600"></span>
+            </button>
+            <Link to="/applications" className="hidden sm:flex items-center gap-1.5 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm transition-opacity hover:opacity-95 bg-gradient-to-r from-blue-600 to-indigo-600">
+              <Plus className="w-4 h-4" />
+              + Đăng Tin Mới
+            </Link>
+            <div className="flex items-center gap-2 cursor-pointer pl-1">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenBao&backgroundColor=b6e3f4" className="w-8 h-8 rounded-full bg-sky-100 border border-slate-100" alt="Avatar" />
+              <span className="hidden lg:block text-sm font-medium text-slate-700">Nguyễn Bảo (HR)</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </div>
+          </div>
+        </div>
+        <div className="border-t border-slate-100 bg-white">
+          <div className="max-w-7xl mx-auto px-6 flex items-center gap-6 h-11 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <Link to="/social" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">Social</Link>
+            <Link to="/applications" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">
+              Quản Lý Tin Tuyển Dụng <span className="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full bg-blue-600">6</span>
+            </Link>
+            <Link to="/candidates" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">Candidates / Freelancer</Link>
+            <Link to="/interview" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">
+              Tin Nhắn <span className="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full bg-blue-600">3</span>
+            </Link>
+            <Link to="/settings" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">Cài Đặt Công Ty</Link>
+          </div>
+        </div>
+      </nav>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          
-          {/* Main Content (Left) */}
-          <div className="flex-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-              
-              <div className="p-6 md:p-8 border-b border-gray-100">
-                <div className="flex justify-between items-start mb-4">
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-                    {job.title}
-                  </h1>
-                </div>
-                
-                <div className="flex items-center text-sm text-gray-500 gap-4 mb-6">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" /> Posted {job.postedAt}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" /> {job.location}
-                  </span>
-                </div>
-                
-                <div className="border-t border-b border-gray-100 py-6 my-6 grid grid-cols-2 md:grid-cols-4 gap-6">
-                  <div>
-                    <div className="flex items-center text-gray-500 mb-1">
-                      <Briefcase className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Experience</span>
-                    </div>
-                    <p className="font-semibold text-gray-900">{job.experienceLevel}</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center text-gray-500 mb-1">
-                      <DollarSign className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Budget ({job.budgetType})</span>
-                    </div>
-                    <p className="font-semibold text-gray-900">${job.budget}</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center text-gray-500 mb-1">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Duration</span>
-                    </div>
-                    <p className="font-semibold text-gray-900">{job.duration}</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center text-gray-500 mb-1">
-                      <Clock className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Category</span>
-                    </div>
-                    <p className="font-semibold text-gray-900">{job.category}</p>
-                  </div>
-                </div>
+      {/* Main content */}
+      <main className="max-w-7xl mx-auto px-6 pt-36 pb-16">
+        <Link to="/candidates" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors mb-5">
+          <ArrowLeft className="w-4 h-4" />
+          Back to search
+        </Link>
 
-                <div className="mb-8">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">Job Description</h2>
-                  <div className="text-gray-700 space-y-4 whitespace-pre-line leading-relaxed">
-                    {job.description || "This is a detailed job description that outlines the responsibilities, requirements, and expectations for the role. The ideal candidate will have strong experience in the required skills and be able to deliver high-quality results within the specified timeframe.\n\nKey responsibilities include:\n- Developing and maintaining core features\n- Collaborating with the design team\n- Ensuring code quality and performance\n\nPlease include examples of previous work in your proposal."}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Left Main */}
+          <div className="lg:col-span-2 space-y-5">
+            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm bg-gradient-to-br from-indigo-500 to-violet-500">
+                  <Zap className="w-7 h-7 text-white" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h1 className="font-sora text-xl font-bold text-slate-900 mb-1">Senior UI/UX Designer</h1>
+                      <p className="text-sm text-slate-500">NovaTech</p>
+                    </div>
+                    <button className="text-slate-400 hover:text-red-500 transition-colors">
+                      <Heart className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
+              </div>
 
-                <div className="mb-8">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">Skills Required</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {job.skills.map((skill, idx) => (
-                      <span key={idx} className="bg-primary-50 text-primary-700 px-4 py-2 rounded-lg text-sm font-medium border border-primary-100 hover:bg-primary-100 transition-colors cursor-default">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+              <div className="flex flex-wrap items-center gap-3 py-4 border-t border-b border-slate-100 mb-4">
+                <span className="flex items-center gap-1.5 text-xs font-semibold bg-sky-50 text-sky-700 px-2.5 py-1 rounded-full">
+                  <MapPin className="w-3 h-3" />
+                  Remote
+                </span>
+                <span className="flex items-center gap-1.5 text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">
+                  Full-time
+                </span>
+                <span className="flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">
+                  $1,500 – $2,500 / month
+                </span>
+                <span className="text-xs text-slate-400 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5" />
+                  Posted 2 days ago
+                </span>
+              </div>
 
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">Activity on this job</h2>
-                  <ul className="space-y-3 text-sm text-gray-600">
-                    <li className="flex items-center justify-between py-2 border-b border-gray-50">
-                      <span>Proposals:</span>
-                      <span className="font-medium text-gray-900">{job.proposals || '10 to 15'}</span>
-                    </li>
-                    <li className="flex items-center justify-between py-2 border-b border-gray-50">
-                      <span>Last viewed by client:</span>
-                      <span className="font-medium text-gray-900">2 hours ago</span>
-                    </li>
-                    <li className="flex items-center justify-between py-2">
-                      <span>Interviewing:</span>
-                      <span className="font-medium text-gray-900">2</span>
-                    </li>
-                  </ul>
-                </div>
+              {/* Tabs */}
+              <div className="flex items-center gap-0 border-b border-slate-100 -mx-6 px-6">
+                {["Overview", "Skills", "Company", "Similar Jobs"].map(tab => (
+                  <button 
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-4 pb-3 text-sm transition-all border-b-2 font-medium ${activeTab === tab ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'}`}
+                  >
+                    {tab}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Similar Jobs */}
-            {similarJobs.length > 0 && (
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Similar Jobs</h2>
-                <div className="space-y-4">
-                  {similarJobs.map(sj => (
-                    <div key={sj.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-start mb-2">
-                        <Link to={`/job/${sj.id}`} className="font-bold text-lg text-gray-900 hover:text-primary-600">
-                          {sj.title}
-                        </Link>
-                        <span className="font-semibold text-gray-900">${sj.budget}</span>
-                      </div>
-                      <p className="text-sm text-gray-500 mb-3">{sj.budgetType} • {sj.experienceLevel}</p>
-                      <div className="flex gap-2">
-                        {sj.skills.slice(0, 3).map((skill, idx) => (
-                          <span key={idx} className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
-                            {skill}
-                          </span>
-                        ))}
-                        {sj.skills.length > 3 && (
-                          <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
-                            +{sj.skills.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+            {/* About section */}
+            {activeTab === "Overview" && (
+              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm animate-[fadeIn_0.2s_ease-out]">
+                <h2 className="font-sora font-bold text-slate-900 text-base mb-3">About the job</h2>
+                <p className="text-sm text-slate-600 leading-relaxed mb-5">NovaTech is looking for a Senior UI/UX Designer to join our product team. You will be responsible for designing intuitive and visually appealing experiences for our web and mobile products.</p>
+                
+                <h3 className="font-sora font-bold text-slate-900 text-sm mb-3">Responsibilities</h3>
+                <ul className="space-y-2 mb-5">
+                  {[
+                    "Design user interfaces for web and mobile applications",
+                    "Collaborate with product managers and developers",
+                    "Conduct user research and usability testing",
+                    "Create design systems and maintain consistency"
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-600">
+                      <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 bg-blue-600"></div>
+                      {item}
+                    </li>
                   ))}
-                </div>
+                </ul>
+                
+                <h3 className="font-sora font-bold text-slate-900 text-sm mb-3">Requirements</h3>
+                <ul className="space-y-2">
+                  {[
+                    "3+ years of UI/UX design experience",
+                    "Proficiency in Figma, Adobe XD or similar tools",
+                    "Strong portfolio demonstrating UX process",
+                    "Experience with design systems and component libraries"
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-600">
+                      <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
 
-          {/* Sidebar (Right) */}
-          <div className="lg:w-80 flex-shrink-0 space-y-6">
-            
-            {/* Actions Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-24">
-              <button className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-lg font-bold transition-colors mb-3">
-                Submit Proposal
-              </button>
-              <button className="w-full bg-white border-2 border-primary-500 text-primary-600 hover:bg-primary-50 py-3 rounded-lg font-bold transition-colors mb-6 flex items-center justify-center gap-2">
-                <Heart className="w-5 h-5" /> Save Job
-              </button>
-
-              <div className="flex items-center justify-center gap-4 text-sm font-medium text-primary-600 border-t border-gray-100 pt-6">
-                <button className="flex items-center gap-1 hover:text-primary-700">
-                  <Flag className="w-4 h-4" /> Flag as inappropriate
+          {/* Right Sidebar */}
+          <div className="space-y-5">
+            {/* Company Card */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-indigo-500 to-violet-500">
+                  <Zap className="w-5 h-5 text-white" />
+                </div>
+                <p className="font-sora font-bold text-sm text-slate-900">NovaTech</p>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed mb-4">We build modern digital products that make a difference.</p>
+              <div className="space-y-2.5 text-xs text-slate-600">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="w-3.5 h-3.5 text-slate-400" /> 51–200 employees
+                </div>
+                <div className="flex items-center gap-2">
+                  <Zap className="w-3.5 h-3.5 text-slate-400" /> Software Development
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-3.5 h-3.5 text-slate-400" /> Vietnam
+                </div>
+              </div>
+              <div className="border-t border-slate-100 mt-4 pt-4">
+                <p className="text-xs text-slate-500 mb-3">Posted by</p>
+                <div className="flex items-center gap-2.5 mb-4">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=EmmaCarter&backgroundColor=ffd5dc" className="w-8 h-8 rounded-full bg-pink-100" alt="Emma Carter" />
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">Emma Carter</p>
+                    <p className="text-xs text-slate-500">Hiring Manager</p>
+                  </div>
+                </div>
+                <button className="w-full border-2 border-blue-200 text-blue-700 text-sm font-semibold py-2.5 rounded-xl hover:bg-blue-50 transition-colors">
+                  Message
                 </button>
               </div>
             </div>
 
-            {/* AI Match Card */}
-            {job.matchScore && (
-              <div className="bg-[#f0f9f0] rounded-xl shadow-sm border border-primary-100 p-6">
-                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="bg-primary-500 text-white text-xs px-2 py-1 rounded">AI</span>
-                  Skill Match
-                </h3>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-full border-4 border-primary-500 flex items-center justify-center bg-white shadow-sm">
-                    <span className="text-xl font-bold text-primary-600">{job.matchScore}%</span>
-                  </div>
-                  <p className="text-sm text-gray-700">
-                    Your profile matches <strong className="text-primary-700">{job.matchScore}%</strong> of the required skills.
-                  </p>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-start gap-2 text-green-700">
-                    <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    <span>Matches: {job.skills[0]}, {job.skills[1]}</span>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Apply CTA */}
+            <div className="rounded-2xl p-5 text-white shadow-lg bg-gradient-to-br from-blue-600 to-indigo-600">
+              <h3 className="font-sora font-bold text-base mb-1">Ready to apply?</h3>
+              <p className="text-blue-100 text-xs mb-4">Let AI create a tailored CV for this role and auto-apply on your behalf.</p>
+              <button className="w-full bg-white text-blue-700 text-sm font-bold py-2.5 rounded-xl hover:bg-blue-50 transition-colors shadow-sm mb-2">
+                ✨ AI Auto-Apply
+              </button>
+              <button className="w-full border border-white/30 text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-white/10 transition-colors">
+                Apply Manually
+              </button>
+            </div>
 
-            {/* Client Info Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h3 className="font-bold text-gray-900 mb-4">About the client</h3>
-              
-              <div className="mb-4">
-                <p className="font-semibold text-gray-900">{job.company}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  {job.clientVerified ? (
-                    <span className="flex items-center text-primary-600 text-sm font-medium">
-                      <CheckCircle2 className="w-4 h-4 mr-1" /> Payment verified
-                    </span>
-                  ) : (
-                    <span className="text-gray-500 text-sm">Payment unverified</span>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1 mb-4 text-sm">
-                <div className="flex text-yellow-400">
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                  <Star className="w-4 h-4 fill-current" />
-                </div>
-                <span className="font-medium text-gray-900">{job.clientRating}</span>
-                <span className="text-gray-500">(12 reviews)</span>
-              </div>
-
-              <div className="space-y-3 text-sm text-gray-600 border-t border-gray-100 pt-4">
-                <div>
-                  <p className="font-semibold text-gray-900">{job.location}</p>
-                  <p className="text-xs">Location</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">15 Jobs posted</p>
-                  <p className="text-xs">80% hire rate, 1 open job</p>
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">$10k+ total spent</p>
-                  <p className="text-xs">36 hires, 12 active</p>
-                </div>
-                <div>
-                  <p className="text-xs mt-4">Member since Aug 2, 2021</p>
-                </div>
+            {/* Required Skills */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+              <h3 className="font-sora font-bold text-sm text-slate-900 mb-3">Required skills</h3>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-xs font-semibold bg-pink-50 text-pink-700 px-2.5 py-1.5 rounded-lg">Figma</span>
+                <span className="text-xs font-semibold bg-violet-50 text-violet-700 px-2.5 py-1.5 rounded-lg">UI/UX Design</span>
+                <span className="text-xs font-semibold bg-indigo-50 text-indigo-700 px-2.5 py-1.5 rounded-lg">Prototyping</span>
+                <span className="text-xs font-semibold bg-blue-50 text-blue-700 px-2.5 py-1.5 rounded-lg">User Research</span>
+                <span className="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1.5 rounded-lg">Design Systems</span>
               </div>
             </div>
 
+            {/* AI Match */}
+            <div className="bg-white rounded-2xl p-5 border border-emerald-100 shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-sora font-bold text-sm text-slate-900">AI Match Score</h3>
+                <span className="text-lg font-extrabold text-emerald-600 font-sora">92%</span>
+              </div>
+              <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-3">
+                <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600" style={{ width: '92%' }}></div>
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed">Strong fit on design skills, experience level, and remote work preference.</p>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
-};
-
-export default JobDetailPage;
+}

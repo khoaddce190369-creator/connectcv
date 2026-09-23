@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect CV â€” AI-Powered Career Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sora: ['Sora', 'sans-serif'],
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            },
+            indigo: {
+              500: '#6366f1',
+              600: '#4f46e5',
+            },
+            sky: {
+              400: '#38bdf8',
+              500: '#0ea5e9',
+            },
+            dark: '#0f172a',
+          },
+          backgroundImage: {
+            'hero-gradient': 'linear-gradient(135deg, #eff6ff 0%, #e0e7ff 50%, #f0f9ff 100%)',
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'float-delay': 'float 6s ease-in-out 2s infinite',
+            'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, h4, .font-sora { font-family: 'Sora', sans-serif; }
+
+    .glass-card {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .blob-1 {
+      position: absolute;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -60px; right: 5%;
+      pointer-events: none;
+    }
+    .blob-2 {
+      position: absolute;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: 20px; left: 10%;
+      pointer-events: none;
+    }
+
+    .job-card:hover { transform: translateY(-3px); transition: all 0.25s ease; }
+    .job-card { transition: all 0.25s ease; }
+
+    .category-card:hover {
+      border-color: #2563eb;
+      background: #eff6ff;
+      transform: translateY(-2px);
+    }
+    .category-card { transition: all 0.2s ease; }
+
+    .designer-card:hover { transform: scale(1.02); }
+    .designer-card { transition: transform 0.2s ease; }
+
+    .nav-link:hover { color: #2563eb; }
+    .nav-link { transition: color 0.15s ease; }
+
+    .step-connector {
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, #2563eb, #4f46e5);
+      opacity: 0.3;
+      margin: 0 12px;
+      margin-top: 28px;
+    }
+
+    .tag-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-white text-slate-800">
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 bg-gradient-to-br from-brand-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+          </svg>
+        </div>
+        <span class="font-sora font-700 text-slate-900 text-lg tracking-tight">Connect<span class="text-brand-600">CV</span></span>
+      </a>
+
+      <!-- Nav links -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#" class="nav-link text-sm font-medium text-slate-700 font-semibold text-brand-600">Find Work</a>
+        <a href="dashboard-candidates.html" class="nav-link text-sm font-medium text-slate-600">Hire a Designer</a>
+        <a href="dashboard-applications.html" class="nav-link text-sm font-medium text-slate-600">For Businesses</a>
+        <div class="relative group">
+          <button class="nav-link text-sm font-medium text-slate-600 flex items-center gap-1">
+            Resources
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right actions -->
+      <div class="flex items-center gap-3">
+        <button class="hidden md:block">
+          <svg class="w-5 h-5 text-slate-500 hover:text-slate-700 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
+          </svg>
+        </button>
+        <a href="#" class="text-sm font-medium text-slate-700 hover:text-brand-600 transition-colors px-3 py-1.5">Log In</a>
+        <a href="#" class="text-sm font-semibold bg-gradient-to-r from-brand-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity shadow-sm">Sign Up</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section class="relative pt-24 pb-10 overflow-hidden" style="background: linear-gradient(135deg, #f8faff 0%, #eef2ff 40%, #f0f9ff 100%);">
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
+
+    <div class="max-w-7xl mx-auto px-6">
+
+      <!-- Full-width search bar -->
+      <div class="bg-white rounded-2xl shadow-md border border-slate-100 flex items-center overflow-hidden w-full mb-8">
+        <div class="pl-5 pr-3">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
+          </svg>
+        </div>
+        <input
+          type="text"
+          placeholder="What kind of work are you looking for? e.g. UI/UX Designer, React Developer..."
+          class="flex-1 py-3.5 px-2 text-sm text-slate-700 placeholder-slate-400 outline-none bg-transparent"
+        />
+        <button class="m-1.5 text-white text-sm font-semibold px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
+          Search
+        </button>
+      </div>
+
+      <!-- Carousel wrapper -->
+      <div class="relative flex items-center gap-3">
+
+        <!-- Left arrow -->
+        <button id="prev-btn" onclick="carouselPrev()" class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-105 transition-transform z-10" style="background:#7c3aed">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        </button>
+
+        <!-- Carousel viewport -->
+        <div class="flex-1 overflow-hidden rounded-3xl">
+          <div id="carousel-track" class="flex transition-transform duration-500 ease-in-out" style="will-change:transform;">
+
+            <!-- Slide 1: AI Job Matching -->
+            <div class="carousel-slide flex-shrink-0 rounded-3xl p-10 flex items-center gap-8 relative overflow-hidden" style="background:linear-gradient(135deg,#2563eb 0%,#4f46e5 50%,#7c3aed 100%); min-height:320px;">
+              <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20" style="background:radial-gradient(circle,#ffffff,transparent)"></div>
+              <div class="absolute bottom-0 left-1/3 w-32 h-32 rounded-full opacity-10" style="background:radial-gradient(circle,#a5f3fc,transparent)"></div>
+              <!-- Text content -->
+              <div class="flex-1 relative z-10">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-200 bg-white/10 px-3 py-1 rounded-full mb-4">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+                  AI-Powered Matching
+                </span>
+                <h2 class="font-sora text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-4">Find your dream job<br/>before anyone else does.</h2>
+                <p class="text-blue-100 text-sm leading-relaxed mb-6 max-w-md">Our AI continuously scans thousands of listings across industries and matches them to your skills, experience level, and career goals &mdash; then notifies you of the best fits in real time. No more endless scrolling.</p>
+                <a href="dashboard-applications.html" class="inline-flex items-center gap-2 bg-white text-brand-700 text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-blue-50 transition-colors shadow-md">
+                  Browse Jobs
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </a>
+              </div>
+              <!-- Right: Person photo + info card -->
+              <div class="hidden lg:flex items-center gap-5 flex-shrink-0 relative z-10">
+                <div class="relative">
+                  <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=220&h=280&fit=crop&crop=face&auto=format&q=80" alt="Professional" class="w-44 h-56 object-cover rounded-2xl shadow-2xl border-2 border-white/30" />
+                  <div class="absolute -bottom-2 -right-2 bg-emerald-400 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow">92% Match</div>
+                </div>
+                <div class="flex flex-col gap-3">
+                  <div class="bg-white/15 backdrop-blur-sm rounded-2xl p-4 w-44 border border-white/20">
+                    <p class="text-[11px] font-semibold text-white/70 mb-2">Top Match</p>
+                    <p class="font-sora font-bold text-white text-sm">Senior UI/UX Designer</p>
+                    <p class="text-xs text-blue-200 mt-0.5">NovaTech &middot; Remote</p>
+                    <div class="mt-2 h-1.5 bg-white/20 rounded-full"><div class="h-full rounded-full bg-emerald-400" style="width:92%"></div></div>
+                  </div>
+                  <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 w-44 border border-white/10">
+                    <p class="text-[11px] font-semibold text-white/70 mb-1">New today</p>
+                    <p class="font-sora font-bold text-white text-sm">Frontend Developer</p>
+                    <p class="text-xs text-blue-200 mt-0.5">PixelWorks &middot; $2,000/mo</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2: CV Generator -->
+            <div class="carousel-slide flex-shrink-0 rounded-3xl p-10 flex items-center gap-8 relative overflow-hidden" style="background:linear-gradient(135deg,#7c3aed 0%,#db2777 55%,#f97316 100%); min-height:320px;">
+              <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20" style="background:radial-gradient(circle,#ffffff,transparent)"></div>
+              <div class="absolute bottom-0 left-1/4 w-40 h-40 rounded-full opacity-10" style="background:radial-gradient(circle,#fbcfe8,transparent)"></div>
+              <div class="flex-1 relative z-10">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-pink-200 bg-white/10 px-3 py-1 rounded-full mb-4">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                  Smart CV Generator
+                </span>
+                <h2 class="font-sora text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-4">A CV that actually<br/>gets you shortlisted.</h2>
+                <p class="text-pink-100 text-sm leading-relaxed mb-6 max-w-md">Stop sending the same generic CV everywhere. Our AI reads each job description and rewrites your CV to highlight exactly what the hiring manager is looking for &mdash; increasing your chances of passing initial screening by up to 3&times;.</p>
+                <a href="dashboard-applications.html" class="inline-flex items-center gap-2 bg-white text-pink-700 text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-pink-50 transition-colors shadow-md">
+                  Generate My CV
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </a>
+              </div>
+              <div class="hidden lg:flex items-center gap-5 flex-shrink-0 relative z-10">
+                <div class="relative">
+                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=220&h=280&fit=crop&crop=face&auto=format&q=80" alt="Professional" class="w-44 h-56 object-cover rounded-2xl shadow-2xl border-2 border-white/30" />
+                  <div class="absolute -bottom-2 -right-2 bg-white/90 text-pink-700 text-[10px] font-bold px-2 py-1 rounded-lg shadow">AI-Ready CV</div>
+                </div>
+                <div class="flex flex-col gap-3">
+                  <div class="bg-white/15 backdrop-blur-sm rounded-2xl p-4 w-44 border border-white/20">
+                    <p class="text-[11px] font-semibold text-white/70 mb-2">AI Generated</p>
+                    <p class="font-sora font-bold text-white text-sm">Your CV &mdash; Tailored</p>
+                    <p class="text-xs text-pink-200 mt-0.5">For Senior UI/UX @ NovaTech</p>
+                    <div class="mt-3 space-y-1.5">
+                      <div class="h-2 bg-white/20 rounded-full w-full"></div>
+                      <div class="h-2 bg-white/20 rounded-full w-4/5"></div>
+                      <div class="h-2 bg-white/20 rounded-full w-3/5"></div>
+                    </div>
+                  </div>
+                  <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 w-44 border border-white/10">
+                    <p class="text-[11px] font-semibold text-white/70 mb-1">AI Tip</p>
+                    <p class="text-xs text-pink-100">Add "Design Systems" &mdash; it appears 3&times; in this job description.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3: Interview Prep -->
+            <div class="carousel-slide flex-shrink-0 rounded-3xl p-10 flex items-center gap-8 relative overflow-hidden" style="background:linear-gradient(135deg,#0891b2 0%,#0ea5e9 50%,#06b6d4 100%); min-height:320px;">
+              <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20" style="background:radial-gradient(circle,#ffffff,transparent)"></div>
+              <div class="absolute bottom-0 right-1/4 w-36 h-36 rounded-full opacity-10" style="background:radial-gradient(circle,#a5f3fc,transparent)"></div>
+              <div class="flex-1 relative z-10">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-200 bg-white/10 px-3 py-1 rounded-full mb-4">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+                  AI Interview Coach
+                </span>
+                <h2 class="font-sora text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-4">Practice interviews with<br/>an AI that thinks like HR.</h2>
+                <p class="text-cyan-100 text-sm leading-relaxed mb-6 max-w-md">After passing the CV round, your real challenge begins. Our AI takes on the role of a senior HR manager and fires real questions tailored to the company and role &mdash; then scores your answers and gives you instant, actionable feedback.</p>
+                <a href="dashboard-interview.html" class="inline-flex items-center gap-2 bg-white text-cyan-700 text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-cyan-50 transition-colors shadow-md">
+                  Start Practicing
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </a>
+              </div>
+              <div class="hidden lg:flex items-center gap-5 flex-shrink-0 relative z-10">
+                <div class="relative">
+                  <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=220&h=280&fit=crop&crop=face&auto=format&q=80" alt="Professional" class="w-44 h-56 object-cover rounded-2xl shadow-2xl border-2 border-white/30" />
+                  <div class="absolute -bottom-2 -right-2 bg-emerald-400 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow">Score: 78%</div>
+                </div>
+                <div class="flex flex-col gap-3">
+                  <div class="bg-white/15 backdrop-blur-sm rounded-2xl p-4 w-44 border border-white/20">
+                    <p class="text-[11px] font-semibold text-white/70 mb-2">AI Interviewer</p>
+                    <p class="text-xs text-cyan-100 leading-relaxed">"Walk me through your design process for a product you're most proud of."</p>
+                  </div>
+                  <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 w-44 border border-white/10">
+                    <p class="text-[11px] font-semibold text-white/70 mb-1">Session Score</p>
+                    <div class="flex items-center gap-2 mt-1">
+                      <div class="flex-1 h-2 bg-white/20 rounded-full"><div class="h-full bg-emerald-300 rounded-full" style="width:78%"></div></div>
+                      <span class="text-xs font-bold text-emerald-300">78%</span>
+                    </div>
+                    <p class="text-[10px] text-cyan-200 mt-1">+12 pts from last session</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right arrow -->
+        <button id="next-btn" onclick="carouselNext()" class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-105 transition-transform z-10" style="background:#7c3aed">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
+
+      <!-- Dots -->
+      <div class="flex items-center justify-center gap-2 mt-5">
+        <button class="carousel-dot w-2.5 h-2.5 rounded-full transition-all" onclick="goToSlide(0)" style="background:#4f46e5"></button>
+        <button class="carousel-dot w-2 h-2 rounded-full transition-all bg-slate-300" onclick="goToSlide(1)"></button>
+        <button class="carousel-dot w-2 h-2 rounded-full transition-all bg-slate-300" onclick="goToSlide(2)"></button>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    (function() {
+      var current = 0;
+      var total = 3;
+      var timer;
+
+      function getSlideWidth() {
+        var track = document.getElementById('carousel-track');
+        var slide = track.querySelector('.carousel-slide');
+        return slide.offsetWidth;
+      }
+
+      function updateTrack() {
+        var track = document.getElementById('carousel-track');
+        track.style.transform = 'translateX(-' + (current * getSlideWidth()) + 'px)';
+      }
+
+      function updateDots() {
+        var dots = document.querySelectorAll('.carousel-dot');
+        dots.forEach(function(d, i) {
+          if (i === current) {
+            d.style.background = '#4f46e5';
+            d.style.width = '2.5rem';
+            d.style.height = '0.625rem';
+            d.style.borderRadius = '9999px';
+          } else {
+            d.style.background = '#cbd5e1';
+            d.style.width = '0.5rem';
+            d.style.height = '0.5rem';
+            d.style.borderRadius = '9999px';
+          }
+        });
+      }
+
+      window.carouselNext = function() { current = (current + 1) % total; updateTrack(); updateDots(); resetTimer(); };
+      window.carouselPrev = function() { current = (current - 1 + total) % total; updateTrack(); updateDots(); resetTimer(); };
+      window.goToSlide = function(i) { current = i; updateTrack(); updateDots(); resetTimer(); };
+
+      function resetTimer() { clearInterval(timer); timer = setInterval(window.carouselNext, 4000); }
+
+      function initSlides() {
+        var viewport = document.querySelector('#carousel-track').parentElement;
+        var slides = document.querySelectorAll('.carousel-slide');
+        var vw = viewport.offsetWidth;
+        slides.forEach(function(s) { s.style.minWidth = vw + 'px'; });
+        updateTrack();
+      }
+
+      initSlides();
+      updateDots();
+      resetTimer();
+
+      window.addEventListener('load', function() { initSlides(); updateDots(); resetTimer(); });
+      window.addEventListener('resize', function() { initSlides(); });
+    })();
+  </script>
+
+  <!-- ========== CATEGORIES SECTION ========== -->
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-end justify-between mb-8">
+        <div>
+          <p class="text-xs font-semibold text-brand-600 uppercase tracking-wider mb-2">Explore Categories</p>
+          <h2 class="font-sora text-2xl font-bold text-slate-900">Explore by category</h2>
+          <p class="text-slate-500 text-sm mt-1">Find opportunities or creative talent in your field</p>
+        </div>
+        <a href="#" class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-colors">
+          View all categories
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <!-- Category cards -->
+        <div class="category-card border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md bg-white">
+          <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-3">
+            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+            </svg>
+          </div>
+          <p class="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Information Security</p>
+          <p class="text-xs text-slate-400 font-medium">120+ jobs</p>
+        </div>
+
+        <div class="category-card border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md bg-white">
+          <div class="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mb-3">
+            <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/>
+            </svg>
+          </div>
+          <p class="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Software Development</p>
+          <p class="text-xs text-slate-400 font-medium">850+ jobs</p>
+        </div>
+
+        <div class="category-card border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md bg-white">
+          <div class="w-10 h-10 bg-pink-50 rounded-xl flex items-center justify-center mb-3">
+            <svg class="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/>
+            </svg>
+          </div>
+          <p class="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Design & Creative</p>
+          <p class="text-xs text-slate-400 font-medium">460+ jobs</p>
+        </div>
+
+        <div class="category-card border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md bg-white">
+          <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mb-3">
+            <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/>
+            </svg>
+          </div>
+          <p class="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Video & Animation</p>
+          <p class="text-xs text-slate-400 font-medium">220+ jobs</p>
+        </div>
+
+        <div class="category-card border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md bg-white">
+          <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center mb-3">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/>
+            </svg>
+          </div>
+          <p class="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Writing & Translation</p>
+          <p class="text-xs text-slate-400 font-medium">310+ jobs</p>
+        </div>
+
+        <div class="category-card border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md bg-white">
+          <div class="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center mb-3">
+            <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0"/>
+            </svg>
+          </div>
+          <p class="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Business & Consulting</p>
+          <p class="text-xs text-slate-400 font-medium">180+ jobs</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RECOMMENDED JOBS ========== -->
+  <section class="py-16 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-end justify-between mb-8">
+        <div>
+          <p class="text-xs font-semibold text-brand-600 uppercase tracking-wider mb-2">Recommended Jobs</p>
+          <h2 class="font-sora text-2xl font-bold text-slate-900">Find jobs matched to you</h2>
+          <p class="text-slate-500 text-sm mt-1">Get personalized job recommendations based on your skills, experience, personality and career goals.</p>
+        </div>
+        <a href="dashboard-applications.html" class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-colors">
+          View all jobs
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Job Card 1 -->
+        <a href="job-detail.html" class="job-card bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md block">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-cyan-100 flex items-center justify-center font-sora font-bold text-cyan-700 text-sm">TC</div>
+              <div>
+                <p class="text-xs font-semibold text-slate-700">TechCorp</p>
+              </div>
+            </div>
+            <span class="tag-badge bg-sky-50 text-sky-700 px-2 py-0.5 rounded-full">Remote</span>
+          </div>
+          <h3 class="font-sora font-bold text-slate-900 text-sm leading-snug mb-2">Information Security Analyst</h3>
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="tag-badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Full-time</span>
+            <span class="tag-badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Mid-Senior</span>
+          </div>
+          <p class="text-brand-600 font-semibold text-sm mb-2">\$800 â€“ \$1,200 / month</p>
+          <p class="text-slate-400 text-xs leading-relaxed mb-3">Join our security team to monitor, analyze and respond to security threats.</p>
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span class="flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+              7 days ago
+            </span>
+            <span>73 applicants</span>
+          </div>
+        </a>
+
+        <!-- Job Card 2 -->
+        <a href="job-detail.html" class="job-card bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md block">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center font-sora font-bold text-blue-700 text-sm">NT</div>
+              <div>
+                <p class="text-xs font-semibold text-slate-700">NovaTech</p>
+              </div>
+            </div>
+            <span class="tag-badge bg-violet-50 text-violet-700 px-2 py-0.5 rounded-full">Hybrid</span>
+          </div>
+          <h3 class="font-sora font-bold text-slate-900 text-sm leading-snug mb-2">Frontend Developer (React)</h3>
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="tag-badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Full-time</span>
+            <span class="tag-badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Junior Â· Mid</span>
+          </div>
+          <p class="text-brand-600 font-semibold text-sm mb-2">\$700 â€“ \$1,100 / month</p>
+          <p class="text-slate-400 text-xs leading-relaxed mb-3">Build modern web applications with React and work with a talented team.</p>
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span class="flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+              3 days ago
+            </span>
+            <span>18 applicants</span>
+          </div>
+        </a>
+
+        <!-- Job Card 3 -->
+        <a href="job-detail.html" class="job-card bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md block">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-purple-100 flex items-center justify-center font-sora font-bold text-purple-700 text-sm">PW</div>
+              <div>
+                <p class="text-xs font-semibold text-slate-700">PixelWorks</p>
+              </div>
+            </div>
+            <span class="tag-badge bg-sky-50 text-sky-700 px-2 py-0.5 rounded-full">Remote</span>
+          </div>
+          <h3 class="font-sora font-bold text-slate-900 text-sm leading-snug mb-2">Graphic Designer</h3>
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="tag-badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Part-time</span>
+            <span class="tag-badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Mid-level</span>
+          </div>
+          <p class="text-brand-600 font-semibold text-sm mb-2">\$18 â€“ \$35 / hour</p>
+          <p class="text-slate-400 text-xs leading-relaxed mb-3">Create stunning visuals for social media, web and branding projects.</p>
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span class="flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+              4 days ago
+            </span>
+            <span>12 applicants</span>
+          </div>
+        </a>
+
+        <!-- Job Card 4 -->
+        <a href="job-detail.html" class="job-card bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md block">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center font-sora font-bold text-emerald-700 text-sm">BP</div>
+              <div>
+                <p class="text-xs font-semibold text-slate-700">BrightPath</p>
+              </div>
+            </div>
+            <span class="tag-badge bg-sky-50 text-sky-700 px-2 py-0.5 rounded-full">Remote</span>
+          </div>
+          <h3 class="font-sora font-bold text-slate-900 text-sm leading-snug mb-2">AI Research Assistant</h3>
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <span class="tag-badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Full-time</span>
+            <span class="tag-badge bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Entry Â· Mid</span>
+          </div>
+          <p class="text-brand-600 font-semibold text-sm mb-2">\$600 â€“ \$1,000 / month</p>
+          <p class="text-slate-400 text-xs leading-relaxed mb-3">Work on real-world AI projects and contribute to innovative solutions.</p>
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span class="flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+              5 days ago
+            </span>
+            <span>9 applicants</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== DESIGNER MARKETPLACE ========== -->
+  <section class="py-20 bg-slate-50 border-y border-slate-200/60">
+    <div class="max-w-7xl mx-auto px-6">
+      <!-- Header -->
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <p class="text-xs font-semibold text-brand-600 uppercase tracking-wider mb-2">Featured Talent</p>
+          <h2 class="font-sora text-2xl font-bold text-slate-900">Hire creative talent</h2>
+          <p class="text-slate-500 text-sm mt-1 max-w-md">Browse verified designers, brand architects and visual creators tailored to your business needs.</p>
+        </div>
+        <a href="dashboard-candidates.html" class="inline-flex items-center gap-2 bg-slate-900 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors shadow-sm">
+          Browse All Talent
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+
+      <!-- 6-card grid in 3-column square/boxy layout with candidate styling -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Card 1: Linh Tran -->
+        <div class="candidate-card bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all p-5 flex flex-col justify-between cursor-pointer">
+          <div>
+            <!-- Top Row: Avatar & Status Badge -->
+            <div class="flex items-start justify-between gap-3 mb-3.5">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=140&h=140&fit=crop&crop=face&auto=format&q=80" class="w-14 h-14 rounded-2xl object-cover bg-blue-50 border border-slate-100 shadow-xs" alt="Linh Trần" />
+                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+              </div>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700">Available</span>
+            </div>
+
+            <!-- Name & Title -->
+            <div class="mb-2.5">
+              <div class="flex items-center gap-1.5 mb-0.5">
+                <h3 class="font-sora font-bold text-slate-900 text-sm">Linh Trần</h3>
+                <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                <span class="text-xs text-slate-400">&middot; Hà Nội</span>
+              </div>
+              <p class="text-xs text-slate-500 font-medium truncate">Poster &amp; Key Visual Designer &middot; 5 yrs</p>
+            </div>
+
+            <!-- Stats: Rating, Projects, Match -->
+            <div class="flex items-center gap-2 mb-3 text-xs text-slate-600 flex-wrap pb-2.5 border-b border-slate-100">
+              <span class="flex items-center gap-1 font-semibold text-slate-800">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                5.0 (28)
+              </span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="text-xs text-slate-500">128 jobs</span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="flex items-center gap-1 font-bold text-emerald-600">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                95% match
+              </span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-xs text-slate-500 leading-relaxed mb-3 line-clamp-2">
+              Chuyên thiết kế poster sự kiện, key visual và ấn phẩm truyền thông đậm chất nghệ thuật, thu hút thị giác cao.
+            </p>
+
+            <!-- Skill Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-blue-50 text-blue-700">Event Posters</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-violet-50 text-violet-700">Print-Ready</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-pink-50 text-pink-700">Typography</span>
+            </div>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
+            <div>
+              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Starting from</p>
+              <p class="text-xs font-bold text-slate-900">$80 <span class="font-normal text-slate-400">&middot; 2 days</span></p>
+            </div>
+            <a href="dashboard-candidates.html" class="text-xs font-semibold px-3.5 py-1.5 rounded-xl text-white transition-opacity hover:opacity-90 shadow-xs" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
+              View Profile
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 2: Vinh Nguyen -->
+        <div class="candidate-card bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all p-5 flex flex-col justify-between cursor-pointer">
+          <div>
+            <!-- Top Row: Avatar & Status Badge -->
+            <div class="flex items-start justify-between gap-3 mb-3.5">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=140&h=140&fit=crop&crop=face&auto=format&q=80" class="w-14 h-14 rounded-2xl object-cover bg-emerald-50 border border-slate-100 shadow-xs" alt="Vinh Nguyễn" />
+                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+              </div>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">Top Rated</span>
+            </div>
+
+            <!-- Name & Title -->
+            <div class="mb-2.5">
+              <div class="flex items-center gap-1.5 mb-0.5">
+                <h3 class="font-sora font-bold text-slate-900 text-sm">Vinh Nguyễn</h3>
+                <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                <span class="text-xs text-slate-400">&middot; Đà Nẵng</span>
+              </div>
+              <p class="text-xs text-slate-500 font-medium truncate">Digital Ad &amp; Banner Designer &middot; 4 yrs</p>
+            </div>
+
+            <!-- Stats: Rating, Projects, Match -->
+            <div class="flex items-center gap-2 mb-3 text-xs text-slate-600 flex-wrap pb-2.5 border-b border-slate-100">
+              <span class="flex items-center gap-1 font-semibold text-slate-800">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                4.9 (34)
+              </span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="text-xs text-slate-500">94 jobs</span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="flex items-center gap-1 font-bold text-emerald-600">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                91% match
+              </span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-xs text-slate-500 leading-relaxed mb-3 line-clamp-2">
+              Tối ưu CTR chiến dịch quảng cáo Facebook, Google Display và sàn TMĐT với bộ banner sắc nét, chuẩn responsive.
+            </p>
+
+            <!-- Skill Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-blue-50 text-blue-700">Web Banners</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700">Google Ads</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-amber-50 text-amber-700">Social Ads</span>
+            </div>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
+            <div>
+              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Starting from</p>
+              <p class="text-xs font-bold text-slate-900">$65 <span class="font-normal text-slate-400">&middot; 1 day</span></p>
+            </div>
+            <a href="dashboard-candidates.html" class="text-xs font-semibold px-3.5 py-1.5 rounded-xl text-white transition-opacity hover:opacity-90 shadow-xs" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
+              View Profile
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 3: Quynh Anh -->
+        <div class="candidate-card bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all p-5 flex flex-col justify-between cursor-pointer">
+          <div>
+            <!-- Top Row: Avatar & Status Badge -->
+            <div class="flex items-start justify-between gap-3 mb-3.5">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=140&h=140&fit=crop&crop=face&auto=format&q=80" class="w-14 h-14 rounded-2xl object-cover bg-violet-50 border border-slate-100 shadow-xs" alt="Quỳnh Anh" />
+                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+              </div>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700">Pro Verified</span>
+            </div>
+
+            <!-- Name & Title -->
+            <div class="mb-2.5">
+              <div class="flex items-center gap-1.5 mb-0.5">
+                <h3 class="font-sora font-bold text-slate-900 text-sm">Quỳnh Anh</h3>
+                <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                <span class="text-xs text-slate-400">&middot; TP.HCM</span>
+              </div>
+              <p class="text-xs text-slate-500 font-medium truncate">Brand Identity Specialist &middot; 6 yrs</p>
+            </div>
+
+            <!-- Stats: Rating, Projects, Match -->
+            <div class="flex items-center gap-2 mb-3 text-xs text-slate-600 flex-wrap pb-2.5 border-b border-slate-100">
+              <span class="flex items-center gap-1 font-semibold text-slate-800">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                5.0 (42)
+              </span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="text-xs text-slate-500">63 jobs</span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="flex items-center gap-1 font-bold text-emerald-600">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                97% match
+              </span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-xs text-slate-500 leading-relaxed mb-3 line-clamp-2">
+              Xây dựng hệ thống nhận diện thương hiệu hoàn chỉnh, logo vector sắc gọn và quy chuẩn brand guideline cao cấp.
+            </p>
+
+            <!-- Skill Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-purple-50 text-purple-700">Brand Identity</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-violet-50 text-violet-700">Vector Logo</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-rose-50 text-rose-700">Brand Book</span>
+            </div>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
+            <div>
+              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Starting from</p>
+              <p class="text-xs font-bold text-slate-900">$150 <span class="font-normal text-slate-400">&middot; 3 days</span></p>
+            </div>
+            <a href="dashboard-candidates.html" class="text-xs font-semibold px-3.5 py-1.5 rounded-xl text-white transition-opacity hover:opacity-90 shadow-xs" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
+              View Profile
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 4: Nguyen Minh Tuan (Match candidate screen) -->
+        <div class="candidate-card bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all p-5 flex flex-col justify-between cursor-pointer">
+          <div>
+            <!-- Top Row: Avatar & Status Badge -->
+            <div class="flex items-start justify-between gap-3 mb-3.5">
+              <div class="relative">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenMinhTuan&backgroundColor=b6e3f4" class="w-14 h-14 rounded-2xl object-cover bg-sky-100 border border-slate-100 shadow-xs" alt="Nguyễn Minh Tuấn" />
+                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+              </div>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700">Shortlisted</span>
+            </div>
+
+            <!-- Name & Title -->
+            <div class="mb-2.5">
+              <div class="flex items-center gap-1.5 mb-0.5">
+                <h3 class="font-sora font-bold text-slate-900 text-sm">Nguyễn Minh Tuấn</h3>
+                <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                <span class="text-xs text-slate-400">&middot; Hà Nội</span>
+              </div>
+              <p class="text-xs text-slate-500 font-medium truncate">Senior UI/UX Designer &middot; 4 yrs</p>
+            </div>
+
+            <!-- Stats: Rating, Projects, Match -->
+            <div class="flex items-center gap-2 mb-3 text-xs text-slate-600 flex-wrap pb-2.5 border-b border-slate-100">
+              <span class="flex items-center gap-1 font-semibold text-slate-800">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                5.0 (18)
+              </span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="text-xs text-slate-500">NovaTech</span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="flex items-center gap-1 font-bold text-emerald-600">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                92% match
+              </span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-xs text-slate-500 leading-relaxed mb-3 line-clamp-2">
+              Thiết kế trải nghiệm người dùng hiện đại cho web và mobile apps. Tối ưu hóa design system và tương tác sản phẩm.
+            </p>
+
+            <!-- Skill Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-blue-50 text-blue-700">React</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-violet-50 text-violet-700">UI/UX</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-pink-50 text-pink-700">Figma</span>
+            </div>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
+            <div>
+              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Experience</p>
+              <p class="text-xs font-bold text-slate-900">4 years <span class="font-normal text-slate-400">&middot; Senior</span></p>
+            </div>
+            <a href="dashboard-candidates.html" class="text-xs font-semibold px-3.5 py-1.5 rounded-xl text-white transition-opacity hover:opacity-90 shadow-xs" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
+              View Profile
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 5: Phuong Ly -->
+        <div class="candidate-card bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all p-5 flex flex-col justify-between cursor-pointer">
+          <div>
+            <!-- Top Row: Avatar & Status Badge -->
+            <div class="flex items-start justify-between gap-3 mb-3.5">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=140&h=140&fit=crop&crop=face&auto=format&q=80" class="w-14 h-14 rounded-2xl object-cover bg-rose-50 border border-slate-100 shadow-xs" alt="Phương Ly" />
+                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+              </div>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-700">Trending</span>
+            </div>
+
+            <!-- Name & Title -->
+            <div class="mb-2.5">
+              <div class="flex items-center gap-1.5 mb-0.5">
+                <h3 class="font-sora font-bold text-slate-900 text-sm">Phương Ly</h3>
+                <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                <span class="text-xs text-slate-400">&middot; TP.HCM</span>
+              </div>
+              <p class="text-xs text-slate-500 font-medium truncate">Social Creative &amp; Content Producer &middot; 3 yrs</p>
+            </div>
+
+            <!-- Stats: Rating, Projects, Match -->
+            <div class="flex items-center gap-2 mb-3 text-xs text-slate-600 flex-wrap pb-2.5 border-b border-slate-100">
+              <span class="flex items-center gap-1 font-semibold text-slate-800">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                4.9 (56)
+              </span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="text-xs text-slate-500">211 jobs</span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="flex items-center gap-1 font-bold text-emerald-600">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                89% match
+              </span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-xs text-slate-500 leading-relaxed mb-3 line-clamp-2">
+              Sáng tạo nội dung hình ảnh viral, template mạng xã hội và banner động bắt kịp xu hướng TikTok, Reels.
+            </p>
+
+            <!-- Skill Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-rose-50 text-rose-700">Instagram Kits</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-violet-50 text-violet-700">TikTok Covers</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-amber-50 text-amber-700">Motion Ads</span>
+            </div>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
+            <div>
+              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Starting from</p>
+              <p class="text-xs font-bold text-slate-900">$95 <span class="font-normal text-slate-400">&middot; 2 days</span></p>
+            </div>
+            <a href="dashboard-candidates.html" class="text-xs font-semibold px-3.5 py-1.5 rounded-xl text-white transition-opacity hover:opacity-90 shadow-xs" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
+              View Profile
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 6: Tuan Anh -->
+        <div class="candidate-card bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all p-5 flex flex-col justify-between cursor-pointer">
+          <div>
+            <!-- Top Row: Avatar & Status Badge -->
+            <div class="flex items-start justify-between gap-3 mb-3.5">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=140&h=140&fit=crop&crop=face&auto=format&q=80" class="w-14 h-14 rounded-2xl object-cover bg-amber-50 border border-slate-100 shadow-xs" alt="Tuấn Anh" />
+                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+              </div>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700">Top Agency</span>
+            </div>
+
+            <!-- Name & Title -->
+            <div class="mb-2.5">
+              <div class="flex items-center gap-1.5 mb-0.5">
+                <h3 class="font-sora font-bold text-slate-900 text-sm">Tuấn Anh</h3>
+                <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                <span class="text-xs text-slate-400">&middot; Cần Thơ</span>
+              </div>
+              <p class="text-xs text-slate-500 font-medium truncate">Minimalist Logo &amp; Icon Designer &middot; 7 yrs</p>
+            </div>
+
+            <!-- Stats: Rating, Projects, Match -->
+            <div class="flex items-center gap-2 mb-3 text-xs text-slate-600 flex-wrap pb-2.5 border-b border-slate-100">
+              <span class="flex items-center gap-1 font-semibold text-slate-800">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                5.0 (68)
+              </span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="text-xs text-slate-500">155 jobs</span>
+              <span class="text-slate-300">&middot;</span>
+              <span class="flex items-center gap-1 font-bold text-emerald-600">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
+                98% match
+              </span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-xs text-slate-500 leading-relaxed mb-3 line-clamp-2">
+              Thiết kế logo tối giản hiện đại, bộ biểu tượng icon độc quyền và ứng dụng 3D mockup nhận diện thương hiệu.
+            </p>
+
+            <!-- Skill Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-blue-50 text-blue-700">Minimalist Logo</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-purple-50 text-purple-700">Monogram</span>
+              <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700">Vector SVG</span>
+            </div>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-2">
+            <div>
+              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Starting from</p>
+              <p class="text-xs font-bold text-slate-900">$120 <span class="font-normal text-slate-400">&middot; 2 days</span></p>
+            </div>
+            <a href="dashboard-candidates.html" class="text-xs font-semibold px-3.5 py-1.5 rounded-xl text-white transition-opacity hover:opacity-90 shadow-xs" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
+              View Profile
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HOW IT WORKS ========== -->
+  <section class="py-20" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-end justify-between mb-12">
+        <div>
+          <p class="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-2">How It Works</p>
+          <h2 class="font-sora text-2xl font-bold text-white">AI-powered application</h2>
+          <p class="text-slate-400 text-sm mt-1 max-w-md">Let our AI handle the heavy lifting â€” from finding the right jobs to preparing you for interviews.</p>
+        </div>
+        <a href="#" class="text-sm font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1 transition-colors">
+          View how it works
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+
+      <div class="flex flex-col md:flex-row items-start gap-0">
+        <!-- Step 1 -->
+        <div class="flex-1 flex flex-col items-center text-center md:items-start md:text-left p-6">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center mb-4 shadow-lg shadow-brand-900/30 relative">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
+            </svg>
+            <span class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-brand-600 text-xs font-bold flex items-center justify-center shadow">1</span>
+          </div>
+          <h3 class="font-sora font-bold text-white text-base mb-2">Analyze Job</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">AI scans job postings and matches them with your profile, goals and company culture.</p>
+        </div>
+
+        <!-- Connector -->
+        <div class="hidden md:flex items-center justify-center w-8 mt-10 flex-shrink-0">
+          <div class="w-full h-px bg-gradient-to-r from-brand-500 to-indigo-500 opacity-40"></div>
+          <svg class="w-4 h-4 text-indigo-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="flex-1 flex flex-col items-center text-center md:items-start md:text-left p-6">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mb-4 shadow-lg shadow-indigo-900/30 relative">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+            </svg>
+            <span class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-indigo-600 text-xs font-bold flex items-center justify-center shadow">2</span>
+          </div>
+          <h3 class="font-sora font-bold text-white text-base mb-2">Tailor CV</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Automatically generates an ATS-friendly CV tailored to each company's requirements.</p>
+        </div>
+
+        <!-- Connector -->
+        <div class="hidden md:flex items-center justify-center w-8 mt-10 flex-shrink-0">
+          <div class="w-full h-px bg-gradient-to-r from-indigo-500 to-violet-500 opacity-40"></div>
+          <svg class="w-4 h-4 text-violet-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex-1 flex flex-col items-center text-center md:items-start md:text-left p-6">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-pink-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-900/30 relative">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/>
+            </svg>
+            <span class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-violet-600 text-xs font-bold flex items-center justify-center shadow">3</span>
+          </div>
+          <h3 class="font-sora font-bold text-white text-base mb-2">Prepare Interview</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">AI acts as an HR, creating role-specific questions and practice sessions to boost your confidence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TESTIMONIALS ========== -->
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-2">Success Stories</p>
+          <h2 class="font-sora text-2xl font-bold text-slate-900">Trusted by job seekers and businesses</h2>
+          <p class="text-slate-500 text-sm mt-1">Real people. Real results.</p>
+        </div>
+        <a href="#" class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-colors">
+          View more stories
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Review 1 -->
+        <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-brand-200 transition-colors hover:shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenMinhTuan&backgroundColor=b6e3f4" alt="Nguyen Minh Tuan" class="w-10 h-10 rounded-full object-cover bg-sky-100" />
+            <div>
+              <p class="font-sora font-semibold text-sm text-slate-900">Nguyá»…n Minh Tuáº¥n</p>
+              <p class="text-xs text-slate-500">Information Security Analyst</p>
+            </div>
+          </div>
+          <div class="flex gap-0.5 mb-3">
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-slate-600 text-sm leading-relaxed italic">"Connect CV helped me land my first internship and the AI-generated CV really made a difference. I got 3 interviews invitations within a week!"</p>
+        </div>
+
+        <!-- Review 2 -->
+        <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-brand-200 transition-colors hover:shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=TranThiHa&backgroundColor=ffd5dc" alt="Tran Thi Ha" class="w-10 h-10 rounded-full object-cover bg-pink-100" />
+            <div>
+              <p class="font-sora font-semibold text-sm text-slate-900">Tráº§n Thá»‹ HÃ </p>
+              <p class="text-xs text-slate-500">Graphic Designer</p>
+            </div>
+          </div>
+          <div class="flex gap-0.5 mb-3">
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-slate-600 text-sm leading-relaxed italic">"I've hired 5 designers through Connect CV. The quality is amazing and the process is so smooth. Highly recommend!"</p>
+        </div>
+
+        <!-- Review 3 -->
+        <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-brand-200 transition-colors hover:shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=LeQuangHuy&backgroundColor=c0aede" alt="Le Quang Huy" class="w-10 h-10 rounded-full object-cover bg-violet-100" />
+            <div>
+              <p class="font-sora font-semibold text-sm text-slate-900">LÃª Quang Huy</p>
+              <p class="text-xs text-slate-500">Hiring Manager at NovaTech</p>
+            </div>
+          </div>
+          <div class="flex gap-0.5 mb-3">
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-slate-600 text-sm leading-relaxed italic">"The platform saves us a lot of time. The AI screening and tailored CVs help us find the right candidates faster and more accurately."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA BANNER ========== -->
+  <section class="py-16" style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+      <h2 class="font-sora text-3xl font-extrabold text-white mb-3">Ready to transform your career?</h2>
+      <p class="text-blue-100 text-sm leading-relaxed mb-8">Join thousands of professionals who found their dream jobs with AI-powered matching and tailored CVs.</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="dashboard-applications.html" class="bg-white text-brand-700 text-sm font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors shadow-md">
+          Get Started Free
+        </a>
+        <a href="#" class="border border-white/30 text-white text-sm font-semibold px-6 py-3 rounded-xl hover:bg-white/10 transition-colors">
+          Learn More
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="bg-dark text-slate-400">
+    <div class="max-w-7xl mx-auto px-6 pt-14 pb-8">
+      <div class="grid md:grid-cols-5 gap-10 mb-12">
+        <!-- Brand -->
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-2.5 mb-4">
+            <div class="w-7 h-7 bg-gradient-to-br from-brand-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+              </svg>
+            </div>
+            <span class="font-sora font-bold text-white text-base">Connect<span class="text-brand-400">CV</span></span>
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed mb-5 max-w-xs">Better opportunities. Smarter careers. AI-powered platform for job seekers and businesses.</p>
+          <div class="flex gap-3">
+            <a href="#" class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.099 18.08.11 18.1.128 18.12a19.898 19.898 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+            </a>
+            <a href="#" class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2" fill="currentColor"/></svg>
+            </a>
+            <a href="#" class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+            </a>
+            <a href="#" class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors">
+              <svg class="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Links -->
+        <div>
+          <p class="font-sora font-semibold text-white text-sm mb-4">For Job Seekers</p>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="dashboard-applications.html" class="hover:text-white transition-colors">Find Jobs</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Career Assistant</a></li>
+            <li><a href="dashboard-interview.html" class="hover:text-white transition-colors">AI Interview Prep</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="font-sora font-semibold text-white text-sm mb-4">For Businesses</p>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="#" class="hover:text-white transition-colors">Post a Job</a></li>
+            <li><a href="dashboard-candidates.html" class="hover:text-white transition-colors">Hire a Designer</a></li>
+            <li><a href="dashboard-candidates.html" class="hover:text-white transition-colors">Browse Candidates</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Enterprise</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="font-sora font-semibold text-white text-sm mb-4">Stay in the loop</p>
+          <p class="text-xs text-slate-500 mb-3">Get the latest jobs, tips and updates.</p>
+          <div class="flex">
+            <input type="email" placeholder="Enter your email" class="flex-1 bg-slate-800 text-sm text-white placeholder-slate-500 px-3 py-2 rounded-l-lg outline-none border border-slate-700 focus:border-brand-500 transition-colors" />
+            <button class="bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 rounded-r-lg transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+        <p class="text-xs text-slate-600">Â© 2025 Connect CV. All rights reserved.</p>
+        <div class="flex gap-5 text-xs">
+          <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+          <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

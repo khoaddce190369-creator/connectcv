@@ -1,324 +1,457 @@
-// Mock data cho giao diện demo — không kết nối backend
+export const heroSlides = [
+  {
+    badge: 'AI-Powered Matching',
+    title: 'Find your dream job<br/>before anyone else does.',
+    description: 'Our AI continuously scans thousands of listings across industries and matches them to your skills, experience level, and career goals — then notifies you of the best fits in real time. No more endless scrolling.',
+    buttonText: 'Browse Jobs',
+    buttonLink: '/job-postings',
+    gradient: 'linear-gradient(135deg,#2563eb 0%,#4f46e5 50%,#7c3aed 100%)',
+    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=220&h=280&fit=crop&crop=face&auto=format&q=80',
+    floatingCards: [
+      { type: 'match', title: 'Senior UI/UX Designer', subtitle: 'NovaTech · Remote', score: 92 },
+      { type: 'new', title: 'Frontend Developer', subtitle: 'PixelWorks · $2,000/mo' }
+    ]
+  },
+  {
+    badge: 'Smart CV Generator',
+    title: 'A CV that actually<br/>gets you shortlisted.',
+    description: 'Automatically generates an ATS-friendly CV tailored to each company\'s requirements based on your profile and the specific job description.',
+    buttonText: 'Create CV',
+    buttonLink: '/profile',
+    gradient: 'linear-gradient(135deg,#7c3aed 0%,#db2777 55%,#f97316 100%)',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=220&h=280&fit=crop&crop=face&auto=format&q=80',
+    floatingCards: [
+      { type: 'match', title: 'Product Manager', subtitle: 'Global Tech · Onsite', score: 85 },
+      { type: 'new', title: 'Data Scientist', subtitle: 'AI Solutions · $3,500/mo' }
+    ]
+  },
+  {
+    badge: 'Real-Time Interview Prep',
+    title: 'Ace your interviews<br/>with AI simulation.',
+    description: 'AI acts as an HR, creating role-specific questions and practice sessions to boost your confidence and help you articulate your value effectively.',
+    buttonText: 'Practice Now',
+    buttonLink: '/interview',
+    gradient: 'linear-gradient(135deg,#0ea5e9 0%,#3b82f6 50%,#8b5cf6 100%)',
+    image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=220&h=280&fit=crop&crop=face&auto=format&q=80',
+    floatingCards: [
+      { type: 'match', title: 'DevOps Engineer', subtitle: 'CloudSync · Remote', score: 95 },
+      { type: 'new', title: 'Backend Developer', subtitle: 'FinTech Pro · $2,800/mo' }
+    ]
+  }
+];
 
 export const categories = [
-  { id: 1, name: 'Web Development', icon: 'Code', jobCount: 1243, color: 'bg-blue-500' },
-  { id: 2, name: 'Mobile Development', icon: 'Smartphone', jobCount: 876, color: 'bg-purple-500' },
-  { id: 3, name: 'AI & Machine Learning', icon: 'Brain', jobCount: 654, color: 'bg-pink-500' },
-  { id: 4, name: 'UI/UX Design', icon: 'Palette', jobCount: 932, color: 'bg-orange-500' },
-  { id: 5, name: 'Data Science', icon: 'BarChart3', jobCount: 521, color: 'bg-cyan-500' },
-  { id: 6, name: 'Digital Marketing', icon: 'Megaphone', jobCount: 743, color: 'bg-green-500' },
-  { id: 7, name: 'DevOps & Cloud', icon: 'Cloud', jobCount: 412, color: 'bg-indigo-500' },
-  { id: 8, name: 'Content Writing', icon: 'PenTool', jobCount: 689, color: 'bg-yellow-500' },
+  { name: 'UI/UX Design', icon: 'PenTool', jobCount: '1,200+', colorClasses: 'text-brand-600 bg-brand-50' },
+  { name: 'Development', icon: 'Code', jobCount: '3,500+', colorClasses: 'text-indigo-600 bg-indigo-50' },
+  { name: 'Marketing', icon: 'Megaphone', jobCount: '800+', colorClasses: 'text-pink-600 bg-pink-50' },
+  { name: 'Data Science', icon: 'BarChart', jobCount: '450+', colorClasses: 'text-emerald-600 bg-emerald-50' },
+  { name: 'Product Management', icon: 'Briefcase', jobCount: '600+', colorClasses: 'text-amber-600 bg-amber-50' },
+  { name: 'Sales', icon: 'TrendingUp', jobCount: '1,500+', colorClasses: 'text-sky-600 bg-sky-50' }
 ];
 
-export const jobs = [
+export const recommendedJobs = [
   {
-    id: 1,
-    title: 'Senior React Developer for E-commerce Platform',
-    company: 'TechViet Solutions',
-    companyLogo: null,
-    description: 'We are looking for an experienced React developer to build a modern e-commerce platform. The ideal candidate should have strong experience with React, Redux, and Node.js. You will be responsible for developing user-facing features, building reusable components, and ensuring the technical feasibility of UI/UX designs.',
-    shortDescription: 'Build a modern e-commerce platform using React, Redux, and Node.js with responsive design...',
-    skills: ['React', 'TypeScript', 'Node.js', 'Redux', 'Tailwind CSS'],
-    budget: { min: 2000, max: 5000, type: 'Fixed Price' },
-    hourlyRate: null,
+    companyInitials: 'N',
+    gradient: 'linear-gradient(135deg,#2563eb,#4f46e5)',
+    company: 'NovaTech',
     location: 'Remote',
-    postedAt: '2 hours ago',
-    proposals: 12,
-    experienceLevel: 'Expert',
-    duration: '3 - 6 months',
-    category: 'Web Development',
-    matchScore: 95,
-    clientRating: 4.9,
-    clientSpent: '$50K+',
-    clientCountry: 'Vietnam',
-    verified: true,
+    title: 'Senior UI/UX Designer',
+    tags: ['Figma', 'Prototyping', 'User Research'],
+    salary: '$2,000 - $3,500',
+    summary: 'Join our core design team to build intuitive enterprise software interfaces. Focus on complex user journeys and design systems.',
+    timeAgo: '2h ago',
+    applicants: 12
   },
   {
-    id: 2,
-    title: 'Full-Stack Developer — Healthcare SaaS Application',
-    company: 'MediTech Asia',
-    companyLogo: null,
-    description: 'Join our team to build a cutting-edge healthcare SaaS application. We need someone who can handle both frontend and backend development. Experience with HIPAA compliance and healthcare data standards is a plus.',
-    shortDescription: 'Build a healthcare SaaS application with React frontend and Python/Django backend...',
-    skills: ['Python', 'Django', 'React', 'PostgreSQL', 'Docker'],
-    budget: { min: 3000, max: 8000, type: 'Fixed Price' },
-    hourlyRate: null,
+    companyInitials: 'P',
+    gradient: 'linear-gradient(135deg,#10b981,#059669)',
+    company: 'PixelWorks',
+    location: 'Onsite',
+    title: 'Frontend Developer',
+    tags: ['React', 'TypeScript', 'Tailwind'],
+    salary: '$1,500 - $2,500',
+    summary: 'Looking for a strong frontend developer to help build performant web applications with modern tech stack.',
+    timeAgo: '5h ago',
+    applicants: 45
+  },
+  {
+    companyInitials: 'G',
+    gradient: 'linear-gradient(135deg,#f59e0b,#d97706)',
+    company: 'Global Tech',
+    location: 'Hybrid',
+    title: 'Product Manager',
+    tags: ['Agile', 'Scrum', 'Roadmapping'],
+    salary: '$2,500 - $4,000',
+    summary: 'Lead a cross-functional team to deliver high-impact features for our flagship B2B product.',
+    timeAgo: '1d ago',
+    applicants: 23
+  },
+  {
+    companyInitials: 'A',
+    gradient: 'linear-gradient(135deg,#8b5cf6,#6d28d9)',
+    company: 'AI Solutions',
     location: 'Remote',
-    postedAt: '5 hours ago',
-    proposals: 8,
-    experienceLevel: 'Intermediate',
-    duration: '1 - 3 months',
-    category: 'Web Development',
-    matchScore: 82,
-    clientRating: 4.7,
-    clientSpent: '$25K+',
-    clientCountry: 'Singapore',
-    verified: true,
-  },
-  {
-    id: 3,
-    title: 'Mobile App UI/UX Designer for Fintech Startup',
-    company: 'PayFlow',
-    companyLogo: null,
-    description: 'We are a fintech startup looking for a talented UI/UX designer to redesign our mobile banking application. The designer should have experience with financial applications and mobile-first design principles.',
-    shortDescription: 'Redesign mobile banking app with modern UI/UX, focusing on user experience and fintech patterns...',
-    skills: ['Figma', 'UI/UX', 'Mobile Design', 'Prototyping', 'User Research'],
-    budget: { min: 1500, max: 3000, type: 'Fixed Price' },
-    hourlyRate: null,
-    location: 'Ho Chi Minh City',
-    postedAt: '1 day ago',
-    proposals: 24,
-    experienceLevel: 'Intermediate',
-    duration: '1 - 3 months',
-    category: 'UI/UX Design',
-    matchScore: 78,
-    clientRating: 4.5,
-    clientSpent: '$10K+',
-    clientCountry: 'Vietnam',
-    verified: false,
-  },
-  {
-    id: 4,
-    title: 'AI/ML Engineer — NLP Chatbot Development',
-    company: 'SmartBot Corp',
-    companyLogo: null,
-    description: 'We need an AI/ML engineer to develop an intelligent customer service chatbot using NLP techniques. The chatbot should support Vietnamese and English languages with high accuracy.',
-    shortDescription: 'Develop an NLP-based customer service chatbot supporting Vietnamese and English...',
-    skills: ['Python', 'TensorFlow', 'NLP', 'LangChain', 'OpenAI API'],
-    budget: { min: 5000, max: 12000, type: 'Fixed Price' },
-    hourlyRate: null,
-    location: 'Remote',
-    postedAt: '3 hours ago',
-    proposals: 6,
-    experienceLevel: 'Expert',
-    duration: '3 - 6 months',
-    category: 'AI & Machine Learning',
-    matchScore: 88,
-    clientRating: 5.0,
-    clientSpent: '$100K+',
-    clientCountry: 'United States',
-    verified: true,
-  },
-  {
-    id: 5,
-    title: 'WordPress Developer for Corporate Website',
-    company: 'BrandViet Agency',
-    companyLogo: null,
-    description: 'Looking for a WordPress developer to create a professional corporate website with custom theme. Must be responsive and SEO-optimized.',
-    shortDescription: 'Create a professional corporate WordPress website with custom theme and SEO optimization...',
-    skills: ['WordPress', 'PHP', 'CSS', 'JavaScript', 'SEO'],
-    budget: { min: 500, max: 1500, type: 'Fixed Price' },
-    hourlyRate: null,
-    location: 'Hanoi',
-    postedAt: '6 hours ago',
-    proposals: 35,
-    experienceLevel: 'Entry Level',
-    duration: 'Less than 1 month',
-    category: 'Web Development',
-    matchScore: 65,
-    clientRating: 4.2,
-    clientSpent: '$5K+',
-    clientCountry: 'Vietnam',
-    verified: true,
-  },
-  {
-    id: 6,
-    title: 'Data Analyst — Business Intelligence Dashboard',
-    company: 'DataDriven Co.',
-    companyLogo: null,
-    description: 'We are looking for a data analyst to build interactive BI dashboards using Power BI or Tableau. Experience with SQL and data visualization best practices required.',
-    shortDescription: 'Build interactive BI dashboards with Power BI/Tableau from SQL data sources...',
-    skills: ['Power BI', 'SQL', 'Tableau', 'Python', 'Data Visualization'],
-    budget: { min: 1000, max: 2500, type: 'Fixed Price' },
-    hourlyRate: null,
-    location: 'Remote',
-    postedAt: '1 day ago',
-    proposals: 18,
-    experienceLevel: 'Intermediate',
-    duration: '1 - 3 months',
-    category: 'Data Science',
-    matchScore: 72,
-    clientRating: 4.6,
-    clientSpent: '$15K+',
-    clientCountry: 'Australia',
-    verified: true,
-  },
-  {
-    id: 7,
-    title: 'React Native Developer for Food Delivery App',
-    company: 'QuickEats',
-    companyLogo: null,
-    description: 'Building a food delivery mobile app similar to GrabFood. Need experienced React Native developer who can work with maps, real-time tracking, and payment integration.',
-    shortDescription: 'Build a food delivery app with real-time tracking, maps integration, and payment system...',
-    skills: ['React Native', 'JavaScript', 'Firebase', 'Google Maps API', 'Redux'],
-    budget: { min: 4000, max: 10000, type: 'Fixed Price' },
-    hourlyRate: null,
-    location: 'Remote',
-    postedAt: '12 hours ago',
-    proposals: 15,
-    experienceLevel: 'Expert',
-    duration: '3 - 6 months',
-    category: 'Mobile Development',
-    matchScore: 90,
-    clientRating: 4.8,
-    clientSpent: '$75K+',
-    clientCountry: 'Vietnam',
-    verified: true,
-  },
-  {
-    id: 8,
-    title: 'SEO Specialist & Content Strategist',
-    company: 'GrowthHub Digital',
-    companyLogo: null,
-    description: 'Looking for an SEO specialist to improve organic traffic for our clients. Must have experience with keyword research, on-page/off-page SEO, and content strategy.',
-    shortDescription: 'Improve organic traffic through keyword research, on-page/off-page SEO, and content strategy...',
-    skills: ['SEO', 'Google Analytics', 'Content Strategy', 'Ahrefs', 'Copywriting'],
-    budget: { min: 800, max: 2000, type: 'Fixed Price' },
-    hourlyRate: null,
-    location: 'Remote',
-    postedAt: '2 days ago',
-    proposals: 42,
-    experienceLevel: 'Intermediate',
-    duration: '1 - 3 months',
-    category: 'Digital Marketing',
-    matchScore: 55,
-    clientRating: 4.3,
-    clientSpent: '$8K+',
-    clientCountry: 'Japan',
-    verified: false,
-  },
-  {
-    id: 9,
-    title: 'DevOps Engineer — CI/CD Pipeline Setup',
-    company: 'CloudFirst Tech',
-    companyLogo: null,
-    description: 'Need a DevOps engineer to set up CI/CD pipelines using GitHub Actions, Docker, and AWS. Infrastructure as Code experience with Terraform is required.',
-    shortDescription: 'Set up CI/CD pipelines with GitHub Actions, Docker, AWS, and Terraform IaC...',
-    skills: ['AWS', 'Docker', 'Kubernetes', 'Terraform', 'GitHub Actions'],
-    budget: { min: 3000, max: 6000, type: 'Fixed Price' },
-    hourlyRate: null,
-    location: 'Remote',
-    postedAt: '4 hours ago',
-    proposals: 9,
-    experienceLevel: 'Expert',
-    duration: '1 - 3 months',
-    category: 'DevOps & Cloud',
-    matchScore: 70,
-    clientRating: 4.9,
-    clientSpent: '$200K+',
-    clientCountry: 'Germany',
-    verified: true,
-  },
-  {
-    id: 10,
-    title: 'Technical Content Writer for Developer Blog',
-    company: 'CodeCraft Media',
-    companyLogo: null,
-    description: 'We need a technical content writer who can produce high-quality articles about web development, cloud computing, and software engineering best practices.',
-    shortDescription: 'Write technical blog articles about web development, cloud computing, and engineering...',
-    skills: ['Technical Writing', 'Web Development', 'SEO', 'Markdown', 'Research'],
-    budget: { min: 300, max: 800, type: 'Fixed Price' },
-    hourlyRate: null,
-    location: 'Remote',
-    postedAt: '3 days ago',
-    proposals: 28,
-    experienceLevel: 'Entry Level',
-    duration: 'Less than 1 month',
-    category: 'Content Writing',
-    matchScore: 60,
-    clientRating: 4.4,
-    clientSpent: '$3K+',
-    clientCountry: 'India',
-    verified: true,
-  },
+    title: 'Data Scientist',
+    tags: ['Python', 'Machine Learning', 'SQL'],
+    salary: '$3,000 - $5,000',
+    summary: 'Develop predictive models and machine learning pipelines to solve complex business problems.',
+    timeAgo: '2d ago',
+    applicants: 8
+  }
 ];
 
-export const currentUser = {
-  id: 1,
-  name: 'Nguyen Dang Khoa',
-  email: 'khoa.nd@gmail.com',
-  title: 'Full-Stack Developer',
-  avatar: null,
-  isPro: true,
-  role: 'Student',
-  skills: ['React', 'Node.js', 'TypeScript', 'Python', 'MongoDB', 'Tailwind CSS', 'Docker'],
-  bio: 'Passionate full-stack developer with 2+ years of experience building web applications. Specialized in React, Node.js, and cloud technologies. Currently studying at FPT University.',
-  hourlyRate: 25,
-  totalEarnings: 12500,
-  totalJobs: 18,
-  successRate: 94,
-  memberSince: 'Jan 2024',
-  location: 'Ho Chi Minh City, Vietnam',
-  languages: ['Vietnamese (Native)', 'English (Fluent)'],
-  education: [
-    { school: 'FPT University', degree: 'B.S. Software Engineering', year: '2022 - 2026' },
-  ],
-  portfolio: [
-    { title: 'E-commerce Platform', description: 'Full-stack e-commerce with React & Node.js', image: null },
-    { title: 'Task Management App', description: 'Kanban-style project management tool', image: null },
-    { title: 'AI Chatbot', description: 'Customer service bot with OpenAI integration', image: null },
-  ],
-};
-
-export const stats = {
-  totalJobs: 12500,
-  totalFreelancers: 8700,
-  totalClients: 3200,
-  totalPaid: 2500000,
-};
+export const featuredTalent = [
+  {
+    name: 'Nguyễn Minh Tuấn',
+    location: 'Hà Nội, Việt Nam',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenMinhTuan&backgroundColor=b6e3f4',
+    badge: 'Shortlisted',
+    title: 'Senior UI/UX Designer',
+    rating: 5.0,
+    reviewCount: 18,
+    completedJobs: 45,
+    matchPercent: 92,
+    bio: 'I design intuitive digital experiences for web and mobile products. Passionate about user-centered design and building scalable design systems with a strong eye for detail.',
+    skills: ['Figma', 'React', 'TypeScript', 'UI/UX'],
+    price: '$30/hr'
+  },
+  {
+    name: 'Trần Thị Hà',
+    location: 'TP.HCM, Việt Nam',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TranThiHa&backgroundColor=ffd5dc',
+    badge: 'Interview',
+    title: 'Graphic Designer',
+    rating: 4.9,
+    reviewCount: 24,
+    completedJobs: 62,
+    matchPercent: 87,
+    bio: 'Graphic designer with a passion for visual storytelling. I create compelling brand identities, social media content and marketing materials that make brands stand out.',
+    skills: ['Figma', 'Adobe XD', 'Illustrator', 'Photoshop'],
+    price: '$25/hr'
+  },
+  {
+    name: 'Lê Quang Huy',
+    location: 'Đà Nẵng, Việt Nam',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=LeQuangHuy&backgroundColor=c0aede',
+    badge: 'Applied',
+    title: 'Frontend Developer',
+    rating: 4.8,
+    reviewCount: 11,
+    completedJobs: 28,
+    matchPercent: 81,
+    bio: 'Frontend developer who loves clean code and pixel-perfect UI. I build performant web apps with React and Next.js and have a strong eye for design-to-code translation.',
+    skills: ['React', 'Next.js', 'Tailwind', 'TypeScript'],
+    price: '$35/hr'
+  },
+  {
+    name: 'Phạm Ngọc Anh',
+    location: 'Hà Nội, Việt Nam',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=PhamNgocAnh&backgroundColor=d1fae5',
+    badge: 'Applied',
+    title: 'Product Designer',
+    rating: 4.7,
+    reviewCount: 36,
+    completedJobs: 89,
+    matchPercent: 76,
+    bio: 'Senior product designer with 6 years of experience crafting digital products for startups and enterprise clients. Expert at design systems, user flows and cross-functional collaboration.',
+    skills: ['UI/UX', 'Figma', 'Prototyping', 'User Research'],
+    price: '$45/hr'
+  },
+  {
+    name: 'Võ Thành Long',
+    location: 'Cần Thơ, Việt Nam',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=VoThanhLong&backgroundColor=fde68a',
+    badge: 'Rejected',
+    title: 'AI Research',
+    rating: 4.3,
+    reviewCount: 5,
+    completedJobs: 12,
+    matchPercent: 63,
+    bio: 'Junior AI researcher with a background in machine learning and data analysis. Looking to apply ML models to real-world problems and contribute to innovative AI products.',
+    skills: ['Python', 'SQL', 'ML', 'TensorFlow'],
+    price: '$20/hr'
+  },
+  {
+    name: 'Nguyễn Thanh Tâm',
+    location: 'Hà Nội, Việt Nam',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenThanhTam&backgroundColor=e9d5ff',
+    badge: 'Applied',
+    title: 'Backend Developer',
+    rating: 4.9,
+    reviewCount: 42,
+    completedJobs: 105,
+    matchPercent: 89,
+    bio: 'Experienced backend developer focusing on scalable microservices. Proficient in Node.js, Go, and cloud infrastructure.',
+    skills: ['Node.js', 'Go', 'AWS', 'Docker'],
+    price: '$40/hr'
+  }
+];
 
 export const testimonials = [
   {
-    id: 1,
-    name: 'Tran Minh Duc',
-    role: 'CEO, TechViet Solutions',
-    content: 'ConnectCV helped us find the perfect developer for our project. The AI matching system saved us weeks of manual screening.',
-    rating: 5,
+    name: 'Nguyễn Minh Tuấn',
+    role: 'Information Security Analyst',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenMinhTuan&backgroundColor=b6e3f4',
+    content: '"Connect CV helped me land my first internship and the AI-generated CV really made a difference. I got 3 interviews invitations within a week!"'
   },
   {
-    id: 2,
-    name: 'Le Thi Hong',
-    role: 'Freelance Designer',
-    content: 'The CV optimization feature helped me land 3x more interviews. The AI-generated proposals are incredibly professional and tailored.',
-    rating: 5,
+    name: 'Trần Thị Hà',
+    role: 'Graphic Designer',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TranThiHa&backgroundColor=ffd5dc',
+    content: '"I\'ve hired 5 designers through Connect CV. The quality is amazing and the process is so smooth. Highly recommend!"'
   },
   {
-    id: 3,
-    name: 'Pham Van Thanh',
-    role: 'HR Manager, DataDriven Co.',
-    content: 'This platform is a game-changer for recruitment. The match scoring system accurately identifies the best candidates for our positions.',
-    rating: 5,
+    name: 'Lê Quang Huy',
+    role: 'Hiring Manager at NovaTech',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=LeQuangHuy&backgroundColor=c0aede',
+    content: '"The platform saves us a lot of time. The AI screening and tailored CVs help us find the right candidates faster and more accurately."'
+  }
+];
+
+export const jobPostings = [
+  {
+    company: 'NovaTech',
+    logoInitials: 'N',
+    gradient: 'linear-gradient(135deg,#2563eb,#4f46e5)',
+    status: 'Active',
+    title: 'Senior UI/UX Designer',
+    location: 'Remote',
+    budget: '$2,000 - $3,500',
+    deadline: '2 days left',
+    skills: ['Figma', 'React', 'TypeScript', 'UI/UX'],
+    applicantCount: 48,
+    avatarUrls: [
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=1&backgroundColor=b6e3f4',
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=2&backgroundColor=ffd5dc',
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=3&backgroundColor=d1fae5'
+    ]
   },
+  {
+    company: 'PixelWorks',
+    logoInitials: 'P',
+    gradient: 'linear-gradient(135deg,#10b981,#059669)',
+    status: 'Draft',
+    title: 'Frontend Developer',
+    location: 'Onsite',
+    budget: '$1,500 - $2,500',
+    deadline: '7 days left',
+    skills: ['React', 'TypeScript', 'Tailwind'],
+    applicantCount: 0,
+    avatarUrls: []
+  },
+  {
+    company: 'Global Tech',
+    logoInitials: 'G',
+    gradient: 'linear-gradient(135deg,#f59e0b,#d97706)',
+    status: 'Closed',
+    title: 'Product Manager',
+    location: 'Hybrid',
+    budget: '$2,500 - $4,000',
+    deadline: 'Closed',
+    skills: ['Agile', 'Scrum', 'Roadmapping'],
+    applicantCount: 120,
+    avatarUrls: [
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=4&backgroundColor=b6e3f4',
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=5&backgroundColor=ffd5dc'
+    ]
+  },
+  {
+    company: 'AI Solutions',
+    logoInitials: 'A',
+    gradient: 'linear-gradient(135deg,#8b5cf6,#6d28d9)',
+    status: 'Active',
+    title: 'Data Scientist',
+    location: 'Remote',
+    budget: '$3,000 - $5,000',
+    deadline: '14 days left',
+    skills: ['Python', 'Machine Learning', 'SQL'],
+    applicantCount: 25,
+    avatarUrls: [
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=6&backgroundColor=d1fae5',
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=7&backgroundColor=b6e3f4'
+    ]
+  },
+  {
+    company: 'FinTech Pro',
+    logoInitials: 'F',
+    gradient: 'linear-gradient(135deg,#0ea5e9,#0284c7)',
+    status: 'Active',
+    title: 'Backend Developer',
+    location: 'Hybrid',
+    budget: '$2,800 - $4,200',
+    deadline: '5 days left',
+    skills: ['Node.js', 'Go', 'AWS', 'Docker'],
+    applicantCount: 65,
+    avatarUrls: [
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=8&backgroundColor=ffd5dc',
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=9&backgroundColor=c0aede',
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=10&backgroundColor=b6e3f4'
+    ]
+  },
+  {
+    company: 'CloudSync',
+    logoInitials: 'C',
+    gradient: 'linear-gradient(135deg,#ec4899,#be185d)',
+    status: 'Active',
+    title: 'DevOps Engineer',
+    location: 'Remote',
+    budget: '$3,500 - $5,500',
+    deadline: '10 days left',
+    skills: ['Kubernetes', 'CI/CD', 'Terraform', 'Azure'],
+    applicantCount: 32,
+    avatarUrls: [
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=11&backgroundColor=d1fae5',
+      'https://api.dicebear.com/7.x/avataaars/svg?seed=12&backgroundColor=ffd5dc'
+    ]
+  }
 ];
 
-export const notifications = [
-  { id: 1, type: 'proposal', message: 'Your proposal for "Senior React Developer" was viewed', time: '2 min ago', read: false },
-  { id: 2, type: 'match', message: 'New job match: AI/ML Engineer at SmartBot Corp (88% match)', time: '1 hour ago', read: false },
-  { id: 3, type: 'interview', message: 'Mock interview results are ready — Score: 8.5/10', time: '3 hours ago', read: true },
-  { id: 4, type: 'payment', message: 'Payment of $2,500 received for E-commerce project', time: '1 day ago', read: true },
-  { id: 5, type: 'system', message: 'Your Pro subscription has been activated', time: '2 days ago', read: true },
+export const candidates = featuredTalent; // Reuse for candidates view
+
+export const artworks = [
+  {
+    category: 'UI Design',
+    imageUrl: 'https://images.unsplash.com/photo-1558655146-d09347e92766?w=600&h=400&fit=crop',
+    title: 'Fintech Dashboard UI',
+    designer: {
+      name: 'Nguyễn Minh Tuấn',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenMinhTuan&backgroundColor=b6e3f4',
+      title: 'Senior UI/UX Designer',
+      rating: 5.0
+    },
+    likes: 124,
+    views: '1.2k'
+  },
+  {
+    category: 'Branding',
+    imageUrl: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=600&h=400&fit=crop',
+    title: 'Eco Brand Identity',
+    designer: {
+      name: 'Trần Thị Hà',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TranThiHa&backgroundColor=ffd5dc',
+      title: 'Graphic Designer',
+      rating: 4.9
+    },
+    likes: 342,
+    views: '3.4k'
+  },
+  {
+    category: 'Web Design',
+    imageUrl: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&h=400&fit=crop',
+    title: 'E-commerce Landing Page',
+    designer: {
+      name: 'Phạm Ngọc Anh',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=PhamNgocAnh&backgroundColor=d1fae5',
+      title: 'Product Designer',
+      rating: 4.7
+    },
+    likes: 89,
+    views: '956'
+  },
+  {
+    category: 'Mobile App',
+    imageUrl: 'https://images.unsplash.com/photo-1618761714954-0b8cd0026356?w=600&h=400&fit=crop',
+    title: 'Health Tracking App',
+    designer: {
+      name: 'Nguyễn Thanh Tâm',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenThanhTam&backgroundColor=e9d5ff',
+      title: 'UI/UX Designer',
+      rating: 4.8
+    },
+    likes: 215,
+    views: '2.1k'
+  },
+  {
+    category: 'Illustration',
+    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&h=400&fit=crop',
+    title: 'Abstract Vector Art',
+    designer: {
+      name: 'Trần Thị Hà',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=TranThiHa&backgroundColor=ffd5dc',
+      title: 'Graphic Designer',
+      rating: 4.9
+    },
+    likes: 567,
+    views: '5.6k'
+  },
+  {
+    category: 'Typography',
+    imageUrl: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=400&fit=crop',
+    title: 'Custom Font Family',
+    designer: {
+      name: 'Nguyễn Minh Tuấn',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenMinhTuan&backgroundColor=b6e3f4',
+      title: 'Senior UI/UX Designer',
+      rating: 5.0
+    },
+    likes: 145,
+    views: '1.5k'
+  },
+  {
+    category: '3D Design',
+    imageUrl: 'https://images.unsplash.com/photo-1633355444132-695d5876cd00?w=600&h=400&fit=crop',
+    title: 'Product Rendering',
+    designer: {
+      name: 'Phạm Ngọc Anh',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=PhamNgocAnh&backgroundColor=d1fae5',
+      title: 'Product Designer',
+      rating: 4.7
+    },
+    likes: 278,
+    views: '2.8k'
+  },
+  {
+    category: 'UI Design',
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop',
+    title: 'Analytics Dashboard',
+    designer: {
+      name: 'Nguyễn Thanh Tâm',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenThanhTam&backgroundColor=e9d5ff',
+      title: 'UI/UX Designer',
+      rating: 4.8
+    },
+    likes: 198,
+    views: '1.9k'
+  }
 ];
 
-export const dashboardStats = [
-  { label: 'Active Proposals', value: '5', change: '+2 this week', trend: 'up', color: 'text-blue-600', bg: 'bg-blue-50', icon: 'FileText' },
-  { label: 'Interviews', value: '3', change: '+1 this week', trend: 'up', color: 'text-purple-600', bg: 'bg-purple-50', icon: 'Video' },
-  { label: 'Total Earnings', value: '$12,500', change: '+$2,500 this month', trend: 'up', color: 'text-green-600', bg: 'bg-green-50', icon: 'DollarSign' },
-  { label: 'Success Rate', value: '94%', change: '+2% this month', trend: 'up', color: 'text-orange-600', bg: 'bg-orange-50', icon: 'TrendingUp' },
+export const interviewMessages = [
+  { sender: 'ai', content: 'Hello! I am the AI Interviewer for the Senior UI/UX Designer position at NovaTech. Are you ready to begin?', badges: [] },
+  { sender: 'user', content: 'Yes, I am ready.', badges: [] },
+  { sender: 'ai', content: 'Great. Let\'s start with a foundational question. Can you walk me through your design process when tackling a complex enterprise software project? Specifically, how do you balance user needs with business requirements?', badges: ['UX Process', 'Problem Solving'] },
+  { sender: 'user', content: 'I usually start with stakeholder interviews to understand the business goals, followed by user research to map out the pain points. I try to find the intersection where solving the user\'s problem directly drives the business metric.', badges: [] },
+  { sender: 'ai', content: 'That\'s a solid approach. Can you give an example of a time you had to compromise between a requested feature from stakeholders and what your user research suggested?', badges: ['Conflict Resolution', 'Communication'], quickReplies: ['Talk about the CRM project', 'Discuss the onboarding flow redesign', 'Explain a time I pushed back on a feature'] }
 ];
 
-export const recentActivity = [
-  { id: 1, action: 'Submitted proposal', target: 'Senior React Developer for E-commerce Platform', time: '2 hours ago', status: 'pending' },
-  { id: 2, action: 'Completed interview', target: 'Full-Stack Developer — Healthcare SaaS', time: '5 hours ago', status: 'completed' },
-  { id: 3, action: 'Received payment', target: 'WordPress Corporate Website', amount: '$1,500', time: '1 day ago', status: 'paid' },
-  { id: 4, action: 'CV optimized', target: 'For "AI/ML Engineer" position', time: '2 days ago', status: 'completed' },
-  { id: 5, action: 'Profile updated', target: 'Added Docker & Kubernetes skills', time: '3 days ago', status: 'completed' },
-];
-
-export const filterOptions = {
-  categories: ['All', 'Web Development', 'Mobile Development', 'AI & Machine Learning', 'UI/UX Design', 'Data Science', 'Digital Marketing', 'DevOps & Cloud', 'Content Writing'],
-  experienceLevels: ['All', 'Entry Level', 'Intermediate', 'Expert'],
-  budgetRanges: ['All', 'Under $500', '$500 - $1K', '$1K - $5K', '$5K - $10K', '$10K+'],
-  durations: ['All', 'Less than 1 month', '1 - 3 months', '3 - 6 months', '6+ months'],
-  locations: ['All', 'Remote', 'Ho Chi Minh City', 'Hanoi', 'Da Nang'],
+export const jobDetail = {
+  title: 'Senior UI/UX Designer',
+  company: 'NovaTech',
+  location: 'Remote',
+  type: 'Full-time',
+  salary: '$2,000 - $3,500/month',
+  postedDate: '2 hours ago',
+  applicants: 12,
+  description: `We are looking for a Senior UI/UX Designer to join our core product team. You will be responsible for designing intuitive, scalable, and visually compelling enterprise software interfaces. You will work closely with product managers, engineers, and stakeholders to translate complex requirements into elegant user journeys.`,
+  responsibilities: [
+    'Lead the design of complex B2B web applications from concept to handoff.',
+    'Conduct user research, usability testing, and gather feedback to iterate on designs.',
+    'Maintain and evolve our comprehensive design system in Figma.',
+    'Collaborate with frontend engineers to ensure pixel-perfect implementation.',
+    'Mentor junior designers and advocate for user-centered design principles across the company.'
+  ],
+  requirements: [
+    '4+ years of experience in UI/UX design, specifically for complex web apps or SaaS products.',
+    'Expert proficiency in Figma and prototyping tools.',
+    'Strong portfolio demonstrating a clean visual aesthetic and deep understanding of UX principles.',
+    'Experience building and maintaining design systems.',
+    'Excellent communication skills and ability to articulate design decisions to non-designers.'
+  ],
+  benefits: [
+    'Competitive salary and equity package',
+    'Fully remote work with flexible hours',
+    'Comprehensive health insurance',
+    'Annual learning and development budget',
+    'MacBook Pro and home office stipend'
+  ],
+  companyAbout: 'NovaTech is a fast-growing B2B SaaS startup building the next generation of team collaboration tools. We believe in empowering teams to do their best work through intuitive, powerful software.'
 };
