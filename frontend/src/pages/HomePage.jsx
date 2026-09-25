@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Shield, Code, Palette, Video, PenTool, Briefcase } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 // import { testimonials } from '../data/mockData.js'; // Importing mockData as requested, though we will hardcode to match pixel-perfect html
 
 export default function HomePage() {
+  const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = 3;
 
@@ -33,11 +35,11 @@ export default function HomePage() {
             </div>
             <input
               type="text"
-              placeholder="What kind of work are you looking for? e.g. UI/UX Designer, React Developer..."
+              placeholder={t('home.searchPlaceholder')}
               className="flex-1 py-3.5 px-2 text-sm text-slate-700 placeholder-slate-400 outline-none bg-transparent"
             />
             <button className="m-1.5 text-white text-sm font-semibold px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity" style={{ background: 'linear-gradient(90deg,#2563eb,#4f46e5)' }}>
-              Tìm kiếm
+              {t('home.searchBtn')}
             </button>
           </div>
 
