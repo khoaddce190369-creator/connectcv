@@ -5,10 +5,10 @@ import { ArrowRight } from 'lucide-react';
 const Footer = () => {
   return (
     <footer className="bg-dark text-slate-400">
-      <div className="max-w-7xl mx-auto px-6 pt-14 pb-8">
-        <div className="grid md:grid-cols-5 gap-10 mb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 sm:gap-10 mb-10 sm:mb-12">
           {/* Brand */}
-          <div className="md:col-span-2">
+          <div className="col-span-1 sm:col-span-2 md:col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
               <div className="w-7 h-7 bg-gradient-to-br from-brand-600 to-indigo-600 rounded-lg flex items-center justify-center">
                 <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div>
+          <div className="col-span-1 sm:col-span-2 md:col-span-1">
             <p className="font-sora font-semibold text-white text-sm mb-4">Stay in the loop</p>
             <p className="text-xs text-slate-500 mb-3">Get the latest jobs, tips and updates.</p>
             <div className="flex">
@@ -77,14 +77,14 @@ const Footer = () => {
                 placeholder="Enter your email"
                 className="flex-1 bg-slate-800 text-sm text-white placeholder-slate-500 px-3 py-2 rounded-l-lg outline-none border border-slate-700 focus:border-brand-500 transition-colors"
               />
-              <button className="bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 rounded-r-lg transition-colors flex items-center justify-center">
+              <button aria-label="Đăng ký nhận tin" className="bg-brand-600 hover:bg-brand-700 text-white px-3 py-2 rounded-r-lg transition-colors flex items-center justify-center">
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-slate-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <p className="text-xs text-slate-600">© 2025 Connect CV. All rights reserved.</p>
           <div className="flex gap-5 text-xs">
             <Link to="#" className="hover:text-white transition-colors">Terms of Service</Link>

@@ -199,23 +199,23 @@ export default function JobPostingsPage() {
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen pt-24 pb-20">
-      <main className="max-w-7xl mx-auto px-6">
+    <div className="bg-slate-50 min-h-screen pt-6 sm:pt-8 pb-20">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700">Recruiter &amp; Hiring Portal</span>
               <span className="text-xs text-slate-400">&bull; Cập nhật lúc 23:50 hôm nay</span>
             </div>
-            <h1 className="font-sora text-2xl font-bold text-slate-900">Bảng Tin Đăng Tuyển Freelancer &amp; Designer</h1>
-            <p className="text-sm text-slate-500 mt-1 max-w-2xl">Quản lý các dự án thiết kế đang mở, xem xét báo giá &amp; hồ sơ ứng viên nộp vào từ cộng đồng designer hàng đầu.</p>
+            <h1 className="font-sora text-xl sm:text-2xl font-bold text-slate-900">Bảng Tin Đăng Tuyển Freelancer &amp; Designer</h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">Quản lý các dự án thiết kế đang mở, xem xét báo giá &amp; hồ sơ ứng viên nộp vào từ cộng đồng designer hàng đầu.</p>
           </div>
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 bg-slate-900 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-slate-800 transition-colors shadow-sm"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-900 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-slate-800 transition-colors shadow-sm"
             >
               <Plus className="w-4 h-4" />
               Đăng Dự Án Mới
@@ -224,33 +224,33 @@ export default function JobPostingsPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
             <p className="text-xs text-slate-500 font-medium mb-1">Tin Đang Tuyển (Active)</p>
             <div className="flex items-baseline gap-2">
-              <span className="font-sora text-2xl font-bold text-slate-900">5</span>
+              <span className="font-sora text-xl sm:text-2xl font-bold text-slate-900">5</span>
               <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md">+1 mới</span>
             </div>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
             <p className="text-xs text-slate-500 font-medium mb-1">Đề Xuất Nhận Được</p>
             <div className="flex items-baseline gap-2">
-              <span className="font-sora text-2xl font-bold text-slate-900">53</span>
+              <span className="font-sora text-xl sm:text-2xl font-bold text-slate-900">53</span>
               <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md">8 mới hôm nay</span>
             </div>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
             <p className="text-xs text-slate-500 font-medium mb-1">Ứng Viên Đã Shortlist</p>
             <div className="flex items-baseline gap-2">
-              <span className="font-sora text-2xl font-bold text-slate-900">12</span>
+              <span className="font-sora text-xl sm:text-2xl font-bold text-slate-900">12</span>
               <span className="text-xs font-medium text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-md">Chờ phỏng vấn</span>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 mb-6 gap-4">
-          <div className="flex items-center gap-1 overflow-x-auto">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-slate-200 mb-6 gap-3 sm:gap-4">
+          <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
             {[
               { id: 'all', label: 'Tất cả tin đăng', count: counts.all, color: 'bg-blue-100 text-blue-800' },
               { id: 'active', label: 'Đang tuyển', count: counts.active, color: 'bg-emerald-50 text-emerald-700' },
@@ -260,32 +260,32 @@ export default function JobPostingsPage() {
               <button 
                 key={tab.id}
                 onClick={() => setActiveStatus(tab.id)}
-                className={`px-4 pb-3 text-sm flex items-center gap-1.5 whitespace-nowrap transition-all border-b-2 ${
+                className={`px-3 sm:px-4 pb-3 text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap transition-all border-b-2 flex-shrink-0 ${
                   activeStatus === tab.id 
                     ? 'border-blue-600 text-blue-600 font-semibold' 
                     : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                 }`}
               >
-                {tab.label} <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${tab.color}`}>{tab.count}</span>
+                {tab.label} <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full ${tab.color}`}>{tab.count}</span>
               </button>
             ))}
           </div>
 
-          <div className="flex items-center gap-2 pb-2 sm:pb-0">
-            <div className="relative">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 pb-3 lg:pb-0 w-full lg:w-auto">
+            <div className="relative flex-1 sm:flex-initial w-full sm:w-auto">
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input 
                 type="text" 
                 placeholder="Tìm kiếm..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="text-xs bg-white border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-slate-700 outline-none w-40 hover:border-slate-300 focus:border-blue-500"
+                className="text-xs bg-white border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-slate-700 outline-none w-full sm:w-40 hover:border-slate-300 focus:border-blue-500"
               />
             </div>
             <select 
               value={activeCategory} 
               onChange={(e) => setActiveCategory(e.target.value)}
-              className="text-xs bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-700 outline-none cursor-pointer hover:border-slate-300"
+              className="flex-1 sm:flex-initial text-xs bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-700 outline-none cursor-pointer hover:border-slate-300"
             >
               <option value="all">Tất cả danh mục</option>
               <option value="uiux">UI/UX &amp; App</option>
@@ -297,7 +297,7 @@ export default function JobPostingsPage() {
             <select 
               value={activeBudget} 
               onChange={(e) => setActiveBudget(e.target.value)}
-              className="text-xs bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-700 outline-none cursor-pointer hover:border-slate-300"
+              className="flex-1 sm:flex-initial text-xs bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-700 outline-none cursor-pointer hover:border-slate-300"
             >
               <option value="all">Mọi mức ngân sách</option>
               <option value="under500">Dưới $500</option>
@@ -308,9 +308,9 @@ export default function JobPostingsPage() {
         </div>
 
         {/* Job Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {filteredJobs.map(job => (
-            <div key={job.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-6 flex flex-col justify-between">
+            <div key={job.id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4 sm:p-6 flex flex-col justify-between">
               <div>
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3.5">
@@ -370,9 +370,9 @@ export default function JobPostingsPage() {
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-slate-500 font-medium">{job.applicantCount} ứng viên đã nộp</span>
                 </div>
-                <button className="text-xs font-semibold px-4 py-2 rounded-xl text-white transition-opacity hover:opacity-90 shadow-sm bg-gradient-to-r from-blue-600 to-indigo-600">
+                <Link to="/candidates" className="text-xs font-semibold px-4 py-2 rounded-xl text-white transition-opacity hover:opacity-90 shadow-sm bg-gradient-to-r from-blue-600 to-indigo-600">
                   Xem Ứng Viên
-                </button>
+                </Link>
               </div>
             </div>
           ))}
@@ -388,18 +388,18 @@ export default function JobPostingsPage() {
 
       {/* Create Job Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in zoom-in-95">
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-              <h2 className="font-sora font-bold text-slate-900 text-lg">Đăng Dự Án Mới</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5"/></button>
+        <div className="fixed inset-0 z-50 bg-slate-950/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in zoom-in-95 max-h-[92vh] flex flex-col">
+            <div className="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex justify-between items-center flex-shrink-0">
+              <h2 className="font-sora font-bold text-slate-900 text-base sm:text-lg">Đăng Dự Án Mới</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 p-1"><X className="w-5 h-5"/></button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3.5 sm:space-y-4 overflow-y-auto">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Tiêu đề dự án *</label>
                 <input required type="text" value={formData.title} onChange={e=>setFormData({...formData, title: e.target.value})} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500" placeholder="Vd: Thiết kế Landing Page..." />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Danh mục</label>
                   <select value={formData.categoryId} onChange={e=>setFormData({...formData, categoryId: e.target.value})} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500">
@@ -413,7 +413,7 @@ export default function JobPostingsPage() {
                   <input required type="text" value={formData.budget} onChange={e=>setFormData({...formData, budget: e.target.value})} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500" placeholder="500 - 1000" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Địa điểm</label>
                   <input type="text" value={formData.location} onChange={e=>setFormData({...formData, location: e.target.value})} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500" />
@@ -431,9 +431,9 @@ export default function JobPostingsPage() {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Kỹ năng (cách nhau bởi dấu phẩy)</label>
                 <input type="text" value={formData.skills} onChange={e=>setFormData({...formData, skills: e.target.value})} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500" placeholder="Figma, UI, UX..." />
               </div>
-              <div className="pt-4 flex justify-end gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800">Hủy</button>
-                <button type="submit" className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm">Đăng Tin</button>
+              <div className="pt-3 sm:pt-4 flex justify-end gap-3 border-t border-slate-100">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-800">Hủy</button>
+                <button type="submit" className="px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm">Đăng Tin</button>
               </div>
             </form>
           </div>

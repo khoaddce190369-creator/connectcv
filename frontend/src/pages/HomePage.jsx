@@ -23,49 +23,49 @@ export default function HomePage() {
   return (
     <div className="bg-white text-slate-800 font-inter">
       {/* HERO SECTION */}
-      <section className="relative pt-24 pb-10 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f8faff 0%, #eef2ff 40%, #f0f9ff 100%)' }}>
+      <section className="relative pt-4 sm:pt-8 pb-8 sm:pb-10 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f8faff 0%, #eef2ff 40%, #f0f9ff 100%)' }}>
         <div className="absolute w-[400px] h-[400px] rounded-full top-[-60px] right-[5%] pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)' }}></div>
         <div className="absolute w-[300px] h-[300px] rounded-full bottom-[20px] left-[10%] pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(14,165,233,0.15) 0%, transparent 70%)' }}></div>
 
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {/* Full-width search bar */}
-          <div className="bg-white rounded-2xl shadow-md border border-slate-100 flex items-center overflow-hidden w-full mb-8 relative z-10">
-            <div className="pl-5 pr-3">
+          <div className="bg-white rounded-2xl shadow-md border border-slate-100 flex items-center overflow-hidden w-full mb-6 sm:mb-8 relative z-10">
+            <div className="pl-4 sm:pl-5 pr-2 sm:pr-3 flex-shrink-0">
               <Search className="w-4 h-4 text-slate-400" />
             </div>
             <input
               type="text"
               placeholder={t('home.searchPlaceholder')}
-              className="flex-1 py-3.5 px-2 text-sm text-slate-700 placeholder-slate-400 outline-none bg-transparent"
+              className="flex-1 py-3 sm:py-3.5 px-2 text-xs sm:text-sm text-slate-700 placeholder-slate-400 outline-none bg-transparent min-w-0"
             />
-            <button className="m-1.5 text-white text-sm font-semibold px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity" style={{ background: 'linear-gradient(90deg,#2563eb,#4f46e5)' }}>
+            <button className="m-1 sm:m-1.5 text-white text-xs sm:text-sm font-semibold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:opacity-90 transition-opacity flex-shrink-0" style={{ background: 'linear-gradient(90deg,#2563eb,#4f46e5)' }}>
               {t('home.searchBtn')}
             </button>
           </div>
 
           {/* Carousel wrapper */}
-          <div className="relative flex items-center gap-3">
+          <div className="relative flex items-center gap-0 sm:gap-3">
             {/* Left arrow */}
-            <button onClick={carouselPrev} className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-105 transition-transform z-10" style={{ background: '#7c3aed' }}>
+            <button onClick={carouselPrev} aria-label="Slide trước" className="hidden sm:flex flex-shrink-0 w-10 h-10 rounded-full items-center justify-center text-white shadow-lg hover:scale-105 transition-transform z-10" style={{ background: '#7c3aed' }}>
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
             </button>
 
             {/* Carousel viewport */}
-            <div className="flex-1 overflow-hidden rounded-3xl">
+            <div className="flex-1 overflow-hidden rounded-2xl sm:rounded-3xl">
               <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)`, willChange: 'transform' }}>
                 
                 {/* Slide 1 */}
-                <div className="w-full flex-shrink-0 rounded-3xl p-10 flex items-center gap-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#2563eb 0%,#4f46e5 50%,#7c3aed 100%)', minHeight: '320px' }}>
+                <div className="w-full flex-shrink-0 rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 flex items-center gap-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#2563eb 0%,#4f46e5 50%,#7c3aed 100%)', minHeight: '280px' }}>
                   <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20" style={{ background: 'radial-gradient(circle,#ffffff,transparent)' }}></div>
                   <div className="absolute bottom-0 left-1/3 w-32 h-32 rounded-full opacity-10" style={{ background: 'radial-gradient(circle,#a5f3fc,transparent)' }}></div>
                   <div className="flex-1 relative z-10">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-200 bg-white/10 px-3 py-1 rounded-full mb-4">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-200 bg-white/10 px-3 py-1 rounded-full mb-3 sm:mb-4">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
                       AI-Powered Matching
                     </span>
-                    <h2 className="font-sora text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-4">Find your dream job<br/>before anyone else does.</h2>
-                    <p className="text-blue-100 text-sm leading-relaxed mb-6 max-w-md">Our AI continuously scans thousands of listings across industries and matches them to your skills, experience level, and career goals — then notifies you of the best fits in real time. No more endless scrolling.</p>
-                    <Link to="/jobs" className="inline-flex items-center gap-2 bg-white text-blue-700 text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-blue-50 transition-colors shadow-md">
+                    <h2 className="font-sora text-xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-3 sm:mb-4">Find your dream job<br/>before anyone else does.</h2>
+                    <p className="text-blue-100 text-xs sm:text-sm leading-relaxed mb-5 sm:mb-6 max-w-md">Our AI continuously scans thousands of listings across industries and matches them to your skills, experience level, and career goals — then notifies you of the best fits in real time. No more endless scrolling.</p>
+                    <Link to="/jobs" className="inline-flex items-center gap-2 bg-white text-blue-700 text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl hover:bg-blue-50 transition-colors shadow-md">
                       Khám phá công việc
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                     </Link>
@@ -92,17 +92,17 @@ export default function HomePage() {
                 </div>
 
                 {/* Slide 2 */}
-                <div className="w-full flex-shrink-0 rounded-3xl p-10 flex items-center gap-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#7c3aed 0%,#db2777 55%,#f97316 100%)', minHeight: '320px' }}>
+                <div className="w-full flex-shrink-0 rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 flex items-center gap-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#7c3aed 0%,#db2777 55%,#f97316 100%)', minHeight: '280px' }}>
                   <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20" style={{ background: 'radial-gradient(circle,#ffffff,transparent)' }}></div>
                   <div className="absolute bottom-0 left-1/4 w-40 h-40 rounded-full opacity-10" style={{ background: 'radial-gradient(circle,#fbcfe8,transparent)' }}></div>
                   <div className="flex-1 relative z-10">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-pink-200 bg-white/10 px-3 py-1 rounded-full mb-4">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-pink-200 bg-white/10 px-3 py-1 rounded-full mb-3 sm:mb-4">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
                       Smart CV Generator
                     </span>
-                    <h2 className="font-sora text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-4">A CV that actually<br/>gets you shortlisted.</h2>
-                    <p className="text-pink-100 text-sm leading-relaxed mb-6 max-w-md">Stop sending the same generic CV everywhere. Our AI reads each job description and rewrites your CV to highlight exactly what the hiring manager is looking for — increasing your chances of passing initial screening by up to 3×.</p>
-                    <Link to="/cv-builder" className="inline-flex items-center gap-2 bg-white text-pink-700 text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-pink-50 transition-colors shadow-md">
+                    <h2 className="font-sora text-xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-3 sm:mb-4">A CV that actually<br/>gets you shortlisted.</h2>
+                    <p className="text-pink-100 text-xs sm:text-sm leading-relaxed mb-5 sm:mb-6 max-w-md">Stop sending the same generic CV everywhere. Our AI reads each job description and rewrites your CV to highlight exactly what the hiring manager is looking for — increasing your chances of passing initial screening by up to 3×.</p>
+                    <Link to="/cv-builder" className="inline-flex items-center gap-2 bg-white text-pink-700 text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl hover:bg-pink-50 transition-colors shadow-md">
                       Tạo CV ngay
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                     </Link>
@@ -132,17 +132,17 @@ export default function HomePage() {
                 </div>
 
                 {/* Slide 3 */}
-                <div className="w-full flex-shrink-0 rounded-3xl p-10 flex items-center gap-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#0891b2 0%,#0ea5e9 50%,#06b6d4 100%)', minHeight: '320px' }}>
+                <div className="w-full flex-shrink-0 rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 flex items-center gap-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#0891b2 0%,#0ea5e9 50%,#06b6d4 100%)', minHeight: '280px' }}>
                   <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20" style={{ background: 'radial-gradient(circle,#ffffff,transparent)' }}></div>
                   <div className="absolute bottom-0 right-1/4 w-36 h-36 rounded-full opacity-10" style={{ background: 'radial-gradient(circle,#a5f3fc,transparent)' }}></div>
                   <div className="flex-1 relative z-10">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-200 bg-white/10 px-3 py-1 rounded-full mb-4">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-200 bg-white/10 px-3 py-1 rounded-full mb-3 sm:mb-4">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
                       AI Interview Coach
                     </span>
-                    <h2 className="font-sora text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-4">Practice interviews with<br/>an AI that thinks like HR.</h2>
-                    <p className="text-cyan-100 text-sm leading-relaxed mb-6 max-w-md">After passing the CV round, your real challenge begins. Our AI takes on the role of a senior HR manager and fires real questions tailored to the company and role — then scores your answers and gives you instant, actionable feedback.</p>
-                    <Link to="/interview" className="inline-flex items-center gap-2 bg-white text-cyan-700 text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-cyan-50 transition-colors shadow-md">
+                    <h2 className="font-sora text-xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-3 sm:mb-4">Practice interviews with<br/>an AI that thinks like HR.</h2>
+                    <p className="text-cyan-100 text-xs sm:text-sm leading-relaxed mb-5 sm:mb-6 max-w-md">After passing the CV round, your real challenge begins. Our AI takes on the role of a senior HR manager and fires real questions tailored to the company and role — then scores your answers and gives you instant, actionable feedback.</p>
+                    <Link to="/interview" className="inline-flex items-center gap-2 bg-white text-cyan-700 text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl hover:bg-cyan-50 transition-colors shadow-md">
                       Bắt đầu luyện tập
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                     </Link>
@@ -173,7 +173,7 @@ export default function HomePage() {
             </div>
 
             {/* Right arrow */}
-            <button onClick={carouselNext} className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-105 transition-transform z-10" style={{ background: '#7c3aed' }}>
+            <button onClick={carouselNext} aria-label="Slide tiếp theo" className="hidden sm:flex flex-shrink-0 w-10 h-10 rounded-full items-center justify-center text-white shadow-lg hover:scale-105 transition-transform z-10" style={{ background: '#7c3aed' }}>
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"/></svg>
             </button>
           </div>
@@ -193,77 +193,77 @@ export default function HomePage() {
       </section>
 
       {/* CATEGORIES SECTION */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-8">
+      <section className="py-12 sm:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8">
             <div>
-              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">Explore Categories</p>
-              <h2 className="font-sora text-2xl font-bold text-slate-900">Explore by category</h2>
-              <p className="text-slate-500 text-sm mt-1">Find opportunities or creative talent in your field</p>
+              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1 sm:mb-2">Explore Categories</p>
+              <h2 className="font-sora text-xl sm:text-2xl font-bold text-slate-900">Explore by category</h2>
+              <p className="text-slate-500 text-xs sm:text-sm mt-1">Find opportunities or creative talent in your field</p>
             </div>
-            <Link to="/categories" className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors">
+            <Link to="/categories" className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors self-start sm:self-auto">
               Xem tất cả danh mục
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
               <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-3">
                 <Shield className="w-5 h-5 text-blue-600" />
               </div>
-              <p className="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Information Security</p>
-              <p className="text-xs text-slate-400 font-medium">120+ jobs</p>
+              <p className="font-sora font-semibold text-xs sm:text-sm text-slate-800 leading-tight mb-1">Information Security</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 font-medium">120+ jobs</p>
             </div>
-            <div className="border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
+            <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
               <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mb-3">
                 <Code className="w-5 h-5 text-violet-600" />
               </div>
-              <p className="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Software Development</p>
-              <p className="text-xs text-slate-400 font-medium">850+ jobs</p>
+              <p className="font-sora font-semibold text-xs sm:text-sm text-slate-800 leading-tight mb-1">Software Development</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 font-medium">850+ jobs</p>
             </div>
-            <div className="border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
+            <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
               <div className="w-10 h-10 bg-pink-50 rounded-xl flex items-center justify-center mb-3">
                 <Palette className="w-5 h-5 text-pink-500" />
               </div>
-              <p className="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Design & Creative</p>
-              <p className="text-xs text-slate-400 font-medium">460+ jobs</p>
+              <p className="font-sora font-semibold text-xs sm:text-sm text-slate-800 leading-tight mb-1">Design & Creative</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 font-medium">460+ jobs</p>
             </div>
-            <div className="border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
+            <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
               <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mb-3">
                 <Video className="w-5 h-5 text-amber-500" />
               </div>
-              <p className="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Video & Animation</p>
-              <p className="text-xs text-slate-400 font-medium">220+ jobs</p>
+              <p className="font-sora font-semibold text-xs sm:text-sm text-slate-800 leading-tight mb-1">Video & Animation</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 font-medium">220+ jobs</p>
             </div>
-            <div className="border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
+            <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
               <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center mb-3">
                 <PenTool className="w-5 h-5 text-emerald-600" />
               </div>
-              <p className="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Writing & Translation</p>
-              <p className="text-xs text-slate-400 font-medium">310+ jobs</p>
+              <p className="font-sora font-semibold text-xs sm:text-sm text-slate-800 leading-tight mb-1">Writing & Translation</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 font-medium">310+ jobs</p>
             </div>
-            <div className="border border-slate-200 rounded-2xl p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
+            <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 cursor-pointer hover:shadow-md hover:border-blue-600 hover:bg-blue-50 transition-all bg-white transform hover:-translate-y-0.5">
               <div className="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center mb-3">
                 <Briefcase className="w-5 h-5 text-sky-600" />
               </div>
-              <p className="font-sora font-semibold text-sm text-slate-800 leading-tight mb-1">Business & Consulting</p>
-              <p className="text-xs text-slate-400 font-medium">180+ jobs</p>
+              <p className="font-sora font-semibold text-xs sm:text-sm text-slate-800 leading-tight mb-1">Business & Consulting</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 font-medium">180+ jobs</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* RECOMMENDED JOBS */}
-      <section className="py-16 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-8">
+      <section className="py-12 sm:py-16 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8">
             <div>
-              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">Recommended Jobs</p>
-              <h2 className="font-sora text-2xl font-bold text-slate-900">Find jobs matched to you</h2>
-              <p className="text-slate-500 text-sm mt-1">Get personalized job recommendations based on your skills, experience, personality and career goals.</p>
+              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1 sm:mb-2">Recommended Jobs</p>
+              <h2 className="font-sora text-xl sm:text-2xl font-bold text-slate-900">Find jobs matched to you</h2>
+              <p className="text-slate-500 text-xs sm:text-sm mt-1">Get personalized job recommendations based on your skills, experience, personality and career goals.</p>
             </div>
-            <Link to="/jobs" className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors">
+            <Link to="/jobs" className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors self-start sm:self-auto">
               Xem tất cả việc làm
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </Link>
@@ -382,15 +382,15 @@ export default function HomePage() {
       </section>
 
       {/* DESIGNER MARKETPLACE */}
-      <section className="py-20 bg-slate-50 border-y border-slate-200/60">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-10">
+      <section className="py-12 sm:py-20 bg-slate-50 border-y border-slate-200/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8 sm:mb-10">
             <div>
-              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">Featured Talent</p>
-              <h2 className="font-sora text-2xl font-bold text-slate-900">Hire creative talent</h2>
-              <p className="text-slate-500 text-sm mt-1 max-w-md">Browse verified designers, brand architects and visual creators tailored to your business needs.</p>
+              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1 sm:mb-2">Featured Talent</p>
+              <h2 className="font-sora text-xl sm:text-2xl font-bold text-slate-900">Hire creative talent</h2>
+              <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-md">Browse verified designers, brand architects and visual creators tailored to your business needs.</p>
             </div>
-            <Link to="/candidates" className="inline-flex items-center gap-2 bg-slate-900 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors shadow-sm">
+            <Link to="/candidates" className="inline-flex items-center gap-2 bg-slate-900 text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors shadow-sm self-start sm:self-auto">
               Xem tất cả tài năng
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </Link>
@@ -685,15 +685,15 @@ export default function HomePage() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="py-20" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-12">
+      <section className="py-12 sm:py-20" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8 sm:mb-12">
             <div>
-              <p className="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-2">How It Works</p>
-              <h2 className="font-sora text-2xl font-bold text-white">AI-powered application</h2>
-              <p className="text-slate-400 text-sm mt-1 max-w-md">Let our AI handle the heavy lifting — from finding the right jobs to preparing you for interviews.</p>
+              <p className="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1 sm:mb-2">How It Works</p>
+              <h2 className="font-sora text-xl sm:text-2xl font-bold text-white">AI-powered application</h2>
+              <p className="text-slate-400 text-xs sm:text-sm mt-1 max-w-md">Let our AI handle the heavy lifting — from finding the right jobs to preparing you for interviews.</p>
             </div>
-            <Link to="/how-it-works" className="text-sm font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1 transition-colors">
+            <Link to="/how-it-works" className="text-xs sm:text-sm font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1 transition-colors self-start sm:self-auto">
               Xem cách hoạt động
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </Link>
@@ -701,15 +701,15 @@ export default function HomePage() {
 
           <div className="flex flex-col md:flex-row items-start gap-0">
             {/* Step 1 */}
-            <div className="flex-1 flex flex-col items-center text-center md:items-start md:text-left p-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-4 shadow-lg shadow-blue-900/30 relative">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <div className="flex-1 flex flex-col items-center text-center md:items-start md:text-left p-4 sm:p-6 w-full">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-4 shadow-lg shadow-blue-900/30 relative">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <circle cx="11" cy="11" r="8"/><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35"/>
                 </svg>
-                <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-blue-600 text-xs font-bold flex items-center justify-center shadow">1</span>
+                <span className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white text-blue-600 text-xs font-bold flex items-center justify-center shadow">1</span>
               </div>
-              <h3 className="font-sora font-bold text-white text-base mb-2">Analyze Job</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">AI scans job postings and matches them with your profile, goals and company culture.</p>
+              <h3 className="font-sora font-bold text-white text-base mb-1.5 sm:mb-2">Analyze Job</h3>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">AI scans job postings and matches them with your profile, goals and company culture.</p>
             </div>
 
             {/* Connector */}
@@ -719,15 +719,15 @@ export default function HomePage() {
             </div>
 
             {/* Step 2 */}
-            <div className="flex-1 flex flex-col items-center text-center md:items-start md:text-left p-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mb-4 shadow-lg shadow-indigo-900/30 relative">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <div className="flex-1 flex flex-col items-center text-center md:items-start md:text-left p-4 sm:p-6 w-full">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mb-4 shadow-lg shadow-indigo-900/30 relative">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                 </svg>
-                <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-indigo-600 text-xs font-bold flex items-center justify-center shadow">2</span>
+                <span className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white text-indigo-600 text-xs font-bold flex items-center justify-center shadow">2</span>
               </div>
-              <h3 className="font-sora font-bold text-white text-base mb-2">Tailor CV</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">Automatically generates an ATS-friendly CV tailored to each company's requirements.</p>
+              <h3 className="font-sora font-bold text-white text-base mb-1.5 sm:mb-2">Tailor CV</h3>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">Automatically generates an ATS-friendly CV tailored to each company's requirements.</p>
             </div>
 
             {/* Connector */}
@@ -737,38 +737,38 @@ export default function HomePage() {
             </div>
 
             {/* Step 3 */}
-            <div className="flex-1 flex flex-col items-center text-center md:items-start md:text-left p-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-pink-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-900/30 relative">
-                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <div className="flex-1 flex flex-col items-center text-center md:items-start md:text-left p-4 sm:p-6 w-full">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-pink-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-900/30 relative">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/>
                 </svg>
-                <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-violet-600 text-xs font-bold flex items-center justify-center shadow">3</span>
+                <span className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white text-violet-600 text-xs font-bold flex items-center justify-center shadow">3</span>
               </div>
-              <h3 className="font-sora font-bold text-white text-base mb-2">Prepare Interview</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">AI acts as an HR, creating role-specific questions and practice sessions to boost your confidence.</p>
+              <h3 className="font-sora font-bold text-white text-base mb-1.5 sm:mb-2">Prepare Interview</h3>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">AI acts as an HR, creating role-specific questions and practice sessions to boost your confidence.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-10">
+      <section className="py-12 sm:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8 sm:mb-10">
             <div>
-              <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-2">Success Stories</p>
-              <h2 className="font-sora text-2xl font-bold text-slate-900">Trusted by job seekers and businesses</h2>
-              <p className="text-slate-500 text-sm mt-1">Real people. Real results.</p>
+              <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1 sm:mb-2">Success Stories</p>
+              <h2 className="font-sora text-xl sm:text-2xl font-bold text-slate-900">Trusted by job seekers and businesses</h2>
+              <p className="text-slate-500 text-xs sm:text-sm mt-1">Real people. Real results.</p>
             </div>
-            <Link to="/testimonials" className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors">
+            <Link to="/testimonials" className="text-xs sm:text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors self-start sm:self-auto">
               Xem thêm đánh giá
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-5 sm:gap-6">
             {/* Review 1 */}
-            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-blue-200 transition-colors hover:shadow-sm">
+            <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-100 hover:border-blue-200 transition-colors hover:shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenMinhTuan&backgroundColor=b6e3f4" alt="Nguyen Minh Tuan" className="w-10 h-10 rounded-full object-cover bg-sky-100" />
                 <div>
@@ -781,11 +781,11 @@ export default function HomePage() {
                   <svg key={i} className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                 ))}
               </div>
-              <p className="text-slate-600 text-sm leading-relaxed italic">"Connect CV helped me land my first internship and the AI-generated CV really made a difference. I got 3 interviews invitations within a week!"</p>
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed italic">"Connect CV helped me land my first internship and the AI-generated CV really made a difference. I got 3 interviews invitations within a week!"</p>
             </div>
 
             {/* Review 2 */}
-            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-blue-200 transition-colors hover:shadow-sm">
+            <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-100 hover:border-blue-200 transition-colors hover:shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=TranThiHa&backgroundColor=ffd5dc" alt="Tran Thi Ha" className="w-10 h-10 rounded-full object-cover bg-pink-100" />
                 <div>
@@ -798,11 +798,11 @@ export default function HomePage() {
                   <svg key={i} className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                 ))}
               </div>
-              <p className="text-slate-600 text-sm leading-relaxed italic">"I've hired 5 designers through Connect CV. The quality is amazing and the process is so smooth. Highly recommend!"</p>
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed italic">"I've hired 5 designers through Connect CV. The quality is amazing and the process is so smooth. Highly recommend!"</p>
             </div>
 
             {/* Review 3 */}
-            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-blue-200 transition-colors hover:shadow-sm">
+            <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-100 hover:border-blue-200 transition-colors hover:shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=LeQuangHuy&backgroundColor=c0aede" alt="Le Quang Huy" className="w-10 h-10 rounded-full object-cover bg-violet-100" />
                 <div>
@@ -815,22 +815,22 @@ export default function HomePage() {
                   <svg key={i} className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                 ))}
               </div>
-              <p className="text-slate-600 text-sm leading-relaxed italic">"The platform saves us a lot of time. The AI screening and tailored CVs help us find the right candidates faster and more accurately."</p>
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed italic">"The platform saves us a lot of time. The AI screening and tailored CVs help us find the right candidates faster and more accurately."</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA BANNER */}
-      <section className="py-16" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)' }}>
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <h2 className="font-sora text-3xl font-extrabold text-white mb-3">Ready to transform your career?</h2>
-          <p className="text-blue-100 text-sm leading-relaxed mb-8">Join thousands of professionals who found their dream jobs with AI-powered matching and tailored CVs.</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/register" className="bg-white text-blue-700 text-sm font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors shadow-md">
+      <section className="py-12 sm:py-16" style={{ background: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)' }}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="font-sora text-2xl sm:text-3xl font-extrabold text-white mb-3">Ready to transform your career?</h2>
+          <p className="text-blue-100 text-xs sm:text-sm leading-relaxed mb-6 sm:mb-8">Join thousands of professionals who found their dream jobs with AI-powered matching and tailored CVs.</p>
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+            <Link to="/register" className="bg-white text-blue-700 text-xs sm:text-sm font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl hover:bg-blue-50 transition-colors shadow-md">
               Bắt đầu miễn phí
             </Link>
-            <Link to="/about" className="border border-white/30 text-white text-sm font-semibold px-6 py-3 rounded-xl hover:bg-white/10 transition-colors">
+            <Link to="/about" className="border border-white/30 text-white text-xs sm:text-sm font-semibold px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl hover:bg-white/10 transition-colors">
               Tìm hiểu thêm
             </Link>
           </div>

@@ -7,109 +7,58 @@ export default function JobDetailPage() {
 
   return (
     <div className="bg-slate-50 text-slate-800 min-h-screen font-inter">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm bg-gradient-to-br from-blue-600 to-indigo-600">
-              <Briefcase className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-sora font-bold text-slate-900 text-lg tracking-tight">Connect<span className="text-blue-600">CV</span></span>
-          </Link>
-          <div className="flex-1 max-w-md hidden md:block">
-            <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3.5 py-2 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:bg-white transition-all">
-              <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
-              <input type="text" placeholder="Tìm kiếm tin tuyển dụng, kỹ năng, vị trí..." className="bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none w-full" />
-            </div>
-          </div>
-          <div className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Find Work</Link>
-            <Link to="/candidates" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Hire a Designer</Link>
-            <Link to="/applications" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">For Businesses</Link>
-          </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <button className="relative p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600"></span>
-            </button>
-            <Link to="/applications" className="hidden sm:flex items-center gap-1.5 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm transition-opacity hover:opacity-95 bg-gradient-to-r from-blue-600 to-indigo-600">
-              <Plus className="w-4 h-4" />
-              + Đăng Tin Mới
-            </Link>
-            <div className="flex items-center gap-2 cursor-pointer pl-1">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenBao&backgroundColor=b6e3f4" className="w-8 h-8 rounded-full bg-sky-100 border border-slate-100" alt="Avatar" />
-              <span className="hidden lg:block text-sm font-medium text-slate-700">Nguyễn Bảo (HR)</span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-slate-100 bg-white">
-          <div className="max-w-7xl mx-auto px-6 flex items-center gap-6 h-11 overflow-x-auto whitespace-nowrap scrollbar-hide">
-            <Link to="/social" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">Social</Link>
-            <Link to="/applications" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">
-              Quản Lý Tin Tuyển Dụng <span className="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full bg-blue-600">6</span>
-            </Link>
-            <Link to="/candidates" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">Candidates / Freelancer</Link>
-            <Link to="/interview" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">
-              Tin Nhắn <span className="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full bg-blue-600">3</span>
-            </Link>
-            <Link to="/settings" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">Cài Đặt Công Ty</Link>
-          </div>
-        </div>
-      </nav>
-
       {/* Main content */}
-      <main className="max-w-7xl mx-auto px-6 pt-36 pb-16">
-        <Link to="/candidates" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors mb-5">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-16">
+        <Link to="/candidates" className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-500 hover:text-slate-700 transition-colors mb-5">
           <ArrowLeft className="w-4 h-4" />
-          Back to search
+          Back to candidates
         </Link>
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Left Main */}
           <div className="lg:col-span-2 space-y-5">
-            <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm bg-gradient-to-br from-indigo-500 to-violet-500">
-                  <Zap className="w-7 h-7 text-white" />
+            <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm">
+              <div className="flex items-start gap-3 sm:gap-4 mb-4">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm bg-gradient-to-br from-indigo-500 to-violet-500">
+                  <Zap className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h1 className="font-sora text-xl font-bold text-slate-900 mb-1">Senior UI/UX Designer</h1>
-                      <p className="text-sm text-slate-500">NovaTech</p>
+                      <h1 className="font-sora text-lg sm:text-xl font-bold text-slate-900 mb-0.5">Senior UI/UX Designer</h1>
+                      <p className="text-xs sm:text-sm text-slate-500">NovaTech</p>
                     </div>
-                    <button className="text-slate-400 hover:text-red-500 transition-colors">
+                    <button className="text-slate-400 hover:text-red-500 transition-colors p-1">
                       <Heart className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 py-4 border-t border-b border-slate-100 mb-4">
-                <span className="flex items-center gap-1.5 text-xs font-semibold bg-sky-50 text-sky-700 px-2.5 py-1 rounded-full">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 py-3 sm:py-4 border-t border-b border-slate-100 mb-4">
+                <span className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold bg-sky-50 text-sky-700 px-2.5 py-1 rounded-full">
                   <MapPin className="w-3 h-3" />
                   Remote
                 </span>
-                <span className="flex items-center gap-1.5 text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">
+                <span className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">
                   Full-time
                 </span>
-                <span className="flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">
+                <span className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">
                   $1,500 – $2,500 / month
                 </span>
-                <span className="text-xs text-slate-400 flex items-center gap-1">
+                <span className="text-[11px] sm:text-xs text-slate-400 flex items-center gap-1 ml-auto sm:ml-0">
                   <Clock className="w-3.5 h-3.5" />
                   Posted 2 days ago
                 </span>
               </div>
 
-              {/* Tabs */}
-              <div className="flex items-center gap-0 border-b border-slate-100 -mx-6 px-6">
+              {/* Tabs with horizontal scrollbar hide on mobile */}
+              <div className="flex items-center gap-0 border-b border-slate-100 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
                 {["Overview", "Skills", "Company", "Similar Jobs"].map(tab => (
                   <button 
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 pb-3 text-sm transition-all border-b-2 font-medium ${activeTab === tab ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'}`}
+                    className={`px-3 sm:px-4 pb-3 text-xs sm:text-sm transition-all border-b-2 font-medium flex-shrink-0 ${activeTab === tab ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'}`}
                   >
                     {tab}
                   </button>

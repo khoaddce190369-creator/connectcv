@@ -145,48 +145,112 @@ const Navbar = ({ variant = 'landing' }) => {
           </div>
         </div>
 
-        {/* Sub-nav for dashboard */}
+        {/* Sub-nav for dashboard - horizontal swipeable on mobile */}
         {isDashboard && (
-          <div className="hidden md:block border-t border-slate-100 bg-white">
-            <div className="max-w-7xl mx-auto px-6 flex items-center gap-6 h-11">
-              <Link to="/social" className={`text-sm pb-0.5 h-full flex items-center border-b-2 ${isActive('/social') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}>
+          <div className="border-t border-slate-100 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-4 sm:gap-6 h-11 overflow-x-auto whitespace-nowrap scrollbar-hide">
+              <Link 
+                to="/social" 
+                className={`text-xs sm:text-sm pb-0.5 h-full flex items-center border-b-2 flex-shrink-0 ${isActive('/social') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}
+              >
                 {t('nav.social')}
               </Link>
-              <Link to="/job-postings" className={`text-sm pb-0.5 h-full flex items-center border-b-2 ${isActive('/job-postings') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}>
+              <Link 
+                to="/job-postings" 
+                className={`text-xs sm:text-sm pb-0.5 h-full flex items-center border-b-2 flex-shrink-0 ${isActive('/job-postings') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}
+              >
                 {t('nav.manageJobs')}
                 <span className="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full bg-brand-600 leading-none">6</span>
               </Link>
-              <Link to="/candidates" className={`text-sm pb-0.5 h-full flex items-center border-b-2 ${isActive('/candidates') || location.pathname.startsWith('/job') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}>
+              <Link 
+                to="/candidates" 
+                className={`text-xs sm:text-sm pb-0.5 h-full flex items-center border-b-2 flex-shrink-0 ${isActive('/candidates') || location.pathname.startsWith('/job') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}
+              >
                 {t('nav.candidates')}
               </Link>
-              <Link to="/interview" className={`text-sm pb-0.5 h-full flex items-center border-b-2 ${isActive('/interview') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}>
+              <Link 
+                to="/interview" 
+                className={`text-xs sm:text-sm pb-0.5 h-full flex items-center border-b-2 flex-shrink-0 ${isActive('/interview') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}
+              >
                 {t('nav.messages')}
                 <span className="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full bg-brand-600 leading-none">3</span>
               </Link>
-              <Link to="#" className={`text-sm pb-0.5 h-full flex items-center border-b-2 ${isActive('/settings') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}>
+              <Link 
+                to="/settings" 
+                className={`text-xs sm:text-sm pb-0.5 h-full flex items-center border-b-2 flex-shrink-0 ${isActive('/settings') ? 'border-brand-600 text-brand-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-200'} transition-all`}
+              >
                 {t('nav.companySettings')}
               </Link>
             </div>
           </div>
         )}
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-100 bg-white">
-            <div className="px-4 py-4 space-y-3 flex flex-col">
+          <div className="md:hidden border-t border-slate-100 bg-white/98 backdrop-blur-md shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="px-5 py-4 space-y-4">
               {isDashboard ? (
                 <>
-                  <Link to="/social" className="text-sm font-medium text-slate-600">{t('nav.social')}</Link>
-                  <Link to="/job-postings" className="text-sm font-medium text-slate-600">{t('nav.manageJobs')}</Link>
-                  <Link to="/candidates" className="text-sm font-medium text-slate-600">{t('nav.candidates')}</Link>
-                  <Link to="/interview" className="text-sm font-medium text-slate-600">{t('nav.messages')}</Link>
+                  {/* Search on mobile */}
+                  <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3.5 py-2.5">
+                    <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                    <input
+                      type="text"
+                      placeholder={t('nav.searchPlaceholder')}
+                      className="bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none w-full"
+                    />
+                  </div>
+
+                  {/* Profile snippet on mobile */}
+                  <div className="flex items-center gap-3 py-2 px-1 border-b border-slate-100">
+                    <img
+                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenBao&backgroundColor=b6e3f4"
+                      className="w-9 h-9 rounded-full bg-sky-100 border border-slate-200"
+                      alt="Avatar"
+                    />
+                    <div>
+                      <p className="text-sm font-bold text-slate-800">Nguyễn Bảo</p>
+                      <p className="text-xs text-slate-500">HR Manager · ConnectCV</p>
+                    </div>
+                  </div>
+
+                  {/* Quick post job button */}
+                  <Link
+                    to="/job-postings"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 text-white text-sm font-semibold py-2.5 px-4 rounded-xl shadow-sm bg-gradient-to-r from-brand-600 to-indigo-600 w-full"
+                  >
+                    <Plus className="w-4 h-4 stroke-[2.5px]" />
+                    {t('nav.postJob')}
+                  </Link>
+
+                  <div className="space-y-1 pt-1">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2">Navigation</p>
+                    <Link to="/" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">{t('nav.findWork')}</Link>
+                    <Link to="/candidates" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">{t('nav.hireDesigner')}</Link>
+                    <Link to="/job-postings" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">{t('nav.forBusinesses')}</Link>
+                    <Link to="/social" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">{t('nav.social')}</Link>
+                    <Link to="/interview" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">{t('nav.messages')}</Link>
+                  </div>
                 </>
               ) : (
                 <>
-                  <Link to="/" className="text-sm font-medium text-slate-600">{t('nav.findWork')}</Link>
-                  <Link to="/candidates" className="text-sm font-medium text-slate-600">{t('nav.hireDesigner')}</Link>
-                  <Link to="/job-postings" className="text-sm font-medium text-slate-600">{t('nav.forBusinesses')}</Link>
-                  <Link to="/login" className="text-sm font-medium text-slate-600">{t('nav.login')}</Link>
+                  <div className="space-y-1">
+                    <Link to="/" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-semibold text-brand-600 bg-brand-50">{t('nav.findWork')}</Link>
+                    <Link to="/candidates" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">{t('nav.hireDesigner')}</Link>
+                    <Link to="/job-postings" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">{t('nav.forBusinesses')}</Link>
+                    <Link to="/social" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">{t('nav.social')}</Link>
+                    <Link to="/interview" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50">{t('nav.messages')}</Link>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-center py-2.5 text-sm font-medium text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50">
+                      {t('nav.login')}
+                    </Link>
+                    <Link to="/signup" onClick={() => setMobileMenuOpen(false)} className="text-center py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-indigo-600 rounded-xl shadow-sm">
+                      {t('nav.signup')}
+                    </Link>
+                  </div>
                 </>
               )}
             </div>

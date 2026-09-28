@@ -73,62 +73,66 @@ export default function InterviewPage() {
     setTimeout(handleSend, 100); // Wait for state update
   };
 
+  const [mobileStagesOpen, setMobileStagesOpen] = useState(false);
+
   return (
-    <div className="bg-slate-50 text-slate-800 h-screen flex flex-col font-inter">
-      {/* Navbar */}
-      <nav className="bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm flex-shrink-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm bg-gradient-to-br from-blue-600 to-indigo-600">
-              <Briefcase className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-sora font-bold text-slate-900 text-lg tracking-tight">Connect<span className="text-blue-600">CV</span></span>
-          </Link>
-          <div className="flex-1 max-w-md hidden md:block">
-            <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3.5 py-2 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:bg-white transition-all">
-              <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
-              <input type="text" placeholder="Tìm kiếm tin tuyển dụng, kỹ năng, vị trí..." className="bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none w-full" />
+    <div className="flex-1 flex flex-col overflow-hidden w-full font-inter bg-slate-50">
+      {/* Mobile Stage Banner (Collapsible) */}
+      <div className="md:hidden bg-white border-b border-slate-100 px-4 py-2.5 flex-shrink-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-5 h-5 rounded-full bg-blue-50 border border-blue-600 flex items-center justify-center text-[10px] font-bold text-blue-600">2</span>
+            <div>
+              <p className="text-xs font-bold text-slate-800">Stage 2: Technical Questions</p>
+              <p className="text-[10px] text-slate-400">Senior UI/UX Designer · NovaTech</p>
             </div>
           </div>
-          <div className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Find Work</Link>
-            <Link to="/candidates" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Hire a Designer</Link>
-            <Link to="/applications" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">For Businesses</Link>
-          </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <button className="relative p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600"></span>
-            </button>
-            <Link to="/applications" className="hidden sm:flex items-center gap-1.5 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm transition-opacity hover:opacity-95 bg-gradient-to-r from-blue-600 to-indigo-600">
-              <Plus className="w-4 h-4" />
-              + Đăng Tin Mới
-            </Link>
-            <div className="flex items-center gap-2 cursor-pointer pl-1">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenBao&backgroundColor=b6e3f4" className="w-8 h-8 rounded-full bg-sky-100 border border-slate-100" alt="Avatar" />
-              <span className="hidden lg:block text-sm font-medium text-slate-700">Nguyễn Bảo (HR)</span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-            </div>
-          </div>
+          <button 
+            onClick={() => setMobileStagesOpen(!mobileStagesOpen)}
+            className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg flex items-center gap-1"
+          >
+            <span>50%</span>
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${mobileStagesOpen ? 'rotate-180' : ''}`} />
+          </button>
         </div>
-        <div className="border-t border-slate-100 bg-white">
-          <div className="max-w-7xl mx-auto px-6 flex items-center gap-6 h-11 overflow-x-auto whitespace-nowrap scrollbar-hide">
-            <Link to="/social" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">Social</Link>
-            <Link to="/applications" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">
-              Quản Lý Tin Tuyển Dụng <span className="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full bg-blue-600">6</span>
-            </Link>
-            <Link to="/candidates" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">Candidates / Freelancer</Link>
-            <Link to="/interview" className="text-sm font-semibold text-blue-600 pb-0.5 h-full flex items-center border-b-2 border-blue-600 transition-all">
-              Tin Nhắn <span className="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full bg-blue-600">3</span>
-            </Link>
-            <Link to="/settings" className="text-sm text-slate-500 hover:text-slate-700 pb-0.5 h-full flex items-center border-b-2 border-transparent transition-all">Cài Đặt Công Ty</Link>
+
+        {/* Mobile Stages Dropdown */}
+        {mobileStagesOpen && (
+          <div className="pt-3 pb-1 border-t border-slate-100 mt-2.5 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="flex items-center gap-2 text-slate-500 font-medium">
+                <Check className="w-3.5 h-3.5 text-emerald-500" /> 1. Introduction
+              </span>
+              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Done</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="flex items-center gap-2 text-blue-600 font-bold">
+                <span className="w-3.5 h-3.5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[9px]">2</span>
+                2. Technical Questions
+              </span>
+              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Current</span>
+            </div>
+            <div className="flex items-center justify-between text-xs text-slate-400">
+              <span className="flex items-center gap-2">
+                <span className="w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-[9px]">3</span>
+                3. Behavioral Questions
+              </span>
+              <span>Pending</span>
+            </div>
+            <div className="flex items-center justify-between text-xs text-slate-400">
+              <span className="flex items-center gap-2">
+                <span className="w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-[9px]">4</span>
+                4. Wrap Up
+              </span>
+              <span>Pending</span>
+            </div>
           </div>
-        </div>
-      </nav>
+        )}
+      </div>
 
       {/* Main Layout */}
       <div className="flex flex-1 overflow-hidden h-full">
-        {/* Left Sidebar */}
+        {/* Left Sidebar (Desktop) */}
         <div className="w-64 bg-white border-r border-slate-100 flex flex-col overflow-y-auto flex-shrink-0 p-5 hidden md:flex">
           <div className="mb-5">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Interview for</p>
@@ -193,48 +197,48 @@ export default function InterviewPage() {
 
         {/* Chat Area */}
         <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
-          <div className="bg-white border-b border-slate-100 px-6 py-4 flex-shrink-0">
-            <div className="flex items-center justify-between">
+          <div className="bg-white border-b border-slate-100 px-4 sm:px-6 py-3 sm:py-4 flex-shrink-0">
+            <div className="flex items-center justify-between gap-2">
               <div>
-                <h1 className="font-sora text-lg font-bold text-slate-900">AI Interview Assistant</h1>
-                <p className="text-sm text-slate-500">Practice with AI after your CV is screened.</p>
+                <h1 className="font-sora text-base sm:text-lg font-bold text-slate-900 leading-tight">AI Interview Assistant</h1>
+                <p className="text-xs sm:text-sm text-slate-500 truncate max-w-[200px] sm:max-w-none">Practice with AI after your CV is screened.</p>
               </div>
-              <span className="flex items-center gap-1.5 text-xs text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-1 rounded-full">
+              <span className="flex items-center gap-1.5 text-xs text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-1 rounded-full flex-shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                 AI Active
               </span>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-5">
             {messages.map(msg => (
-              <div key={msg.id} className={`flex gap-3 ${msg.type === 'user' ? 'justify-end' : ''} animate-[fadeIn_0.3s_ease-out]`}>
+              <div key={msg.id} className={`flex gap-2 sm:gap-3 ${msg.type === 'user' ? 'justify-end' : ''} animate-[fadeIn_0.3s_ease-out]`}>
                 {msg.type === 'ai' && (
-                  <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm bg-gradient-to-br from-blue-600 to-indigo-600">
-                    <Zap className="w-4 h-4 text-white" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm bg-gradient-to-br from-blue-600 to-indigo-600">
+                    <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   </div>
                 )}
                 <div className={`flex-1 ${msg.type === 'user' ? 'flex justify-end' : ''}`}>
                   {msg.type === 'ai' && (
-                    <div className="flex items-center gap-2 mb-1.5">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
                       <span className="text-xs font-semibold text-slate-700">AI Interviewer</span>
                       {msg.tags?.map((tag, idx) => (
-                        <span key={idx} className={`text-xs font-semibold px-2 py-0.5 rounded-full ${idx === 0 ? 'bg-blue-50 text-blue-600' : 'bg-indigo-50 text-indigo-700'}`}>
+                        <span key={idx} className={`text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full ${idx === 0 ? 'bg-blue-50 text-blue-600' : 'bg-indigo-50 text-indigo-700'}`}>
                           {tag}
                         </span>
                       ))}
                     </div>
                   )}
-                  <div className={`max-w-xl ${msg.type === 'user' ? 'text-right' : ''}`}>
-                    <div className={`p-4 shadow-sm ${msg.type === 'user' ? 'bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl rounded-tr-none text-white' : 'bg-white rounded-2xl rounded-tl-none border border-slate-100 text-slate-800'}`}>
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                  <div className={`max-w-full sm:max-w-xl ${msg.type === 'user' ? 'text-right' : ''}`}>
+                    <div className={`p-3.5 sm:p-4 shadow-sm ${msg.type === 'user' ? 'bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl rounded-tr-none text-white' : 'bg-white rounded-2xl rounded-tl-none border border-slate-100 text-slate-800'}`}>
+                      <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                       {msg.quickReplies && (
-                        <div className="flex flex-wrap gap-2 mt-3">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
                           {msg.quickReplies.map((reply, idx) => (
                             <button 
                               key={idx}
                               onClick={() => handleQuickReply(reply)}
-                              className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors border bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
+                              className="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full transition-colors border bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
                             >
                               {reply}
                             </button>
@@ -243,20 +247,20 @@ export default function InterviewPage() {
                       )}
                     </div>
                     {msg.type === 'user' && msg.time && (
-                      <p className="text-xs text-slate-400 mt-1">{msg.time}</p>
+                      <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{msg.time}</p>
                     )}
                   </div>
                 </div>
                 {msg.type === 'user' && (
-                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenBao&backgroundColor=b6e3f4" className="w-8 h-8 rounded-xl bg-sky-100 flex-shrink-0" alt="User" />
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenBao&backgroundColor=b6e3f4" className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-sky-100 flex-shrink-0" alt="User" />
                 )}
               </div>
             ))}
 
             {isTyping && (
-              <div className="flex gap-3 animate-[fadeIn_0.3s_ease-out]">
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm bg-gradient-to-br from-blue-600 to-indigo-600">
-                  <Zap className="w-4 h-4 text-white" />
+              <div className="flex gap-2 sm:gap-3 animate-[fadeIn_0.3s_ease-out]">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm bg-gradient-to-br from-blue-600 to-indigo-600">
+                  <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                 </div>
                 <div className="bg-white rounded-2xl rounded-tl-none p-3 px-4 shadow-sm border border-slate-100 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-slate-400 block animate-[bounce_1.4s_infinite]"></span>
@@ -268,27 +272,27 @@ export default function InterviewPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="bg-white border-t border-slate-100 p-4 flex-shrink-0">
-            <div className="flex items-end gap-3 max-w-4xl mx-auto">
-              <div className="flex-1 bg-slate-100 rounded-2xl px-4 py-3 flex items-end gap-2 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 transition-all border border-transparent focus-within:border-slate-200">
+          <div className="bg-white border-t border-slate-100 p-2.5 sm:p-4 flex-shrink-0">
+            <div className="flex items-end gap-2 sm:gap-3 max-w-4xl mx-auto">
+              <div className="flex-1 bg-slate-100 rounded-2xl px-3 sm:px-4 py-2 sm:py-3 flex items-end gap-2 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 transition-all border border-transparent focus-within:border-slate-200">
                 <textarea 
                   placeholder="Type your answer..." 
                   rows={1}
                   value={inputValue}
                   onChange={e => setInputValue(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="flex-1 bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none resize-none leading-relaxed max-h-[120px]"
+                  className="flex-1 bg-transparent text-xs sm:text-sm text-slate-700 placeholder-slate-400 outline-none resize-none leading-relaxed max-h-[100px] sm:max-h-[120px]"
                 />
                 <button className="text-slate-400 hover:text-slate-600 transition-colors p-1 flex-shrink-0">
-                  <Mic className="w-5 h-5" />
+                  <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
               <button 
                 onClick={handleSend}
                 disabled={!inputValue.trim()}
-                className="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-md flex-shrink-0 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-br from-blue-600 to-indigo-600"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-white shadow-md flex-shrink-0 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-br from-blue-600 to-indigo-600"
               >
-                <Send className="w-5 h-5 ml-1" />
+                <Send className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5" />
               </button>
             </div>
           </div>
