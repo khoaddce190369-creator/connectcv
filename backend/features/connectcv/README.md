@@ -5,7 +5,7 @@ This additive bundle preserves the existing React website and all account-team s
 ## Required production integration
 
 - Install root backend dependencies: the postinstall hook installs this bundle from its lockfile.
-- Supply server-only `GEMINI_API_KEY`, `FEATURE_STATE_DIR` on persistent disk, and `FEATURE_SINGLE_PROCESS=true` with exactly one process/instance.
+- Supply server-only `GEMINI_API_KEY`, a stable random `CV_TRANSLATION_SIGNING_SECRET` (at least 32 random bytes), `FEATURE_STATE_DIR` on persistent disk, and `FEATURE_SINGLE_PROCESS=true` with exactly one process/instance. Translation signatures use an ephemeral key when the stable secret is absent and will not survive a restart.
 - Call `mount(app, { authenticate: trustedRequireAuth })` only after the account team provides middleware that verifies the token and sets `req.user.id`. Current upstream middleware is a placeholder; writes deliberately return 503. Never accept userId from the browser or enable the development JWT fallback.
 - Use a sandboxed, isolated Chromium worker via `CV_BROWSER_WS_ENDPOINT=wss://...`. No key/profile data in its environment; only the local immutable assets may be loaded. The worker must have the same bundled fonts. Keep the worker authenticated, network isolated and resource limited. Do not disable Chromium sandbox to make deployment pass.
 - Community rewards are persisted as pending unique `community:<postId>` events. The central credits team must credit them transactionally and idempotently; this module does not claim that a pending event increased a balance.

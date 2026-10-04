@@ -1,7 +1,10 @@
 'use strict';
 const crypto=require('node:crypto');
 const {callGeminiJSON}=require('./geminiService');
-const signingKey=process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
+// Translation integrity has its own server secret, independent of login tokens.
+const signingKey=process.env.CV_TRANSLATION_SIGNING_SECRET ||
+  (process.env.NODE_ENV!=='production' ? process.env.JWT_SECRET : '') ||
+  crypto.randomBytes(32).toString('hex');
 const cache=new Map();
 const vietnamese=/[àáạảãăằắặẳẵâầấậẩẫèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i;
 function entries(cv) {
