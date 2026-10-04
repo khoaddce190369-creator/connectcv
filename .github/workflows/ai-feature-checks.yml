@@ -1,5 +1,5 @@
 name: AI feature security checks
-on:
+'on':
   pull_request:
     paths: ['backend/features/**', 'backend/package*.json', 'backend/server.js', '.github/workflows/ai-feature-checks.yml']
   push:
