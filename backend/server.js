@@ -12,6 +12,9 @@ app.get('/', (req, res) => {
   res.send('AI Career is ready.');
 });
 
+// Additive feature bundle. Existing auth, payment, jobs and frontend are preserved.
+require('./features/connectcv/mount')(app);
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });

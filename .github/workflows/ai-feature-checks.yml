@@ -1,0 +1,30 @@
+name: AI feature security checks
+on:
+  pull_request:
+    paths: ['backend/features/**', 'backend/package*.json', 'backend/server.js', '.github/workflows/ai-feature-checks.yml']
+  push:
+    branches: ['minh/secure-ai-features']
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci --omit=dev
+        working-directory: backend
+      - run: npm audit --omit=dev --audit-level=high
+        working-directory: backend
+      - run: npm audit --omit=dev --audit-level=high
+        working-directory: backend/features/connectcv
+      - run: node --test tests/cvGrounding.test.js
+        working-directory: backend/features/connectcv
+      - run: node tests/integration.check.cjs
+        working-directory: backend/features/connectcv
+        env:
+          NODE_ENV: production
