@@ -4,7 +4,7 @@ RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefo
 COPY package*.json ./
 COPY features/connectcv/package*.json ./features/connectcv/
 RUN npm ci --omit=dev
-COPY server.js ./
+COPY server.js app.js ./
 COPY src ./src
 COPY features ./features
 RUN mkdir -p /app/data && chown node:node /app/data

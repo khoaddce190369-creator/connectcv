@@ -12,5 +12,5 @@ try{
  checks.push('all 148 gallery previews available from packaged paths');
  const ui=await (await fetch(base+'/ai/')).text();assert(!ui.includes('initConnectCVAuth'));assert(!ui.includes('Huỳnh Kiên Minh'));assert(!ui.includes('kienminh.dev@gmail.com'));assert(!ui.includes('id="btn-tab-freelance-module"'));checks.push('no development login, personal defaults or portfolio navigation');
  const compiled=[...ui.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(x=>x[1]).filter(Boolean);for(const js of compiled)new (require('vm').Script)(js);checks.push('packaged UI scripts compile');
- require('fs').writeFileSync('/tmp/feature-integration-results.json',JSON.stringify({checks,publicDeploymentReady:false,authSourceChanged:false,reactSourceChanged:false},null,2));console.log('PASS integration',checks);
+ require('fs').writeFileSync(path.join(require('os').tmpdir(),'feature-integration-results.json'),JSON.stringify({checks,publicDeploymentReady:false,authSourceChanged:false,reactSourceChanged:false},null,2));console.log('PASS integration',checks);
 }finally{s.close();}})().catch(e=>{console.error(e);process.exitCode=1});
