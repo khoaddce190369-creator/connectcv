@@ -15,3 +15,9 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Feature secrets and account/profile state
+**/.keys.json
+**/data/
+**/.env
+**/node_modules/

@@ -1,0 +1,41 @@
+name: AI feature security checks
+'on':
+  pull_request:
+    paths: ['backend/**', 'frontend/**', 'package.json', '.github/workflows/ai-feature-checks.yml']
+  workflow_dispatch:
+concurrency:
+  group: ai-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci --omit=dev
+        working-directory: backend
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
+      - run: node tests/fullstack.check.cjs
+        working-directory: backend
+        env:
+          NODE_ENV: production
+      - run: npm audit --omit=dev --audit-level=high
+        working-directory: backend
+      - run: npm audit --omit=dev --audit-level=high
+        working-directory: backend/features/connectcv
+      - run: node --test tests/cvGrounding.test.js
+        working-directory: backend/features/connectcv
+      - run: node tests/integration.check.cjs
+        working-directory: backend/features/connectcv
+        env:
+          NODE_ENV: production
