@@ -19,14 +19,10 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// Endpoint kiểm tra sức khỏe máy chủ (dành cho Render health check & Cron-job bên ngoài)
-app.all('/health', (req, res) => {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.json({
-    status: 'OK',
-    message: 'Backend & Frontend service is running!',
-    timestamp: new Date().toISOString()
-  });
+// Endpoint siêu nhẹ chỉ trả về HTTP 200 (hỗ trợ cả /ping và /health, dùng cho Cron-job)
+app.all(['/ping', '/health'], (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.sendStatus(200);
 });
 
 // Đường dẫn tới thư mục build của React frontend
