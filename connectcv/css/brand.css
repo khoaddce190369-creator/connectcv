@@ -1,0 +1,297 @@
+/* ==========================================================================
+   ConnectCV — Upwork Air 3.0 Design System
+   - Strict adherence to Upwork (https://www.upwork.com/) layout, spacing & typography
+   - Brand Colors: Deep Navy (#0f172a / #172554) & Vibrant Cyan (#0284c7 / #0ea5e9)
+   - Pill buttons (radius-pill), 16px/24px rounded cards, clean 1px borders
+   - 100% Vietnamese typography with Plus Jakarta Sans & Inter
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
+
+:root {
+  --brand-navy: #172554;
+  --brand-navy-dark: #0f172a;
+  --brand-navy-deep: #090e1a;
+  --brand-cyan: #0284c7;
+  --brand-cyan-hover: #0369a1;
+  --brand-cyan-light: #f0f9ff;
+  --brand-cyan-border: #bae6fd;
+  --brand-emerald: #10b981;
+  --brand-emerald-dark: #047857;
+  --brand-emerald-light: #ecfdf5;
+  --brand-border: #e2e8f0;
+  --brand-border-dark: #cbd5e1;
+  --brand-bg: #f8fafc;
+  --brand-card-bg: #ffffff;
+  --brand-text: #0f172a;
+  --brand-text-muted: #475569;
+  --brand-text-light: #64748b;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 12px 28px -6px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+body {
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--brand-text);
+  background-color: var(--brand-bg);
+  line-height: 1.55;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  letter-spacing: -0.025em;
+  color: var(--brand-text);
+}
+
+/* ==========================================================================
+   BUTTONS (UPWORK PILL BUTTONS)
+   ========================================================================== */
+.btn-primary {
+  background-color: var(--brand-cyan) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--brand-cyan) !important;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 9px 20px;
+  border-radius: var(--radius-pill) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2);
+}
+.btn-primary:hover {
+  background-color: var(--brand-cyan-hover) !important;
+  border-color: var(--brand-cyan-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-navy {
+  background-color: var(--brand-navy) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--brand-navy) !important;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 9px 20px;
+  border-radius: var(--radius-pill) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.15);
+}
+.btn-navy:hover {
+  background-color: var(--brand-navy-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+}
+
+.btn-secondary {
+  background-color: #ffffff !important;
+  color: var(--brand-text) !important;
+  border: 1px solid var(--brand-border-dark) !important;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 9px 18px;
+  border-radius: var(--radius-pill) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-secondary:hover {
+  background-color: #f8fafc !important;
+  border-color: var(--brand-cyan) !important;
+  color: var(--brand-cyan) !important;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background-color: transparent !important;
+  color: var(--brand-text-muted) !important;
+  border: 1px solid transparent !important;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill) !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-ghost:hover {
+  background-color: #f1f5f9 !important;
+  color: var(--brand-text) !important;
+}
+
+/* ==========================================================================
+   UPWORK HERO SECTION
+   ========================================================================== */
+.upwork-hero {
+  background-color: var(--brand-navy-dark);
+  background-image: radial-gradient(circle at 85% 15%, rgba(2, 132, 199, 0.28) 0%, transparent 60%),
+                    radial-gradient(circle at 10% 85%, rgba(23, 37, 84, 0.8) 0%, transparent 50%);
+  border-radius: var(--radius-xl);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   UPWORK CATEGORY CARDS
+   ========================================================================== */
+.upwork-category-card {
+  background-color: #ffffff;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  cursor: pointer;
+  display: block;
+}
+.upwork-category-card:hover {
+  border-color: var(--brand-cyan);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
+}
+.upwork-category-card:hover .category-arrow {
+  transform: translateX(4px);
+  color: var(--brand-cyan);
+}
+
+/* ==========================================================================
+   CARDS & TILES (UPWORK STYLE JOB TILE)
+   ========================================================================== */
+.upwork-card {
+  background-color: #ffffff;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-subtle);
+}
+.upwork-card:hover {
+  border-color: #93c5fd;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.job-title-link {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: #0f172a;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  line-height: 1.4;
+}
+.job-title-link:hover {
+  color: var(--brand-cyan);
+}
+
+/* TAGS / CHIPS (UPWORK PILL CHIPS) */
+.chip-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: var(--radius-pill) !important;
+  background-color: #f1f5f9;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+.chip-pill:hover {
+  background-color: #e2e8f0;
+  color: var(--brand-text);
+}
+
+.chip-cyan {
+  background-color: var(--brand-cyan-light);
+  color: var(--brand-cyan);
+  border-color: #bae6fd;
+}
+.chip-emerald {
+  background-color: var(--brand-emerald-light);
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+/* INPUTS & SELECTS */
+.input-upwork {
+  border: 1.5px solid var(--brand-border) !important;
+  border-radius: var(--radius-md) !important;
+  background-color: #ffffff !important;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--brand-text);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input-upwork:focus {
+  border-color: var(--brand-cyan) !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+/* KHỔ GIẤY CV A4 TIÊU CHUẨN (GIỐNG UI MẪU MYCV/F8) */
+.cv-canvas-a4 {
+  width: 210mm;
+  min-height: 297mm;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--brand-border);
+  border-radius: 4px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ANIMATIONS */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.view-animate {
+  animation: slideUpFade 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 16px rgba(2, 132, 199, 0);
+  }
+}
+.orb-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}

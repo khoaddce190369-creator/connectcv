@@ -1,48 +1,161 @@
-// [Server] Express server phục vụ API & Static Frontend cho Render Web Service (Monolith 1 node)
+'use strict';
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors');
+const helmet = require('helmet');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware CORS (hỗ trợ cả môi trường dev tách port và production)
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
-});
+// Trust proxy cho môi trường Render
+app.set('trust proxy', 1);
 
-app.use(express.json());
+// Cấu hình Helmet an toàn cho phép CDN, nhúng iframe & script
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
 
-// Endpoint siêu nhẹ chỉ trả về HTTP 200 (hỗ trợ cả /ping và /health, dùng cho Cron-job)
+// Middleware CORS
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'If-Match']
+}));
+
+// Body Parsers
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+
+// Health Check & Ping cho Render Web Service và Cron Uptime
 app.all(['/ping', '/health'], (req, res) => {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-  res.sendStatus(200);
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.json({
+    status: 'OK',
+    message: 'ConnectCV Unified Fullstack Service is running!',
+    platform: 'Render',
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Đường dẫn tới thư mục build của React frontend
-const frontendDistPath = path.join(__dirname, '../frontend/dist');
+// Middleware xác thực JWT cầu nối cho các module mở rộng
+const { authMiddleware, optionalAuth } = require('./src/middlewares/authMiddleware');
+const featureAuthBridge = (req, res, next) => {
+  if (req.headers.authorization) {
+    return authMiddleware(req, res, (err) => {
+      if (err || !req.user) {
+        req.user = { id: 'guest_' + (req.ip || '127.0.0.1').replace(/[^a-zA-Z0-9]/g, '_'), role: 'Student', isPro: false };
+      }
+      return next();
+    });
+  }
+  req.user = { id: 'guest_' + (req.ip || '127.0.0.1').replace(/[^a-zA-Z0-9]/g, '_'), role: 'Student', isPro: false };
+  return next();
+};
 
-if (fs.existsSync(frontendDistPath)) {
-  // Phục vụ các file tĩnh (js, css, hình ảnh...) từ frontend/dist
-  app.use(express.static(frontendDistPath));
+// ==========================================
+// 1. TÍCH HỢP TOÀN BỘ CÁC ROUTE ĐẶC TẢ KỸ THUẬT
+// ==========================================
+app.use('/api/auth', require('./src/routes/auth'));
+app.use('/api/cv', require('./src/routes/cv'));
+app.use('/api/interview', require('./src/routes/interview'));
+app.use('/api/freelance', require('./src/routes/interview')); // Hỗ trợ POST /api/freelance/proposal
+app.use('/api/jobs', require('./src/routes/jobs'));
+app.use('/api/filter/jobs', (req, res, next) => {
+  req.url = '/filter';
+  return require('./src/routes/jobs')(req, res, next);
+});
+app.use('/api/portfolios', require('./src/routes/portfolios'));
+app.use('/api/posts', require('./src/routes/posts'));
+app.use('/api/filter/candidates', (req, res, next) => {
+  req.url = '/filter/candidates';
+  return require('./src/routes/candidates')(req, res, next);
+});
+app.use('/api/applications', (req, res, next) => {
+  req.url = '/applications' + req.url;
+  return require('./src/routes/candidates')(req, res, next);
+});
+app.use('/api/feedback', require('./src/routes/feedback'));
+app.use('/api/payment', require('./src/routes/payment'));
 
-  // SPA fallback: Mọi URL giao diện (trừ static files và API) đều trả về index.html
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendDistPath, 'index.html'));
-  });
+// ==========================================
+// 2. TÍCH HỢP TÍNH NĂNG MỚI (AI STUDIO & CV RENDERER)
+// ==========================================
+const featuresMountPath = path.join(__dirname, 'features/connectcv/mount.js');
+if (fs.existsSync(featuresMountPath)) {
+  try {
+    const mountFeatures = require('./features/connectcv/mount');
+    mountFeatures(app, { authenticate: featureAuthBridge });
+    console.log('✅ Đã tích hợp thành công module AI Studio từ features/connectcv tại đường dẫn /ai');
+  } catch (err) {
+    console.warn('⚠️ Lỗi khởi tạo module AI Studio:', err.message);
+  }
 } else {
-  // Nếu chưa build frontend (chạy dev backend độc lập)
-  app.get('/', (req, res) => {
-    res.send('ConnectCV API is ready. (Frontend chưa được build, hãy chạy "npm run build")');
-  });
+  console.log('ℹ️ Module features/connectcv chưa được mount.');
 }
 
+// ==========================================
+// 3. PHỤC VỤ GIAO DIỆN WEB MỚI (UI MỚI)
+// ==========================================
+// Thư mục connectcv chứa 19 trang HTML giao diện mới
+const connectcvUiPath = path.join(__dirname, '../connectcv');
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+
+// Phục vụ favicon chống lỗi 404 trên browser console
+app.get('/favicon.ico', (req, res) => {
+  const faviconFile = path.join(connectcvUiPath, 'assets/logo.png');
+  if (fs.existsSync(faviconFile)) {
+    return res.sendFile(faviconFile);
+  }
+  return res.status(204).end();
+});
+
+// Phục vụ trang tĩnh Portfolio Công Khai kèm Subdomain (/p/:subdomain)
+app.get(['/p/:subdomain', '/portfolio/:subdomain'], (req, res) => {
+  const portfolioHtml = path.join(connectcvUiPath, 'portfolio-public.html');
+  if (fs.existsSync(portfolioHtml)) {
+    return res.sendFile(portfolioHtml);
+  }
+  return res.redirect('/#portfolio');
+});
+
+if (fs.existsSync(connectcvUiPath)) {
+  // Phục vụ các trang HTML tĩnh giao diện mới
+  app.use(express.static(connectcvUiPath, {
+    index: 'index.html',
+    extensions: ['html']
+  }));
+}
+
+if (fs.existsSync(frontendDistPath)) {
+  // Phục vụ React frontend nếu có
+  app.use('/react', express.static(frontendDistPath));
+}
+
+// Fallback trang chủ mặc định nếu chưa khớp
+app.get('/', (req, res) => {
+  const indexFile = path.join(connectcvUiPath, 'index.html');
+  if (fs.existsSync(indexFile)) {
+    return res.sendFile(indexFile);
+  }
+  return res.send('ConnectCV API Server is running on Render.');
+});
+
+// Xử lý lỗi tập trung
+app.use((err, req, res, next) => {
+  if (res.headersSent) return next(err);
+  console.error('Lỗi Server:', err);
+  const status = [400, 401, 402, 403, 404, 409, 413, 429].includes(err.status) ? err.status : 500;
+  return res.status(status).json({
+    success: false,
+    message: err.message || 'Lỗi xử lý yêu cầu hệ thống.'
+  });
+});
+
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`🚀 ConnectCV Server is listening on port ${PORT}`);
+  console.log(`🌐 Website URL: http://localhost:${PORT}`);
+  console.log(`🤖 AI Studio: http://localhost:${PORT}/ai`);
 });

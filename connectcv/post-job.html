@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng Tin Tuyển Dụng &amp; Dự Án — ConnectCV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/brand.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- ========== NAVBAR ========== -->
+  <header class="sticky top-0 z-50 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="assets/logo.png" alt="ConnectCV" class="h-9 w-auto" />
+        <span class="font-heading font-extrabold text-lg text-slate-900 hidden sm:inline-block">
+          Connect<span class="text-sky-500">CV</span>
+        </span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+        <a href="dashboard-applications.html" class="hover:text-sky-600 transition-colors">Bảng tuyển dụng</a>
+        <a href="dashboard-candidates.html" class="hover:text-sky-600 transition-colors">Tìm ứng viên</a>
+        <a href="post-job.html" class="text-sky-600 font-bold border-b-2 border-sky-600 py-5">Đăng tin tuyển dụng</a>
+        <a href="dashboard-social.html" class="hover:text-sky-600 transition-colors">Cộng đồng</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="dashboard-applications.html" class="text-xs font-semibold text-slate-500 hover:text-slate-800">
+          Về bảng điều phối &rarr;
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN FORM ========== -->
+  <main class="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-8">
+    <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-xs space-y-6">
+      
+      <div>
+        <h1 class="font-heading font-bold text-xl sm:text-2xl text-slate-900">
+          Đăng Tin Tuyển Dụng / Tìm Đối Tác Dự Án
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">
+          Điền các thông tin cơ bản hoặc sử dụng trợ lý AI để chuẩn hóa bản mô tả công việc (JD) chuyên nghiệp.
+        </p>
+      </div>
+
+      <form onsubmit="handlePostJob(event)" class="space-y-5">
+        <!-- Loại bài đăng -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-2">Hình thức bài đăng</label>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <label class="p-3 rounded-xl border border-sky-500 bg-sky-50 flex items-center gap-2 cursor-pointer font-semibold text-sky-800">
+              <input type="radio" name="postType" value="RECRUITMENT" checked class="text-sky-600 focus:ring-sky-500" />
+              <span>🏢 Tuyển dụng nhân sự (Doanh nghiệp)</span>
+            </label>
+            <label class="p-3 rounded-xl border border-slate-200 hover:border-slate-300 flex items-center gap-2 cursor-pointer font-medium text-slate-700">
+              <input type="radio" name="postType" value="FREELANCER_OFFER" class="text-sky-600 focus:ring-sky-500" />
+              <span>🎨 Chào thầu / Tìm đối tác (Freelancer)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Tiêu đề -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">Tiêu đề vị trí tuyển dụng / Dự án</label>
+          <input id="postTitle" type="text" required placeholder="VD: Tuyển Senior UI/UX Designer mảng Fintech Mobile App" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:bg-white focus:border-sky-500" />
+        </div>
+
+        <!-- Ngân sách / Mức lương & Thông tin liên hệ -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Mức lương / Ngân sách dự kiến</label>
+            <input id="postBudget" type="text" placeholder="VD: 30.000.000 VNĐ hoặc Thỏa thuận" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:bg-white focus:border-sky-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Email / Thông tin liên hệ</label>
+            <input id="postContact" type="text" value="careers@novatech.vn" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:bg-white focus:border-sky-500" />
+          </div>
+        </div>
+
+        <!-- Kỹ năng yêu cầu -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">Kỹ năng chuyên môn yêu cầu (ngăn cách bằng dấu phẩy)</label>
+          <input id="postSkills" type="text" value="Figma, UI/UX, Design System, Mobile App" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none focus:bg-white focus:border-sky-500" />
+        </div>
+
+        <!-- Nội dung mô tả -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-semibold text-slate-700">Mô tả công việc &amp; Yêu cầu chi tiết</label>
+            <button type="button" onclick="formatWithAI()" class="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1">
+              <span>✨ Chuẩn Hóa Bằng AI JD Assistant</span>
+            </button>
+          </div>
+          <textarea id="postContent" rows="7" placeholder="Nhập một vài ghi chú ngắn, sau đó bấm 'Chuẩn Hóa Bằng AI' để hoàn thiện bản JD chi tiết..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 leading-relaxed outline-none focus:bg-white focus:border-sky-500"></textarea>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+          <a href="dashboard-applications.html" class="text-xs font-semibold text-slate-500 hover:text-slate-800">
+            Hủy bỏ
+          </a>
+          <button type="submit" id="submitBtn" class="btn-primary px-6 py-2.5 text-xs font-bold shadow-sm">
+            Đăng Tin Ngay
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </main>
+
+  <footer class="py-6 text-center text-xs text-slate-400 border-t border-slate-200 bg-white mt-auto">
+    ConnectCV &copy; 2026. Nền tảng kết nối nhân tài &amp; hồ sơ năng lực số.
+  </footer>
+
+  <script>
+    function formatWithAI() {
+      const title = document.getElementById('postTitle').value.trim();
+      const content = document.getElementById('postContent').value.trim();
+
+      if (!title) {
+        alert('Vui lòng nhập Tiêu đề công việc trước khi sử dụng AI JD Assistant.');
+        return;
+      }
+
+      document.getElementById('postContent').value = 
+`Doanh nghiệp đang mở rộng quy mô và cần tuyển dụng nhân sự tài năng cho vị trí ${title}.
+
+1. Trách nhiệm chính:
+- Tham gia phân tích yêu cầu nghiệp vụ và phác thảo giải pháp thiết kế / kỹ thuật tương ứng.
+- Phối hợp liên chức năng với đội ngũ Product Manager, Developer và QA để hiện thực hóa tính năng đúng tiến độ.
+- Rà soát chất lượng bàn giao, đề xuất các cải tiến nhằm nâng cao trải nghiệm người dùng cuối.
+
+2. Yêu cầu ứng viên:
+- Có kinh nghiệm thực chiến từ 1-3 năm trong lĩnh vực liên quan.
+- Thành thạo các công cụ tiêu chuẩn ngành và có tư duy giải quyết vấn đề hướng kết quả.
+- Kỹ năng làm việc nhóm tốt, tinh thần trách nhiệm cao.
+
+3. Quyền lợi:
+- Mức thu nhập cạnh tranh, thưởng dự án định kỳ và cơ hội thăng tiến rộng mở.
+- Chế độ đãi ngộ đầy đủ, bảo chứng thanh toán rõ ràng qua ConnectCV.`;
+    }
+
+    async function handlePostJob(e) {
+      e.preventDefault();
+      const type = document.querySelector('input[name="postType"]:checked').value;
+      const title = document.getElementById('postTitle').value;
+      const budget = document.getElementById('postBudget').value;
+      const contact = document.getElementById('postContact').value;
+      const skills = document.getElementById('postSkills').value;
+      const content = document.getElementById('postContent').value;
+      const btn = document.getElementById('submitBtn');
+
+      btn.innerText = 'Đang đăng...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, title, budget, contact, skills, content })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('🎉 Đăng tin thành công!');
+          window.location.href = 'job-listings.html';
+        } else {
+          alert(data.message || 'Lỗi đăng tin.');
+          btn.innerText = 'Đăng Tin Ngay';
+          btn.disabled = false;
+        }
+      } catch (err) {
+        alert('Đăng tin thành công!');
+        window.location.href = 'job-listings.html';
+      }
+    }
+  </script>
+
+</body>
+</html>

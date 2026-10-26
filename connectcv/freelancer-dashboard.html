@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bảng Điều Khiển Ứng Viên — ConnectCV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/brand.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: '#172554',
+              cyan: '#0ea5e9',
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              600: '#0284c7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- ========== NAVBAR ========== -->
+  <header class="sticky top-0 z-50 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- Logo thương hiệu -->
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="assets/logo.png" alt="ConnectCV" class="h-9 w-auto" />
+        <span class="font-heading font-extrabold text-lg text-slate-900 hidden sm:inline-block">
+          Connect<span class="text-sky-500">CV</span>
+        </span>
+      </a>
+
+      <!-- Menu chính tiếng Việt -->
+      <nav class="hidden md:flex items-center gap-6 text-xs sm:text-sm font-medium text-slate-600">
+        <a href="freelancer-dashboard.html" class="text-sky-600 font-bold border-b-2 border-sky-600 py-5">Tổng quan</a>
+        <a href="job-listings.html" class="hover:text-sky-600 transition-colors">Tìm việc làm</a>
+        <a href="/ai" class="flex items-center gap-1.5 text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-100 font-semibold hover:bg-sky-100 transition-colors">
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+          Tạo &amp; Tối ưu CV
+        </a>
+        <a href="dashboard-interview.html" class="hover:text-sky-600 transition-colors">Luyện phỏng vấn</a>
+        <a href="my-applications.html" class="hover:text-sky-600 transition-colors">Đơn ứng tuyển</a>
+        <a href="wallet.html" class="hover:text-sky-600 transition-colors">Ví &amp; Gói Pro</a>
+      </nav>
+
+      <!-- User Profile Dropdown -->
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-100">
+          Ứng viên / Freelancer
+        </span>
+
+        <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" class="w-8 h-8 rounded-full object-cover border border-slate-200" alt="Avatar" />
+          <div class="hidden lg:block text-left">
+            <p id="userNameText" class="text-xs font-bold text-slate-800 leading-tight">Nguyễn Minh Tuấn</p>
+            <p class="text-[10px] text-slate-400">UI/UX Designer</p>
+          </div>
+          <a href="login.html" class="text-xs text-rose-500 hover:text-rose-700 font-medium ml-2" title="Đăng xuất">
+            Thoát
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN DASHBOARD ========== -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+
+    <!-- Lời chào & Thao tác nhanh -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200">
+      <div>
+        <h1 class="font-heading text-xl sm:text-2xl font-bold text-slate-900">
+          Xin chào, <span id="welcomeName">Minh Tuấn</span> 👋
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">
+          Hồ sơ của bạn đã sẵn sàng. Có <strong>18 việc làm mới</strong> phù hợp với chuyên môn của bạn hôm nay.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-2.5">
+        <a href="/ai" class="btn-primary px-4 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <span>Tối ưu CV với AI</span>
+        </a>
+        <a href="dashboard-interview.html" class="btn-secondary px-4 py-2 text-xs font-semibold flex items-center gap-1.5">
+          <span>Luyện phỏng vấn</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 4 Khối Thống kê Trực quan -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200">
+        <span class="text-xs font-medium text-slate-500">Độ hoàn thiện hồ sơ</span>
+        <div class="flex items-baseline justify-between mt-2">
+          <p class="font-heading font-extrabold text-2xl text-slate-900">85%</p>
+          <span class="text-[11px] font-semibold text-emerald-600">Khá tốt</span>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-1.5 mt-3 overflow-hidden">
+          <div class="bg-sky-500 h-1.5 rounded-full" style="width: 85%"></div>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200">
+        <span class="text-xs font-medium text-slate-500">Việc làm đã nộp</span>
+        <div class="flex items-baseline justify-between mt-2">
+          <p class="font-heading font-extrabold text-2xl text-slate-900">12</p>
+          <span class="text-[11px] font-semibold text-sky-600">3 đang xem xét</span>
+        </div>
+        <p class="text-[11px] text-slate-400 mt-3">2 doanh nghiệp đã phản hồi</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200">
+        <span class="text-xs font-medium text-slate-500">Lượt luyện phỏng vấn</span>
+        <div class="flex items-baseline justify-between mt-2">
+          <p class="font-heading font-extrabold text-2xl text-slate-900">8 lượt</p>
+          <span class="text-[11px] font-semibold text-emerald-600">Điểm TB: 8.5/10</span>
+        </div>
+        <p class="text-[11px] text-slate-400 mt-3">Đã làm chủ cấu trúc STAR</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200">
+        <span class="text-xs font-medium text-slate-500">Số dư ví &amp; Hợp đồng</span>
+        <div class="flex items-baseline justify-between mt-2">
+          <p class="font-heading font-extrabold text-2xl text-sky-700">36.8M đ</p>
+          <span class="text-[11px] font-semibold text-slate-400">Escrow</span>
+        </div>
+        <a href="wallet.html" class="text-[11px] font-bold text-sky-600 hover:underline block mt-3">Chi tiết ví &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Layout 2 Cột: Việc làm đề xuất & Trạng thái nộp đơn -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Cột trái (2/3): Việc làm phù hợp nhất -->
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="font-heading text-base font-bold text-slate-900">Cơ Hội Việc Làm Phù Hợp Nhất</h2>
+          <a href="job-listings.html" class="text-xs font-semibold text-sky-600 hover:underline">Xem thêm &rarr;</a>
+        </div>
+
+        <div class="space-y-3">
+          
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 hover:border-slate-300 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-start gap-3.5">
+              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop" class="w-11 h-11 rounded-xl object-cover border border-slate-200" alt="Company" />
+              <div>
+                <h3 class="font-heading font-bold text-slate-900 text-sm hover:text-sky-600">
+                  <a href="job-detail.html">Senior Product Designer (App &amp; Web)</a>
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">NovaTech Solutions &bull; TP. Hồ Chí Minh &bull; 35 - 50 Triệu</p>
+                <div class="flex gap-1.5 mt-2">
+                  <span class="px-2 py-0.5 rounded bg-slate-100 text-[10px] font-medium text-slate-600">Figma</span>
+                  <span class="px-2 py-0.5 rounded bg-slate-100 text-[10px] font-medium text-slate-600">Design System</span>
+                  <span class="px-2 py-0.5 rounded bg-sky-50 text-[10px] font-bold text-sky-700">92% Phù hợp</span>
+                </div>
+              </div>
+            </div>
+            <a href="job-detail.html" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 self-end sm:self-center transition-colors">
+              Ứng tuyển
+            </a>
+          </div>
+
+          <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 hover:border-slate-300 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-start gap-3.5">
+              <img src="https://images.unsplash.com/photo-1572021335469-31706a17aaef?w=100&h=100&fit=crop" class="w-11 h-11 rounded-xl object-cover border border-slate-200" alt="Company" />
+              <div>
+                <h3 class="font-heading font-bold text-slate-900 text-sm hover:text-sky-600">
+                  <a href="job-detail.html">Thiết Kế Nhận Diện Thương Hiệu Organic</a>
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">GreenEats &bull; Remote &bull; 15 - 25 Triệu / Dự án</p>
+                <div class="flex gap-1.5 mt-2">
+                  <span class="px-2 py-0.5 rounded bg-slate-100 text-[10px] font-medium text-slate-600">Branding</span>
+                  <span class="px-2 py-0.5 rounded bg-slate-100 text-[10px] font-medium text-slate-600">Illustrator</span>
+                  <span class="px-2 py-0.5 rounded bg-emerald-50 text-[10px] font-bold text-emerald-700">Freelance</span>
+                </div>
+              </div>
+            </div>
+            <a href="job-detail.html" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 self-end sm:self-center transition-colors">
+              Chào thầu
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Cột phải (1/3): Tiến độ hồ sơ đã nộp -->
+      <div class="space-y-4">
+        <h2 class="font-heading text-base font-bold text-slate-900">Hồ Sơ Đã Nộp Gần Đây</h2>
+        
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4">
+          <div class="pb-3 border-b border-slate-100">
+            <div class="flex justify-between items-start">
+              <h4 class="text-xs font-bold text-slate-900">Senior Product Designer</h4>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">Đã xem hồ sơ</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">NovaTech Solutions</p>
+          </div>
+
+          <div class="pb-3 border-b border-slate-100">
+            <div class="flex justify-between items-start">
+              <h4 class="text-xs font-bold text-slate-900">Brand Identity Designer</h4>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Đạt sơ loại</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">GreenEats Organic</p>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-start">
+              <h4 class="text-xs font-bold text-slate-900">Lead UX Designer</h4>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-sky-50 text-sky-700 border border-sky-200">Hẹn phỏng vấn</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">EduForward Global &bull; 10:00 AM Ngày mai</p>
+          </div>
+
+          <div class="pt-2">
+            <a href="my-applications.html" class="w-full py-2 text-center text-xs font-semibold text-slate-600 bg-slate-50 rounded-xl hover:bg-slate-100 block transition-colors">
+              Xem tất cả đơn đã nộp (12)
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-4 text-center text-xs text-slate-400 border-t border-slate-200/80 bg-white mt-auto">
+    ConnectCV &copy; 2026. Nền tảng kết nối nhân tài &amp; hồ sơ năng lực số.
+  </footer>
+
+  <script>
+    // Khôi phục tên user từ localStorage nếu có
+    try {
+      const stored = localStorage.getItem('connectcv_user');
+      if (stored) {
+        const u = JSON.parse(stored);
+        if (u.username) {
+          document.getElementById('userNameText').innerText = u.username;
+          document.getElementById('welcomeName').innerText = u.username.split(' ').pop() || u.username;
+        }
+      }
+    } catch (_) {}
+  </script>
+
+</body>
+</html>

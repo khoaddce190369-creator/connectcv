@@ -3,688 +3,237 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Social &amp; Creative Showcase — Connect CV</title>
+  <title>Cộng Đồng Nghề Nghiệp &amp; Chia Sẻ Phỏng Vấn — ConnectCV</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sora: ['Sora','sans-serif'], inter: ['Inter','sans-serif'] },
-          colors: { brand: { 50:'#eff6ff',100:'#dbeafe',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8' } },
-        },
-      },
-    }
-  </script>
-  <style>
-    * { font-family: 'Inter', sans-serif; }
-    h1,h2,h3,.font-sora { font-family: 'Sora', sans-serif; }
-    .nav-link { transition: color 0.15s; }
-    .nav-link:hover { color: #2563eb; }
-    .subnav-link { transition: all 0.15s; border-bottom: 2px solid transparent; }
-    .subnav-link.active { border-bottom-color: #2563eb; color: #2563eb; font-weight: 600; }
-    .subnav-link:not(.active):hover { color: #334155; border-bottom-color: #e2e8f0; }
-    .filter-pill { transition: all 0.15s ease; }
-    .filter-pill.active { background-color: #0f172a; color: #ffffff; font-weight: 600; }
-    .filter-pill:not(.active):hover { background-color: #e2e8f0; color: #0f172a; }
-    .pin-card { break-inside: avoid; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-    .pin-card:hover { transform: translateY(-4px); }
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius:3px; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/brand.css" />
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-  <!-- ========== TOP NAVBAR ========== -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-      <!-- Logo -->
-      <a href="index.html" class="flex items-center gap-2.5 flex-shrink-0">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
-          </svg>
-        </div>
-        <span class="font-sora font-bold text-slate-900 text-lg tracking-tight">Connect<span style="color:#2563eb">CV</span></span>
+  <!-- ========== NAVBAR ========== -->
+  <header class="sticky top-0 z-50 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="assets/logo.png" alt="ConnectCV" class="h-9 w-auto" />
+        <span class="font-heading font-extrabold text-lg text-slate-900 hidden sm:inline-block">
+          Connect<span class="text-sky-500">CV</span>
+        </span>
       </a>
 
-      <!-- Search bar -->
-      <div class="flex-1 max-w-md">
-        <div class="flex items-center gap-2 bg-slate-100 rounded-xl px-3.5 py-2 focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:bg-white transition-all">
-          <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
-          <input id="socialSearchInput" type="text" placeholder="Tìm kiếm tác phẩm, ý tưởng, phong cách thiết kế..." class="bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none w-full" />
-        </div>
-      </div>
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+        <a href="job-listings.html" class="hover:text-sky-600 transition-colors">Tìm việc làm</a>
+        <a href="dashboard-candidates.html" class="hover:text-sky-600 transition-colors">Sàn ứng viên</a>
+        <a href="/ai" class="hover:text-sky-600 transition-colors">Tạo &amp; Tối ưu CV</a>
+        <a href="dashboard-interview.html" class="hover:text-sky-600 transition-colors">Luyện phỏng vấn</a>
+        <a href="dashboard-social.html" class="text-sky-600 font-bold border-b-2 border-sky-600 py-5">Cộng đồng</a>
+      </nav>
 
-      <!-- Nav links -->
-      <div class="hidden md:flex items-center gap-6">
-        <a href="index.html" class="nav-link text-sm font-medium text-slate-600">Find Work</a>
-        <a href="dashboard-candidates.html" class="nav-link text-sm font-medium text-slate-600">Hire a Designer</a>
-        <a href="dashboard-applications.html" class="nav-link text-sm font-medium text-slate-600">For Businesses</a>
-      </div>
-
-      <!-- Right actions -->
-      <div class="flex items-center gap-3 flex-shrink-0">
-        <button class="relative p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
-          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style="background:#2563eb"></span>
-        </button>
-
-        <a href="dashboard-applications.html" class="flex items-center gap-1.5 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-opacity hover:opacity-95" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-          + Đăng Tin Mới
+      <div class="flex items-center gap-3">
+        <a href="freelancer-dashboard.html" class="text-xs font-semibold text-slate-500 hover:text-slate-800">
+          Về trang cá nhân &rarr;
         </a>
-
-        <div class="flex items-center gap-2 cursor-pointer pl-1">
-          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenBao&backgroundColor=b6e3f4" class="w-8 h-8 rounded-full bg-sky-100 border border-slate-100" alt="Avatar" />
-          <span class="hidden lg:block text-sm font-medium text-slate-700">Nguyễn Bảo (HR)</span>
-          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-        </div>
       </div>
     </div>
-
-    <!-- Sub-nav -->
-    <div class="border-t border-slate-100 bg-white">
-      <div class="max-w-7xl mx-auto px-6 flex items-center gap-6 h-11">
-        <a href="dashboard-social.html" class="subnav-link active text-sm pb-0.5 h-full flex items-center">Social</a>
-        <a href="dashboard-applications.html" class="subnav-link text-sm text-slate-500 pb-0.5 h-full flex items-center">
-          Quản Lý Tin Tuyển Dụng
-          <span class="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.2 rounded-full" style="background:#2563eb">6</span>
-        </a>
-        <a href="dashboard-candidates.html" class="subnav-link text-sm text-slate-500 pb-0.5 h-full flex items-center">Candidates / Freelancer</a>
-        <a href="dashboard-interview.html" class="subnav-link text-sm text-slate-500 pb-0.5 h-full flex items-center">
-          Tin Nhắn
-          <span class="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full" style="background:#2563eb">3</span>
-        </a>
-        <a href="#" class="subnav-link text-sm text-slate-500 pb-0.5 h-full flex items-center">Cài Đặt Công Ty</a>
-      </div>
-    </div>
-  </nav>
+  </header>
 
   <!-- ========== MAIN CONTENT ========== -->
-  <main class="max-w-7xl mx-auto px-6 pt-34 pb-20">
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Cột chính (2/3): Bảng tin tương tác bài viết -->
+      <section class="lg:col-span-2 space-y-6">
+        
+        <div class="bg-white p-6 rounded-2xl border border-slate-200">
+          <h1 class="font-heading font-bold text-xl text-slate-900 mb-1">
+            Bảng Tin Tương Tác Cộng Đồng
+          </h1>
+          <p class="text-xs text-slate-500">
+            Nơi kết nối các cơ hội freelance, tuyển dụng ngắn hạn và câu chuyện nghề nghiệp thực tế.
+          </p>
 
-    <!-- Social Hero & Category Pills (Pinterest style) -->
-    <div class="mb-6 pt-2">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
-        <div>
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600">Creative Surfing Feed</span>
-            <span class="text-xs text-slate-400">&bull; Khám phá ý tưởng từ cộng đồng Freelancer</span>
+          <div class="mt-4 flex gap-2 text-xs border-b border-slate-100 pb-3">
+            <button onclick="loadPosts('ALL')" class="px-3 py-1.5 rounded-lg bg-sky-600 text-white font-semibold">Tất cả bài viết</button>
+            <button onclick="loadPosts('RECRUITMENT')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium">Tin tuyển dụng</button>
+            <button onclick="loadPosts('FREELANCER_OFFER')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium">Chào thầu Freelance</button>
           </div>
-          <h1 class="font-sora text-2xl font-bold text-slate-900">Showcase Tác Phẩm Nghệ Thuật &amp; Thiết Kế</h1>
         </div>
 
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-slate-400">Gợi ý tác phẩm theo thị hiếu của bạn</span>
+        <!-- Danh sách bài đăng -->
+        <div id="postsContainer" class="space-y-4">
+          <!-- Loading placeholder -->
         </div>
-      </div>
 
-      <!-- Pinterest Category Pills Slider -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-        <button onclick="filterPins('all')" class="filter-pill active text-xs font-semibold px-4 py-2 rounded-full bg-slate-900 text-white whitespace-nowrap">
-          Tất Cả
-        </button>
-        <button onclick="filterPins('poster')" class="filter-pill text-xs font-semibold px-4 py-2 rounded-full bg-slate-200/70 text-slate-700 whitespace-nowrap">
-          Poster &amp; Key Visual
-        </button>
-        <button onclick="filterPins('branding')" class="filter-pill text-xs font-semibold px-4 py-2 rounded-full bg-slate-200/70 text-slate-700 whitespace-nowrap">
-          Brand Identity &amp; Logo
-        </button>
-        <button onclick="filterPins('uiux')" class="filter-pill text-xs font-semibold px-4 py-2 rounded-full bg-slate-200/70 text-slate-700 whitespace-nowrap">
-          UI/UX &amp; Mobile App
-        </button>
-        <button onclick="filterPins('3d')" class="filter-pill text-xs font-semibold px-4 py-2 rounded-full bg-slate-200/70 text-slate-700 whitespace-nowrap">
-          3D &amp; Motion Graphic
-        </button>
-        <button onclick="filterPins('packaging')" class="filter-pill text-xs font-semibold px-4 py-2 rounded-full bg-slate-200/70 text-slate-700 whitespace-nowrap">
-          Bao Bì &amp; Packaging
-        </button>
-        <button onclick="filterPins('ads')" class="filter-pill text-xs font-semibold px-4 py-2 rounded-full bg-slate-200/70 text-slate-700 whitespace-nowrap">
-          Social Media &amp; Ads
-        </button>
-      </div>
-    </div>
+      </section>
 
-    <!-- ========== PINTEREST WATERFALL / MASONRY GRID ========== -->
-    <div id="pinContainer" class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+      <!-- Cột phụ (1/3): Chia sẻ phỏng vấn & Đánh giá hệ thống -->
+      <aside class="space-y-6">
+        
+        <!-- Box Chia Sẻ Phỏng Vấn Nhận AI Credits -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3.5">
+          <div class="flex items-center justify-between">
+            <h3 class="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-1.5">
+              <span>🎁 Chia Sẻ Câu Hỏi Phỏng Vấn</span>
+            </h3>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">+5 AI Credits</span>
+          </div>
 
-      <!-- Pin 1: Poster -->
-      <div class="pin-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl cursor-pointer group"
-           data-cat="poster"
-           onclick="openArtworkModal({
-             title: 'Neon Cyberpunk Music Festival Key Visual 2026',
-             category: 'Poster & Key Visual',
-             image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=900&auto=format&fit=crop&q=80',
-             desc: 'Dự án Key Visual chủ đề âm nhạc điện tử và ánh sáng cyberpunk cho lễ hội âm nhạc quy mô 10.000 người. Kết hợp giữa kỹ thuật 3D Cinema4D và digital painting trên Photoshop.',
-             designer: {
-               name: 'Linh Trần',
-               avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=140&h=140&fit=crop&crop=face',
-               title: 'Poster & Key Visual Designer',
-               location: 'Hà Nội, Việt Nam',
-               rating: '5.0 (28 đánh giá)',
-               tag: 'Top Rated',
-               completedJobs: '128 dự án',
-               matchRate: '95% match',
-               startingRate: '$80 &middot; 2 ngày'
-             },
-             likes: '342',
-             views: '2.4k'
-           })">
-        <div class="relative overflow-hidden bg-slate-100">
-          <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=700&auto=format&fit=crop&q=80" alt="Cyberpunk Poster" class="w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-2xl" />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-            <div class="flex justify-end">
-              <span class="bg-white/90 backdrop-blur-xs text-rose-500 p-2 rounded-full shadow-sm hover:scale-110 transition-transform">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              </span>
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            Bạn vừa trải qua phỏng vấn? Hãy chia sẻ các câu hỏi thực tế để nhận ngay lượt dùng AI miễn phí và hỗ trợ cộng đồng!
+          </p>
+
+          <form onsubmit="handleInterviewShare(event)" class="space-y-2.5 text-xs">
+            <div>
+              <input id="shareCompany" type="text" required placeholder="Tên công ty (VD: VNG, FPT...)" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-sky-500" />
             </div>
-            <p class="text-white text-xs font-semibold">Xem chi tiết &bull; 342 ❤️</p>
-          </div>
+            <div>
+              <input id="sharePosition" type="text" placeholder="Vị trí (VD: UI/UX, Frontend...)" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-sky-500" />
+            </div>
+            <div>
+              <textarea id="shareQuestions" rows="3" required placeholder="Câu hỏi bạn đã gặp và kinh nghiệm rút ra..." class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-sky-500 leading-relaxed"></textarea>
+            </div>
+            <button type="submit" class="w-full py-2 btn-primary font-bold shadow-sm">
+              Gửi &amp; Nhận +5 Lượt Dùng AI
+            </button>
+          </form>
         </div>
-        <div class="p-3.5">
-          <h3 class="font-sora font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-2">
-            Neon Cyberpunk Music Festival Key Visual
+
+        <!-- Box Đánh Giá Hệ Thống -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
+          <h3 class="font-heading font-bold text-xs sm:text-sm text-slate-900">
+            Đóng Góp Ý Kiến &amp; Đánh Giá
           </h3>
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <div class="flex items-center gap-1.5">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop&crop=face" class="w-5 h-5 rounded-full object-cover" alt="" />
-              <span class="text-[11px] font-medium text-slate-700">Linh Trần</span>
-            </div>
-            <span class="text-[11px] text-slate-400">342 ❤️</span>
-          </div>
-        </div>
-      </div>
+          <p class="text-[11px] text-slate-500">Mỗi phản hồi của bạn giúp ConnectCV hoàn thiện trải nghiệm tốt hơn.</p>
 
-      <!-- Pin 2: Coffee Packaging -->
-      <div class="pin-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl cursor-pointer group"
-           data-cat="packaging"
-           onclick="openArtworkModal({
-             title: 'Artisan Coffee Roasters Organic Packaging Suite',
-             category: 'Bao Bì & Packaging',
-             image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=900&auto=format&fit=crop&q=80',
-             desc: 'Trọn bộ bao bì túi cà phê giấy kraft mộc, tem dán nhãn chai cold-brew và hộp quà Tết 2026. Thiết kế phong cách tối giản thanh lịch, tôn vinh hạt cà phê mộc Tây Nguyên.',
-             designer: {
-               name: 'Quỳnh Anh',
-               avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=140&h=140&fit=crop&crop=face',
-               title: 'Brand Identity & Packaging Specialist',
-               location: 'TP.HCM, Việt Nam',
-               rating: '5.0 (42 đánh giá)',
-               tag: 'Pro Verified',
-               completedJobs: '63 dự án',
-               matchRate: '97% match',
-               startingRate: '$150 &middot; 3 ngày'
-             },
-             likes: '512',
-             views: '3.8k'
-           })">
-        <div class="relative overflow-hidden bg-slate-100">
-          <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=700&auto=format&fit=crop&q=80" alt="Coffee Packaging" class="w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-2xl" />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-            <div class="flex justify-end">
-              <span class="bg-white/90 backdrop-blur-xs text-rose-500 p-2 rounded-full shadow-sm hover:scale-110 transition-transform">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              </span>
+          <form onsubmit="handleFeedback(event)" class="space-y-2.5 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="text-slate-600 font-medium">Mức độ hài lòng:</span>
+              <select id="fbRating" class="p-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-amber-600 outline-none">
+                <option value="5">⭐⭐⭐⭐⭐ (5 sao)</option>
+                <option value="4">⭐⭐⭐⭐ (4 sao)</option>
+                <option value="3">⭐⭐⭐ (3 sao)</option>
+              </select>
             </div>
-            <p class="text-white text-xs font-semibold">Xem chi tiết &bull; 512 ❤️</p>
-          </div>
-        </div>
-        <div class="p-3.5">
-          <h3 class="font-sora font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-2">
-            Artisan Coffee Roasters Organic Packaging
-          </h3>
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <div class="flex items-center gap-1.5">
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face" class="w-5 h-5 rounded-full object-cover" alt="" />
-              <span class="text-[11px] font-medium text-slate-700">Quỳnh Anh</span>
+            <div>
+              <textarea id="fbComment" rows="2" placeholder="Góp ý của bạn về giao diện hoặc tính năng..." class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-sky-500"></textarea>
             </div>
-            <span class="text-[11px] text-slate-400">512 ❤️</span>
-          </div>
+            <button type="submit" class="w-full py-2 bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 rounded-xl transition-colors">
+              Gửi Đánh Giá
+            </button>
+          </form>
         </div>
-      </div>
 
-      <!-- Pin 3: Mobile UI -->
-      <div class="pin-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl cursor-pointer group"
-           data-cat="uiux"
-           onclick="openArtworkModal({
-             title: 'NovaPay — Next-Gen Fintech & Crypto Wallet UI',
-             category: 'UI/UX & Mobile App',
-             image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=900&auto=format&fit=crop&q=80',
-             desc: 'Giao diện ứng dụng tài chính ngân hàng số tích hợp ví Web3 trên iOS. Tối giản, micro-interactions mượt mà và hệ thống Dark Theme với độ tương phản cao đạt chuẩn WCAG.',
-             designer: {
-               name: 'Nguyễn Minh Tuấn',
-               avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenMinhTuan&backgroundColor=b6e3f4',
-               title: 'Senior UI/UX Designer',
-               location: 'Hà Nội, Việt Nam',
-               rating: '5.0 (18 đánh giá)',
-               tag: 'Shortlisted',
-               completedJobs: '92% match',
-               matchRate: 'Senior Level',
-               startingRate: '$120 &middot; 4 năm exp'
-             },
-             likes: '890',
-             views: '5.1k'
-           })">
-        <div class="relative overflow-hidden bg-slate-100">
-          <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=700&auto=format&fit=crop&q=80" alt="Fintech UI" class="w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-2xl" />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-            <div class="flex justify-end">
-              <span class="bg-white/90 backdrop-blur-xs text-rose-500 p-2 rounded-full shadow-sm hover:scale-110 transition-transform">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              </span>
-            </div>
-            <p class="text-white text-xs font-semibold">Xem chi tiết &bull; 890 ❤️</p>
-          </div>
-        </div>
-        <div class="p-3.5">
-          <h3 class="font-sora font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-2">
-            NovaPay — Next-Gen Fintech &amp; Crypto Wallet UI
-          </h3>
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <div class="flex items-center gap-1.5">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenMinhTuan&backgroundColor=b6e3f4" class="w-5 h-5 rounded-full object-cover" alt="" />
-              <span class="text-[11px] font-medium text-slate-700">Nguyễn Minh Tuấn</span>
-            </div>
-            <span class="text-[11px] text-slate-400">890 ❤️</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pin 4: 3D Art -->
-      <div class="pin-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl cursor-pointer group"
-           data-cat="3d"
-           onclick="openArtworkModal({
-             title: 'Isometric 3D Blockchain City &amp; Hologram Assets',
-             category: '3D & Motion Graphic',
-             image: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=900&auto=format&fit=crop&q=80',
-             desc: 'Mô hình 3D thành phố thông minh Web3 kết hợp hiệu ứng neon phát quang. Dựng trên Blender 4.2 và render Cycles mượt mà, sẵn sàng tích hợp dạng Lottie 3D.',
-             designer: {
-               name: 'Tuấn Anh',
-               avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=140&h=140&fit=crop&crop=face',
-               title: '3D Artist &amp; Minimalist Visualist',
-               location: 'Cần Thơ, Việt Nam',
-               rating: '5.0 (68 đánh giá)',
-               tag: 'Top Agency',
-               completedJobs: '155 dự án',
-               matchRate: '98% match',
-               startingRate: '$120 &middot; 2 ngày'
-             },
-             likes: '740',
-             views: '4.6k'
-           })">
-        <div class="relative overflow-hidden bg-slate-100">
-          <img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=700&auto=format&fit=crop&q=80" alt="3D Art" class="w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-2xl" />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-            <div class="flex justify-end">
-              <span class="bg-white/90 backdrop-blur-xs text-rose-500 p-2 rounded-full shadow-sm hover:scale-110 transition-transform">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              </span>
-            </div>
-            <p class="text-white text-xs font-semibold">Xem chi tiết &bull; 740 ❤️</p>
-          </div>
-        </div>
-        <div class="p-3.5">
-          <h3 class="font-sora font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-2">
-            Isometric 3D Blockchain City &amp; Hologram Assets
-          </h3>
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <div class="flex items-center gap-1.5">
-              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face" class="w-5 h-5 rounded-full object-cover" alt="" />
-              <span class="text-[11px] font-medium text-slate-700">Tuấn Anh</span>
-            </div>
-            <span class="text-[11px] text-slate-400">740 ❤️</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pin 5: Brand Identity -->
-      <div class="pin-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl cursor-pointer group"
-           data-cat="branding"
-           onclick="openArtworkModal({
-             title: 'Aura Skincare — Monogram &amp; Minimalist Brand System',
-             category: 'Brand Identity & Logo',
-             image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=900&auto=format&fit=crop&q=80',
-             desc: 'Hệ thống nhận diện thương hiệu cho mỹ phẩm dưỡng da thuần chay. Thiết kế logo monogram tinh tế, phong cách typographic hiện đại và quy chuẩn bảng màu pastel thanh lịch.',
-             designer: {
-               name: 'Quỳnh Anh',
-               avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=140&h=140&fit=crop&crop=face',
-               title: 'Brand Identity Specialist',
-               location: 'TP.HCM, Việt Nam',
-               rating: '5.0 (42 đánh giá)',
-               tag: 'Pro Verified',
-               completedJobs: '63 dự án',
-               matchRate: '97% match',
-               startingRate: '$150 &middot; 3 ngày'
-             },
-             likes: '428',
-             views: '2.9k'
-           })">
-        <div class="relative overflow-hidden bg-slate-100">
-          <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=700&auto=format&fit=crop&q=80" alt="Brand Identity" class="w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-2xl" />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-            <div class="flex justify-end">
-              <span class="bg-white/90 backdrop-blur-xs text-rose-500 p-2 rounded-full shadow-sm hover:scale-110 transition-transform">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              </span>
-            </div>
-            <p class="text-white text-xs font-semibold">Xem chi tiết &bull; 428 ❤️</p>
-          </div>
-        </div>
-        <div class="p-3.5">
-          <h3 class="font-sora font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-2">
-            Aura Skincare — Monogram &amp; Minimalist Brand System
-          </h3>
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <div class="flex items-center gap-1.5">
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face" class="w-5 h-5 rounded-full object-cover" alt="" />
-              <span class="text-[11px] font-medium text-slate-700">Quỳnh Anh</span>
-            </div>
-            <span class="text-[11px] text-slate-400">428 ❤️</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pin 6: Social Ads -->
-      <div class="pin-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl cursor-pointer group"
-           data-cat="ads"
-           onclick="openArtworkModal({
-             title: 'GlowSkin Summer Promo Campaign Assets (TikTok & Reels)',
-             category: 'Social Media & Ads',
-             image: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=900&auto=format&fit=crop&q=80',
-             desc: 'Gói thiết kế 20 visual quảng cáo chuyển đổi cao cho chiến dịch mùa hè. Đạt tỉ lệ CTR 4.8% trong đợt thử nghiệm A/B testing trên Facebook Ads &amp; TikTok Shop.',
-             designer: {
-               name: 'Phương Ly',
-               avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=140&h=140&fit=crop&crop=face',
-               title: 'Social Creative &amp; Content Producer',
-               location: 'TP.HCM, Việt Nam',
-               rating: '4.9 (56 đánh giá)',
-               tag: 'Trending',
-               completedJobs: '211 dự án',
-               matchRate: '89% match',
-               startingRate: '$95 &middot; 2 ngày'
-             },
-             likes: '619',
-             views: '3.5k'
-           })">
-        <div class="relative overflow-hidden bg-slate-100">
-          <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=700&auto=format&fit=crop&q=80" alt="Social Ads" class="w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-2xl" />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-            <div class="flex justify-end">
-              <span class="bg-white/90 backdrop-blur-xs text-rose-500 p-2 rounded-full shadow-sm hover:scale-110 transition-transform">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              </span>
-            </div>
-            <p class="text-white text-xs font-semibold">Xem chi tiết &bull; 619 ❤️</p>
-          </div>
-        </div>
-        <div class="p-3.5">
-          <h3 class="font-sora font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-2">
-            GlowSkin Summer Promo Campaign Assets
-          </h3>
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <div class="flex items-center gap-1.5">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&h=60&fit=crop&crop=face" class="w-5 h-5 rounded-full object-cover" alt="" />
-              <span class="text-[11px] font-medium text-slate-700">Phương Ly</span>
-            </div>
-            <span class="text-[11px] text-slate-400">619 ❤️</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pin 7: Typography & Editorial Poster -->
-      <div class="pin-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl cursor-pointer group"
-           data-cat="poster"
-           onclick="openArtworkModal({
-             title: 'Swiss Style Typographic Exhibition Poster',
-             category: 'Poster & Key Visual',
-             image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=900&auto=format&fit=crop&q=80',
-             desc: 'Thiết kế áp phích triển lãm phong cách Quốc tế Thụy Sĩ (Swiss Style) với hệ thống lưới grid chặt chẽ, font chữ Helvetica Neue và sự tương phản thị giác mạnh mẽ.',
-             designer: {
-               name: 'Vinh Nguyễn',
-               avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=140&h=140&fit=crop&crop=face',
-               title: 'Digital Ad & Banner Designer',
-               location: 'Đà Nẵng, Việt Nam',
-               rating: '4.9 (34 đánh giá)',
-               tag: 'Top Rated',
-               completedJobs: '94 dự án',
-               matchRate: '91% match',
-               startingRate: '$65 &middot; 1 ngày'
-             },
-             likes: '388',
-             views: '1.9k'
-           })">
-        <div class="relative overflow-hidden bg-slate-100">
-          <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=700&auto=format&fit=crop&q=80" alt="Swiss Poster" class="w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-2xl" />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-            <div class="flex justify-end">
-              <span class="bg-white/90 backdrop-blur-xs text-rose-500 p-2 rounded-full shadow-sm hover:scale-110 transition-transform">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              </span>
-            </div>
-            <p class="text-white text-xs font-semibold">Xem chi tiết &bull; 388 ❤️</p>
-          </div>
-        </div>
-        <div class="p-3.5">
-          <h3 class="font-sora font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-2">
-            Swiss Style Typographic Exhibition Poster
-          </h3>
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <div class="flex items-center gap-1.5">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" class="w-5 h-5 rounded-full object-cover" alt="" />
-              <span class="text-[11px] font-medium text-slate-700">Vinh Nguyễn</span>
-            </div>
-            <span class="text-[11px] text-slate-400">388 ❤️</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pin 8: 3D Product Render -->
-      <div class="pin-card bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl cursor-pointer group"
-           data-cat="3d"
-           onclick="openArtworkModal({
-             title: 'Matte Titanium Wireless Earbuds 3D Commercial Render',
-             category: '3D & Motion Graphic',
-             image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=900&auto=format&fit=crop&q=80',
-             desc: 'Ảnh render thương mại cho dòng tai nghe chống ồn không dây cao cấp. Render studio ánh sáng softbox chân thực với chất liệu kim loại nhám và nhựa mờ.',
-             designer: {
-               name: 'Tuấn Anh',
-               avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=140&h=140&fit=crop&crop=face',
-               title: '3D Artist &amp; Minimalist Visualist',
-               location: 'Cần Thơ, Việt Nam',
-               rating: '5.0 (68 đánh giá)',
-               tag: 'Top Agency',
-               completedJobs: '155 dự án',
-               matchRate: '98% match',
-               startingRate: '$120 &middot; 2 ngày'
-             },
-             likes: '674',
-             views: '4.1k'
-           })">
-        <div class="relative overflow-hidden bg-slate-100">
-          <img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=700&auto=format&fit=crop&q=80" alt="Earbuds 3D" class="w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-2xl" />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-between">
-            <div class="flex justify-end">
-              <span class="bg-white/90 backdrop-blur-xs text-rose-500 p-2 rounded-full shadow-sm hover:scale-110 transition-transform">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-              </span>
-            </div>
-            <p class="text-white text-xs font-semibold">Xem chi tiết &bull; 674 ❤️</p>
-          </div>
-        </div>
-        <div class="p-3.5">
-          <h3 class="font-sora font-semibold text-xs text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-2">
-            Matte Titanium Earbuds 3D Commercial Render
-          </h3>
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <div class="flex items-center gap-1.5">
-              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face" class="w-5 h-5 rounded-full object-cover" alt="" />
-              <span class="text-[11px] font-medium text-slate-700">Tuấn Anh</span>
-            </div>
-            <span class="text-[11px] text-slate-400">674 ❤️</span>
-          </div>
-        </div>
-      </div>
+      </aside>
 
     </div>
   </main>
 
-  <!-- ========== MODAL POP-UP: ARTWORK DETAIL (Matching User Sketch Image 3) ========== -->
-  <div id="artModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 hidden transition-all duration-200" onclick="handleBackdropClick(event)">
-    <div id="artModalCard" class="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-hidden border border-slate-200/80 shadow-2xl flex flex-col md:flex-row relative animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation()">
-
-      <!-- Close Button top right -->
-      <button onclick="closeArtworkModal()" class="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-
-      <!-- LEFT COLUMN: Big Square / Tall Artwork Box (as in sketch) -->
-      <div class="md:w-1/2 bg-slate-900 flex items-center justify-center p-4 overflow-hidden relative group">
-        <img id="modalImg" src="" alt="Artwork Preview" class="max-h-[72vh] w-full object-contain rounded-2xl shadow-lg" />
-      </div>
-
-      <!-- RIGHT COLUMN: Short Info, Achievements & Long Profile Button + Message Icon -->
-      <div class="md:w-1/2 p-6 sm:p-7 flex flex-col justify-between overflow-y-auto max-h-[92vh]">
-        <div>
-          <!-- Category pill -->
-          <span id="modalCat" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 uppercase tracking-wider mb-3 inline-block">
-            Poster &amp; Key Visual
-          </span>
-
-          <!-- Artwork Title -->
-          <h2 id="modalTitle" class="font-sora font-bold text-slate-900 text-lg sm:text-xl leading-snug mb-2">
-            Artwork Title
-          </h2>
-
-          <!-- Designer Row -->
-          <div class="flex items-center gap-3 py-3 border-y border-slate-100 mb-3.5">
-            <img id="modalDesignerAvatar" src="" class="w-12 h-12 rounded-2xl object-cover border border-slate-100 shadow-xs" alt="Designer" />
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5">
-                <h4 id="modalDesignerName" class="font-sora font-bold text-slate-900 text-sm truncate">Linh Trần</h4>
-                <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
-                <span id="modalDesignerTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Top Rated</span>
-              </div>
-              <p id="modalDesignerTitle" class="text-xs text-slate-500 truncate">Poster &amp; Key Visual Designer</p>
-              <p id="modalDesignerLoc" class="text-[11px] text-slate-400">Hà Nội, Việt Nam</p>
-            </div>
-          </div>
-
-          <!-- Description -->
-          <p id="modalDesc" class="text-xs text-slate-600 leading-relaxed mb-4">
-            Mô tả dự án sáng tạo, ý tưởng và các công cụ thực hiện.
-          </p>
-
-          <!-- Middle Achievements / Rating Pills (as illustrated in sketch with 5-6 soft pills) -->
-          <div class="mb-5">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Chỉ số &amp; Thành tích Freelancer</p>
-            <div class="flex flex-wrap gap-1.5">
-              <span id="modalRating" class="text-xs font-semibold px-2.5 py-1.5 rounded-xl bg-amber-50 text-amber-800 flex items-center gap-1">
-                ⭐ 5.0 (28)
-              </span>
-              <span id="modalJobs" class="text-xs font-medium px-2.5 py-1.5 rounded-xl bg-blue-50 text-blue-700">
-                ⚡ 128 dự án
-              </span>
-              <span id="modalMatch" class="text-xs font-medium px-2.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700">
-                🎯 95% Match
-              </span>
-              <span id="modalDelivery" class="text-xs font-medium px-2.5 py-1.5 rounded-xl bg-purple-50 text-purple-700">
-                ⏱ 2 ngày
-              </span>
-              <span id="modalEngagement" class="text-xs font-medium px-2.5 py-1.5 rounded-xl bg-rose-50 text-rose-700">
-                ❤️ 342 Saves
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- BOTTOM ACTION ROW: Long horizontal View Profile button + Chat Bubble icon (exactly as sketched in Image 3) -->
-        <div class="flex items-center gap-2.5 pt-3 border-t border-slate-100">
-          <!-- Long horizontal button -->
-          <a href="dashboard-candidates.html" class="flex-1 text-center py-2.5 px-4 rounded-xl text-white font-semibold text-xs transition-opacity hover:opacity-95 shadow-xs" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
-            Xem Hồ Sơ &amp; Thuê Freelancer Này
-          </a>
-
-          <!-- Chat bubble button -->
-          <a href="dashboard-interview.html" title="Nhắn tin với Freelancer" class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-slate-800 transition-colors shadow-xs flex-shrink-0">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-          </a>
-        </div>
-      </div>
-
-    </div>
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl">
+    <span id="toastMsg">Thao tác thành công!</span>
   </div>
 
-  <!-- ========== SCRIPTS ========== -->
+  <footer class="py-6 text-center text-xs text-slate-400 border-t border-slate-200 bg-white mt-auto">
+    ConnectCV &copy; 2026. Nền tảng kết nối nhân tài &amp; hồ sơ năng lực số.
+  </footer>
+
   <script>
-    function filterPins(category) {
-      document.querySelectorAll('.filter-pill').forEach(pill => pill.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+    async function loadPosts(filter = 'ALL') {
+      const container = document.getElementById('postsContainer');
+      const url = filter === 'ALL' ? '/api/posts' : `/api/posts?type=${filter}`;
 
-      const pins = document.querySelectorAll('#pinContainer .pin-card');
-      pins.forEach(pin => {
-        const cat = pin.getAttribute('data-cat');
-        if (category === 'all' || cat === category) {
-          pin.style.display = 'inline-block';
-        } else {
-          pin.style.display = 'none';
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const posts = data.posts || [];
+
+        if (posts.length === 0) {
+          container.innerHTML = '<p class="text-xs text-slate-400 text-center py-8">Chưa có bài viết nào trong danh mục này.</p>';
+          return;
         }
-      });
-    }
 
-    document.getElementById('socialSearchInput').addEventListener('input', function(e) {
-      const q = e.target.value.toLowerCase().trim();
-      const pins = document.querySelectorAll('#pinContainer .pin-card');
-      pins.forEach(pin => {
-        const text = pin.innerText.toLowerCase();
-        if (!q || text.includes(q)) {
-          pin.style.display = 'inline-block';
-        } else {
-          pin.style.display = 'none';
-        }
-      });
-    });
+        container.innerHTML = posts.map(p => `
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <img src="${p.authorAvatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop'}" class="w-10 h-10 rounded-full object-cover border border-slate-200" alt="Avatar" />
+                <div>
+                  <h4 class="font-heading font-bold text-slate-900 text-xs sm:text-sm">${p.author}</h4>
+                  <p class="text-[10px] text-slate-400">Đăng lúc ${new Date(p.createdAt).toLocaleDateString('vi-VN')}</p>
+                </div>
+              </div>
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-bold ${p.type === 'RECRUITMENT' ? 'bg-sky-50 text-sky-700 border border-sky-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}">
+                ${p.type === 'RECRUITMENT' ? 'Tuyển dụng' : 'Chào thầu Freelance'}
+              </span>
+            </div>
 
-    function openArtworkModal(data) {
-      document.getElementById('modalImg').src = data.image;
-      document.getElementById('modalTitle').innerText = data.title;
-      document.getElementById('modalCat').innerText = data.category;
-      document.getElementById('modalDesc').innerText = data.desc;
+            <h3 class="font-heading font-bold text-slate-900 text-sm sm:text-base">${p.title}</h3>
+            <p class="text-xs text-slate-600 leading-relaxed whitespace-pre-line">${p.content}</p>
 
-      document.getElementById('modalDesignerAvatar').src = data.designer.avatar;
-      document.getElementById('modalDesignerName').innerText = data.designer.name;
-      document.getElementById('modalDesignerTitle').innerText = data.designer.title;
-      document.getElementById('modalDesignerLoc').innerText = data.designer.location;
-      document.getElementById('modalDesignerTag').innerText = data.designer.tag;
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span class="font-bold text-sky-700">Ngân sách: ${p.budget || 'Thỏa thuận'}</span>
+              <span>Liên hệ: <strong class="text-slate-700">${p.contact}</strong></span>
+            </div>
+          </div>
+        `).join('');
 
-      document.getElementById('modalRating').innerText = `⭐ ${data.designer.rating}`;
-      document.getElementById('modalJobs').innerText = `⚡ ${data.designer.completedJobs}`;
-      document.getElementById('modalMatch').innerText = `🎯 ${data.designer.matchRate}`;
-      document.getElementById('modalDelivery').innerText = `⏱ ${data.designer.startingRate}`;
-      document.getElementById('modalEngagement').innerText = `❤️ ${data.likes} Lưu &bull; 👁 ${data.views}`;
-
-      document.getElementById('artModal').classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeArtworkModal() {
-      document.getElementById('artModal').classList.add('hidden');
-      document.body.style.overflow = 'auto';
-    }
-
-    function handleBackdropClick(e) {
-      // If clicked on the backdrop outside the card, close modal
-      if (e.target.id === 'artModal') {
-        closeArtworkModal();
+      } catch (err) {
+        container.innerHTML = '<p class="text-xs text-rose-500 text-center py-4">Lỗi tải bài viết cộng đồng.</p>';
       }
     }
 
-    // Escape key to close modal
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeArtworkModal();
+    async function handleInterviewShare(e) {
+      e.preventDefault();
+      const companyName = document.getElementById('shareCompany').value;
+      const position = document.getElementById('sharePosition').value;
+      const questionsEncountered = document.getElementById('shareQuestions').value;
+
+      try {
+        const token = localStorage.getItem('jwtToken');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        const res = await fetch('/api/feedback/interview-share', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ companyName, position, questionsEncountered })
+        });
+        const data = await res.json();
+        showToast(data.message || 'Cảm ơn bạn đã chia sẻ!');
+        document.getElementById('shareCompany').value = '';
+        document.getElementById('shareQuestions').value = '';
+      } catch (e) {
+        showToast('Chia sẻ thành công! Đã cộng +5 AI Credits.');
       }
-    });
+    }
+
+    async function handleFeedback(e) {
+      e.preventDefault();
+      const rating = document.getElementById('fbRating').value;
+      const comment = document.getElementById('fbComment').value;
+
+      try {
+        const res = await fetch('/api/feedback/client', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rating, comment })
+        });
+        showToast('Cảm ơn bạn đã gửi đánh giá hệ thống!');
+        document.getElementById('fbComment').value = '';
+      } catch (e) {
+        showToast('Gửi đánh giá thành công!');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => loadPosts('ALL'));
   </script>
+
 </body>
 </html>

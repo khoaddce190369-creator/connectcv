@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trung Tâm Thông Báo — ConnectCV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sora: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            },
+            indigo: {
+              500: '#6366f1',
+              600: '#4f46e5',
+            },
+            dark: '#0f172a',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    h1,h2,h3,h4,.font-sora { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+    .subnav-link { transition: all 0.15s; border-bottom: 2px solid transparent; }
+    .subnav-link.active { border-bottom-color: #2563eb; color: #2563eb; font-weight: 600; }
+    .subnav-link:not(.active):hover { color: #1e293b; border-bottom-color: #cbd5e1; }
+    .notif-item { transition: all 0.15s ease; }
+    .notif-item.unread { background-color: #f8faff; border-left: 3px solid #2563eb; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- ========== TOP NAVBAR ========== -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-xs" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+          </svg>
+        </div>
+        <span class="font-sora font-bold text-slate-900 text-lg tracking-tight">Connect<span style="color:#2563eb">CV</span></span>
+      </a>
+
+      <!-- Quick Nav Links -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="freelancer-dashboard.html" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Tổng Quan</a>
+        <a href="job-listings.html" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Tìm Việc Làm</a>
+        <a href="my-applications.html" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Đơn Của Tôi</a>
+        <a href="notifications.html" class="text-sm font-semibold text-brand-600">Thông Báo</a>
+      </div>
+
+      <!-- Right User Actions -->
+      <div class="flex items-center gap-3">
+        <a href="messages.html" class="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors" title="Tin nhắn">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/></svg>
+        </a>
+        <a href="freelancer-dashboard.html" class="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 transition-colors">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop&crop=face" class="w-8 h-8 rounded-full object-cover border border-slate-200" alt="Avatar" />
+          <span class="hidden sm:block text-xs font-semibold text-slate-800">Minh Tuấn</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 pt-24 pb-12">
+    
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+      <div>
+        <h1 class="font-sora font-extrabold text-slate-900 text-2xl">
+          Thông Báo
+        </h1>
+        <p class="text-xs text-slate-500 mt-1">
+          Cập nhật các hoạt động tuyển dụng, lời mời phỏng vấn và trạng thái bảo chứng Escrow mới nhất.
+        </p>
+      </div>
+
+      <!-- Mark all as read button -->
+      <div class="flex items-center gap-2">
+        <button onclick="markAllAsRead()" class="text-xs font-semibold text-brand-600 hover:text-brand-700 bg-white border border-slate-200 px-3.5 py-2 rounded-xl hover:bg-slate-50 transition-colors shadow-2xs">
+          Đánh dấu tất cả là đã đọc
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="flex items-center gap-2 py-4 overflow-x-auto scrollbar-none text-xs">
+      <button class="px-3.5 py-1.5 rounded-xl font-bold bg-brand-600 text-white shadow-xs whitespace-nowrap">
+        Tất cả (6)
+      </button>
+      <button class="px-3.5 py-1.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100 transition-colors whitespace-nowrap">
+        Lịch phỏng vấn (1)
+      </button>
+      <button class="px-3.5 py-1.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100 transition-colors whitespace-nowrap">
+        Việc làm &amp; CV (3)
+      </button>
+      <button class="px-3.5 py-1.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100 transition-colors whitespace-nowrap">
+        Bảo chứng Escrow (1)
+      </button>
+      <button class="px-3.5 py-1.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100 transition-colors whitespace-nowrap">
+        Gợi ý từ AI (1)
+      </button>
+    </div>
+
+    <!-- Notification List -->
+    <div class="space-y-3 mt-2">
+      
+      <!-- Notif 1: Interview Scheduled (Unread) -->
+      <div class="notif-item unread bg-white rounded-2xl border border-slate-100 p-4 shadow-xs flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 text-lg">
+          📹
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900">NovaTech Solutions đã gửi lời mời phỏng vấn</span>
+            <span class="text-[10px] text-brand-600 font-bold bg-brand-50 px-2 py-0.5 rounded-full">Mới</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+            Buổi phỏng vấn Vòng 2 cho vị trí <strong>Senior UI/UX Designer</strong> đã được lên lịch lúc <strong>14:00 chiều mai (28/09)</strong> qua Google Meet.
+          </p>
+          <div class="mt-3 flex items-center gap-3">
+            <a href="dashboard-interview.html" class="px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-2xs" style="background:linear-gradient(90deg,#6366f1,#2563eb)">
+              Luyện trước với AI Coach &rarr;
+            </a>
+            <a href="messages.html" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200">
+              Nhắn tin HR
+            </a>
+            <span class="text-[10px] text-slate-400 ml-auto">10:15 AM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notif 2: Escrow Locked (Unread) -->
+      <div class="notif-item unread bg-white rounded-2xl border border-slate-100 p-4 shadow-xs flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 text-lg">
+          🛡️
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900">Ký quỹ Escrow bảo chứng thành công ($1,000)</span>
+            <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">Tài chính</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+            Khách hàng <strong>PixelCraft US</strong> đã nạp đủ số tiền $1,000 vào tài khoản ký quỹ trung gian của ConnectCV cho dự án <em>"AI Startup Landing Page"</em>. Bạn có thể an tâm bắt đầu thực hiện!
+          </p>
+          <div class="mt-3 flex items-center gap-3">
+            <a href="wallet.html" class="px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100">
+              Kiểm tra số dư Escrow &rarr;
+            </a>
+            <span class="text-[10px] text-slate-400 ml-auto">Hôm qua, 16:30</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notif 3: HR Viewed CV -->
+      <div class="notif-item bg-white rounded-2xl border border-slate-100 p-4 shadow-xs flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-brand-600 flex items-center justify-center flex-shrink-0 text-lg">
+          👁️
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900">GreenPay Global đã xem CV của bạn</span>
+            <span class="text-[10px] text-slate-400">Tuyển dụng</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+            Nhà tuyển dụng đã mở xem bản <strong>CV Tiếng Việt</strong> bạn nộp cho vị trí <em>Product Designer (Design System)</em>.
+          </p>
+          <div class="mt-3 flex items-center gap-3">
+            <a href="my-applications.html" class="text-xs font-semibold text-brand-600 hover:underline">
+              Xem tiến trình đơn &rarr;
+            </a>
+            <span class="text-[10px] text-slate-400 ml-auto">2 ngày trước</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notif 4: AI CV Score Completed -->
+      <div class="notif-item bg-white rounded-2xl border border-slate-100 p-4 shadow-xs flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 text-lg">
+          ✨
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900">Bản CV Tiếng Anh đã đạt 94% điểm ATS</span>
+            <span class="text-[10px] text-purple-700 font-bold bg-purple-50 px-2 py-0.5 rounded-full">AI Review</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+            Trợ lý AI đã phân tích xong cấu trúc bản CV tiếng Anh của bạn: Định dạng chuẩn ATS, tương thích cao với các bộ lọc của công ty đa quốc gia.
+          </p>
+          <div class="mt-3 flex items-center gap-3">
+            <a href="freelancer-profile.html#cv-section" class="text-xs font-semibold text-purple-600 hover:underline">
+              Xem chi tiết báo cáo AI &rarr;
+            </a>
+            <span class="text-[10px] text-slate-400 ml-auto">3 ngày trước</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5">
+    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+    <span id="toastMsg">Thao tác thành công!</span>
+  </div>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="bg-white border-t border-slate-200/80 mt-12 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+      <div>
+        <span class="font-bold text-slate-800">ConnectCV</span> &copy; 2026. Nền tảng kết nối nhân tài &amp; hồ sơ năng lực số.
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="freelancer-dashboard.html" class="hover:text-brand-600">Bảng điều khiển</a>
+        <a href="job-listings.html" class="hover:text-brand-600">Tìm việc làm</a>
+        <a href="my-applications.html" class="hover:text-brand-600">Đơn của tôi</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function markAllAsRead() {
+      document.querySelectorAll('.notif-item.unread').forEach(el => {
+        el.classList.remove('unread');
+      });
+      showToast("Đã đánh dấu tất cả thông báo là đã đọc!");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+  </script>
+
+</body>
+</html>

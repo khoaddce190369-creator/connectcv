@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cài Đặt Tài Khoản &amp; Hồ Sơ — ConnectCV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sora: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            },
+            indigo: {
+              500: '#6366f1',
+              600: '#4f46e5',
+            },
+            dark: '#0f172a',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    h1,h2,h3,h4,.font-sora { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+    .settings-tab.active { background-color: #eff6ff; color: #2563eb; font-weight: 600; }
+    .form-input {
+      width: 100%;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.75rem;
+      color: #1e293b;
+      outline: none;
+      transition: all 0.15s;
+    }
+    .form-input:focus {
+      background-color: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- ========== TOP NAVBAR ========== -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-xs" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+          </svg>
+        </div>
+        <span class="font-sora font-bold text-slate-900 text-lg tracking-tight">Connect<span style="color:#2563eb">CV</span></span>
+      </a>
+
+      <!-- Quick Back -->
+      <div class="flex items-center gap-3">
+        <a href="freelancer-dashboard.html" class="text-xs font-semibold text-slate-600 hover:text-brand-600 flex items-center gap-1.5">
+          &larr; Về Bảng Điều Khiển
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== MAIN CONTENT: SETTINGS 2 COLS ========== -->
+  <main class="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 pt-24 pb-12">
+    
+    <div class="mb-6">
+      <h1 class="font-sora font-extrabold text-slate-900 text-2xl">Cài Đặt Tài Khoản</h1>
+      <p class="text-xs text-slate-500 mt-1">Quản lý hồ sơ công khai, cập nhật 2 bản CV song ngữ và thiết lập bảo mật.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+
+      <!-- ================= SIDEBAR TABS (4 Cols) ================= -->
+      <aside class="md:col-span-4 space-y-2">
+        <div class="bg-white rounded-2xl border border-slate-100 p-2 shadow-xs space-y-1 text-xs font-medium">
+          
+          <button onclick="switchTab('profile', this)" class="settings-tab active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-colors">
+            <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+            <span>Hồ Sơ Cá Nhân &amp; Bio</span>
+          </button>
+
+          <button onclick="switchTab('cv', this)" class="settings-tab w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-slate-600 hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+            <span>Quản Lý CV Song Ngữ</span>
+          </button>
+
+          <button onclick="switchTab('security', this)" class="settings-tab w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-slate-600 hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+            <span>Mật Khẩu &amp; Bảo Mật 2FA</span>
+          </button>
+
+          <button onclick="switchTab('bank', this)" class="settings-tab w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-slate-600 hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.5H4.5V21h15z"/></svg>
+            <span>Tài Khoản Ngân Hàng &amp; Rút Tiền</span>
+          </button>
+
+          <button onclick="switchTab('notifications', this)" class="settings-tab w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-slate-600 hover:bg-slate-50 transition-colors">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+            <span>Tùy Chọn Thông Báo</span>
+          </button>
+
+        </div>
+      </aside>
+
+      <!-- ================= MAIN SETTINGS CONTENT (8 Cols) ================= -->
+      <section class="md:col-span-8 space-y-6">
+
+        <!-- TAB 1: Profile Form -->
+        <div id="tab-profile" class="bg-white rounded-3xl border border-slate-100 p-6 shadow-xs space-y-6">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+              <h2 class="font-sora font-bold text-slate-900 text-base">Thông Tin Cá Nhân &amp; Năng Lực</h2>
+              <p class="text-xs text-slate-500">Thông tin này sẽ hiển thị trên trang hồ sơ và gửi cho nhà tuyển dụng.</p>
+            </div>
+            <a href="freelancer-profile.html" class="text-xs font-semibold text-brand-600 hover:underline">Xem trang cá nhân &rarr;</a>
+          </div>
+
+          <!-- Avatar Upload -->
+          <div class="flex items-center gap-4">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&h=160&fit=crop&crop=face" class="w-16 h-16 rounded-2xl object-cover border-2 border-brand-100 shadow-2xs" alt="Avatar" />
+            <div>
+              <button type="button" onclick="showToast('Chọn ảnh mới thành công!')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+                Thay đổi ảnh đại diện
+              </button>
+              <p class="text-[10px] text-slate-400 mt-1">Khuyến nghị ảnh vuông tỉ lệ 1:1, tối thiểu 400x400px (PNG, JPG).</p>
+            </div>
+          </div>
+
+          <form onsubmit="saveSettings(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Họ và tên *</label>
+                <input type="text" value="Nguyễn Minh Tuấn" class="form-input font-medium" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Chức danh nghề nghiệp *</label>
+                <input type="text" value="Senior Product &amp; UI/UX Designer" class="form-input font-medium" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Email liên hệ *</label>
+                <input type="email" value="tuan.nguyen@example.com" class="form-input text-slate-500" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Số điện thoại / Zalo</label>
+                <input type="text" value="+84 912 345 678" class="form-input" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Giới thiệu ngắn (Bio)</label>
+              <textarea rows="3" class="form-input leading-relaxed">4+ năm kinh nghiệm thiết kế giao diện ứng dụng Fintech, SaaS và kiến trúc Design System chuẩn Tokens. Đam mê tối ưu hóa luồng trải nghiệm người dùng và chuyển đổi.</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Mức thù lao mong muốn ($/tháng)</label>
+                <input type="text" value="$1,500 – $2,200" class="form-input" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Trạng thái nhận việc</label>
+                <select class="form-input font-medium">
+                  <option selected>🟢 Sẵn sàng nhận dự án mới &amp; việc làm</option>
+                  <option>🟡 Chỉ nhận dự án bán thời gian (Part-time)</option>
+                  <option>🔴 Đang bận dự án (Tạm ẩn hồ sơ)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex justify-end">
+              <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white shadow-xs hover:opacity-95" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
+                Lưu Thay Đổi
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- TAB 2: Dual CV Management -->
+        <div id="tab-cv" class="hidden bg-white rounded-3xl border border-slate-100 p-6 shadow-xs space-y-5">
+          <div class="pb-3 border-b border-slate-100">
+            <h2 class="font-sora font-bold text-slate-900 text-base">Quản Lý 2 Bản CV Song Ngữ</h2>
+            <p class="text-xs text-slate-500">Mỗi Freelancer bắt buộc tải lên 2 bản CV (Tiếng Anh &amp; Tiếng Việt) để AI tự động ghép nối với các đối tác trong nước và quốc tế.</p>
+          </div>
+
+          <!-- English CV -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🇬🇧</span>
+                <div>
+                  <p class="font-bold text-slate-900 text-xs">Bản CV Tiếng Anh (English CV - ATS Standard)</p>
+                  <p class="text-[10px] text-emerald-600 font-semibold">Điểm ATS hiện tại: 94/100 &middot; Cập nhật hôm qua</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Đang kích hoạt</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <button onclick="showToast('Chọn file PDF CV Tiếng Anh mới')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-brand-600 bg-white border border-brand-200 hover:bg-brand-50">
+                Tải lên bản thay thế
+              </button>
+              <a href="#" class="text-xs text-slate-500 hover:underline">Tải về xem thử (PDF)</a>
+            </div>
+          </div>
+
+          <!-- Vietnamese CV -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🇻🇳</span>
+                <div>
+                  <p class="font-bold text-slate-900 text-xs">Bản CV Tiếng Việt (Vietnamese CV)</p>
+                  <p class="text-[10px] text-slate-500 font-medium">Phiên bản chuẩn dành cho các tập đoàn &amp; doanh nghiệp nội địa</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Đang kích hoạt</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <button onclick="showToast('Chọn file PDF CV Tiếng Việt mới')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-brand-600 bg-white border border-brand-200 hover:bg-brand-50">
+                Tải lên bản thay thế
+              </button>
+              <a href="#" class="text-xs text-slate-500 hover:underline">Tải về xem thử (PDF)</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Security & Password -->
+        <div id="tab-security" class="hidden bg-white rounded-3xl border border-slate-100 p-6 shadow-xs space-y-5">
+          <div class="pb-3 border-b border-slate-100">
+            <h2 class="font-sora font-bold text-slate-900 text-base">Đổi Mật Khẩu &amp; Bảo Mật</h2>
+            <p class="text-xs text-slate-500">Bảo vệ tài khoản và ví tiền thù lao của bạn.</p>
+          </div>
+
+          <form onsubmit="saveSettings(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Mật khẩu hiện tại</label>
+              <input type="password" placeholder="••••••••" class="form-input" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Mật khẩu mới</label>
+                <input type="password" placeholder="••••••••" class="form-input" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Nhập lại mật khẩu mới</label>
+                <input type="password" placeholder="••••••••" class="form-input" />
+              </div>
+            </div>
+            <div class="pt-3 border-t border-slate-100 flex justify-end">
+              <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold text-white shadow-xs" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
+                Cập Nhật Mật Khẩu
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- TAB 4: Bank Account -->
+        <div id="tab-bank" class="hidden bg-white rounded-3xl border border-slate-100 p-6 shadow-xs space-y-5">
+          <div class="pb-3 border-b border-slate-100">
+            <h2 class="font-sora font-bold text-slate-900 text-base">Tài Khoản Ngân Hàng Nhận Tiền Thù Lao</h2>
+            <p class="text-xs text-slate-500">Tiền giải ngân từ các hợp đồng Escrow sẽ được chuyển về tài khoản này.</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+            <div>
+              <p class="font-bold text-slate-900 text-xs">Techcombank (Ngân hàng TMCP Kỹ Thương)</p>
+              <p class="text-xs text-slate-500 font-mono mt-0.5">1903 8842 1999 &middot; NGUYEN MINH TUAN</p>
+            </div>
+            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">Mặc định</span>
+          </div>
+
+          <button onclick="showToast('Chức năng liên kết thêm ngân hàng!')" class="w-full py-2.5 rounded-xl border-2 border-dashed border-slate-200 text-xs font-bold text-brand-600 hover:bg-slate-50 transition-colors">
+            + Thêm Tài Khoản Ngân Hàng Mới
+          </button>
+        </div>
+
+        <!-- TAB 5: Notifications -->
+        <div id="tab-notifications" class="hidden bg-white rounded-3xl border border-slate-100 p-6 shadow-xs space-y-5">
+          <div class="pb-3 border-b border-slate-100">
+            <h2 class="font-sora font-bold text-slate-900 text-base">Cài Đặt Nhận Thông Báo</h2>
+            <p class="text-xs text-slate-500">Tùy chỉnh các thông báo bạn muốn nhận qua Email và Web.</p>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-50 cursor-pointer">
+              <span>Thông báo khi có việc làm mới khớp > 90% với CV</span>
+              <input type="checkbox" checked class="text-brand-600 rounded" />
+            </label>
+            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-50 cursor-pointer">
+              <span>Thông báo khi Doanh nghiệp mời phỏng vấn hoặc gửi tin nhắn</span>
+              <input type="checkbox" checked class="text-brand-600 rounded" />
+            </label>
+            <label class="flex items-center justify-between p-3 rounded-xl bg-slate-50 cursor-pointer">
+              <span>Thông báo tiền ký quỹ Escrow và thanh toán cột mốc</span>
+              <input type="checkbox" checked class="text-brand-600 rounded" />
+            </label>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5">
+    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+    <span id="toastMsg">Thao tác thành công!</span>
+  </div>
+
+  <script>
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.settings-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const tabs = ['profile', 'cv', 'security', 'bank', 'notifications'];
+      tabs.forEach(t => {
+        document.getElementById('tab-' + t).classList.add('hidden');
+      });
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+    }
+
+    function saveSettings(e) {
+      e.preventDefault();
+      showToast("💾 Đã lưu thay đổi cài đặt thành công!");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+  </script>
+
+</body>
+</html>

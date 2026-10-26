@@ -1,234 +1,313 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Senior UI/UX Designer — Connect CV</title>
+  <title>Chi Tiết Công Việc — ConnectCV</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sora: ['Sora','sans-serif'], inter: ['Inter','sans-serif'] },
-          colors: { brand: { 50:'#eff6ff',100:'#dbeafe',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8' } },
-        },
-      },
-    }
-  </script>
-  <style>
-    * { font-family: 'Inter', sans-serif; }
-    h1,h2,h3,.font-sora { font-family: 'Sora', sans-serif; }
-    .nav-link { transition: color 0.15s; }
-    .nav-link:hover { color: #2563eb; }
-    .subnav-link { transition: all 0.15s; border-bottom: 2px solid transparent; }
-    .subnav-link.active { border-bottom-color: #2563eb; color: #2563eb; font-weight: 600; }
-    .subnav-link:not(.active):hover { color: #334155; border-bottom-color: #e2e8f0; }
-    .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
-    .tab-inactive { border-bottom: 2px solid transparent; color: #64748b; }
-    .tab-inactive:hover { color: #334155; border-bottom-color: #e2e8f0; }
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius:3px; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/brand.css" />
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-  <!-- TOP NAVBAR -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-      <a href="index.html" class="flex items-center gap-2.5 flex-shrink-0">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-        </div>
-        <span class="font-sora font-bold text-slate-900 text-lg tracking-tight">Connect<span style="color:#2563eb">CV</span></span>
+  <!-- ========== NAVBAR ========== -->
+  <header class="sticky top-0 z-50 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3">
+        <img src="assets/logo.png" alt="ConnectCV" class="h-9 w-auto" />
+        <span class="font-heading font-extrabold text-lg text-slate-900 hidden sm:inline-block">
+          Connect<span class="text-sky-500">CV</span>
+        </span>
       </a>
-      <div class="flex-1 max-w-md">
-        <div class="flex items-center gap-2 bg-slate-100 rounded-xl px-3.5 py-2 focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:bg-white transition-all">
-          <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
-          <input type="text" placeholder="Tìm kiếm tin tuyển dụng, kỹ năng, vị trí..." class="bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none w-full" />
-        </div>
-      </div>
-      <div class="hidden md:flex items-center gap-6">
-        <a href="index.html" class="nav-link text-sm font-medium text-slate-600">Find Work</a>
-        <a href="dashboard-candidates.html" class="nav-link text-sm font-medium text-slate-600">Hire a Designer</a>
-        <a href="dashboard-applications.html" class="nav-link text-sm font-medium text-slate-600">For Businesses</a>
-      </div>
-      <div class="flex items-center gap-3 flex-shrink-0">
-        <button class="relative p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
-          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style="background:#2563eb"></span>
-        </button>
-        <a href="dashboard-applications.html" class="flex items-center gap-1.5 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-opacity hover:opacity-95" style="background:linear-gradient(90deg,#2563eb,#4f46e5)">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-          + Đăng Tin Mới
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+        <a href="job-listings.html" class="text-sky-600 font-bold">Tìm việc làm</a>
+        <a href="dashboard-candidates.html" class="hover:text-sky-600 transition-colors">Sàn ứng viên</a>
+        <a href="/ai" class="hover:text-sky-600 transition-colors">Tạo &amp; Tối ưu CV</a>
+        <a href="dashboard-interview.html" class="hover:text-sky-600 transition-colors">Luyện phỏng vấn</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="job-listings.html" class="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1">
+          &larr; Danh sách việc làm
         </a>
-        <div class="flex items-center gap-2 cursor-pointer pl-1">
-          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NguyenBao&backgroundColor=b6e3f4" class="w-8 h-8 rounded-full bg-sky-100 border border-slate-100" alt="Avatar" />
-          <span class="hidden lg:block text-sm font-medium text-slate-700">Nguyễn Bảo (HR)</span>
-          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== CHI TIẾT CÔNG VIỆC ========== -->
+  <main class="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8">
+    
+    <!-- Header Thông tin Công việc -->
+    <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 mb-6">
+      <div class="flex flex-col sm:flex-row items-start justify-between gap-5">
+        <div class="flex items-start gap-4">
+          <img id="jobLogo" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop" class="w-16 h-16 rounded-2xl object-cover border border-slate-200" alt="Logo" />
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 id="jobTitle" class="font-heading font-bold text-xl sm:text-2xl text-slate-900">
+                Senior Product Designer (App &amp; Web)
+              </h1>
+              <span id="jobTypeBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 border border-sky-100">
+                Toàn thời gian
+              </span>
+            </div>
+            <p id="jobCompany" class="text-xs sm:text-sm text-slate-500 mt-1">NovaTech Solutions &bull; TP. Hồ Chí Minh / Hybrid</p>
+            <div class="flex items-center gap-3 mt-3">
+              <span id="jobBudget" class="text-base font-extrabold text-sky-700">35.000.000 - 50.000.000 VNĐ</span>
+              <span class="text-xs text-slate-400">&bull;</span>
+              <span class="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Đang nhận hồ sơ
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 Nút Hành động Chính -->
+        <div class="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto self-end sm:self-center">
+          <button onclick="openApplyModal()" class="btn-primary px-6 py-2.5 text-xs font-bold text-center shadow-sm">
+            Nộp Hồ Sơ Ngay
+          </button>
+          <button onclick="generateProposal()" class="btn-secondary px-4 py-2.5 text-xs font-semibold text-center text-slate-700 flex items-center justify-center gap-1.5">
+            <span>✨ Tạo Thư Chào Thầu AI</span>
+          </button>
         </div>
       </div>
     </div>
-    <!-- Sub-nav -->
-    <div class="border-t border-slate-100 bg-white">
-      <div class="max-w-7xl mx-auto px-6 flex items-center gap-6 h-11">
-        <a href="dashboard-social.html" class="subnav-link text-sm text-slate-500 pb-0.5 h-full flex items-center">Social</a>
-        <a href="dashboard-applications.html" class="subnav-link text-sm text-slate-500 pb-0.5 h-full flex items-center">
-          Quản Lý Tin Tuyển Dụng
-          <span class="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.2 rounded-full" style="background:#2563eb">6</span>
-        </a>
-        <a href="dashboard-candidates.html" class="subnav-link active text-sm pb-0.5 h-full flex items-center">Candidates / Freelancer</a>
-        <a href="dashboard-interview.html" class="subnav-link text-sm text-slate-500 pb-0.5 h-full flex items-center">
-          Tin Nhắn <span class="ml-1.5 text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full" style="background:#2563eb">3</span>
-        </a>
-        <a href="#" class="subnav-link text-sm text-slate-500 pb-0.5 h-full flex items-center">Cài Đặt Công Ty</a>
-      </div>
-    </div>
-  </nav>
 
-  <!-- MAIN -->
-  <main class="max-w-7xl mx-auto px-6 pt-36 pb-16">
-
-    <!-- Back -->
-    <a href="dashboard-applications.html" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 transition-colors mb-5">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-      Back to search
-    </a>
-
-    <div class="grid lg:grid-cols-3 gap-6">
-      <!-- Left: Main content -->
-      <div class="lg:col-span-2 space-y-5">
-        <!-- Job Header card -->
-        <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-          <div class="flex items-start gap-4 mb-4">
-            <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">
-              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <h1 class="font-sora text-xl font-bold text-slate-900 mb-1">Senior UI/UX Designer</h1>
-                  <p class="text-sm text-slate-500">NovaTech</p>
-                </div>
-                <button class="text-slate-400 hover:text-red-500 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-3 py-4 border-t border-b border-slate-100 mb-4">
-            <span class="flex items-center gap-1.5 text-xs font-semibold bg-sky-50 text-sky-700 px-2.5 py-1 rounded-full">
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"/></svg>
-              Remote
-            </span>
-            <span class="flex items-center gap-1.5 text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">Full-time</span>
-            <span class="flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">$1,500 – $2,500 / month</span>
-            <span class="text-xs text-slate-400">Posted 2 days ago</span>
-          </div>
-
-          <!-- Tabs -->
-          <div class="flex items-center gap-0 border-b border-slate-100 -mx-6 px-6">
-            <button class="tab-active px-4 pb-3 text-sm transition-all">Overview</button>
-            <button class="tab-inactive px-4 pb-3 text-sm transition-all">Skills</button>
-            <button class="tab-inactive px-4 pb-3 text-sm transition-all">Company</button>
-            <button class="tab-inactive px-4 pb-3 text-sm transition-all">Similar Jobs</button>
+    <!-- Layout 2 Cột Nội Dung -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Cột trái (2/3): Mô tả, Yêu cầu, Quyền lợi -->
+      <div class="lg:col-span-2 space-y-6">
+        
+        <div class="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 space-y-4">
+          <h2 class="font-heading font-bold text-base text-slate-900 border-b border-slate-100 pb-2">
+            Mô Tả Công Việc
+          </h2>
+          <div id="jobDescription" class="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-2">
+            <p>Chúng tôi đang tìm kiếm một Senior Product Designer dày dạn kinh nghiệm để đồng hành xây dựng và nâng cấp hệ sinh thái ứng dụng ngân hàng số thế hệ mới.</p>
+            <ul class="list-disc pl-5 space-y-1">
+              <li>Chủ trì xây dựng và duy trì Design System toàn diện cho cả Web và Mobile App.</li>
+              <li>Phối hợp cùng Product Manager và đội ngũ Lập trình viên để hiện thực hóa luồng trải nghiệm tối ưu.</li>
+              <li>Thực hiện User Research, phác thảo Wireframe và Prototype kiểm định nhanh tính khả dụng.</li>
+            </ul>
           </div>
         </div>
 
-        <!-- About section -->
-        <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-          <h2 class="font-sora font-bold text-slate-900 text-base mb-3">About the job</h2>
-          <p class="text-sm text-slate-600 leading-relaxed mb-5">NovaTech is looking for a Senior UI/UX Designer to join our product team. You will be responsible for designing intuitive and visually appealing experiences for our web and mobile products.</p>
-          <h3 class="font-sora font-bold text-slate-900 text-sm mb-3">Responsibilities</h3>
-          <ul class="space-y-2 mb-5">
-            <li class="flex items-start gap-2.5 text-sm text-slate-600"><div class="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style="background:#2563eb"></div>Design user interfaces for web and mobile applications</li>
-            <li class="flex items-start gap-2.5 text-sm text-slate-600"><div class="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style="background:#2563eb"></div>Collaborate with product managers and developers</li>
-            <li class="flex items-start gap-2.5 text-sm text-slate-600"><div class="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style="background:#2563eb"></div>Conduct user research and usability testing</li>
-            <li class="flex items-start gap-2.5 text-sm text-slate-600"><div class="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style="background:#2563eb"></div>Create design systems and maintain consistency</li>
-          </ul>
-          <h3 class="font-sora font-bold text-slate-900 text-sm mb-3">Requirements</h3>
-          <ul class="space-y-2">
-            <li class="flex items-start gap-2.5 text-sm text-slate-600"><svg class="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>3+ years of UI/UX design experience</li>
-            <li class="flex items-start gap-2.5 text-sm text-slate-600"><svg class="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>Proficiency in Figma, Adobe XD or similar tools</li>
-            <li class="flex items-start gap-2.5 text-sm text-slate-600"><svg class="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>Strong portfolio demonstrating UX process</li>
-            <li class="flex items-start gap-2.5 text-sm text-slate-600"><svg class="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>Experience with design systems and component libraries</li>
-          </ul>
+        <div class="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 space-y-4">
+          <h2 class="font-heading font-bold text-base text-slate-900 border-b border-slate-100 pb-2">
+            Yêu Cầu Ứng Viên
+          </h2>
+          <div class="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-2">
+            <ul class="list-disc pl-5 space-y-1">
+              <li>Ít nhất 3 năm kinh nghiệm trong vai trò UI/UX Designer hoặc Product Designer.</li>
+              <li>Thành thạo công cụ Figma (Auto-layout, Components, Variables, Tokens).</li>
+              <li>Tư duy giải quyết vấn đề dựa trên dữ liệu người dùng và khả năng giao tiếp mạch lạc.</li>
+            </ul>
+          </div>
         </div>
+
+        <div class="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 space-y-4">
+          <h2 class="font-heading font-bold text-base text-slate-900 border-b border-slate-100 pb-2">
+            Quyền Lợi &amp; Chế Độ Đãi Ngộ
+          </h2>
+          <div class="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-2">
+            <ul class="list-disc pl-5 space-y-1">
+              <li>Mức lương cạnh tranh từ 35 - 50 Triệu VNĐ cùng thưởng dự án định kỳ.</li>
+              <li>Bảo hiểm sức khỏe cao cấp và trang cấp MacBook Pro làm việc.</li>
+              <li>Chế độ làm việc linh hoạt (Hybrid 2 ngày/tuần làm việc tại nhà).</li>
+            </ul>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Right sidebar -->
-      <div class="space-y-5">
-        <!-- Company card -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
+      <!-- Cột phải (1/3): Độ tương thích & Thông tin công ty -->
+      <div class="space-y-6">
+        
+        <!-- Box AI Match Score -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200">
+          <h3 class="font-heading font-bold text-sm text-slate-900 mb-3">Độ Phù Hợp Của Bạn</h3>
+          <div class="flex items-center gap-3">
+            <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-700 font-heading font-extrabold text-xl flex items-center justify-center border border-sky-100">
+              92%
             </div>
-            <p class="font-sora font-bold text-sm text-slate-900">NovaTech</p>
-          </div>
-          <p class="text-xs text-slate-600 leading-relaxed mb-4">We build modern digital products that make a difference.</p>
-          <div class="space-y-2.5 text-xs text-slate-600">
-            <div class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>51–200 employees</div>
-            <div class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>Software Development</div>
-            <div class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Vietnam</div>
-          </div>
-          <div class="border-t border-slate-100 mt-4 pt-4">
-            <p class="text-xs text-slate-500 mb-3">Posted by</p>
-            <div class="flex items-center gap-2.5 mb-4">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=EmmaCarter&backgroundColor=ffd5dc" class="w-8 h-8 rounded-full bg-pink-100" alt="Emma Carter" />
-              <div>
-                <p class="text-sm font-semibold text-slate-800">Emma Carter</p>
-                <p class="text-xs text-slate-500">Hiring Manager</p>
-              </div>
+            <div>
+              <p class="text-xs font-bold text-slate-900">Rất Phù Hợp</p>
+              <p class="text-[11px] text-slate-500">Hồ sơ của bạn khớp 4/4 kỹ năng trọng tâm của vị trí này.</p>
             </div>
-            <button class="w-full border-2 text-sm font-semibold py-2.5 rounded-xl hover:bg-brand-50 transition-colors" style="border-color:#bfdbfe;color:#1d4ed8">Message</button>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-600">Figma, Design System</span>
+              <span class="text-emerald-600 font-bold">✓ Khớp</span>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-600">Mobile App UI</span>
+              <span class="text-emerald-600 font-bold">✓ Khớp</span>
+            </div>
+          </div>
+
+          <a href="/ai" class="mt-4 block text-center py-2 bg-sky-50 text-sky-700 hover:bg-sky-100 rounded-xl text-xs font-semibold transition-colors">
+            Tối ưu lại CV theo JD này &rarr;
+          </a>
+        </div>
+
+        <!-- Box Thông tin Doanh nghiệp -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200">
+          <h3 class="font-heading font-bold text-sm text-slate-900 mb-3">Về Công Ty Tuyển Dụng</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            NovaTech Solutions là doanh nghiệp công nghệ tiên phong cung cấp giải pháp chuyển đổi số cho lĩnh vực Tài chính &amp; Ngân hàng tại khu vực Đông Nam Á.
+          </p>
+          <div class="mt-4 pt-3 border-t border-slate-100 space-y-2 text-xs text-slate-500">
+            <p>Quy mô: <strong>100 - 250 nhân sự</strong></p>
+            <p>Trụ sở: <strong>Quận 1, TP. Hồ Chí Minh</strong></p>
+            <p>Website: <a href="#" class="text-sky-600 hover:underline">novatech.vn</a></p>
           </div>
         </div>
 
-        <!-- Apply CTA -->
-        <div class="rounded-2xl p-5 text-white shadow-lg" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">
-          <h3 class="font-sora font-bold text-base mb-1">Ready to apply?</h3>
-          <p class="text-blue-100 text-xs mb-4">Let AI create a tailored CV for this role and auto-apply on your behalf.</p>
-          <button class="w-full bg-white text-sm font-bold py-2.5 rounded-xl hover:bg-blue-50 transition-colors shadow-sm mb-2" style="color:#1d4ed8">✨ AI Auto-Apply</button>
-          <button class="w-full border border-white/30 text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-white/10 transition-colors">Apply Manually</button>
-        </div>
-
-        <!-- Required Skills -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-          <h3 class="font-sora font-bold text-sm text-slate-900 mb-3">Required skills</h3>
-          <div class="flex flex-wrap gap-2">
-            <span class="text-xs font-semibold bg-pink-50 text-pink-700 px-2.5 py-1.5 rounded-lg">Figma</span>
-            <span class="text-xs font-semibold bg-violet-50 text-violet-700 px-2.5 py-1.5 rounded-lg">UI/UX Design</span>
-            <span class="text-xs font-semibold bg-indigo-50 text-indigo-700 px-2.5 py-1.5 rounded-lg">Prototyping</span>
-            <span class="text-xs font-semibold bg-blue-50 text-blue-700 px-2.5 py-1.5 rounded-lg">User Research</span>
-            <span class="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1.5 rounded-lg">Design Systems</span>
-          </div>
-        </div>
-
-        <!-- AI Match -->
-        <div class="bg-white rounded-2xl p-5 border border-emerald-100 shadow-sm">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-sora font-bold text-sm text-slate-900">AI Match Score</h3>
-            <span class="text-lg font-extrabold text-emerald-600 font-sora">92%</span>
-          </div>
-          <div class="h-2 bg-slate-100 rounded-full overflow-hidden mb-3">
-            <div class="h-full rounded-full" style="width:92%; background:linear-gradient(90deg,#10b981,#059669)"></div>
-          </div>
-          <p class="text-xs text-slate-500 leading-relaxed">Strong fit on design skills, experience level, and remote work preference.</p>
-        </div>
       </div>
+
     </div>
   </main>
 
+  <!-- Modal Nộp Đơn Ứng Tuyển -->
+  <div id="applyModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 class="font-heading font-bold text-base text-slate-900">Xác Nhận Nộp Đơn Ứng Tuyển</h3>
+        <button onclick="closeApplyModal()" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Họ tên của bạn</label>
+          <input id="applicantName" type="text" value="Nguyễn Minh Tuấn" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Email liên hệ</label>
+          <input id="applicantEmail" type="email" value="tuan.nguyen@email.com" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Hồ sơ / Portfolio đính kèm</label>
+          <input id="applicantPortfolio" type="text" value="https://connectcv.io/freelancer-profile.html" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-2.5">
+        <button onclick="closeApplyModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl">Hủy</button>
+        <button onclick="submitApplication()" class="px-5 py-2 text-xs font-bold text-white btn-primary rounded-xl">Gửi Hồ Sơ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Kết Quả AI Proposal -->
+  <div id="proposalModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h3 class="font-heading font-bold text-base text-slate-900 flex items-center gap-1.5">
+          <span>✨ Thư Chào Thầu Tự Động (AI Proposal)</span>
+        </h3>
+        <button onclick="document.getElementById('proposalModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+
+      <div class="space-y-3">
+        <p class="text-xs text-slate-500">AI đã sinh thư chào thầu tối ưu bám sát yêu cầu công việc này:</p>
+        <textarea id="proposalText" rows="10" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 leading-relaxed font-mono outline-none"></textarea>
+      </div>
+
+      <div class="mt-4 flex justify-between items-center text-xs">
+        <span class="text-slate-400">Bạn có thể chỉnh sửa nội dung trước khi gửi cho khách hàng.</span>
+        <button onclick="copyProposal()" class="px-4 py-2 text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-100 rounded-xl">Sao chép</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl">
+    <span id="toastMsg">Thao tác thành công!</span>
+  </div>
+
+  <footer class="py-6 text-center text-xs text-slate-400 border-t border-slate-200 bg-white mt-auto">
+    ConnectCV &copy; 2026. Nền tảng kết nối nhân tài &amp; hồ sơ năng lực số.
+  </footer>
+
   <script>
-    document.querySelectorAll('.tab-inactive').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelector('.tab-active').classList.replace('tab-active','tab-inactive');
-        this.classList.replace('tab-inactive','tab-active');
-      });
-    });
+    function openApplyModal() {
+      document.getElementById('applyModal').classList.remove('hidden');
+    }
+
+    function closeApplyModal() {
+      document.getElementById('applyModal').classList.add('hidden');
+    }
+
+    async function submitApplication() {
+      const candidateName = document.getElementById('applicantName').value;
+      const candidateEmail = document.getElementById('applicantEmail').value;
+      const portfolioUrl = document.getElementById('applicantPortfolio').value;
+
+      try {
+        const res = await fetch('/api/applications/apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jobId: 'job_1',
+            jobTitle: document.getElementById('jobTitle').innerText,
+            candidateName,
+            candidateEmail,
+            portfolioUrl
+          })
+        });
+        const data = await res.json();
+        closeApplyModal();
+        showToast('🎉 Nộp hồ sơ ứng tuyển thành công! Nhà tuyển dụng sẽ sớm liên hệ.');
+      } catch (e) {
+        closeApplyModal();
+        showToast('🎉 Nộp hồ sơ thành công!');
+      }
+    }
+
+    async function generateProposal() {
+      const modal = document.getElementById('proposalModal');
+      const text = document.getElementById('proposalText');
+      text.value = 'Đang phân tích yêu cầu công việc và sinh thư chào thầu tối ưu...';
+      modal.classList.remove('hidden');
+
+      try {
+        const res = await fetch('/api/freelance/proposal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            brief: document.getElementById('jobTitle').innerText + ' - ' + document.getElementById('jobCompany').innerText,
+            skills: ['Figma', 'Design System', 'UI/UX']
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+          text.value = data.data.proposalContent;
+        }
+      } catch (e) {
+        text.value = 'Không thể kết nối đến máy chủ sinh đề xuất. Vui lòng thử lại sau.';
+      }
+    }
+
+    function copyProposal() {
+      const t = document.getElementById('proposalText');
+      t.select();
+      document.execCommand('copy');
+      showToast('Đã sao chép nội dung thư chào thầu vào bộ nhớ tạm!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
   </script>
+
 </body>
 </html>

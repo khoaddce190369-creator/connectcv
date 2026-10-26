@@ -8,7 +8,20 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
-  },
-  "devDependencies": {}
+    "@google/generative-ai": "^0.24.1",
+    "adm-zip": "^0.6.1",
+    "compression": "^1.8.2",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "joi": "^18.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "msedge-tts": "^2.1.1",
+    "multer": "^2.5.0",
+    "pdf-lib": "^1.17.1",
+    "playwright-core": "^1.49.1",
+    "uuid": "^14.0.3"
+  }
 }
