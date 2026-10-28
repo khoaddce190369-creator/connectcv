@@ -12,32 +12,7 @@ if (!fs.existsSync(DATA_DIR)) {
 
 // Dữ liệu ban đầu mặc định
 const initialData = {
-  users: [
-    {
-      id: 'usr_freelancer_demo',
-      username: 'Nguyễn Minh Tuấn',
-      email: 'tuan.nguyen@email.com',
-      password_hash: null,
-      isPro: false,
-      role: 'Student', // Job Seeker / Freelancer
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-      title: 'Senior UI/UX Designer',
-      aiCredits: 15,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: 'usr_hr_demo',
-      username: 'Trần Thị Mai',
-      email: 'careers@novatech.vn',
-      password_hash: null,
-      isPro: true,
-      role: 'HR', // Recruiter / Enterprise
-      company: 'NovaTech Solutions',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face',
-      aiCredits: 50,
-      createdAt: new Date().toISOString()
-    }
-  ],
+  users: [],
   jobs: [
     {
       id: 'job_1',

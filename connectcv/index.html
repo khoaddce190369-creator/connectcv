@@ -54,37 +54,36 @@
         </a>
 
         <!-- Các Tab Điều Hướng Chính Dạng Upwork Nav Links -->
-        <nav class="hidden md:flex items-center space-x-1 text-xs font-semibold text-slate-600">
-          <button id="nav-jobs" onclick="switchTab('jobs')" class="px-4 py-2 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 transition-all">
-            Tìm Việc Làm
+        <nav class="hidden md:flex items-center space-x-1 text-xs font-semibold text-slate-600 whitespace-nowrap">
+          <button id="nav-jobs" onclick="switchTab('jobs')" class="whitespace-nowrap px-3 py-1.5 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 transition-all">
+            Tìm Việc
           </button>
-          <button id="nav-portfolio" onclick="switchTab('portfolio')" class="px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
-            Portfolio Dự Án
+          <button id="nav-portfolio" onclick="switchTab('portfolio')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+            Portfolio
           </button>
-          <button id="nav-candidates" onclick="switchTab('candidates')" class="px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
-            Sàn Ứng Viên
+          <button id="nav-candidates" onclick="switchTab('candidates')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+            Ứng Viên
           </button>
-          <button id="nav-cv" onclick="switchTab('cv')" class="px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
-            Tạo CV Chuẩn ATS
+          <button id="nav-cv" onclick="switchTab('cv')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+            Tạo CV
           </button>
-          <button id="nav-interview" onclick="switchTab('interview')" class="px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
-            Luyện Phỏng Vấn AI
+          <button id="nav-interview" onclick="switchTab('interview')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+            Phỏng Vấn
           </button>
-          <button id="nav-wallet" onclick="switchTab('wallet')" class="px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
-            Ví &amp; Nâng Cấp Pro
+          <button id="nav-wallet" onclick="switchTab('wallet')" class="whitespace-nowrap px-3 py-1.5 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+            Gói Pro
           </button>
         </nav>
       </div>
 
       <!-- Góc Phải: Nút Đăng Tin Tuyển Dụng & Tài Khoản -->
-      <div class="flex items-center gap-3">
-        <button id="btnNavPostJob" onclick="openPostJobModal()" class="btn-primary text-xs font-bold px-4 py-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      <div class="flex items-center gap-2 whitespace-nowrap">
+        <button id="btnNavPostJob" onclick="openPostJobModal()" class="btn-primary text-xs font-bold px-3 py-1.5 whitespace-nowrap">
           <span>Đăng Tin Tuyển Dụng</span>
         </button>
 
-        <div id="userAuthSection" class="flex items-center gap-2 text-xs">
-          <button onclick="toggleAuthModal()" id="btnUserAccount" class="btn-secondary text-xs px-4 py-2 font-bold">
+        <div id="userAuthSection" class="flex items-center gap-2 text-xs whitespace-nowrap">
+          <button onclick="toggleAuthModal()" id="btnUserAccount" class="btn-secondary text-xs px-3 py-1.5 font-bold whitespace-nowrap">
             Đăng Nhập
           </button>
         </div>
@@ -1132,93 +1131,130 @@
   </div>
 
   <!-- ==========================================================================
-       MODAL 6: ĐĂNG NHẬP / ĐĂNG KÝ (GOOGLE OAUTH2 & JWT WORKFLOW)
+       MODAL 6: ĐĂNG NHẬP / ĐĂNG KÝ (KHÔNG ICON, CHỌN ROLE TRƯỚC KHI ĐĂNG KÝ)
        ========================================================================== -->
   <div id="authModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full p-6 sm:p-7 space-y-5 max-h-[90vh] overflow-y-auto modal-animate">
+    <div class="bg-white rounded-2xl border border-slate-300 shadow-xl max-w-md w-full p-6 sm:p-7 space-y-4 max-h-[90vh] overflow-y-auto modal-animate">
       
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
         <div>
-          <h3 id="spaModalAuthTitle" class="font-heading font-extrabold text-base text-slate-900">Đăng Nhập ConnectCV</h3>
-          <p class="text-[11px] text-slate-500">Đồng bộ hồ sơ và phân quyền đúng vai trò</p>
+          <h3 id="spaModalAuthTitle" class="font-heading font-extrabold text-base text-slate-900">Đăng Nhập Tài Khoản</h3>
+          <p id="spaModalAuthSubtitle" class="text-xs text-slate-500">Hệ thống kết nối nhân tài và phát triển sự nghiệp</p>
         </div>
-        <button onclick="toggleAuthModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1">&times;</button>
+        <button onclick="toggleAuthModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold leading-none p-1">&times;</button>
       </div>
 
       <!-- Tab Chuyển Đổi: Đăng Nhập / Đăng Ký -->
-      <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-full gap-1 text-xs font-bold">
-        <button type="button" onclick="setSpaAuthMode('login')" id="spaTabLogin" class="py-2 px-3 rounded-full transition-all bg-white text-slate-900 shadow-xs">
+      <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-lg gap-1 text-xs font-bold">
+        <button type="button" onclick="setSpaAuthMode('login')" id="spaTabLogin" class="py-2 px-3 rounded-md transition-all bg-white text-slate-900 shadow-xs">
           Đăng Nhập
         </button>
-        <button type="button" onclick="setSpaAuthMode('register')" id="spaTabRegister" class="py-2 px-3 rounded-full transition-all text-slate-500 hover:text-slate-900">
+        <button type="button" onclick="setSpaAuthMode('register')" id="spaTabRegister" class="py-2 px-3 rounded-md transition-all text-slate-600 hover:text-slate-900">
           Đăng Ký
         </button>
       </div>
 
-      <!-- Chọn Vai Trò (Role) -->
-      <div class="space-y-1.5">
-        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600">Chọn vai trò của bạn:</label>
-        <div class="grid grid-cols-2 gap-2 text-xs font-bold">
-          <button type="button" onclick="setSpaAuthRole('Student')" id="spaRoleStudent" class="py-2.5 px-2 rounded-xl border-2 border-[#0284c7] bg-sky-50 text-[#0284c7] flex items-center justify-center gap-1.5 transition-all">
-            <span>👤</span>
-            <span>Ứng Viên / Freelancer</span>
-          </button>
-          <button type="button" onclick="setSpaAuthRole('HR')" id="spaRoleHR" class="py-2.5 px-2 rounded-xl border-2 border-slate-200 bg-white text-slate-600 hover:border-slate-300 flex items-center justify-center gap-1.5 transition-all">
-            <span>🏢</span>
-            <span>Nhà Tuyển Dụng</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Google OAuth Nhanh -->
-      <div class="space-y-2">
-        <button onclick="triggerGoogleSignIn()" class="w-full py-2.5 px-4 rounded-full border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 flex items-center justify-center gap-2.5 transition-all shadow-xs">
-          <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span id="spaGoogleBtnText">Tiếp tục với Google OAuth2</span>
+      <!-- VIEW 1: ĐĂNG NHẬP -->
+      <div id="spaLoginSection" class="space-y-4">
+        <!-- Nút Đăng Nhập Google Thực Tế -->
+        <button type="button" onclick="promptGoogleSignIn()" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
+          <span class="font-bold text-sky-700">Google</span>
+          <span>Đăng nhập nhanh với Google</span>
         </button>
 
         <div class="flex items-center gap-2">
           <div class="flex-1 h-px bg-slate-200"></div>
-          <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">hoặc dùng Email</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">hoặc dùng Email</span>
           <div class="flex-1 h-px bg-slate-200"></div>
         </div>
+
+        <form onsubmit="handleSpaLoginSubmit(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+            <input id="spaLoginEmail" type="email" required class="input-upwork w-full text-xs" placeholder="name@email.com" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu</label>
+            <input id="spaLoginPassword" type="password" required class="input-upwork w-full text-xs" placeholder="Nhập mật khẩu" />
+          </div>
+          <button id="spaBtnLoginSubmit" type="submit" class="w-full btn-navy text-xs font-bold py-2.5 uppercase tracking-wider">
+            Đăng Nhập
+          </button>
+        </form>
       </div>
 
-      <!-- Form Đăng Nhập / Đăng Ký -->
-      <form onsubmit="handleSpaAuthSubmit(event)" class="space-y-3">
-        <div id="spaUsernameWrapper" class="hidden">
-          <label class="block text-[11px] font-semibold text-slate-700 mb-1">Họ và tên</label>
-          <input id="spaUsernameInput" type="text" class="input-upwork w-full text-xs" placeholder="Nguyễn Văn An" />
+      <!-- VIEW 2: ĐĂNG KÝ (BƯỚC 1 - CHỌN ROLE TRƯỚC) -->
+      <div id="spaRegisterStep1" class="hidden space-y-4">
+        <div class="text-left">
+          <span class="text-[11px] font-bold text-sky-700 uppercase tracking-wider">Bước 1 trên 2</span>
+          <h4 class="font-heading font-bold text-sm text-slate-900 mt-0.5">Chọn vai trò của bạn</h4>
+          <p class="text-xs text-slate-500">Vui lòng xác định vai trò trước khi tiếp tục đăng ký:</p>
         </div>
 
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-1">Email</label>
-          <input id="spaEmailInput" type="email" required class="input-upwork w-full text-xs" value="tuan.nguyen@email.com" placeholder="name@email.com" />
+        <div class="space-y-2.5">
+          <div onclick="selectSpaRegisterRole('Student')" id="spaRoleCardStudent" class="p-3.5 rounded-xl border-2 border-sky-600 bg-sky-50 cursor-pointer transition-all">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs text-sky-900">Ứng Viên / Freelancer</span>
+              <span id="spaRoleIndicatorStudent" class="text-xs font-bold text-sky-700">Đang chọn</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Tìm việc làm, làm dự án freelance, tối ưu CV chuẩn ATS, luyện phỏng vấn AI và tạo portfolio.</p>
+          </div>
+
+          <div onclick="selectSpaRegisterRole('HR')" id="spaRoleCardHR" class="p-3.5 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition-all">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs text-slate-900">Nhà Tuyển Dụng / Doanh Nghiệp</span>
+              <span id="spaRoleIndicatorHR" class="text-xs font-bold text-slate-400 hidden">Đang chọn</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Đăng bài tuyển dụng, tìm kiếm chuyên gia, lọc hồ sơ ứng viên và quản lý phỏng vấn.</p>
+          </div>
         </div>
 
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-1">Mật khẩu</label>
-          <input id="spaPasswordInput" type="password" required class="input-upwork w-full text-xs" value="12345678" />
+        <button type="button" onclick="goToSpaRegisterStep2()" class="w-full btn-navy text-xs font-bold py-2.5 uppercase tracking-wider">
+          Tiếp Tục Tạo Tài Khoản
+        </button>
+      </div>
+
+      <!-- VIEW 3: ĐĂNG KÝ (BƯỚC 2 - NHẬP THÔNG TIN HOẶC GOOGLE) -->
+      <div id="spaRegisterStep2" class="hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-[11px] font-bold text-sky-700 uppercase tracking-wider">Bước 2 trên 2</span>
+            <h4 id="spaRegStep2RoleTitle" class="font-heading font-bold text-sm text-slate-900 mt-0.5">Đăng ký: Ứng Viên / Freelancer</h4>
+          </div>
+          <button type="button" onclick="goToSpaRegisterStep1()" class="text-xs text-sky-700 hover:underline font-semibold">
+            Đổi vai trò
+          </button>
         </div>
 
-        <button id="spaAuthSubmitBtn" type="submit" class="w-full btn-navy text-xs font-bold py-2.5 uppercase tracking-wider shadow-xs">
-          Đăng Nhập
+        <!-- Google OAuth Đăng ký -->
+        <button type="button" onclick="promptGoogleSignIn()" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
+          <span class="font-bold text-sky-700">Google</span>
+          <span id="spaRegisterGoogleBtnText">Đăng ký nhanh với Google</span>
         </button>
-      </form>
 
-      <!-- 1-Click Fast Role Demo -->
-      <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
-        <button type="button" onclick="quickDemoAuth('Student')" class="text-sky-700 font-bold hover:underline">
-          👤 Vào vai Ứng Viên demo
-        </button>
-        <button type="button" onclick="quickDemoAuth('HR')" class="text-amber-700 font-bold hover:underline">
-          🏢 Vào vai Tuyển Dụng demo
-        </button>
+        <div class="flex items-center gap-2">
+          <div class="flex-1 h-px bg-slate-200"></div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">hoặc điền thông tin</span>
+          <div class="flex-1 h-px bg-slate-200"></div>
+        </div>
+
+        <form onsubmit="handleSpaRegisterSubmit(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên</label>
+            <input id="spaRegisterUsername" type="text" required class="input-upwork w-full text-xs" placeholder="Nguyễn Văn An" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+            <input id="spaRegisterEmail" type="email" required class="input-upwork w-full text-xs" placeholder="name@email.com" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu</label>
+            <input id="spaRegisterPassword" type="password" required class="input-upwork w-full text-xs" placeholder="Tối thiểu 6 ký tự" />
+          </div>
+          <button id="spaBtnRegisterSubmit" type="submit" class="w-full btn-navy text-xs font-bold py-2.5 uppercase tracking-wider">
+            Tạo Tài Khoản
+          </button>
+        </form>
       </div>
 
     </div>
@@ -1496,7 +1532,7 @@
         if (el) el.classList.add('hidden');
         const navBtn = document.getElementById(`nav-${v}`);
         if (navBtn) {
-          navBtn.className = 'px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all';
+          navBtn.className = 'whitespace-nowrap px-3 py-1.5 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all';
         }
       });
 
@@ -1511,7 +1547,7 @@
 
       const activeNav = document.getElementById(`nav-${tabName}`);
       if (activeNav) {
-        activeNav.className = 'px-4 py-2 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 transition-all';
+        activeNav.className = 'whitespace-nowrap px-3 py-1.5 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 transition-all';
       }
 
       // Xử lý nạp dữ liệu khi vào từng tab
@@ -2737,7 +2773,8 @@
 
     // --- 7. LOGIC AUTHENTICATION & ROLE-BASED ACCESS CONTROL (RBAC) ---
     let spaAuthMode = 'login';
-    let spaAuthRole = 'Student';
+    let spaRegisterRole = 'Student'; // 'Student' | 'HR'
+    let spaRegStep = 1;
 
     function toggleAuthModal() {
       document.getElementById('authModal').classList.toggle('hidden');
@@ -2748,64 +2785,95 @@
       const tabLogin = document.getElementById('spaTabLogin');
       const tabRegister = document.getElementById('spaTabRegister');
       const title = document.getElementById('spaModalAuthTitle');
-      const submitBtn = document.getElementById('spaAuthSubmitBtn');
-      const userWrapper = document.getElementById('spaUsernameWrapper');
+      const subtitle = document.getElementById('spaModalAuthSubtitle');
+      const loginSection = document.getElementById('spaLoginSection');
+      const regStep1 = document.getElementById('spaRegisterStep1');
+      const regStep2 = document.getElementById('spaRegisterStep2');
 
       if (mode === 'login') {
-        tabLogin.className = 'py-2 px-3 rounded-full transition-all bg-white text-slate-900 shadow-xs';
-        tabRegister.className = 'py-2 px-3 rounded-full transition-all text-slate-500 hover:text-slate-900';
-        title.innerText = 'Đăng Nhập ConnectCV';
-        submitBtn.innerText = 'Đăng Nhập';
-        userWrapper.classList.add('hidden');
+        tabLogin.className = 'py-2 px-3 rounded-md transition-all bg-white text-slate-900 shadow-xs';
+        tabRegister.className = 'py-2 px-3 rounded-md transition-all text-slate-600 hover:text-slate-900';
+        title.innerText = 'Đăng Nhập Tài Khoản';
+        subtitle.innerText = 'Hệ thống kết nối nhân tài và phát triển sự nghiệp';
+        loginSection.classList.remove('hidden');
+        regStep1.classList.add('hidden');
+        regStep2.classList.add('hidden');
       } else {
-        tabRegister.className = 'py-2 px-3 rounded-full transition-all bg-white text-slate-900 shadow-xs';
-        tabLogin.className = 'py-2 px-3 rounded-full transition-all text-slate-500 hover:text-slate-900';
-        title.innerText = 'Đăng Ký Tài Khoản';
-        submitBtn.innerText = 'Đăng Ký';
-        userWrapper.classList.remove('hidden');
+        tabRegister.className = 'py-2 px-3 rounded-md transition-all bg-white text-slate-900 shadow-xs';
+        tabLogin.className = 'py-2 px-3 rounded-md transition-all text-slate-600 hover:text-slate-900';
+        title.innerText = 'Đăng Ký Tài Khoản Mới';
+        subtitle.innerText = 'Vui lòng chọn vai trò trước khi khởi tạo tài khoản';
+        loginSection.classList.add('hidden');
+        spaRegStep = 1;
+        regStep1.classList.remove('hidden');
+        regStep2.classList.add('hidden');
+        selectSpaRegisterRole(spaRegisterRole);
       }
     }
 
-    function setSpaAuthRole(role) {
-      spaAuthRole = role;
-      const btnStudent = document.getElementById('spaRoleStudent');
-      const btnHR = document.getElementById('spaRoleHR');
-      const emailInput = document.getElementById('spaEmailInput');
+    function selectSpaRegisterRole(role) {
+      spaRegisterRole = role;
+      const cardStudent = document.getElementById('spaRoleCardStudent');
+      const cardHR = document.getElementById('spaRoleCardHR');
+      const indStudent = document.getElementById('spaRoleIndicatorStudent');
+      const indHR = document.getElementById('spaRoleIndicatorHR');
 
       if (role === 'Student') {
-        btnStudent.className = 'py-2.5 px-2 rounded-xl border-2 border-[#0284c7] bg-sky-50 text-[#0284c7] flex items-center justify-center gap-1.5 transition-all';
-        btnHR.className = 'py-2.5 px-2 rounded-xl border-2 border-slate-200 bg-white text-slate-600 hover:border-slate-300 flex items-center justify-center gap-1.5 transition-all';
-        if (emailInput.value.includes('novatech')) emailInput.value = 'tuan.nguyen@email.com';
+        cardStudent.className = 'p-3.5 rounded-xl border-2 border-sky-600 bg-sky-50 cursor-pointer transition-all';
+        cardHR.className = 'p-3.5 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition-all';
+        indStudent.classList.remove('hidden');
+        indHR.classList.add('hidden');
       } else {
-        btnHR.className = 'py-2.5 px-2 rounded-xl border-2 border-[#0284c7] bg-sky-50 text-[#0284c7] flex items-center justify-center gap-1.5 transition-all';
-        btnStudent.className = 'py-2.5 px-2 rounded-xl border-2 border-slate-200 bg-white text-slate-600 hover:border-slate-300 flex items-center justify-center gap-1.5 transition-all';
-        if (emailInput.value.includes('tuan.nguyen')) emailInput.value = 'careers@novatech.vn';
+        cardHR.className = 'p-3.5 rounded-xl border-2 border-sky-600 bg-sky-50 cursor-pointer transition-all';
+        cardStudent.className = 'p-3.5 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition-all';
+        indHR.classList.remove('hidden');
+        indStudent.classList.add('hidden');
       }
     }
 
-    async function handleSpaAuthSubmit(e) {
+    function goToSpaRegisterStep2() {
+      spaRegStep = 2;
+      document.getElementById('spaRegisterStep1').classList.add('hidden');
+      document.getElementById('spaRegisterStep2').classList.remove('hidden');
+      
+      const roleTitle = document.getElementById('spaRegStep2RoleTitle');
+      const googleBtnText = document.getElementById('spaRegisterGoogleBtnText');
+      if (spaRegisterRole === 'HR') {
+        roleTitle.innerText = 'Đăng ký: Nhà Tuyển Dụng / Doanh Nghiệp';
+        googleBtnText.innerText = 'Đăng ký bằng Google (Doanh nghiệp)';
+      } else {
+        roleTitle.innerText = 'Đăng ký: Ứng Viên / Freelancer';
+        googleBtnText.innerText = 'Đăng ký bằng Google (Ứng viên)';
+      }
+    }
+
+    function goToSpaRegisterStep1() {
+      spaRegStep = 1;
+      document.getElementById('spaRegisterStep2').classList.add('hidden');
+      document.getElementById('spaRegisterStep1').classList.remove('hidden');
+    }
+
+    async function handleSpaLoginSubmit(e) {
       e.preventDefault();
-      const email = document.getElementById('spaEmailInput').value.trim();
-      const password = document.getElementById('spaPasswordInput').value.trim();
-      const username = document.getElementById('spaUsernameInput')?.value?.trim();
-      const btn = document.getElementById('spaAuthSubmitBtn');
+      const email = document.getElementById('spaLoginEmail').value.trim();
+      const password = document.getElementById('spaLoginPassword').value.trim();
+      const btn = document.getElementById('spaBtnLoginSubmit');
       const origText = btn.innerText;
 
-      btn.innerText = 'Đang xử lý...';
+      if (!email || !password) {
+        alert('Vui lòng điền đầy đủ Email và Mật khẩu.');
+        return;
+      }
+
+      btn.innerText = 'Đang đăng nhập...';
       btn.disabled = true;
 
       try {
-        const endpoint = spaAuthMode === 'login' ? '/api/auth/login' : '/api/auth/register';
-        const payload = spaAuthMode === 'login'
-          ? { email, password, role: spaAuthRole }
-          : { username, email, password, role: spaAuthRole };
-
-        const res = await fetch(endpoint, {
+        const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ email, password })
         });
-
         const data = await res.json();
         if (data.success && data.jwtToken) {
           currentUser = data.user;
@@ -2813,28 +2881,43 @@
           localStorage.setItem('connectcv_user', JSON.stringify(data.user));
           renderUserAuth();
           toggleAuthModal();
-          showToast(spaAuthMode === 'login' ? 'Đăng nhập thành công!' : 'Đăng ký tài khoản thành công!');
+          showToast('Đăng nhập thành công!');
         } else {
-          alert(data.message || 'Xác thực không thành công.');
+          alert(data.message || 'Email hoặc mật khẩu không chính xác.');
         }
       } catch (err) {
-        alert('Lỗi kết nối máy chủ xác thực.');
+        alert('Lỗi kết nối máy chủ.');
       } finally {
         btn.innerText = origText;
         btn.disabled = false;
       }
     }
 
-    async function triggerGoogleSignIn() {
+    async function handleSpaRegisterSubmit(e) {
+      e.preventDefault();
+      const username = document.getElementById('spaRegisterUsername').value.trim();
+      const email = document.getElementById('spaRegisterEmail').value.trim();
+      const password = document.getElementById('spaRegisterPassword').value.trim();
+      const btn = document.getElementById('spaBtnRegisterSubmit');
+      const origText = btn.innerText;
+
+      if (!username || !email || !password) {
+        alert('Vui lòng điền đầy đủ thông tin đăng ký.');
+        return;
+      }
+
+      btn.innerText = 'Đang khởi tạo tài khoản...';
+      btn.disabled = true;
+
       try {
-        const res = await fetch('/api/auth/google', {
+        const res = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            googleToken: 'token_google_' + Date.now(),
-            email: spaAuthRole === 'HR' ? 'hr.google@novatech.vn' : 'ungvien.google@connectcv.io',
-            name: spaAuthRole === 'HR' ? 'Trần Mai HR' : 'Nguyễn Minh Tuấn',
-            role: spaAuthRole
+            username,
+            email,
+            password,
+            role: spaRegisterRole
           })
         });
         const data = await res.json();
@@ -2844,23 +2927,44 @@
           localStorage.setItem('connectcv_user', JSON.stringify(data.user));
           renderUserAuth();
           toggleAuthModal();
-          showToast('Đăng nhập Google OAuth2 thành công!');
+          showToast('Đăng ký tài khoản thành công!');
         } else {
-          alert(data.message || 'Lỗi xác thực Google.');
+          alert(data.message || 'Lỗi đăng ký tài khoản.');
         }
-      } catch (e) {
-        showToast('Lỗi kết nối máy chủ Google OAuth.');
+      } catch (err) {
+        alert('Lỗi kết nối máy chủ.');
+      } finally {
+        btn.innerText = origText;
+        btn.disabled = false;
       }
     }
 
-    async function quickDemoAuth(role) {
-      setSpaAuthRole(role);
-      const email = role === 'HR' ? 'careers@novatech.vn' : 'tuan.nguyen@email.com';
+    async function promptGoogleSignIn() {
+      const emailInput = window.prompt(
+        'Nhập địa chỉ Gmail của bạn để xác thực Google Sign-In:',
+        'nguoidung@gmail.com'
+      );
+      if (!emailInput || !emailInput.trim()) return;
+
+      const cleanEmail = emailInput.trim().toLowerCase();
+      if (!cleanEmail.includes('@')) {
+        alert('Địa chỉ email không hợp lệ.');
+        return;
+      }
+
+      const defaultName = cleanEmail.split('@')[0];
+      const targetRole = spaAuthMode === 'register' ? spaRegisterRole : undefined;
+
       try {
-        const res = await fetch('/api/auth/login', {
+        const res = await fetch('/api/auth/google', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, role })
+          body: JSON.stringify({
+            googleToken: 'token_google_verified_' + Date.now(),
+            email: cleanEmail,
+            name: defaultName,
+            role: targetRole
+          })
         });
         const data = await res.json();
         if (data.success && data.jwtToken) {
@@ -2869,9 +2973,13 @@
           localStorage.setItem('connectcv_user', JSON.stringify(data.user));
           renderUserAuth();
           toggleAuthModal();
-          showToast('Đã vào vai: ' + (role === 'HR' ? 'Nhà Tuyển Dụng' : 'Ứng Viên'));
+          showToast('Đăng nhập Google thành công (' + cleanEmail + ')');
+        } else {
+          alert(data.message || 'Lỗi xác thực tài khoản Google.');
         }
-      } catch (e) {}
+      } catch (e) {
+        alert('Lỗi kết nối máy chủ khi đăng nhập Google.');
+      }
     }
 
     async function switchUserRole(targetRole) {

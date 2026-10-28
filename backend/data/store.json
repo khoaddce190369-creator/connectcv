@@ -67,6 +67,61 @@
       "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
       "aiCredits": 40,
       "createdAt": "2026-10-28T19:28:36.342Z"
+    },
+    {
+      "id": "usr_1793216457831_kbage",
+      "username": "Trần Mai HR",
+      "email": "hr.google@novatech.vn",
+      "password_hash": null,
+      "isPro": false,
+      "role": "HR",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "aiCredits": 15,
+      "createdAt": "2026-10-28T19:40:57.831Z"
+    },
+    {
+      "id": "usr_1793216463397_r99v6",
+      "username": "Nguyễn Minh Tuấn",
+      "email": "ungvien.google@connectcv.io",
+      "password_hash": null,
+      "isPro": false,
+      "role": "Student",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "aiCredits": 15,
+      "createdAt": "2026-10-28T19:41:03.397Z"
+    },
+    {
+      "id": "usr_1793216499696_dqdta",
+      "username": "Đinh Đăng Khoa",
+      "email": "khoadd.ce190369@gmail.com",
+      "password_hash": "12390765",
+      "isPro": false,
+      "role": "Student",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "aiCredits": 20,
+      "createdAt": "2026-10-28T19:41:39.696Z"
+    },
+    {
+      "id": "usr_1793217127760_8fj7l",
+      "username": "Trưởng Phòng Nhân Sự",
+      "email": "hr.test.1793217127663@congty.vn",
+      "password_hash": "SecurePassword123!",
+      "isPro": false,
+      "role": "HR",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "aiCredits": 40,
+      "createdAt": "2026-10-28T19:52:07.760Z"
+    },
+    {
+      "id": "usr_1793217127774_8haqc",
+      "username": "Nguyễn Văn Google",
+      "email": "ungvien.google.1793217127770@gmail.com",
+      "password_hash": null,
+      "isPro": false,
+      "role": "Student",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "aiCredits": 15,
+      "createdAt": "2026-10-28T19:52:07.774Z"
     }
   ],
   "jobs": [
