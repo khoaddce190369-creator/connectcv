@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/User');
-const { authMiddleware, JWT_SECRET } = require('../middlewares/authMiddleware');
+const { authMiddleware, optionalAuth, JWT_SECRET } = require('../middlewares/authMiddleware');
 
 function generateToken(user) {
   return jwt.sign(
@@ -38,16 +38,18 @@ router.post('/google', async (req, res) => {
     // Xác định thông tin user từ googleToken hoặc body
     let userEmail = email;
     let userName = name;
+    let userAvatar = req.body.avatar;
     let googleId = null;
 
     if (googleToken) {
-      // Giả mã payload từ JWT Google (base64)
+      // Giải mã payload từ JWT Google (base64)
       try {
         const parts = googleToken.split('.');
         if (parts.length === 3) {
           const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
           userEmail = payload.email || userEmail;
           userName = payload.name || userName;
+          userAvatar = payload.picture || userAvatar;
           googleId = payload.sub;
         }
       } catch (err) {
@@ -72,8 +74,11 @@ router.post('/google', async (req, res) => {
         password_hash: null,
         isPro: false,
         role: role === 'HR' ? 'HR' : 'Student',
+        avatar: userAvatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop',
         aiCredits: 15
       });
+    } else if (userAvatar && !user.avatar) {
+      UserModel.update(user.id, { avatar: userAvatar });
     }
 
     const jwtToken = generateToken(user);
@@ -92,6 +97,65 @@ router.post('/google', async (req, res) => {
       code: 'AUTH_FAILED',
       message: 'Lỗi xác thực Google. Vui lòng thử lại.'
     });
+  }
+});
+
+/**
+ * @route   POST /api/auth/register
+ * @desc    Đăng ký tài khoản mới (Ứng viên hoặc Doanh nghiệp)
+ */
+router.post('/register', async (req, res) => {
+  try {
+    const { username, email, password, role } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng nhập đầy đủ Email và Mật khẩu.'
+      });
+    }
+
+    const existingUser = UserModel.findByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email này đã được đăng ký tài khoản trên hệ thống. Vui lòng đăng nhập.'
+      });
+    }
+
+    const assignedRole = role === 'HR' || role === 'Employer' ? 'HR' : 'Student';
+    const newUser = UserModel.create({
+      username: username || email.split('@')[0],
+      email: email.toLowerCase(),
+      password_hash: password,
+      role: assignedRole,
+      isPro: false,
+      aiCredits: assignedRole === 'HR' ? 40 : 20
+    });
+
+    const jwtToken = generateToken(newUser);
+    return res.status(201).json({
+      success: true,
+      message: 'Đăng ký tài khoản thành công.',
+      jwtToken,
+      user: UserModel.toPublicJSON(newUser)
+    });
+  } catch (error) {
+    console.error('Lỗi POST /api/auth/register:', error);
+    return res.status(500).json({ success: false, message: 'Lỗi đăng ký tài khoản.' });
+  }
+});
+
+/**
+ * @route   GET /api/auth/users
+ * @desc    Danh sách người dùng cho Admin Dashboard
+ */
+router.get('/users', optionalAuth, (req, res) => {
+  try {
+    const users = UserModel.findAll();
+    return res.json({ success: true, count: users.length, users });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Lỗi lấy danh sách user.' });
   }
 });
 

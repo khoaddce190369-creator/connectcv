@@ -99,6 +99,14 @@ router.get('/:id', optionalAuth, (req, res) => {
  */
 router.post('/', optionalAuth, (req, res) => {
   try {
+    // Phân quyền RBAC: Nhà tuyển dụng KHÔNG được tạo portfolio ứng viên
+    if (req.user && (req.user.role === 'HR' || req.user.role === 'Employer')) {
+      return res.status(403).json({
+        success: false,
+        message: 'Tài khoản Nhà tuyển dụng / Doanh nghiệp không thể tạo Portfolio ứng viên. Vui lòng sử dụng tài khoản Ứng viên / Freelancer.'
+      });
+    }
+
     const { 
       title, 
       subdomain, 

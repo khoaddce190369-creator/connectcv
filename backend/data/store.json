@@ -6,7 +6,7 @@
       "email": "tuan.nguyen@email.com",
       "password_hash": null,
       "isPro": false,
-      "role": "Student",
+      "role": "HR",
       "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
       "title": "Senior UI/UX Designer",
       "aiCredits": 15,
@@ -45,6 +45,28 @@
       "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
       "aiCredits": 15,
       "createdAt": "2026-10-26T21:24:36.394Z"
+    },
+    {
+      "id": "usr_1793215716319_cglxe",
+      "username": "Nguyễn Văn Google",
+      "email": "test_google_candidate@connectcv.io",
+      "password_hash": null,
+      "isPro": false,
+      "role": "Student",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "aiCredits": 15,
+      "createdAt": "2026-10-28T19:28:36.319Z"
+    },
+    {
+      "id": "usr_1793215716342_9bb99",
+      "username": "Trần Tuyển Dụng",
+      "email": "hr_1793215716341@novatech.vn",
+      "password_hash": "password123",
+      "isPro": false,
+      "role": "HR",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "aiCredits": 40,
+      "createdAt": "2026-10-28T19:28:36.342Z"
     }
   ],
   "jobs": [
@@ -126,6 +148,22 @@
         "Usability Testing"
       ],
       "createdAt": "2026-10-26T18:58:28.629Z"
+    },
+    {
+      "id": "job_post_1793215716360_kbup",
+      "title": "Senior Frontend Engineer React",
+      "company": "Trần Tuyển Dụng",
+      "logo": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "type": "Full-time",
+      "location": "Toàn quốc / Hybrid",
+      "budget": "35000000",
+      "tags": [
+        "UI/UX",
+        "Figma"
+      ],
+      "skills": [],
+      "description": "Tuyển dụng chuyên viên lập trình giao diện React kinh nghiệm.",
+      "createdAt": "2026-10-28T19:28:36.360Z"
     }
   ],
   "portfolios": [
@@ -322,6 +360,22 @@
       "likes": 34,
       "comments": 11,
       "createdAt": "2026-10-26T06:58:28.629Z"
+    },
+    {
+      "id": "post_1793215716360_kbup",
+      "type": "RECRUITMENT",
+      "author": "Trần Tuyển Dụng",
+      "authorAvatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "authorId": "usr_1793215716342_9bb99",
+      "title": "Senior Frontend Engineer React",
+      "content": "Tuyển dụng chuyên viên lập trình giao diện React kinh nghiệm.",
+      "budget": "35000000",
+      "contact": "hr_1793215716341@novatech.vn",
+      "skills": [],
+      "likes": 0,
+      "comments": 0,
+      "aiAssistantResult": null,
+      "createdAt": "2026-10-28T19:28:36.360Z"
     }
   ],
   "feedback": [

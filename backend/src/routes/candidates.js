@@ -137,6 +137,14 @@ router.post('/applications/status', optionalAuth, (req, res) => {
  */
 router.post('/applications/apply', optionalAuth, (req, res) => {
   try {
+    // Phân quyền RBAC: Nhà tuyển dụng KHÔNG được nộp đơn ứng tuyển
+    if (req.user && (req.user.role === 'HR' || req.user.role === 'Employer')) {
+      return res.status(403).json({
+        success: false,
+        message: 'Tài khoản Nhà tuyển dụng / Doanh nghiệp không thể nộp hồ sơ ứng tuyển việc làm. Vui lòng sử dụng tài khoản Ứng viên.'
+      });
+    }
+
     const { jobId, jobTitle, candidateName, candidateEmail, portfolioUrl, matchScore } = req.body;
 
     const newApp = {

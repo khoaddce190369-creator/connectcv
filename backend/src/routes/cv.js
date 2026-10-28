@@ -137,4 +137,40 @@ router.post('/download-pdf', (req, res) => {
   }
 });
 
+/**
+ * @route   GET /api/cv/templates
+ * @desc    Danh sách mẫu CV chuẩn ATS từ thư mục assets
+ */
+router.get('/templates', (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const templatesDir = path.join(__dirname, '../../../connectcv/assets/templates');
+    
+    let templateFiles = [];
+    if (fs.existsSync(templatesDir)) {
+      templateFiles = fs.readdirSync(templatesDir).filter(f => f.endsWith('.png'));
+    }
+
+    const templates = templateFiles.slice(0, 24).map((file, idx) => {
+      const cleanName = file.replace(/\.png$/, '').replace(/^\d+_/, '').replace(/_/g, ' ');
+      return {
+        id: `tpl_${idx + 1}`,
+        fileName: file,
+        imageUrl: `assets/templates/${file}`,
+        name: cleanName.length > 25 ? cleanName.substring(0, 25) + '...' : cleanName,
+        style: idx % 3 === 0 ? 'Hiện Đại 2 Cột' : (idx % 3 === 1 ? 'Cổ Điển Harvard' : 'Kỹ Thuật Công Nghệ')
+      };
+    });
+
+    return res.json({
+      success: true,
+      count: templates.length,
+      templates
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Lỗi tải danh mục template.' });
+  }
+});
+
 module.exports = router;

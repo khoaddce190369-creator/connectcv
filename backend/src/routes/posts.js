@@ -38,6 +38,25 @@ router.post('/', optionalAuth, (req, res) => {
   try {
     const { type = 'RECRUITMENT', title, content, budget, contact, skills, useAiAssistant } = req.body;
 
+    // Phân quyền RBAC: Ứng viên / Freelancer KHÔNG được đăng bài tuyển dụng
+    if (type === 'RECRUITMENT' && req.user && req.user.role !== 'HR' && req.user.role !== 'Employer') {
+      return res.status(403).json({
+        success: false,
+        message: 'Chỉ tài khoản Nhà tuyển dụng / Doanh nghiệp (HR) mới có quyền đăng tin tuyển dụng. Tài khoản Ứng viên không được phép đăng tin.'
+      });
+    }
+
+    // Chi phí lương ở bài tuyển dụng KHÔNG được phép nhập số âm
+    if (budget) {
+      const budgetStr = String(budget);
+      if (/-\s*\d+/.test(budgetStr)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Mức lương hoặc ngân sách tuyển dụng không được phép là số âm. Vui lòng nhập mức chi phí hợp lệ.'
+        });
+      }
+    }
+
     if (!title || (!content && !useAiAssistant)) {
       return res.status(400).json({
         success: false,
@@ -124,6 +143,25 @@ router.get('/', optionalAuth, (req, res) => {
   } catch (error) {
     console.error('Lỗi GET /api/posts:', error);
     return res.status(500).json({ success: false, message: 'Lỗi tải bài viết cộng đồng.' });
+  }
+});
+
+/**
+ * @route   DELETE /api/posts/:id
+ * @desc    Xóa bài đăng / tin tuyển dụng (Admin hoặc tác giả)
+ */
+router.delete('/:id', optionalAuth, (req, res) => {
+  try {
+    const postId = req.params.id;
+    db.delete('posts', p => p.id === postId);
+    db.delete('jobs', j => j.id === `job_${postId}` || j.id === postId);
+
+    return res.json({
+      success: true,
+      message: 'Đã xóa bài đăng thành công.'
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Lỗi xóa bài đăng.' });
   }
 });
 

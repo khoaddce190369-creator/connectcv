@@ -3,84 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Đăng Nhập — ConnectCV</title>
+  <title>Đăng Nhập &amp; Đăng Ký — ConnectCV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/brand.css" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              navy: '#172554',
-              cyan: '#0ea5e9',
-              50: '#f0f9ff',
-              100: '#e0f2fe',
-              600: '#0284c7'
-            }
-          }
-        }
-      }
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    body {
+      font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-  </script>
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between antialiased">
 
-  <!-- Header đơn giản -->
+  <!-- Header Đơn Giản & Trang Nhã -->
   <header class="w-full max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
-    <a href="index.html" class="flex items-center gap-3">
+    <a href="/" class="flex items-center gap-3">
       <img src="assets/logo.png" alt="ConnectCV" class="h-9 w-auto" />
-      <span class="font-heading font-extrabold text-xl text-slate-900">
-        Connect<span class="text-sky-500">CV</span>
+      <span class="font-heading font-extrabold text-xl text-[#172554]">
+        Connect<span class="text-[#0284c7]">CV</span>
       </span>
     </a>
-    <a href="index.html" class="text-xs font-semibold text-slate-500 hover:text-sky-600 transition-colors flex items-center gap-1.5">
+    <a href="/" class="text-xs font-semibold text-slate-600 hover:text-[#0284c7] transition-colors flex items-center gap-1.5">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
-      Trang chủ
+      <span>Về Trang Chủ</span>
     </a>
   </header>
 
-  <!-- Khung Đăng nhập Gọn gàng, Thanh lịch -->
+  <!-- Khung Đăng Nhập / Đăng Ký Chuyên Nghiệp Chuẩn Upwork -->
   <main class="flex-1 flex items-center justify-center px-4 py-8">
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+    <div class="max-w-md w-full bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
       
-      <!-- Tiêu đề -->
-      <div class="text-center mb-6">
-        <h1 class="font-heading text-2xl font-bold text-slate-900">Chào Mừng Trở Lại</h1>
-        <p class="text-xs text-slate-500 mt-1">Chọn vai trò của bạn để vào đúng không gian làm việc</p>
+      <!-- Logo & Tiêu đề -->
+      <div class="text-center space-y-1">
+        <h1 id="authTitle" class="font-heading text-2xl font-extrabold text-slate-900">
+          Chào Mừng Trở Lại
+        </h1>
+        <p id="authSubtitle" class="text-xs text-slate-500">
+          Truy cập hệ thống kết nối nhân tài và phát triển sự nghiệp
+        </p>
       </div>
 
-      <!-- Tab Chuyển Đổi Vai Trò -->
-      <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-xl gap-1 mb-5">
-        <button type="button" onclick="setRole('freelancer')" id="tabFreelancer" class="py-2 px-3 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-xs">
-          👤 Ứng Viên / Freelancer
+      <!-- Tab Chuyển Đổi: Đăng Nhập / Đăng Ký -->
+      <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-full gap-1 text-xs font-bold">
+        <button type="button" onclick="setAuthMode('login')" id="tabModeLogin" class="py-2.5 px-4 rounded-full transition-all bg-white text-slate-900 shadow-sm">
+          Đăng Nhập
         </button>
-        <button type="button" onclick="setRole('hr')" id="tabHr" class="py-2 px-3 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 transition-all">
-          🏢 Nhà Tuyển Dụng / HR
+        <button type="button" onclick="setAuthMode('register')" id="tabModeRegister" class="py-2.5 px-4 rounded-full transition-all text-slate-500 hover:text-slate-900">
+          Đăng Ký
         </button>
       </div>
 
-      <!-- Lời nhắc ngữ cảnh vai trò -->
-      <div id="roleNotice" class="mb-5 p-3 rounded-xl bg-sky-50 border border-sky-100 text-xs text-sky-800 flex items-start gap-2">
-        <svg class="w-4 h-4 text-sky-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
-        <span id="roleNoticeText">Khám phá việc làm, quản lý CV chuẩn ATS và tham gia phỏng vấn thử nghiệm.</span>
+      <!-- Chọn Vai Trò (Role) -->
+      <div class="space-y-2">
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">
+          Chọn vai trò của bạn:
+        </label>
+        <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+          <button type="button" onclick="setAuthRole('Student')" id="roleBtnStudent" class="py-3 px-3 rounded-2xl border-2 border-[#0284c7] bg-sky-50 text-[#0284c7] flex flex-col items-center gap-1 transition-all">
+            <span class="text-base">👤</span>
+            <span>Ứng Viên / Freelancer</span>
+          </button>
+          <button type="button" onclick="setAuthRole('HR')" id="roleBtnHR" class="py-3 px-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 hover:border-slate-300 flex flex-col items-center gap-1 transition-all">
+            <span class="text-base">🏢</span>
+            <span>Nhà Tuyển Dụng (HR)</span>
+          </button>
+        </div>
+        <p id="roleDescription" class="text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 leading-relaxed">
+          Ứng tuyển việc làm, tối ưu CV chuẩn ATS, xây dựng Portfolio công khai và luyện phỏng vấn AI.
+        </p>
       </div>
 
-      <!-- Form Đăng Nhập -->
-      <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1.5">Email tài khoản</label>
-          <input id="emailInput" type="email" required value="tuan.nguyen@email.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:bg-white focus:border-sky-500 transition-colors" placeholder="name@company.com" />
+      <!-- Nút Đăng Nhập Nhanh Qua Google (Google OAuth2 GIS Workflow) -->
+      <div class="space-y-3">
+        <button type="button" onclick="triggerGoogleSignIn()" id="btnGoogleAuth" class="w-full py-2.5 px-4 rounded-full border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 flex items-center justify-center gap-3 transition-all shadow-xs">
+          <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span id="googleBtnText">Đăng Nhập Với Tài Khoản Google</span>
+        </button>
+
+        <div class="flex items-center gap-3">
+          <div class="flex-1 h-px bg-slate-200"></div>
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">hoặc dùng Email</span>
+          <div class="flex-1 h-px bg-slate-200"></div>
+        </div>
+      </div>
+
+      <!-- Form Nhập Liệu -->
+      <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        
+        <div id="usernameFieldWrapper" class="hidden">
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên</label>
+          <input id="usernameInput" type="text" class="input-upwork w-full text-xs" placeholder="Nguyễn Văn An" />
         </div>
 
         <div>
-          <div class="flex items-center justify-between mb-1.5">
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Địa chỉ Email</label>
+          <input id="emailInput" type="email" required class="input-upwork w-full text-xs" placeholder="name@email.com" value="tuan.nguyen@email.com" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
             <label class="text-xs font-semibold text-slate-700">Mật khẩu</label>
-            <a href="#" class="text-xs text-sky-600 hover:underline">Quên mật khẩu?</a>
+            <a href="#" id="forgotPasswordLink" class="text-xs text-[#0284c7] hover:underline">Quên mật khẩu?</a>
           </div>
           <div class="relative">
-            <input id="passwordInput" type="password" required value="12345678" class="w-full px-3.5 py-2.5 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 outline-none focus:bg-white focus:border-sky-500 transition-colors" />
+            <input id="passwordInput" type="password" required class="input-upwork w-full text-xs pr-10" value="12345678" />
             <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
               👁️
             </button>
@@ -89,132 +123,201 @@
 
         <div class="flex items-center justify-between text-xs pt-1">
           <label class="flex items-center gap-2 cursor-pointer text-slate-600">
-            <input type="checkbox" checked class="w-4 h-4 text-sky-600 rounded border-slate-300" />
-            <span>Ghi nhớ đăng nhập</span>
+            <input id="rememberCheckbox" type="checkbox" checked class="w-4 h-4 text-[#0284c7] rounded border-slate-300" />
+            <span>Ghi nhớ phiên đăng nhập</span>
           </label>
         </div>
 
-        <button id="loginSubmitBtn" type="submit" class="w-full py-2.5 px-4 btn-primary text-sm font-bold shadow-sm">
+        <button id="authSubmitBtn" type="submit" class="w-full btn-navy text-xs font-bold py-3 uppercase tracking-wider shadow-sm">
           Đăng Nhập
         </button>
+
       </form>
 
-      <!-- 1-Click Fast Demo Login Nhanh -->
-      <div class="mt-6 pt-5 border-t border-slate-100">
-        <p class="text-[11px] font-semibold text-slate-400 text-center uppercase tracking-wider mb-2.5">Trải nghiệm nhanh (1-Click Demo)</p>
+      <!-- 1-Click Fast Role Demo -->
+      <div class="pt-4 border-t border-slate-100">
+        <p class="text-[11px] font-semibold text-slate-400 text-center uppercase tracking-wider mb-2.5">
+          Trải nghiệm nhanh (1-Click Demo)
+        </p>
         <div class="grid grid-cols-2 gap-2 text-xs">
-          <button type="button" onclick="demoLogin('freelancer')" class="p-2 rounded-xl border border-slate-200 hover:border-sky-400 hover:bg-sky-50/50 font-medium text-slate-700 transition-colors">
-            🎨 Vào vai Ứng viên
+          <button type="button" onclick="oneClickDemo('Student')" class="p-2.5 rounded-2xl border border-slate-200 hover:border-[#0284c7] hover:bg-sky-50 font-bold text-slate-700 transition-all text-center">
+            👤 Vai Ứng Viên
           </button>
-          <button type="button" onclick="demoLogin('hr')" class="p-2 rounded-xl border border-slate-200 hover:border-sky-400 hover:bg-sky-50/50 font-medium text-slate-700 transition-colors">
-            🏢 Vào vai HR / Doanh nghiệp
+          <button type="button" onclick="oneClickDemo('HR')" class="p-2.5 rounded-2xl border border-slate-200 hover:border-[#0284c7] hover:bg-sky-50 font-bold text-slate-700 transition-all text-center">
+            🏢 Vai Tuyển Dụng
           </button>
         </div>
-      </div>
-
-      <div class="mt-5 text-center text-xs text-slate-500">
-        Chưa có tài khoản? <a href="onboarding.html" class="font-bold text-sky-600 hover:underline">Đăng ký ngay</a>
       </div>
 
     </div>
   </main>
 
-  <!-- Footer -->
+  <!-- Footer Tối Giản -->
   <footer class="py-4 text-center text-xs text-slate-400 border-t border-slate-100">
-    ConnectCV &copy; 2026. Nền tảng kết nối nhân tài &amp; hồ sơ năng lực số.
+    ConnectCV &copy; 2026. Nền tảng kết nối nhân tài &amp; phát triển sự nghiệp bằng Trí tuệ Nhân tạo.
   </footer>
 
   <script>
-    let currentRole = 'freelancer';
+    let authMode = 'login'; // 'login' | 'register'
+    let currentRole = 'Student'; // 'Student' | 'HR'
 
-    function setRole(role) {
-      currentRole = role;
-      const tabFreelancer = document.getElementById('tabFreelancer');
-      const tabHr = document.getElementById('tabHr');
-      const noticeText = document.getElementById('roleNoticeText');
-      const emailInput = document.getElementById('emailInput');
+    function setAuthMode(mode) {
+      authMode = mode;
+      const tabLogin = document.getElementById('tabModeLogin');
+      const tabRegister = document.getElementById('tabModeRegister');
+      const title = document.getElementById('authTitle');
+      const subtitle = document.getElementById('authSubtitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const googleBtnText = document.getElementById('googleBtnText');
+      const usernameWrapper = document.getElementById('usernameFieldWrapper');
+      const forgotLink = document.getElementById('forgotPasswordLink');
 
-      if (role === 'freelancer') {
-        tabFreelancer.className = 'py-2 px-3 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-xs';
-        tabHr.className = 'py-2 px-3 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 transition-all';
-        noticeText.innerText = 'Khám phá việc làm, quản lý CV chuẩn ATS và tham gia phỏng vấn thử nghiệm.';
-        emailInput.value = 'tuan.nguyen@email.com';
+      if (mode === 'login') {
+        tabLogin.className = 'py-2.5 px-4 rounded-full transition-all bg-white text-slate-900 shadow-sm';
+        tabRegister.className = 'py-2.5 px-4 rounded-full transition-all text-slate-500 hover:text-slate-900';
+        title.innerText = 'Chào Mừng Trở Lại';
+        subtitle.innerText = 'Truy cập hệ thống kết nối nhân tài và phát triển sự nghiệp';
+        submitBtn.innerText = 'Đăng Nhập';
+        googleBtnText.innerText = 'Đăng Nhập Với Tài Khoản Google';
+        usernameWrapper.classList.add('hidden');
+        forgotLink.classList.remove('hidden');
       } else {
-        tabHr.className = 'py-2 px-3 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-xs';
-        tabFreelancer.className = 'py-2 px-3 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 transition-all';
-        noticeText.innerText = 'Đăng tin tuyển dụng, tìm kiếm ứng viên tài năng và quản lý quy trình xét duyệt hồ sơ.';
-        emailInput.value = 'careers@novatech.vn';
+        tabRegister.className = 'py-2.5 px-4 rounded-full transition-all bg-white text-slate-900 shadow-sm';
+        tabLogin.className = 'py-2.5 px-4 rounded-full transition-all text-slate-500 hover:text-slate-900';
+        title.innerText = 'Tạo Tài Khoản Mới';
+        subtitle.innerText = 'Bắt đầu kết nối việc làm và tối ưu CV chuẩn ATS chuyên nghiệp';
+        submitBtn.innerText = 'Đăng Ký Tài Khoản';
+        googleBtnText.innerText = 'Đăng Ký Với Tài Khoản Google';
+        usernameWrapper.classList.remove('hidden');
+        forgotLink.classList.add('hidden');
       }
     }
 
-    async function handleLoginSubmit(event) {
-      event.preventDefault();
-      const email = document.getElementById('emailInput').value;
-      const password = document.getElementById('passwordInput').value;
-      const btn = document.getElementById('loginSubmitBtn');
+    function setAuthRole(role) {
+      currentRole = role;
+      const btnStudent = document.getElementById('roleBtnStudent');
+      const btnHR = document.getElementById('roleBtnHR');
+      const desc = document.getElementById('roleDescription');
+      const emailInput = document.getElementById('emailInput');
+
+      if (role === 'Student') {
+        btnStudent.className = 'py-3 px-3 rounded-2xl border-2 border-[#0284c7] bg-sky-50 text-[#0284c7] flex flex-col items-center gap-1 transition-all';
+        btnHR.className = 'py-3 px-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 hover:border-slate-300 flex flex-col items-center gap-1 transition-all';
+        desc.innerText = 'Ứng tuyển việc làm, tối ưu CV chuẩn ATS, xây dựng Portfolio công khai và luyện phỏng vấn AI.';
+        if (emailInput.value.includes('novatech')) {
+          emailInput.value = 'tuan.nguyen@email.com';
+        }
+      } else {
+        btnHR.className = 'py-3 px-3 rounded-2xl border-2 border-[#0284c7] bg-sky-50 text-[#0284c7] flex flex-col items-center gap-1 transition-all';
+        btnStudent.className = 'py-3 px-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-600 hover:border-slate-300 flex flex-col items-center gap-1 transition-all';
+        desc.innerText = 'Đăng tin tuyển dụng, tìm kiếm nhân tài chất lượng cao và quản lý ứng viên qua bảng Kanban.';
+        if (emailInput.value.includes('tuan.nguyen')) {
+          emailInput.value = 'careers@novatech.vn';
+        }
+      }
+    }
+
+    // Google OAuth2 GIS & Fallback Workflow
+    async function triggerGoogleSignIn() {
+      const btn = document.getElementById('btnGoogleAuth');
       const origText = btn.innerHTML;
-      btn.innerText = 'Đang đăng nhập...';
+      btn.innerText = 'Đang kết nối Google...';
       btn.disabled = true;
 
       try {
-        const response = await fetch('/api/auth/login', {
+        const payload = {
+          googleToken: 'mock_google_oauth_token_' + Date.now(),
+          email: currentRole === 'HR' ? 'hr.enterprise@connectcv.io' : 'ungvien.google@connectcv.io',
+          name: currentRole === 'HR' ? 'Nhà Tuyển Dụng Google' : 'Nguyễn Văn Google',
+          role: currentRole
+        };
+
+        const res = await fetch('/api/auth/google', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, role: currentRole })
+          body: JSON.stringify(payload)
         });
-        const data = await response.json();
 
+        const data = await res.json();
         if (data.success && data.jwtToken) {
           localStorage.setItem('jwtToken', data.jwtToken);
           localStorage.setItem('connectcv_user', JSON.stringify(data.user));
-          if (data.user.role === 'HR') {
-            window.location.href = 'dashboard-applications.html';
-          } else {
-            window.location.href = 'freelancer-dashboard.html';
-          }
+          window.location.href = '/';
         } else {
-          alert(data.message || 'Đăng nhập không thành công.');
+          alert(data.message || 'Lỗi xác thực Google');
           btn.innerHTML = origText;
           btn.disabled = false;
         }
       } catch (err) {
-        console.warn('Lỗi kết nối API:', err);
-        if (currentRole === 'hr') {
-          window.location.href = 'dashboard-applications.html';
-        } else {
-          window.location.href = 'freelancer-dashboard.html';
-        }
+        alert('Lỗi kết nối máy chủ xác thực.');
+        btn.innerHTML = origText;
+        btn.disabled = false;
       }
     }
 
-    async function demoLogin(role) {
-      setRole(role);
-      const email = role === 'hr' ? 'careers@novatech.vn' : 'tuan.nguyen@email.com';
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value.trim();
+      const username = document.getElementById('usernameInput')?.value?.trim();
+      const btn = document.getElementById('authSubmitBtn');
+      const origText = btn.innerText;
+
+      btn.innerText = 'Đang xử lý...';
+      btn.disabled = true;
+
       try {
-        const response = await fetch('/api/auth/login', {
+        const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+        const bodyData = authMode === 'login' 
+          ? { email, password, role: currentRole }
+          : { username, email, password, role: currentRole };
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+
+        const data = await res.json();
+        if (data.success && data.jwtToken) {
+          localStorage.setItem('jwtToken', data.jwtToken);
+          localStorage.setItem('connectcv_user', JSON.stringify(data.user));
+          window.location.href = '/';
+        } else {
+          alert(data.message || 'Xác thực không thành công.');
+          btn.innerText = origText;
+          btn.disabled = false;
+        }
+      } catch (err) {
+        alert('Lỗi kết nối máy chủ.');
+        btn.innerText = origText;
+        btn.disabled = false;
+      }
+    }
+
+    async function oneClickDemo(role) {
+      setAuthRole(role);
+      const email = role === 'HR' ? 'careers@novatech.vn' : 'tuan.nguyen@email.com';
+      try {
+        const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, role })
         });
-        const data = await response.json();
+        const data = await res.json();
         if (data.success && data.jwtToken) {
           localStorage.setItem('jwtToken', data.jwtToken);
           localStorage.setItem('connectcv_user', JSON.stringify(data.user));
+          window.location.href = '/';
         }
-      } catch (_) {}
-
-      setTimeout(() => {
-        if (role === 'hr') {
-          window.location.href = 'dashboard-applications.html';
-        } else {
-          window.location.href = 'freelancer-dashboard.html';
-        }
-      }, 200);
+      } catch (e) {
+        window.location.href = '/';
+      }
     }
 
     function togglePasswordVisibility() {
-      const pwd = document.getElementById('passwordInput');
-      pwd.type = pwd.type === 'password' ? 'text' : 'password';
+      const p = document.getElementById('passwordInput');
+      p.type = p.type === 'password' ? 'text' : 'password';
     }
   </script>
 

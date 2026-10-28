@@ -33,6 +33,14 @@ class UserModel {
     return db.update('users', u => u.id === id, updates);
   }
 
+  static findAll() {
+    return (db.get('users') || []).map(u => UserModel.toPublicJSON(u));
+  }
+
+  static delete(id) {
+    return db.delete('users', u => u.id === id);
+  }
+
   static toPublicJSON(user) {
     if (!user) return null;
     const { password_hash, ...publicData } = user;

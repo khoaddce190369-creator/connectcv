@@ -121,6 +121,15 @@ app.get(['/p/:subdomain', '/portfolio/:subdomain'], (req, res) => {
   return res.redirect('/#portfolio');
 });
 
+// Tuyến đường riêng cho Trang Quản Trị Hệ Thống (/admin) - Không hiển thị link trên web chính
+app.get(['/admin', '/admin-dashboard'], (req, res) => {
+  const adminHtml = path.join(connectcvUiPath, 'admin-dashboard.html');
+  if (fs.existsSync(adminHtml)) {
+    return res.sendFile(adminHtml);
+  }
+  return res.status(404).send('Không tìm thấy trang quản trị.');
+});
+
 if (fs.existsSync(connectcvUiPath)) {
   // Phục vụ các trang HTML tĩnh giao diện mới
   app.use(express.static(connectcvUiPath, {

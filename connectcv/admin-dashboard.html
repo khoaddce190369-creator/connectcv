@@ -4,24 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bảng Quản Trị Hệ Thống (Admin Control Portal) — ConnectCV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sora: ['Plus Jakarta Sans', 'Inter', 'sans-serif'], inter: ['Inter','sans-serif'] },
-          colors: {
-            brand: { 50:'#eff6ff',100:'#dbeafe',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8' },
-            slate: { 850:'#1e293b', 900:'#0f172a', 950:'#020617' }
-          },
-        },
-      },
-    }
-  </script>
+  <link rel="stylesheet" href="css/brand.css" />
   <style>
-    * { font-family: 'Inter', sans-serif; }
-    h1,h2,h3,h4,.font-sora { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+    body {
+      font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
     .admin-nav-item.active {
       background: #1e293b;
       color: #38bdf8;
@@ -29,29 +20,26 @@
       border-left: 3px solid #38bdf8;
     }
     .admin-nav-item:not(.active):hover {
-      background: #1e293b/60;
+      background: rgba(30, 41, 59, 0.6);
       color: #f1f5f9;
     }
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius:3px; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex antialiased">
 
   <!-- ================= ADMIN SIDEBAR ================= -->
   <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between flex-shrink-0 fixed h-full z-30">
     <div>
       <!-- Brand & Admin Badge -->
       <div class="p-6 border-b border-slate-800/80 flex items-center justify-between">
-        <a href="index.html" class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" style="background:linear-gradient(135deg,#2563eb,#4f46e5)">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <a href="/" class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-[#172554] border border-sky-500/30 flex items-center justify-center shadow-sm">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
             </svg>
           </div>
           <div>
-            <span class="font-sora font-bold text-white text-base tracking-tight">Connect<span class="text-blue-500">CV</span></span>
+            <span class="font-extrabold text-white text-base tracking-tight">Connect<span class="text-sky-400">CV</span></span>
             <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 ml-1">Admin</span>
           </div>
         </a>
@@ -61,40 +49,25 @@
       <div class="py-4">
         <p class="px-6 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Trung tâm điều hành</p>
         <nav class="space-y-0.5">
-          <a href="#" class="admin-nav-item active flex items-center gap-3 px-6 py-2.5 text-xs text-slate-300 transition-colors">
+          <a href="#overview-section" class="admin-nav-item active flex items-center gap-3 px-6 py-2.5 text-xs text-slate-300 transition-colors">
             <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
-            Tổng Quan Sàn (Overview)
+            Tổng Quan Sàn
           </a>
 
           <a href="#jobs-section" class="admin-nav-item flex items-center justify-between px-6 py-2.5 text-xs text-slate-300 transition-colors">
             <div class="flex items-center gap-3">
               <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
-              Duyệt Tin Tuyển Dụng
+              Quản Lý Tin Tuyển Dụng
             </div>
-            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">4 mới</span>
+            <span id="badgeJobCount" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">0</span>
           </a>
 
-          <a href="#kyc-section" class="admin-nav-item flex items-center justify-between px-6 py-2.5 text-xs text-slate-300 transition-colors">
+          <a href="#users-section" class="admin-nav-item flex items-center justify-between px-6 py-2.5 text-xs text-slate-300 transition-colors">
             <div class="flex items-center gap-3">
-              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
-              Xác Minh Doanh Nghiệp (HR)
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+              Quản Lý Người Dùng
             </div>
-            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">2</span>
-          </a>
-
-          <a href="#users-section" class="admin-nav-item flex items-center gap-3 px-6 py-2.5 text-xs text-slate-300 transition-colors">
-            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
-            Quản Lý Freelancer &amp; SV
-          </a>
-
-          <a href="#" class="admin-nav-item flex items-center gap-3 px-6 py-2.5 text-xs text-slate-300 transition-colors">
-            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6H2.25m0 0H3m0 0a60.07 60.07 0 0115.797-2.101c.727-.198 1.453.342 1.453 1.096V4.5M3.75 12h16.5"/></svg>
-            Ký Quỹ Escrow &amp; Phí Sàn
-          </a>
-
-          <a href="#" class="admin-nav-item flex items-center gap-3 px-6 py-2.5 text-xs text-slate-300 transition-colors">
-            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
-            Khiếu Nại &amp; Báo Cáo
+            <span id="badgeUserCount" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">0</span>
           </a>
         </nav>
       </div>
@@ -102,25 +75,17 @@
 
     <!-- Bottom Switch to User Interface -->
     <div class="p-4 border-t border-slate-800">
-      <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800 mb-3">
-        <p class="text-[11px] font-semibold text-slate-400 mb-1">Chế độ xem trước:</p>
-        <div class="grid grid-cols-2 gap-1.5 text-[11px]">
-          <a href="dashboard-applications.html" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-center text-slate-200 font-medium">Giao diện HR</a>
-          <a href="freelancer-profile.html" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-center text-slate-200 font-medium">Giao diện FL</a>
-        </div>
-      </div>
-
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-xs text-sky-400">
             AD
           </div>
           <div>
-            <p class="text-xs font-bold text-white">Hoàng Quân</p>
-            <p class="text-[10px] text-slate-400">Super Admin</p>
+            <p class="text-xs font-bold text-white">Quản Trị Viên</p>
+            <p class="text-[10px] text-slate-400">Super Admin Portal</p>
           </div>
         </div>
-        <a href="login.html" class="text-slate-400 hover:text-rose-400 p-1.5" title="Đăng xuất">
+        <a href="/" class="text-slate-400 hover:text-rose-400 p-1.5" title="Thoát ra Web">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
         </a>
       </div>
@@ -131,22 +96,16 @@
   <div class="flex-1 ml-64 flex flex-col min-h-screen">
 
     <!-- Top Admin Bar -->
-    <header class="h-16 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 px-8 flex items-center justify-between sticky top-0 z-20">
+    <header class="h-16 bg-slate-950/90 backdrop-blur-md border-b border-slate-800 px-8 flex items-center justify-between sticky top-0 z-20">
       <div class="flex items-center gap-3">
-        <h1 class="font-sora text-sm font-bold text-white">Bảng Điều Khiển Quản Trị Hệ Thống</h1>
-        <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">Hệ thống ổn định 99.98%</span>
+        <h1 class="text-sm font-bold text-white">Bảng Điều Khiển Quản Trị Hệ Thống (/admin)</h1>
+        <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">Tách biệt trang chính</span>
       </div>
 
       <div class="flex items-center gap-3">
-        <!-- Live Search for users/jobs -->
-        <div class="relative">
-          <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
-          <input type="text" placeholder="Tìm người dùng, tin đăng, mã thuế..." class="bg-slate-900 border border-slate-700/80 rounded-xl pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-sky-500 w-64" />
-        </div>
-
-        <a href="index.html" class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-          Về Sàn ConnectCV
+        <a href="/" class="text-xs font-bold px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all flex items-center gap-1.5 border border-slate-700">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+          <span>Xem Trang Chính</span>
         </a>
       </div>
     </header>
@@ -155,181 +114,100 @@
     <main class="p-8 space-y-8 flex-1">
 
       <!-- ================= 4 KPI CARDS ================= -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div id="overview-section" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Card 1 -->
-        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-slate-400">Tổng Freelancer &amp; SV</span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">+12%</span>
-          </div>
-          <p class="font-sora text-2xl font-bold text-white">12,480</p>
-          <p class="text-[11px] text-slate-500 mt-1">Đã kích hoạt CV 2 ngôn ngữ: 8,920</p>
+        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+          <span class="text-xs font-semibold text-slate-400">Tổng Tin Tuyển Dụng</span>
+          <p id="statTotalJobs" class="text-2xl font-extrabold text-white">0</p>
+          <p class="text-[11px] text-slate-500">Đang hoạt động trên sàn</p>
         </div>
 
         <!-- Card 2 -->
-        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-slate-400">Doanh Nghiệp / HR</span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400">+42 mới</span>
-          </div>
-          <p class="font-sora text-2xl font-bold text-white">1,250</p>
-          <p class="text-[11px] text-slate-500 mt-1">Đã xác minh KYC: 890 doanh nghiệp</p>
+        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+          <span class="text-xs font-semibold text-slate-400">Tổng Người Dùng</span>
+          <p id="statTotalUsers" class="text-2xl font-extrabold text-white">0</p>
+          <p class="text-[11px] text-slate-500">Ứng viên &amp; Nhà tuyển dụng</p>
         </div>
 
         <!-- Card 3 -->
-        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-slate-400">Ký Quỹ Đang Giữ (Escrow)</span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400">An toàn 100%</span>
-          </div>
-          <p class="font-sora text-2xl font-bold text-emerald-400">$184,500 <span class="text-xs text-slate-400 font-normal">USD</span></p>
-          <p class="text-[11px] text-slate-500 mt-1">~4.6 tỷ VNĐ đang lưu ký hợp đồng</p>
+        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+          <span class="text-xs font-semibold text-slate-400">Hồ Sơ Ứng Tuyển</span>
+          <p id="statTotalApplications" class="text-2xl font-extrabold text-sky-400">0</p>
+          <p class="text-[11px] text-slate-500">Đã nộp qua hệ thống</p>
         </div>
 
         <!-- Card 4 -->
-        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-slate-400">Doanh Thu Phí Sàn (Platform)</span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400">Phí 5-10%</span>
-          </div>
-          <p class="font-sora text-2xl font-bold text-amber-400">$18,450 <span class="text-xs text-slate-400 font-normal">USD</span></p>
-          <p class="text-[11px] text-slate-500 mt-1">Tăng trưởng +18.4% tháng này</p>
+        <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+          <span class="text-xs font-semibold text-slate-400">Bảo Chứng Thanh Toán</span>
+          <p class="text-2xl font-extrabold text-emerald-400">100%</p>
+          <p class="text-[11px] text-slate-500">VietQR Escrow tự động</p>
         </div>
       </div>
 
-
-      <!-- ================= SECTION 1: DUYỆT TIN TUYỂN DỤNG ================= -->
-      <section id="jobs-section" class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden">
+      <!-- ================= SECTION 1: QUẢN LÝ TIN TUYỂN DỤNG ================= -->
+      <section id="jobs-section" class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden space-y-4">
         <div class="p-5 border-b border-slate-800 flex items-center justify-between">
           <div>
-            <h3 class="font-sora text-sm font-bold text-white flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-              Tin Tuyển Dụng Chờ Quản Trị Phê Duyệt (Moderation Queue)
+            <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Danh Sách Tin Tuyển Dụng &amp; Dự Án Cần Quản Trị
             </h3>
-            <p class="text-xs text-slate-400 mt-0.5">Kiểm tra thông tin bài đăng, ngân sách hợp lý và tránh tin tuyển dụng lừa đảo/spam.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Kiểm duyệt nội dung, mức chi phí lương và xóa bài đăng vi phạm.</p>
           </div>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-xl bg-slate-800 text-slate-300">4 tin đang chờ duyệt</span>
+          <button onclick="loadAdminData()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200">
+            Làm Mới
+          </button>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-900/80 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+            <thead class="bg-slate-900/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
               <tr>
-                <th class="p-4">Doanh Nghiệp / HR</th>
-                <th class="p-4">Vị Trí Tuyển Dụng</th>
-                <th class="p-4">Ngân Sách (Escrow)</th>
-                <th class="p-4">Hạn Chót</th>
-                <th class="p-4">Trạng Thái</th>
-                <th class="p-4 text-right">Hành Động</th>
+                <th class="p-4">Doanh Nghiệp / Tác Giả</th>
+                <th class="p-4">Tiêu Đề Vị Trí</th>
+                <th class="p-4">Ngân Sách / Lương</th>
+                <th class="p-4">Thời Gian</th>
+                <th class="p-4 text-right">Thao Tác Quản Trị</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-800/80 text-slate-300">
-              <tr class="hover:bg-slate-900/50 transition-colors">
-                <td class="p-4">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-xs">NT</div>
-                    <div>
-                      <p class="font-bold text-white">NovaTech Solutions</p>
-                      <p class="text-[11px] text-slate-500">HR: Nguyễn Bảo &bull; MST 0108923456</p>
-                    </div>
-                  </div>
-                </td>
-                <td class="p-4">
-                  <a href="job-detail.html" target="_blank" class="font-semibold text-sky-400 hover:underline">Senior UI/UX Designer for Fintech Mobile App &amp; Web Portal</a>
-                  <p class="text-[11px] text-slate-500">Figma, Design System, Fintech UI</p>
-                </td>
-                <td class="p-4">
-                  <span class="font-bold text-emerald-400">$1,200 – $1,800</span>
-                  <span class="text-[10px] text-slate-500 block">Đã nạp cọc 30% Escrow</span>
-                </td>
-                <td class="p-4 text-slate-400">25/10/2026 (6 tuần)</td>
-                <td class="p-4">
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Hợp Lệ</span>
-                </td>
-                <td class="p-4 text-right space-x-1.5">
-                  <button onclick="approveJob(this)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors">Duyệt Đăng</button>
-                  <button onclick="rejectJob(this)" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-900/50 hover:text-rose-300 text-slate-400 transition-colors">Từ Chối</button>
-                </td>
-              </tr>
-
-              <tr class="hover:bg-slate-900/50 transition-colors">
-                <td class="p-4">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center font-bold text-white text-xs">AR</div>
-                    <div>
-                      <p class="font-bold text-white">Artisan Roastery</p>
-                      <p class="text-[11px] text-slate-500">HR: Thu Trang &bull; MST 0314981122</p>
-                    </div>
-                  </div>
-                </td>
-                <td class="p-4">
-                  <p class="font-semibold text-white">Bộ Nhận Diện Thương Hiệu &amp; Bao Bì Cà Phê Cao Cấp</p>
-                  <p class="text-[11px] text-slate-500">Logo, Packaging, Illustrator</p>
-                </td>
-                <td class="p-4">
-                  <span class="font-bold text-emerald-400">$800 – $1,200</span>
-                  <span class="text-[10px] text-slate-500 block">Đã nạp cọc 30% Escrow</span>
-                </td>
-                <td class="p-4 text-slate-400">18/10/2026</td>
-                <td class="p-4">
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Hợp Lệ</span>
-                </td>
-                <td class="p-4 text-right space-x-1.5">
-                  <button onclick="approveJob(this)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors">Duyệt Đăng</button>
-                  <button onclick="rejectJob(this)" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-900/50 hover:text-rose-300 text-slate-400 transition-colors">Từ Chối</button>
-                </td>
+            <tbody id="adminJobsTableBody" class="divide-y divide-slate-800 text-slate-300">
+              <tr>
+                <td colspan="5" class="p-4 text-center text-slate-500">Đang tải dữ liệu...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
 
-
-      <!-- ================= SECTION 2: DUYỆT XÁC MINH DOANH NGHIỆP (KYC) ================= -->
-      <section id="kyc-section" class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden">
+      <!-- ================= SECTION 2: QUẢN LÝ NGƯỜI DÙNG ================= -->
+      <section id="users-section" class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden space-y-4">
         <div class="p-5 border-b border-slate-800 flex items-center justify-between">
           <div>
-            <h3 class="font-sora text-sm font-bold text-white flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-              Xác Minh Doanh Nghiệp &amp; Cấp Huy Hiệu Uy Tín (HR KYC)
+            <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+              Danh Sách Tài Khoản Người Dùng (Users)
             </h3>
-            <p class="text-xs text-slate-400 mt-0.5">Xác nhận pháp nhân thực tế, Giấy phép ĐKKD để đảm bảo an toàn thanh toán cho Freelancer.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Phân quyền vai trò: Ứng viên (Student) hoặc Nhà tuyển dụng (HR).</p>
           </div>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-xl bg-slate-800 text-slate-300">2 yêu cầu KYC</span>
         </div>
 
-        <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-start justify-between gap-4">
-            <div>
-              <p class="font-bold text-white text-xs flex items-center gap-1.5">
-                Công ty Cổ phần Công nghệ NovaTech
-                <span class="text-[10px] text-amber-400 font-normal">Chờ cấp huy hiệu</span>
-              </p>
-              <p class="text-[11px] text-slate-400 mt-1">MST: 0108923456 &bull; GPĐKKD: Số 0108923456 cấp bởi Sở KH&ĐT Hà Nội</p>
-              <p class="text-[11px] text-slate-400">Địa chỉ: 29 Liễu Giai, P. Ngọc Khánh, Q. Ba Đình, Hà Nội</p>
-              <p class="text-[11px] text-slate-500 mt-2">Người đại diện HR: Nguyễn Bảo (0912 345 678)</p>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <button onclick="alert('Đã cấp huy hiệu Doanh Nghiệp Đã Xác Minh cho NovaTech Solutions!')" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs whitespace-nowrap">Cấp Verified</button>
-              <button class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs">Xem Hồ Sơ GP</button>
-            </div>
-          </div>
-
-          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-start justify-between gap-4">
-            <div>
-              <p class="font-bold text-white text-xs flex items-center gap-1.5">
-                Echo Sound Entertainment VN
-                <span class="text-[10px] text-amber-400 font-normal">Chờ cấp huy hiệu</span>
-              </p>
-              <p class="text-[11px] text-slate-400 mt-1">MST: 0315998231 &bull; GPĐKKD: Sở KH&ĐT TP.HCM</p>
-              <p class="text-[11px] text-slate-400">Địa chỉ: Landmark 81, P. 22, Q. Bình Thạnh, TP. HCM</p>
-              <p class="text-[11px] text-slate-500 mt-2">Người đại diện HR: Phương Thảo (0988 123 456)</p>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <button onclick="alert('Đã cấp huy hiệu Doanh Nghiệp Đã Xác Minh cho Echo Sound!')" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs whitespace-nowrap">Cấp Verified</button>
-              <button class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs">Xem Hồ Sơ GP</button>
-            </div>
-          </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="p-4">Họ và Tên</th>
+                <th class="p-4">Email</th>
+                <th class="p-4">Vai Trò (Role)</th>
+                <th class="p-4">Gói Pro</th>
+                <th class="p-4">AI Credits</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody" class="divide-y divide-slate-800 text-slate-300">
+              <tr>
+                <td colspan="5" class="p-4 text-center text-slate-500">Đang tải dữ liệu...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -337,21 +215,99 @@
   </div>
 
   <script>
-    function approveJob(btn) {
-      const row = btn.closest('tr');
-      row.style.opacity = '0.4';
-      btn.innerText = 'Đã Duyệt ✓';
-      btn.disabled = true;
-      btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
-      btn.classList.add('bg-slate-700');
-    }
+    async function loadAdminData() {
+      try {
+        // 1. Tải jobs
+        const resJobs = await fetch('/api/jobs');
+        const dataJobs = await resJobs.json();
+        const jobs = dataJobs.jobs || [];
 
-    function rejectJob(btn) {
-      if (confirm('Bạn có chắc muốn từ chối bài đăng tuyển dụng này?')) {
-        const row = btn.closest('tr');
-        row.remove();
+        document.getElementById('statTotalJobs').innerText = jobs.length;
+        document.getElementById('badgeJobCount').innerText = jobs.length;
+
+        const tbody = document.getElementById('adminJobsTableBody');
+        if (jobs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">Chưa có bài đăng nào.</td></tr>';
+        } else {
+          tbody.innerHTML = jobs.map(j => `
+            <tr class="hover:bg-slate-900/50 transition-colors">
+              <td class="p-4">
+                <div class="font-bold text-white">${j.company || 'Doanh Nghiệp'}</div>
+                <div class="text-[11px] text-slate-400">${j.location || 'Toàn quốc'}</div>
+              </td>
+              <td class="p-4">
+                <div class="font-semibold text-white">${j.title}</div>
+                <div class="text-[11px] text-slate-400">${(j.tags || []).join(', ')}</div>
+              </td>
+              <td class="p-4 font-bold text-emerald-400">
+                ${j.budget || 'Thỏa thuận'}
+              </td>
+              <td class="p-4 text-slate-400 text-[11px]">
+                ${new Date(j.createdAt || Date.now()).toLocaleDateString('vi-VN')}
+              </td>
+              <td class="p-4 text-right space-x-2">
+                <button onclick="deleteJobPost('${j.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white font-bold transition-all">
+                  Xóa Tin
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+
+        // 2. Tải users
+        const resUsers = await fetch('/api/auth/users');
+        const dataUsers = await resUsers.json();
+        const users = dataUsers.users || [];
+
+        document.getElementById('statTotalUsers').innerText = users.length;
+        document.getElementById('badgeUserCount').innerText = users.length;
+
+        const ubody = document.getElementById('adminUsersTableBody');
+        if (users.length === 0) {
+          ubody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">Chưa có người dùng nào.</td></tr>';
+        } else {
+          ubody.innerHTML = users.map(u => `
+            <tr class="hover:bg-slate-900/50 transition-colors">
+              <td class="p-4 font-bold text-white">${u.username || 'Người dùng'}</td>
+              <td class="p-4 text-slate-300">${u.email}</td>
+              <td class="p-4">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${u.role === 'HR' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-sky-500/20 text-sky-300 border border-sky-500/30'}">
+                  ${u.role === 'HR' ? 'Nhà Tuyển Dụng (HR)' : 'Ứng Viên (Student)'}
+                </span>
+              </td>
+              <td class="p-4">
+                <span class="${u.isPro ? 'text-amber-400 font-bold' : 'text-slate-500'}">
+                  ${u.isPro ? '★ ConnectCV Pro' : 'Tiêu chuẩn'}
+                </span>
+              </td>
+              <td class="p-4 font-bold text-sky-400">${u.aiCredits || 10}</td>
+            </tr>
+          `).join('');
+        }
+
+        // 3. Tải applications
+        const resApp = await fetch('/api/applications');
+        const dataApp = await resApp.json();
+        document.getElementById('statTotalApplications').innerText = dataApp.stats?.total || 0;
+
+      } catch (e) {
+        console.error('Lỗi nạp dữ liệu admin:', e);
       }
     }
+
+    async function deleteJobPost(id) {
+      if (!confirm('Bạn có chắc chắn muốn xóa tin tuyển dụng này khỏi hệ thống?')) return;
+      try {
+        const cleanId = id.replace(/^job_/, '');
+        await fetch('/api/posts/' + cleanId, { method: 'DELETE' });
+        await fetch('/api/posts/' + id, { method: 'DELETE' });
+        loadAdminData();
+      } catch (e) {
+        alert('Lỗi xóa bài đăng.');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadAdminData);
   </script>
 
 </body>
