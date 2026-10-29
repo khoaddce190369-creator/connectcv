@@ -8,7 +8,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/brand.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Google Firebase OAuth SDK Chính Chuẩn -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <style>
     /* Contenteditable hover highlight on CV */
     .cv-field:hover {
@@ -1156,10 +1158,10 @@
 
       <!-- VIEW 1: ĐĂNG NHẬP -->
       <div id="spaLoginSection" class="space-y-4">
-        <!-- Nút Đăng Nhập Google Thực Tế -->
-        <button type="button" onclick="promptGoogleSignIn()" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
+        <!-- Nút Đăng Nhập Google OAuth Chuẩn -->
+        <button type="button" onclick="executeGoogleOAuthSpa()" id="btnSpaLoginGoogle" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
           <span class="font-bold text-sky-700">Google</span>
-          <span>Đăng nhập nhanh với Google</span>
+          <span id="btnSpaLoginGoogleText">Đăng nhập với Google OAuth</span>
         </button>
 
         <div class="flex items-center gap-2">
@@ -1226,10 +1228,10 @@
           </button>
         </div>
 
-        <!-- Google OAuth Đăng ký -->
-        <button type="button" onclick="promptGoogleSignIn()" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
+        <!-- Google OAuth Đăng ký Chuẩn -->
+        <button type="button" onclick="executeGoogleOAuthSpa()" id="btnSpaRegGoogle" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
           <span class="font-bold text-sky-700">Google</span>
-          <span id="spaRegisterGoogleBtnText">Đăng ký nhanh với Google</span>
+          <span id="spaRegisterGoogleBtnText">Đăng ký bằng Google OAuth</span>
         </button>
 
         <div class="flex items-center gap-2">
@@ -2939,33 +2941,64 @@
       }
     }
 
-    async function promptGoogleSignIn() {
-      const emailInput = window.prompt(
-        'Nhập địa chỉ Gmail của bạn để xác thực Google Sign-In:',
-        'nguoidung@gmail.com'
-      );
-      if (!emailInput || !emailInput.trim()) return;
+    // Khởi tạo Firebase Google OAuth chuẩn cho toàn hệ thống
+    const firebaseConfigSpa = {
+      apiKey: "AIzaSyDwORNiGUS0XRRMvA4WWupjLxOEBubsDfQ",
+      authDomain: "connect-cv.firebaseapp.com",
+      projectId: "connect-cv",
+      storageBucket: "connect-cv.firebasestorage.app",
+      messagingSenderId: "994370542588",
+      appId: "1:994370542588:web:16f3a811279862d5fc7079",
+      measurementId: "G-VLNQN46Z5Q"
+    };
 
-      const cleanEmail = emailInput.trim().toLowerCase();
-      if (!cleanEmail.includes('@')) {
-        alert('Địa chỉ email không hợp lệ.');
-        return;
+    let spaFbAuth = null;
+    try {
+      if (typeof firebase !== 'undefined') {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfigSpa);
+        }
+        spaFbAuth = firebase.auth();
+        spaFbAuth.useDeviceLanguage();
+      }
+    } catch (e) {
+      console.warn('Firebase init error (SPA):', e);
+    }
+
+    async function executeGoogleOAuthSpa() {
+      const targetRole = spaAuthMode === 'register' ? spaRegisterRole : undefined;
+      const btn = spaAuthMode === 'register' ? document.getElementById('btnSpaRegGoogle') : document.getElementById('btnSpaLoginGoogle');
+      const origText = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.innerHTML = '<span class="font-bold text-sky-700">Google</span><span>Đang mở cửa sổ đăng nhập...</span>';
+        btn.disabled = true;
       }
 
-      const defaultName = cleanEmail.split('@')[0];
-      const targetRole = spaAuthMode === 'register' ? spaRegisterRole : undefined;
-
       try {
+        if (!spaFbAuth) {
+          throw new Error('Dịch vụ Google OAuth chưa sẵn sàng.');
+        }
+
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        // Mở popup tài khoản Google chuẩn chính thức
+        const result = await spaFbAuth.signInWithPopup(provider);
+        const user = result.user;
+        const idToken = await user.getIdToken();
+
         const res = await fetch('/api/auth/google', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            googleToken: 'token_google_verified_' + Date.now(),
-            email: cleanEmail,
-            name: defaultName,
+            googleToken: idToken,
+            email: user.email,
+            name: user.displayName || user.email.split('@')[0],
+            avatar: user.photoURL,
             role: targetRole
           })
         });
+
         const data = await res.json();
         if (data.success && data.jwtToken) {
           currentUser = data.user;
@@ -2973,12 +3006,24 @@
           localStorage.setItem('connectcv_user', JSON.stringify(data.user));
           renderUserAuth();
           toggleAuthModal();
-          showToast('Đăng nhập Google thành công (' + cleanEmail + ')');
+          showToast('Đăng nhập Google OAuth thành công!');
         } else {
-          alert(data.message || 'Lỗi xác thực tài khoản Google.');
+          alert(data.message || 'Lỗi đồng bộ tài khoản Google với máy chủ.');
         }
-      } catch (e) {
-        alert('Lỗi kết nối máy chủ khi đăng nhập Google.');
+      } catch (err) {
+        console.error('Lỗi Google OAuth:', err);
+        if (err.code === 'auth/popup-closed-by-user') {
+          // Người dùng đóng popup
+        } else if (err.code === 'auth/popup-blocked') {
+          alert('Trình duyệt đang chặn popup. Vui lòng cho phép mở cửa sổ đăng nhập Google.');
+        } else {
+          alert('Lỗi xác thực Google: ' + (err.message || 'Vui lòng thử lại.'));
+        }
+      } finally {
+        if (btn) {
+          btn.innerHTML = origText;
+          btn.disabled = false;
+        }
       }
     }
 

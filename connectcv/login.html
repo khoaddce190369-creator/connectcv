@@ -9,6 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/brand.css" />
+  <!-- Google Firebase OAuth SDK Chính Chuẩn -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <style>
     body {
       font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -17,7 +20,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between antialiased">
 
-  <!-- Header Đơn Giản & Trang Nhã -->
+  <!-- Header Đơn Giản & Trang Nhã (Không Icon) -->
   <header class="w-full max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
     <a href="/" class="flex items-center gap-2.5">
       <img src="assets/logo.png" alt="ConnectCV" class="h-9 w-auto" />
@@ -56,10 +59,10 @@
 
       <!-- VIEW 1: ĐĂNG NHẬP -->
       <div id="sectionLogin" class="space-y-4">
-        <!-- Đăng nhập Google Thực Tế -->
-        <button type="button" onclick="promptGoogleAuth()" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
+        <!-- Đăng nhập Google OAuth Chuẩn -->
+        <button type="button" onclick="executeGoogleOAuth()" id="btnLoginGoogle" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
           <span class="font-bold text-sky-700">Google</span>
-          <span>Đăng nhập nhanh với Google</span>
+          <span id="btnLoginGoogleText">Đăng nhập với Google OAuth</span>
         </button>
 
         <div class="flex items-center gap-2">
@@ -135,10 +138,10 @@
           </button>
         </div>
 
-        <!-- Nút Đăng ký Google -->
-        <button type="button" onclick="promptGoogleAuth()" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
+        <!-- Nút Đăng ký Google OAuth Chuẩn -->
+        <button type="button" onclick="executeGoogleOAuth()" id="btnRegGoogle" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
           <span class="font-bold text-sky-700">Google</span>
-          <span id="btnRegGoogleText">Đăng ký bằng tài khoản Google</span>
+          <span id="btnRegGoogleText">Đăng ký bằng Google OAuth</span>
         </button>
 
         <div class="flex items-center gap-2">
@@ -178,6 +181,31 @@
   </footer>
 
   <script>
+    // --- 1. KHỞI TẠO FIREBASE GOOGLE OAUTH CHUẨN ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyDwORNiGUS0XRRMvA4WWupjLxOEBubsDfQ",
+      authDomain: "connect-cv.firebaseapp.com",
+      projectId: "connect-cv",
+      storageBucket: "connect-cv.firebasestorage.app",
+      messagingSenderId: "994370542588",
+      appId: "1:994370542588:web:16f3a811279862d5fc7079",
+      measurementId: "G-VLNQN46Z5Q"
+    };
+
+    let fbAuth = null;
+    try {
+      if (typeof firebase !== 'undefined') {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+        }
+        fbAuth = firebase.auth();
+        fbAuth.useDeviceLanguage();
+      }
+    } catch (e) {
+      console.warn('Firebase init error:', e);
+    }
+
+    // --- 2. TRẠNG THÁI GIAO DIỆN AUTH ---
     let currentMode = 'login'; // 'login' | 'register'
     let chosenRole = 'Student'; // 'Student' | 'HR'
 
@@ -240,10 +268,10 @@
 
       if (chosenRole === 'HR') {
         title.innerText = 'Tạo tài khoản: Nhà Tuyển Dụng / Doanh Nghiệp';
-        btnGoogleText.innerText = 'Đăng ký nhanh bằng Google (Doanh nghiệp)';
+        btnGoogleText.innerText = 'Đăng ký bằng Google (Doanh nghiệp)';
       } else {
         title.innerText = 'Tạo tài khoản: Ứng Viên / Freelancer';
-        btnGoogleText.innerText = 'Đăng ký nhanh bằng Google (Ứng viên)';
+        btnGoogleText.innerText = 'Đăng ký bằng Google (Ứng viên)';
       }
     }
 
@@ -252,6 +280,66 @@
       document.getElementById('sectionRegisterStep1').classList.remove('hidden');
     }
 
+    // --- 3. ĐĂNG NHẬP / ĐĂNG KÝ GOOGLE OAUTH CHUẨN ---
+    async function executeGoogleOAuth() {
+      const targetRole = currentMode === 'register' ? chosenRole : undefined;
+      const btn = currentMode === 'register' ? document.getElementById('btnRegGoogle') : document.getElementById('btnLoginGoogle');
+      const origText = btn.innerHTML;
+      btn.innerHTML = '<span class="font-bold text-sky-700">Google</span><span>Đang mở cửa sổ đăng nhập...</span>';
+      btn.disabled = true;
+
+      try {
+        if (!fbAuth) {
+          throw new Error('Dịch vụ Google OAuth chưa sẵn sàng.');
+        }
+
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        // Mở cửa sổ popup Google OAuth chuẩn chính thức của Google
+        const result = await fbAuth.signInWithPopup(provider);
+        const user = result.user;
+        const idToken = await user.getIdToken();
+
+        // Gửi token chuẩn lên backend để xác thực và cấp JWT
+        const res = await fetch('/api/auth/google', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            googleToken: idToken,
+            email: user.email,
+            name: user.displayName || user.email.split('@')[0],
+            avatar: user.photoURL,
+            role: targetRole
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.jwtToken) {
+          localStorage.setItem('jwtToken', data.jwtToken);
+          localStorage.setItem('connectcv_user', JSON.stringify(data.user));
+          window.location.href = '/';
+        } else {
+          alert(data.message || 'Lỗi đồng bộ tài khoản máy chủ.');
+        }
+      } catch (err) {
+        console.error('Lỗi Google OAuth:', err);
+        if (err.code === 'auth/popup-closed-by-user') {
+          // Người dùng chủ động đóng popup
+        } else if (err.code === 'auth/popup-blocked') {
+          alert('Trình duyệt đang chặn cửa sổ đăng nhập. Vui lòng cho phép popup trên trang web này để đăng nhập Google.');
+        } else if (err.code === 'auth/unauthorized-domain') {
+          alert('Tên miền này cần được thêm vào danh sách Authorized Domains trên Firebase Console của dự án connect-cv.');
+        } else {
+          alert('Lỗi xác thực Google: ' + (err.message || 'Vui lòng thử lại.'));
+        }
+      } finally {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+      }
+    }
+
+    // --- 4. FORM SUBMIT BẰNG EMAIL & MẬT KHẨU ---
     async function handleLoginSubmit(e) {
       e.preventDefault();
       const email = document.getElementById('loginEmail').value.trim();
@@ -333,47 +421,6 @@
         alert('Lỗi kết nối máy chủ.');
         btn.innerText = origText;
         btn.disabled = false;
-      }
-    }
-
-    async function promptGoogleAuth() {
-      const emailInput = window.prompt(
-        'Nhập địa chỉ Gmail của bạn để xác thực Google Sign-In:',
-        'nguoidung@gmail.com'
-      );
-      if (!emailInput || !emailInput.trim()) return;
-
-      const cleanEmail = emailInput.trim().toLowerCase();
-      if (!cleanEmail.includes('@')) {
-        alert('Địa chỉ email không hợp lệ.');
-        return;
-      }
-
-      const defaultName = cleanEmail.split('@')[0];
-      const targetRole = currentMode === 'register' ? chosenRole : undefined;
-
-      try {
-        const res = await fetch('/api/auth/google', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            googleToken: 'token_google_verified_' + Date.now(),
-            email: cleanEmail,
-            name: defaultName,
-            role: targetRole
-          })
-        });
-
-        const data = await res.json();
-        if (data.success && data.jwtToken) {
-          localStorage.setItem('jwtToken', data.jwtToken);
-          localStorage.setItem('connectcv_user', JSON.stringify(data.user));
-          window.location.href = '/';
-        } else {
-          alert(data.message || 'Lỗi xác thực Google.');
-        }
-      } catch (e) {
-        alert('Lỗi kết nối máy chủ xác thực Google.');
       }
     }
   </script>
