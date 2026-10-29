@@ -146,20 +146,47 @@ router.get('/templates', (req, res) => {
     const fs = require('fs');
     const path = require('path');
     const templatesDir = path.join(__dirname, '../../../connectcv/assets/templates');
+    const htmlDir = path.join(__dirname, '../../../connectcv/assets/template-library');
     
     let templateFiles = [];
     if (fs.existsSync(templatesDir)) {
       templateFiles = fs.readdirSync(templatesDir).filter(f => f.endsWith('.png'));
     }
 
-    const templates = templateFiles.slice(0, 24).map((file, idx) => {
-      const cleanName = file.replace(/\.png$/, '').replace(/^\d+_/, '').replace(/_/g, ' ');
+    const availableHtmls = fs.existsSync(htmlDir)
+      ? fs.readdirSync(htmlDir).filter(f => f.endsWith('.html'))
+      : [];
+
+    const templates = templateFiles.map((file, idx) => {
+      const baseName = file.replace(/\.png$/, '');
+      const cleanName = baseName.replace(/^\d+_/, '').replace(/_/g, ' ');
+      
+      // Tìm file HTML tương ứng
+      let matchedHtml = availableHtmls.find(h => h.replace(/\.html$/, '') === baseName);
+      if (!matchedHtml) {
+        matchedHtml = availableHtmls.find(h => h.includes(baseName) || baseName.includes(h.replace(/\.html$/, '')));
+      }
+
+      // Xác định style phong cách
+      let style = 'Hiện Đại 2 Cột';
+      if (baseName.toLowerCase().includes('harvard') || baseName.toLowerCase().includes('classic')) {
+        style = 'Cổ Điển Harvard';
+      } else if (baseName.toLowerCase().includes('minimal') || baseName.toLowerCase().includes('toi_gian')) {
+        style = 'Tối Giản Chuẩn ATS';
+      } else if (baseName.toLowerCase().includes('pro') || baseName.toLowerCase().includes('chuyen_nghiep')) {
+        style = 'Chuyên Nghiệp';
+      } else if (baseName.toLowerCase().includes('impressive') || baseName.toLowerCase().includes('an_tuong')) {
+        style = 'Ấn Tượng Sáng Tạo';
+      }
+
       return {
-        id: `tpl_${idx + 1}`,
+        id: baseName,
+        index: idx,
         fileName: file,
+        htmlFile: matchedHtml || null,
         imageUrl: `assets/templates/${file}`,
-        name: cleanName.length > 25 ? cleanName.substring(0, 25) + '...' : cleanName,
-        style: idx % 3 === 0 ? 'Hiện Đại 2 Cột' : (idx % 3 === 1 ? 'Cổ Điển Harvard' : 'Kỹ Thuật Công Nghệ')
+        name: cleanName.length > 30 ? cleanName.substring(0, 30) + '...' : cleanName,
+        style
       };
     });
 
@@ -170,6 +197,83 @@ router.get('/templates', (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Lỗi tải danh mục template.' });
+  }
+});
+
+/**
+ * @route   GET /api/cv/template/:id
+ * @desc    Lấy nội dung HTML mẫu CV có thể chỉnh sửa trực tiếp (Live Editable)
+ */
+router.get('/template/:id', (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const templateId = req.params.id;
+    const htmlDir = path.join(__dirname, '../../../connectcv/assets/template-library');
+
+    if (!fs.existsSync(htmlDir)) {
+      return res.status(404).json({ success: false, message: 'Thư viện mẫu CV chưa sẵn sàng.' });
+    }
+
+    const availableHtmls = fs.readdirSync(htmlDir).filter(f => f.endsWith('.html'));
+
+    // Tìm file HTML tương ứng với templateId
+    let targetFile = availableHtmls.find(h => h.replace(/\.html$/, '') === templateId);
+    if (!targetFile) {
+      targetFile = availableHtmls.find(h => h.includes(templateId) || templateId.includes(h.replace(/\.html$/, '')));
+    }
+    // Nếu vẫn không tìm thấy, fallback về mẫu tiêu chuẩn đầu tiên
+    if (!targetFile && availableHtmls.length > 0) {
+      targetFile = availableHtmls[0];
+    }
+
+    if (!targetFile) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy mẫu CV này.' });
+    }
+
+    const filePath = path.join(htmlDir, targetFile);
+    const rawContent = fs.readFileSync(filePath, 'utf8');
+
+    // Bóc tách Style CSS
+    let styleCss = '';
+    const styleMatch = rawContent.match(/<style\b[^>]*>([\s\S]*?)<\/style>/i);
+    if (styleMatch) {
+      styleCss = styleMatch[1];
+    }
+
+    // Bóc tách khối nội dung CV (thẻ .cv-page-container hoặc body)
+    let cvHtml = '';
+    const containerMatch = rawContent.match(/<div[^>]*class=["'][^"']*cv-page-container[^"']*["'][^>]*>([\s\S]*?)<\/div>\s*(?:<script|$)/i);
+    if (containerMatch) {
+      cvHtml = containerMatch[1];
+    } else {
+      const bodyMatch = rawContent.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i);
+      cvHtml = bodyMatch ? bodyMatch[1] : rawContent;
+    }
+
+    // Loại bỏ thanh toolbar nếu có trong template
+    cvHtml = cvHtml.replace(/<div\b[^>]*class=["'][^"']*cv-toolbar[^"']*["'][\s\S]*?<\/div>/gi, '');
+    cvHtml = cvHtml.replace(/<script\b[\s\S]*?<\/script>/gi, '');
+
+    // Đảm bảo các trường tiêu đề và nội dung đều có thuộc tính contenteditable="true"
+    cvHtml = cvHtml.replace(/<([a-z0-9]+)([^>]*?)contenteditable=["']false["']([^>]*?)>/gi, '<$1$2contenteditable="true"$3>');
+
+    // Gán contenteditable cho các thẻ tiêu biểu nếu chưa có
+    cvHtml = cvHtml.replace(/<(h[1-6]|p|li|span\b(?![^>]*contenteditable))([^>]*?)>/gi, (match, tag, rest) => {
+      if (rest.includes('contenteditable')) return match;
+      return `<${tag}${rest} contenteditable="true">`;
+    });
+
+    return res.json({
+      success: true,
+      templateId,
+      fileName: targetFile,
+      styleCss,
+      cvHtml
+    });
+  } catch (err) {
+    console.error('Lỗi GET /api/cv/template/:id:', err);
+    return res.status(500).json({ success: false, message: 'Lỗi tải mẫu CV.' });
   }
 });
 

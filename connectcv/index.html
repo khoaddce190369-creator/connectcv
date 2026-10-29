@@ -2001,10 +2001,30 @@
 
     // --- 2. LOGIC TẠO CV CHUẨN ATS (UI MẪU MYCV/F8 STYLE) ---
     function changeCvTheme(colorHex) {
-      document.getElementById('cvHeaderBanner').style.backgroundColor = colorHex;
+      const banner = document.getElementById('cvHeaderBanner');
+      if (banner) banner.style.backgroundColor = colorHex;
+
       document.querySelectorAll('.cv-theme-color').forEach(el => {
         el.style.color = colorHex;
       });
+
+      // Đổi màu các tiêu đề h2, h3, h4 hoặc thanh viền trong mẫu bất kỳ
+      const canvas = document.getElementById('cvCanvas');
+      if (canvas) {
+        canvas.querySelectorAll('h2, h3, h4').forEach(h => {
+          if (h.style.color && h.style.color !== 'white' && h.style.color !== '#ffffff' && h.style.color !== 'rgb(255, 255, 255)') {
+            h.style.color = colorHex;
+          }
+          if (h.style.borderBottomColor) {
+            h.style.borderBottomColor = colorHex;
+          }
+        });
+        canvas.querySelectorAll('.cv-header, header, [style*="border-bottom"]').forEach(el => {
+          if (el.style.borderBottom && !el.style.borderBottom.includes('transparent')) {
+            el.style.borderBottomColor = colorHex;
+          }
+        });
+      }
     }
 
     function changeCvFont(fontFamily) {
@@ -2013,7 +2033,7 @@
 
     async function downloadCvPDF() {
       const element = document.getElementById('cvCanvas');
-      const rawName = document.getElementById('cvFullName')?.innerText || 'ConnectCV';
+      const rawName = document.querySelector('#cvCanvas h1')?.innerText || document.getElementById('cvFullName')?.innerText || 'ConnectCV';
       const cleanName = rawName.trim().replace(/[^a-zA-Z0-9_\u00C0-\u1EF9]/g, '_') || 'Hồ_Sơ';
 
       if (typeof html2pdf !== 'undefined') {
@@ -3145,6 +3165,9 @@
     }
 
     // --- 8. KHO MẪU CV CHUẨN ATS TỪ THƯ VIỆN ASSETS ---
+    let currentTemplateId = 'default_v2';
+    let cachedCvTemplates = [];
+
     async function loadCvTemplates() {
       const container = document.getElementById('cvTemplateGallery');
       if (!container) return;
@@ -3152,23 +3175,23 @@
       try {
         const res = await fetch('/api/cv/templates');
         const data = await res.json();
-        const templates = data.templates || [];
+        cachedCvTemplates = data.templates || [];
 
-        if (templates.length === 0) {
+        if (cachedCvTemplates.length === 0) {
           container.innerHTML = '<span class="text-xs text-slate-400">Đang chuẩn bị các mẫu CV từ Assets...</span>';
           return;
         }
 
-        container.innerHTML = templates.map((tpl, i) => `
-          <div onclick="applyCvTemplate('${tpl.name}', ${i})" class="flex-shrink-0 w-36 group cursor-pointer space-y-1.5">
-            <div class="w-36 h-48 rounded-xl overflow-hidden border-2 border-slate-200 group-hover:border-[#0284c7] group-hover:shadow-md transition-all bg-white relative">
+        container.innerHTML = cachedCvTemplates.map((tpl, i) => `
+          <div onclick="applyCvTemplate('${tpl.id}', '${tpl.name.replace(/'/g, "\\'")}', ${i})" id="tplItem-${i}" class="tpl-card-item flex-shrink-0 w-36 group cursor-pointer space-y-1.5 transition-all">
+            <div id="tplBorder-${i}" class="w-36 h-48 rounded-xl overflow-hidden border-2 ${i === 0 ? 'border-sky-600 ring-2 ring-sky-300' : 'border-slate-200'} group-hover:border-[#0284c7] group-hover:shadow-md transition-all bg-white relative">
               <img src="${tpl.imageUrl}" alt="${tpl.name}" class="w-full h-full object-cover object-top" onerror="this.onerror=null;this.src='assets/logo.png';" />
               <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <span class="bg-[#0284c7] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Áp dụng</span>
+                <span class="bg-[#0284c7] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Áp dụng mẫu</span>
               </div>
             </div>
             <div class="text-center">
-              <p class="text-[11px] font-bold text-slate-800 group-hover:text-[#0284c7] truncate">${tpl.name}</p>
+              <p class="text-[11px] font-bold text-slate-800 group-hover:text-[#0284c7] truncate" title="${tpl.name}">${tpl.name}</p>
               <span class="text-[9px] text-slate-400 block">${tpl.style}</span>
             </div>
           </div>
@@ -3178,11 +3201,83 @@
       }
     }
 
-    function applyCvTemplate(templateName, index) {
-      const colors = ['#172554', '#0284c7', '#0f172a', '#15803d', '#574040'];
-      const pickedColor = colors[index % colors.length];
-      changeCvTheme(pickedColor);
-      showToast('Đã áp dụng mẫu thiết kế: ' + templateName);
+    async function applyCvTemplate(templateId, templateName, index) {
+      currentTemplateId = templateId;
+
+      // Cập nhật viền active trên danh sách mẫu
+      document.querySelectorAll('.tpl-card-item div[id^="tplBorder-"]').forEach(el => {
+        el.className = 'w-36 h-48 rounded-xl overflow-hidden border-2 border-slate-200 group-hover:border-[#0284c7] group-hover:shadow-md transition-all bg-white relative';
+      });
+      const activeBorder = document.getElementById(`tplBorder-${index}`);
+      if (activeBorder) {
+        activeBorder.className = 'w-36 h-48 rounded-xl overflow-hidden border-2 border-sky-600 ring-2 ring-sky-300 shadow-md transition-all bg-white relative';
+      }
+
+      showToast('Đang tải và áp dụng mẫu: ' + templateName + '...');
+
+      try {
+        const res = await fetch('/api/cv/template/' + encodeURIComponent(templateId));
+        const data = await res.json();
+
+        if (!data.success || !data.cvHtml) {
+          throw new Error(data.message || 'Không thể tải nội dung mẫu');
+        }
+
+        const canvas = document.getElementById('cvCanvas');
+        if (!canvas) return;
+
+        // Bóc tách & áp dụng CSS riêng của template vào trang
+        if (data.styleCss) {
+          let scopedCss = data.styleCss
+            .replace(/body\.in-iframe/g, '#cvCanvas')
+            .replace(/\.cv-page-container/g, '#cvCanvas')
+            .replace(/body\s*\{[^}]*\}/g, '')
+            .replace(/@media\s+print\s*\{[\s\S]*?body[^}]*\}[\s\S]*?\}/gi, '');
+
+          let styleEl = document.getElementById('dynamicCvTemplateStyle');
+          if (!styleEl) {
+            styleEl = document.createElement('style');
+            styleEl.id = 'dynamicCvTemplateStyle';
+            document.head.appendChild(styleEl);
+          }
+          styleEl.textContent = scopedCss;
+        }
+
+        // Thay đổi toàn bộ nội dung sang layout của mẫu CV mới
+        canvas.innerHTML = data.cvHtml;
+
+        // Đảm bảo TẤT CẢ các thẻ văn bản trong mẫu đều có thể CHỈNH SỬA TRỰC TIẾP (contenteditable="true")
+        const editableTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'li', 'span', 'b', 'strong', 'em', 'td', 'th', 'div'];
+        canvas.querySelectorAll(editableTags.join(',')).forEach(el => {
+          // Bỏ qua nếu là container chứa nhiều khối phức tạp
+          if (el.tagName === 'DIV' && el.children.length > 2) return;
+          
+          el.setAttribute('contenteditable', 'true');
+          el.classList.add('cv-field');
+          el.style.outline = 'none';
+        });
+
+        // Xử lý ảnh avatar nếu có lỗi
+        canvas.querySelectorAll('img').forEach(img => {
+          img.onerror = function() {
+            this.onerror = null;
+            this.src = 'assets/logo.png';
+          };
+        });
+
+        // Kích hoạt animation mượt mà
+        canvas.classList.remove('view-animate');
+        void canvas.offsetWidth;
+        canvas.classList.add('view-animate');
+
+        // Cuộn mượt đến khung soạn thảo CV
+        canvas.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        showToast('Đã đổi sang mẫu: ' + templateName + '. Bạn có thể nhấp chuột vào bất kỳ chữ nào để chỉnh sửa trực tiếp!');
+      } catch (err) {
+        console.error('Lỗi áp dụng mẫu CV:', err);
+        showToast('Lỗi khi tải mẫu CV. Vui lòng thử lại.');
+      }
     }
 
     // --- Toast Helper ---
