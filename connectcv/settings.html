@@ -147,7 +147,7 @@
               <button type="button" onclick="showToast('Chọn ảnh mới thành công!')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
                 Thay đổi ảnh đại diện
               </button>
-              <p class="text-[10px] text-slate-400 mt-1">Khuyến nghị ảnh vuông tỉ lệ 1:1, tối thiểu 400x400px (PNG, JPG).</p>
+              <p class="text-xs text-slate-400 mt-1">Khuyến nghị ảnh vuông tỉ lệ 1:1, tối thiểu 400x400px (PNG, JPG).</p>
             </div>
           </div>
 
@@ -187,9 +187,9 @@
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1.5">Trạng thái nhận việc</label>
                 <select class="form-input font-medium">
-                  <option selected>🟢 Sẵn sàng nhận dự án mới &amp; việc làm</option>
-                  <option>🟡 Chỉ nhận dự án bán thời gian (Part-time)</option>
-                  <option>🔴 Đang bận dự án (Tạm ẩn hồ sơ)</option>
+                  <option selected>Sẵn sàng nhận dự án & việc làm</option>
+                  <option>Chỉ nhận dự án bán thời gian</option>
+                  <option>Tạm ẩn hồ sơ</option>
                 </select>
               </div>
             </div>
@@ -213,13 +213,13 @@
           <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="text-xl">🇬🇧</span>
+                <span class="font-bold text-xs text-slate-500">EN</span>
                 <div>
                   <p class="font-bold text-slate-900 text-xs">Bản CV Tiếng Anh (English CV - ATS Standard)</p>
-                  <p class="text-[10px] text-emerald-600 font-semibold">Điểm ATS hiện tại: 94/100 &middot; Cập nhật hôm qua</p>
+                  <p class="text-xs text-emerald-600 font-semibold">Điểm ATS hiện tại: 94/100 &middot; Cập nhật hôm qua</p>
                 </div>
               </div>
-              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Đang kích hoạt</span>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Đang kích hoạt</span>
             </div>
             <div class="flex items-center gap-3">
               <button onclick="showToast('Chọn file PDF CV Tiếng Anh mới')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-brand-600 bg-white border border-brand-200 hover:bg-brand-50">
@@ -233,13 +233,13 @@
           <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="text-xl">🇻🇳</span>
+                <span class="font-bold text-xs text-slate-500">VI</span>
                 <div>
                   <p class="font-bold text-slate-900 text-xs">Bản CV Tiếng Việt (Vietnamese CV)</p>
-                  <p class="text-[10px] text-slate-500 font-medium">Phiên bản chuẩn dành cho các tập đoàn &amp; doanh nghiệp nội địa</p>
+                  <p class="text-xs text-slate-500 font-medium">Phiên bản chuẩn dành cho các tập đoàn &amp; doanh nghiệp nội địa</p>
                 </div>
               </div>
-              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Đang kích hoạt</span>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Đang kích hoạt</span>
             </div>
             <div class="flex items-center gap-3">
               <button onclick="showToast('Chọn file PDF CV Tiếng Việt mới')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-brand-600 bg-white border border-brand-200 hover:bg-brand-50">
@@ -292,7 +292,7 @@
               <p class="font-bold text-slate-900 text-xs">Techcombank (Ngân hàng TMCP Kỹ Thương)</p>
               <p class="text-xs text-slate-500 font-mono mt-0.5">1903 8842 1999 &middot; NGUYEN MINH TUAN</p>
             </div>
-            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">Mặc định</span>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">Mặc định</span>
           </div>
 
           <button onclick="showToast('Chức năng liên kết thêm ngân hàng!')" class="w-full py-2.5 rounded-xl border-2 border-dashed border-slate-200 text-xs font-bold text-brand-600 hover:bg-slate-50 transition-colors">
@@ -348,7 +348,7 @@
 
     function saveSettings(e) {
       e.preventDefault();
-      showToast("💾 Đã lưu thay đổi cài đặt thành công!");
+      showToast("Đã lưu thay đổi cài đặt.");
     }
 
     function showToast(msg) {

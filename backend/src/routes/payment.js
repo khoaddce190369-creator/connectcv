@@ -15,8 +15,12 @@ const BANK_CONFIG = {
 };
 
 const PACKAGES = {
+  FREE: { name: 'ConnectCV Cơ Bản', amount: 0, durationDays: 3650 },
   PRO_MONTHLY: { name: 'ConnectCV Pro Tháng', amount: 20000, durationDays: 30 },
-  PRO_LIFETIME: { name: 'ConnectCV Pro Trọn Gói', amount: 49000, durationDays: 365 }
+  PRO_YEARLY: { name: 'ConnectCV Pro Năm', amount: 199000, durationDays: 365 },
+  PRO_LIFETIME: { name: 'ConnectCV Pro Trọn Gói', amount: 199000, durationDays: 365 },
+  MAX_MONTHLY: { name: 'ConnectCV MAX VIP Tháng', amount: 49000, durationDays: 30 },
+  MAX_YEARLY: { name: 'ConnectCV MAX VIP Năm', amount: 399000, durationDays: 365 }
 };
 
 /**
@@ -139,14 +143,18 @@ router.post('/mock-confirm', optionalAuth, (req, res) => {
     }
 
     const userId = targetTxn?.userId || req.user?.id;
+    const pkg = targetTxn?.packageType || 'PRO_MONTHLY';
+    let updatedUser = null;
     if (userId) {
-      UserModel.update(userId, { isPro: true, role: 'Employer' });
+      updatedUser = UserModel.update(userId, { isPro: true, plan: pkg });
     }
 
     return res.json({
       success: true,
-      message: 'Xác nhận thanh toán thành công! Tài khoản đã được kích hoạt Pro.',
-      isPro: true
+      message: 'Xác nhận thanh toán thành công! Gói cước đã được kích hoạt ngay lập tức.',
+      isPro: true,
+      plan: pkg,
+      user: UserModel.toPublicJSON(updatedUser || { id: userId, isPro: true, plan: pkg })
     });
   } catch (error) {
     console.error('Lỗi POST /api/payment/mock-confirm:', error);

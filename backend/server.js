@@ -1,7 +1,7 @@
 'use strict';
-require('dotenv').config();
-const express = require('express');
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+const express = require('express');
 const fs = require('fs');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -12,10 +12,12 @@ const PORT = process.env.PORT || 5000;
 // Trust proxy cho môi trường Render
 app.set('trust proxy', 1);
 
-// Cấu hình Helmet an toàn cho phép CDN, nhúng iframe & script
+// Cấu hình Helmet an toàn cho phép CDN, Google OAuth popup & script
 app.use(helmet({
   contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));
 
 // Middleware CORS
@@ -121,6 +123,15 @@ app.get(['/p/:subdomain', '/portfolio/:subdomain'], (req, res) => {
   return res.redirect('/#portfolio');
 });
 
+// Phục vụ Trang Cá Nhân LinkedIn Style (/profile, /profile.html, /my-profile)
+app.get(['/profile', '/profile.html', '/my-profile'], (req, res) => {
+  const profileHtml = path.join(connectcvUiPath, 'profile.html');
+  if (fs.existsSync(profileHtml)) {
+    return res.sendFile(profileHtml);
+  }
+  return res.redirect('/');
+});
+
 // Tuyến đường riêng cho Trang Quản Trị Hệ Thống (/admin) - Không hiển thị link trên web chính
 app.get(['/admin', '/admin-dashboard'], (req, res) => {
   const adminHtml = path.join(connectcvUiPath, 'admin-dashboard.html');
@@ -129,6 +140,67 @@ app.get(['/admin', '/admin-dashboard'], (req, res) => {
   }
   return res.status(404).send('Không tìm thấy trang quản trị.');
 });
+
+// ==========================================
+// 4. PHỤC VỤ TRÌNH TẠO CV CHUẨN ATS (CLONE TOPCV & MYCV SPA)
+// ==========================================
+const topcvDistPath = fs.existsSync(path.join(__dirname, '../Clone TOPCV/dist'))
+  ? path.join(__dirname, '../Clone TOPCV/dist')
+  : path.join(__dirname, '../subfolder/Clone TOPCV/dist');
+const topcvIndex = path.join(topcvDistPath, 'index.html');
+
+if (fs.existsSync(topcvDistPath)) {
+  app.use('/cv-assets', express.static(topcvDistPath, {
+    setHeaders: (res, p) => {
+      if (p.endsWith('.js') || p.endsWith('.css') || p.endsWith('.html')) {
+        res.set('Cache-Control', 'no-cache, must-revalidate');
+      }
+    }
+  }));
+
+  // Tuyến đường SPA phục vụ trình tạo CV theo mẫu chuẩn ATS quốc tế (12 mẫu)
+  app.get([
+    '/cv-editor',
+    '/cv-editor/*',
+    '/editor',
+    '/editor/*',
+    '/new'
+  ], (req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.sendFile(topcvIndex);
+  });
+}
+
+const mycvPath = fs.existsSync(path.join(__dirname, '../MyCV'))
+  ? path.join(__dirname, '../MyCV')
+  : path.join(__dirname, '../subfolder/MyCV');
+if (fs.existsSync(mycvPath)) {
+  app.use('/static', express.static(path.join(mycvPath, 'static'), {
+    setHeaders: (res, p) => {
+      if (p.endsWith('.js') || p.endsWith('.css') || p.endsWith('.html')) {
+        res.set('Cache-Control', 'no-cache, must-revalidate');
+      }
+    }
+  }));
+  app.use('/backgrounds', express.static(path.join(mycvPath, 'backgrounds')));
+  app.use('/favicon', express.static(path.join(mycvPath, 'favicon')));
+  
+  app.get('/manifest.json', (req, res) => res.sendFile(path.join(mycvPath, 'manifest.json')));
+  app.get('/asset_manifest.json', (req, res) => res.sendFile(path.join(mycvPath, 'asset_manifest.json')));
+
+  // Tuyến đường SPA phục vụ MyCV dự phòng
+  const mycvIndex = path.join(mycvPath, 'index.html');
+  app.get([
+    '/mycv',
+    '/mycv/*',
+    '/edit/:documentId',
+    '/view/:documentId',
+    '/my-documents'
+  ], (req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.sendFile(mycvIndex);
+  });
+}
 
 if (fs.existsSync(connectcvUiPath)) {
   // Phục vụ các trang HTML tĩnh giao diện mới
@@ -163,8 +235,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 ConnectCV Server is listening on port ${PORT}`);
+// Xử lý lỗi không đồng bộ toàn cục để server không bị crash đột ngột
+process.on('uncaughtException', (err) => {
+  console.error('💥 Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('💥 Unhandled Rejection:', reason);
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 ConnectCV Server is listening on port ${PORT} (0.0.0.0)`);
   console.log(`🌐 Website URL: http://localhost:${PORT}`);
   console.log(`🤖 AI Studio: http://localhost:${PORT}/ai`);
 });

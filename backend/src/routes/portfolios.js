@@ -71,6 +71,39 @@ router.get('/by-subdomain/:subdomain', optionalAuth, (req, res) => {
 });
 
 /**
+ * @route   GET /api/portfolios/my
+ * @desc    Lấy danh sách dự án portfolio của chính ứng viên hiện tại
+ */
+router.get('/my', optionalAuth, (req, res) => {
+  try {
+    const list = db.get('portfolios') || [];
+    const userId = req.user?.id || req.query.userId;
+    const username = req.user?.username || req.query.username;
+    const subdomain = req.user?.subdomain || req.query.subdomain;
+    const author = req.query.author;
+
+    let userPortfolios = [];
+    if (userId || username || subdomain || author) {
+      userPortfolios = list.filter(p => 
+        (userId && p.authorId === userId) ||
+        (author && p.author && p.author.toLowerCase().includes(author.toLowerCase())) ||
+        (username && p.author && p.author.toLowerCase() === username.toLowerCase()) ||
+        (subdomain && p.subdomain && p.subdomain.toLowerCase() === subdomain.toLowerCase())
+      );
+    }
+    // Nếu chưa có dự án cá nhân, trả về rỗng để hiển thị empty state
+    return res.json({
+      success: true,
+      count: userPortfolios.length,
+      portfolios: userPortfolios
+    });
+  } catch (error) {
+    console.error('Lỗi GET /api/portfolios/my:', error);
+    return res.status(500).json({ success: false, message: 'Lỗi tải portfolio cá nhân.' });
+  }
+});
+
+/**
  * @route   GET /api/portfolios/:id
  * @desc    Xem chi tiết dự án trong Modal hoặc trang tĩnh riêng biệt
  */
@@ -162,6 +195,26 @@ router.post('/', optionalAuth, (req, res) => {
   } catch (error) {
     console.error('Lỗi POST /api/portfolios:', error);
     return res.status(500).json({ success: false, message: 'Lỗi thêm dự án vào portfolio.' });
+  }
+});
+
+/**
+ * @route   DELETE /api/portfolios/:id
+ * @desc    Xóa một dự án khỏi portfolio
+ */
+router.delete('/:id', optionalAuth, (req, res) => {
+  try {
+    const list = db.get('portfolios') || [];
+    const index = list.findIndex(p => p.id === req.params.id);
+    if (index === -1) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy dự án portfolio.' });
+    }
+    list.splice(index, 1);
+    db.saveData();
+    return res.json({ success: true, message: 'Đã xóa dự án portfolio thành công.' });
+  } catch (error) {
+    console.error('Lỗi DELETE /api/portfolios/:id:', error);
+    return res.status(500).json({ success: false, message: 'Lỗi xóa dự án.' });
   }
 });
 

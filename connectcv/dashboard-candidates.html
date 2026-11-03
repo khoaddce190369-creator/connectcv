@@ -126,14 +126,14 @@
                   <h3 class="font-heading font-bold text-slate-900 text-sm">${c.name}</h3>
                   <p class="text-xs text-slate-500">${c.role} &bull; ${c.experienceYears} năm KN</p>
                   <div class="flex items-center gap-1 text-[11px] text-amber-500 mt-0.5">
-                    <span>★ ${c.rating || 4.9}</span>
+                    <span>${c.rating || 4.9} / 5</span>
                     <span class="text-slate-400">(${c.completedProjects || 15} dự án hoàn thành)</span>
                   </div>
                 </div>
               </div>
 
               <div class="flex flex-wrap gap-1.5 mb-4">
-                ${(c.skills || []).map(s => `<span class="px-2 py-0.5 rounded bg-slate-100 text-[10px] font-medium text-slate-600">${s}</span>`).join('')}
+                ${(c.skills || []).map(s => `<span class="px-2 py-0.5 rounded bg-slate-100 text-xs font-medium text-slate-600">${s}</span>`).join('')}
               </div>
             </div>
 

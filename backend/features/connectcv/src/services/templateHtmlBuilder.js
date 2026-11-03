@@ -190,18 +190,18 @@ function buildCvTemplateHtml(tmpl, cvData = {}, userProfile = {}, language = 'vi
   const toolbarHtml = `
     <div class="cv-toolbar no-print">
         <button onclick="downloadAsPdf()" style="background:#00B14F; color:#fff; border:none; padding:7px 15px; border-radius:20px; font-weight:bold; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:6px;">
-          ${isEn ? '📥 Download PDF (A4)' : '📥 Tải PDF (Chuẩn A4)'}
+          ${isEn ? 'Download PDF' : 'Tải PDF'}
         </button>
         <button onclick="downloadAsDocx()" style="background:#2563eb; color:#fff; border:none; padding:7px 15px; border-radius:20px; font-weight:bold; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:6px;">
-          ${isEn ? '📄 Download Word (.docx)' : '📄 Tải Word (.docx)'}
+          ${isEn ? 'Download Word' : 'Tải Word'}
         </button>
         <button onclick="window.print()" style="background:#475569; color:#fff; border:none; padding:7px 15px; border-radius:20px; font-weight:bold; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:6px;">
-          ${isEn ? '🖨️ Print A4' : '🖨️ In A4'}
+          ${isEn ? 'Print' : 'In A4'}
         </button>
         <button onclick="saveCurrentCVHtml()" style="background:#fff; border:1px solid #cbd5e1; padding:7px 15px; border-radius:20px; font-weight:bold; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:6px;">
-          ${isEn ? '💾 Save HTML' : '💾 Lưu File HTML'}
+          ${isEn ? 'Save HTML' : 'Lưu HTML'}
         </button>
-        <span style="font-size:12px; color:#64748b; font-weight:700;">🎨 ${isEn ? 'Template' : 'Mẫu'}: <b>${escapeHtml(tmpl.title || '')}</b></span>
+        <span style="font-size:12px; color:#64748b; font-weight:700;">${isEn ? 'Template' : 'Mẫu'}: <b>${escapeHtml(tmpl.title || '')}</b></span>
     </div>
   `;
 

@@ -6,15 +6,27 @@
   <title>Đăng Nhập &amp; Đăng Ký — ConnectCV</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '"Be Vietnam Pro"', 'sans-serif'],
+            heading: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
   <link rel="stylesheet" href="css/brand.css" />
-  <!-- Google Firebase OAuth SDK Chính Chuẩn -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <!-- Google Identity Services (GSI) SDK Chính Thức Chuẩn 2026 -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     body {
-      font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--font-sans, 'Inter', 'Be Vietnam Pro', sans-serif);
+      -webkit-font-smoothing: antialiased;
     }
   </style>
 </head>
@@ -33,141 +45,122 @@
     </a>
   </header>
 
-  <!-- Khung Đăng Nhập / Đăng Ký (Không Icon, Chọn Role Trước Khi Đăng Ký) -->
-  <main class="flex-1 flex items-center justify-center px-4 py-8">
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+  <!-- Khung Đăng Nhập / Đăng Ký Rộng Rãi & Đa Phương Thức -->
+  <main class="flex-1 flex items-center justify-center px-4 py-10">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-7 sm:p-8 space-y-6">
       
-      <!-- Tiêu đề -->
-      <div class="text-center space-y-1">
-        <h1 id="authTitle" class="font-heading text-2xl font-extrabold text-slate-900">
-          Chào Mừng Trở Lại
+      <!-- Tiêu đề ở giữa phía trên khung (Không chú thích nhỏ) -->
+      <div class="text-center pt-1">
+        <h1 id="authTitle" class="font-heading text-2xl font-extrabold text-slate-900 tracking-tight">
+          Đăng Nhập Tài Khoản
         </h1>
-        <p id="authSubtitle" class="text-xs text-slate-500">
-          Truy cập hệ thống kết nối nhân tài và phát triển sự nghiệp
-        </p>
       </div>
 
       <!-- Tab Chuyển Đổi: Đăng Nhập / Đăng Ký -->
-      <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-lg gap-1 text-xs font-bold">
-        <button type="button" onclick="setAuthMode('login')" id="tabModeLogin" class="py-2.5 px-4 rounded-md transition-all bg-white text-slate-900 shadow-xs">
+      <div class="grid grid-cols-2 p-1.5 bg-slate-100 rounded-xl gap-1 text-xs font-bold">
+        <button type="button" onclick="setAuthMode('login')" id="tabModeLogin" class="py-2.5 px-4 rounded-lg transition-all bg-white text-slate-900 shadow-xs">
           Đăng Nhập
         </button>
-        <button type="button" onclick="setAuthMode('register')" id="tabModeRegister" class="py-2.5 px-4 rounded-md transition-all text-slate-600 hover:text-slate-900">
+        <button type="button" onclick="setAuthMode('register')" id="tabModeRegister" class="py-2.5 px-4 rounded-lg transition-all text-slate-600 hover:text-slate-900">
           Đăng Ký
         </button>
       </div>
 
       <!-- VIEW 1: ĐĂNG NHẬP -->
-      <div id="sectionLogin" class="space-y-4">
-        <!-- Đăng nhập Google OAuth Chuẩn -->
-        <button type="button" onclick="executeGoogleOAuth()" id="btnLoginGoogle" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
-          <span class="font-bold text-sky-700">Google</span>
-          <span id="btnLoginGoogleText">Đăng nhập với Google OAuth</span>
+      <div id="sectionLogin" class="space-y-5">
+        <!-- Đăng nhập Google -->
+        <button type="button" onclick="executeGoogleOAuth('login')" id="btnLoginGoogle" class="w-full py-3 px-4 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-800 flex items-center justify-center gap-2.5 transition-all shadow-xs">
+          <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span id="btnLoginGoogleText">Đăng nhập với Google</span>
         </button>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
           <div class="flex-1 h-px bg-slate-200"></div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">hoặc dùng Email</span>
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">hoặc tài khoản website</span>
           <div class="flex-1 h-px bg-slate-200"></div>
         </div>
 
         <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Địa chỉ Email</label>
-            <input id="loginEmail" type="email" required class="input-upwork w-full text-xs" placeholder="name@email.com" />
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Địa chỉ Email</label>
+            <input id="loginEmail" type="email" required class="input-upwork w-full text-xs py-2.5" placeholder="name@email.com" />
           </div>
 
           <div>
-            <div class="flex items-center justify-between mb-1">
-              <label class="text-xs font-semibold text-slate-700">Mật khẩu</label>
-              <a href="#" onclick="alert('Vui lòng liên hệ quản trị viên qua email support@connectcv.vn để đặt lại mật khẩu.')" class="text-xs text-[#0284c7] hover:underline">Quên mật khẩu?</a>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-bold text-slate-700">Mật khẩu</label>
+              <a href="#" onclick="alert('Vui lòng liên hệ quản trị viên qua email support@connectcv.vn để đặt lại mật khẩu.')" class="text-[11px] text-[#0284c7] hover:underline font-semibold">Quên mật khẩu?</a>
             </div>
-            <input id="loginPassword" type="password" required class="input-upwork w-full text-xs" placeholder="Nhập mật khẩu" />
+            <input id="loginPassword" type="password" required class="input-upwork w-full text-xs py-2.5" placeholder="Nhập mật khẩu" />
           </div>
 
-          <button id="btnLoginSubmit" type="submit" class="w-full btn-navy text-xs font-bold py-3 uppercase tracking-wider shadow-xs">
+          <button id="btnLoginSubmit" type="submit" class="w-full btn-navy text-xs font-bold py-3 uppercase tracking-wider shadow-sm">
             Đăng Nhập
           </button>
         </form>
       </div>
 
-      <!-- VIEW 2: ĐĂNG KÝ (BƯỚC 1 - CHỌN ROLE TRƯỚC) -->
-      <div id="sectionRegisterStep1" class="hidden space-y-4">
-        <div class="text-left">
-          <span class="text-[11px] font-bold text-sky-700 uppercase tracking-wider">Bước 1 trên 2</span>
-          <h2 class="font-heading font-bold text-base text-slate-900 mt-0.5">Bạn tham gia với tư cách nào?</h2>
-          <p class="text-xs text-slate-500">Vui lòng chọn vai trò trước khi khởi tạo tài khoản:</p>
-        </div>
-
-        <div class="space-y-3">
-          <div onclick="selectRegisterRole('Student')" id="cardRoleStudent" class="p-4 rounded-xl border-2 border-sky-600 bg-sky-50 cursor-pointer transition-all">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-xs text-sky-950 uppercase tracking-wide">Ứng Viên / Freelancer</span>
-              <span id="badgeRoleStudent" class="text-xs font-bold text-sky-700">Đang chọn</span>
+      <!-- VIEW 2: ĐĂNG KÝ -->
+      <div id="sectionRegister" class="hidden space-y-5">
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-slate-700">Chọn vai trò tham gia</label>
+          <div class="grid grid-cols-2 gap-2.5">
+            <div onclick="selectRegisterRole('Student')" id="cardRoleStudent" class="p-3.5 rounded-xl border-2 border-sky-600 bg-sky-50/70 cursor-pointer transition-all flex items-center justify-between">
+              <span class="font-bold text-xs text-sky-950">Ứng Viên / Freelancer</span>
+              <span id="badgeRoleStudent" class="text-xs font-bold text-sky-700 flex items-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              </span>
             </div>
-            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
-              Dành cho cá nhân tìm kiếm việc làm, dự án freelance, tối ưu CV chuẩn ATS và luyện phỏng vấn cùng AI.
-            </p>
-          </div>
 
-          <div onclick="selectRegisterRole('HR')" id="cardRoleHR" class="p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition-all">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-xs text-slate-900 uppercase tracking-wide">Nhà Tuyển Dụng / Doanh Nghiệp</span>
-              <span id="badgeRoleHR" class="text-xs font-bold text-slate-400 hidden">Đang chọn</span>
+            <div onclick="selectRegisterRole('HR')" id="cardRoleHR" class="p-3.5 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition-all flex items-center justify-between">
+              <span class="font-bold text-xs text-slate-800">Nhà Tuyển Dụng</span>
+              <span id="badgeRoleHR" class="text-xs font-bold text-slate-400 hidden items-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              </span>
             </div>
-            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
-              Dành cho doanh nghiệp hoặc chuyên viên tuyển dụng đăng bài tìm kiếm nhân tài và quản lý ứng viên.
-            </p>
           </div>
         </div>
 
-        <button type="button" onclick="goToRegisterStep2()" class="w-full btn-navy text-xs font-bold py-3 uppercase tracking-wider">
-          Tiếp Tục Tạo Tài Khoản &rarr;
-        </button>
-      </div>
-
-      <!-- VIEW 3: ĐĂNG KÝ (BƯỚC 2 - NHẬP THÔNG TIN HOẶC DÙNG GOOGLE) -->
-      <div id="sectionRegisterStep2" class="hidden space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-          <div>
-            <span class="text-[11px] font-bold text-sky-700 uppercase tracking-wider">Bước 2 trên 2</span>
-            <h2 id="regStep2Title" class="font-heading font-bold text-base text-slate-900 mt-0.5">Tạo tài khoản: Ứng Viên</h2>
-          </div>
-          <button type="button" onclick="goToRegisterStep1()" class="text-xs text-sky-700 hover:underline font-semibold">
-            &larr; Đổi vai trò
-          </button>
-        </div>
-
-        <!-- Nút Đăng ký Google OAuth Chuẩn -->
-        <button type="button" onclick="executeGoogleOAuth()" id="btnRegGoogle" class="w-full py-2.5 px-4 rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 flex items-center justify-center gap-2 transition-all">
-          <span class="font-bold text-sky-700">Google</span>
-          <span id="btnRegGoogleText">Đăng ký bằng Google OAuth</span>
+        <!-- Đăng ký Google -->
+        <button type="button" onclick="executeGoogleOAuth('register')" id="btnRegGoogle" class="w-full py-3 px-4 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-800 flex items-center justify-center gap-2.5 transition-all shadow-xs">
+          <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span id="btnRegGoogleText">Đăng ký bằng Google</span>
         </button>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
           <div class="flex-1 h-px bg-slate-200"></div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">hoặc điền thông tin</span>
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">hoặc đăng ký bằng Email</span>
           <div class="flex-1 h-px bg-slate-200"></div>
         </div>
 
-        <form onsubmit="handleRegisterSubmit(event)" class="space-y-4">
+        <form onsubmit="handleRegisterSubmit(event)" class="space-y-3.5">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên</label>
-            <input id="regUsername" type="text" required class="input-upwork w-full text-xs" placeholder="Nguyễn Văn An" />
+            <label class="block text-xs font-bold text-slate-700 mb-1">Họ và tên</label>
+            <input id="regUsername" type="text" required class="input-upwork w-full text-xs py-2.5" placeholder="Nguyễn Văn An" />
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Địa chỉ Email</label>
-            <input id="regEmail" type="email" required class="input-upwork w-full text-xs" placeholder="name@email.com" />
+            <label class="block text-xs font-bold text-slate-700 mb-1">Địa chỉ Email</label>
+            <input id="regEmail" type="email" required class="input-upwork w-full text-xs py-2.5" placeholder="name@email.com" />
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu</label>
-            <input id="regPassword" type="password" required class="input-upwork w-full text-xs" placeholder="Tối thiểu 6 ký tự" />
+            <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu</label>
+            <input id="regPassword" type="password" required class="input-upwork w-full text-xs py-2.5" placeholder="Tối thiểu 6 ký tự" />
           </div>
 
-          <button id="btnRegSubmit" type="submit" class="w-full btn-navy text-xs font-bold py-3 uppercase tracking-wider shadow-xs">
-            Hoàn Tất Đăng Ký
+          <button id="btnRegSubmit" type="submit" class="w-full btn-navy text-xs font-bold py-3 uppercase tracking-wider shadow-sm">
+            Tạo Tài Khoản
           </button>
         </form>
       </div>
@@ -181,29 +174,20 @@
   </footer>
 
   <script>
-    // --- 1. KHỞI TẠO FIREBASE GOOGLE OAUTH CHUẨN ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyDwORNiGUS0XRRMvA4WWupjLxOEBubsDfQ",
-      authDomain: "connect-cv.firebaseapp.com",
-      projectId: "connect-cv",
-      storageBucket: "connect-cv.firebasestorage.app",
-      messagingSenderId: "994370542588",
-      appId: "1:994370542588:web:16f3a811279862d5fc7079",
-      measurementId: "G-VLNQN46Z5Q"
-    };
-
-    let fbAuth = null;
-    try {
-      if (typeof firebase !== 'undefined') {
-        if (!firebase.apps.length) {
-          firebase.initializeApp(firebaseConfig);
+    // --- 1. LẤY CẤU HÌNH GOOGLE OAUTH TỪ BACKEND ---
+    let googleClientId = '';
+    async function loadGoogleConfig() {
+      try {
+        const res = await fetch('/api/auth/config');
+        const data = await res.json();
+        if (data && data.googleClientId) {
+          googleClientId = data.googleClientId.trim();
         }
-        fbAuth = firebase.auth();
-        fbAuth.useDeviceLanguage();
+      } catch (err) {
+        console.warn('Lỗi lấy config auth:', err);
       }
-    } catch (e) {
-      console.warn('Firebase init error:', e);
     }
+    loadGoogleConfig();
 
     // --- 2. TRẠNG THÁI GIAO DIỆN AUTH ---
     let currentMode = 'login'; // 'login' | 'register'
@@ -214,28 +198,22 @@
       const tabLogin = document.getElementById('tabModeLogin');
       const tabRegister = document.getElementById('tabModeRegister');
       const title = document.getElementById('authTitle');
-      const subtitle = document.getElementById('authSubtitle');
       const sectionLogin = document.getElementById('sectionLogin');
-      const secReg1 = document.getElementById('sectionRegisterStep1');
-      const secReg2 = document.getElementById('sectionRegisterStep2');
+      const sectionRegister = document.getElementById('sectionRegister');
 
       if (mode === 'login') {
-        tabLogin.className = 'py-2.5 px-4 rounded-md transition-all bg-white text-slate-900 shadow-xs';
-        tabRegister.className = 'py-2.5 px-4 rounded-md transition-all text-slate-600 hover:text-slate-900';
-        title.innerText = 'Chào Mừng Trở Lại';
-        subtitle.innerText = 'Truy cập hệ thống kết nối nhân tài và phát triển sự nghiệp';
-        sectionLogin.classList.remove('hidden');
-        secReg1.classList.add('hidden');
-        secReg2.classList.add('hidden');
+        tabLogin.className = 'py-2.5 px-3 rounded-lg transition-all bg-white text-slate-900 shadow-xs';
+        tabRegister.className = 'py-2.5 px-3 rounded-lg transition-all text-slate-600 hover:text-slate-900';
+        if (title) title.innerText = 'Đăng Nhập Tài Khoản';
+        if (sectionLogin) sectionLogin.classList.remove('hidden');
+        if (sectionRegister) sectionRegister.classList.add('hidden');
       } else {
-        tabRegister.className = 'py-2.5 px-4 rounded-md transition-all bg-white text-slate-900 shadow-xs';
-        tabLogin.className = 'py-2.5 px-4 rounded-md transition-all text-slate-600 hover:text-slate-900';
-        title.innerText = 'Tạo Tài Khoản Mới';
-        subtitle.innerText = 'Bắt đầu bằng việc xác định vai trò phù hợp nhất với bạn';
-        sectionLogin.classList.add('hidden');
-        secReg1.classList.remove('hidden');
-        secReg2.classList.add('hidden');
-        selectRegisterRole(chosenRole);
+        tabRegister.className = 'py-2.5 px-3 rounded-lg transition-all bg-white text-slate-900 shadow-xs';
+        tabLogin.className = 'py-2.5 px-3 rounded-lg transition-all text-slate-600 hover:text-slate-900';
+        if (title) title.innerText = 'Đăng Ký Tài Khoản';
+        if (sectionLogin) sectionLogin.classList.add('hidden');
+        if (sectionRegister) sectionRegister.classList.remove('hidden');
+        selectRegisterRole(chosenRole || 'Student');
       }
     }
 
@@ -247,99 +225,154 @@
       const badgeHR = document.getElementById('badgeRoleHR');
 
       if (role === 'Student') {
-        cardStudent.className = 'p-4 rounded-xl border-2 border-sky-600 bg-sky-50 cursor-pointer transition-all';
-        cardHR.className = 'p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition-all';
-        badgeStudent.classList.remove('hidden');
-        badgeHR.classList.add('hidden');
+        if (cardStudent) cardStudent.className = 'p-3.5 rounded-xl border-2 border-sky-600 bg-sky-50/70 cursor-pointer transition-all flex items-center justify-between';
+        if (cardHR) cardHR.className = 'p-3.5 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition-all flex items-center justify-between';
+        if (badgeStudent) badgeStudent.classList.remove('hidden');
+        if (badgeHR) badgeHR.classList.add('hidden');
       } else {
-        cardHR.className = 'p-4 rounded-xl border-2 border-sky-600 bg-sky-50 cursor-pointer transition-all';
-        cardStudent.className = 'p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition-all';
-        badgeHR.classList.remove('hidden');
-        badgeStudent.classList.add('hidden');
+        if (cardHR) cardHR.className = 'p-3.5 rounded-xl border-2 border-sky-600 bg-sky-50/70 cursor-pointer transition-all flex items-center justify-between';
+        if (cardStudent) cardStudent.className = 'p-3.5 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 cursor-pointer transition-all flex items-center justify-between';
+        if (badgeHR) badgeHR.classList.remove('hidden');
+        if (badgeStudent) badgeStudent.classList.add('hidden');
       }
-    }
-
-    function goToRegisterStep2() {
-      document.getElementById('sectionRegisterStep1').classList.add('hidden');
-      document.getElementById('sectionRegisterStep2').classList.remove('hidden');
-
-      const title = document.getElementById('regStep2Title');
-      const btnGoogleText = document.getElementById('btnRegGoogleText');
-
-      if (chosenRole === 'HR') {
-        title.innerText = 'Tạo tài khoản: Nhà Tuyển Dụng / Doanh Nghiệp';
-        btnGoogleText.innerText = 'Đăng ký bằng Google (Doanh nghiệp)';
-      } else {
-        title.innerText = 'Tạo tài khoản: Ứng Viên / Freelancer';
-        btnGoogleText.innerText = 'Đăng ký bằng Google (Ứng viên)';
-      }
-    }
-
-    function goToRegisterStep1() {
-      document.getElementById('sectionRegisterStep2').classList.add('hidden');
-      document.getElementById('sectionRegisterStep1').classList.remove('hidden');
     }
 
     // --- 3. ĐĂNG NHẬP / ĐĂNG KÝ GOOGLE OAUTH CHUẨN ---
-    async function executeGoogleOAuth() {
-      const targetRole = currentMode === 'register' ? chosenRole : undefined;
-      const btn = currentMode === 'register' ? document.getElementById('btnRegGoogle') : document.getElementById('btnLoginGoogle');
-      const origText = btn.innerHTML;
-      btn.innerHTML = '<span class="font-bold text-sky-700">Google</span><span>Đang mở cửa sổ đăng nhập...</span>';
-      btn.disabled = true;
+    let tokenClient = null;
 
-      try {
-        if (!fbAuth) {
-          throw new Error('Dịch vụ Google OAuth chưa sẵn sàng.');
-        }
-
-        const provider = new firebase.auth.GoogleAuthProvider();
-        provider.setCustomParameters({ prompt: 'select_account' });
-
-        // Mở cửa sổ popup Google OAuth chuẩn chính thức của Google
-        const result = await fbAuth.signInWithPopup(provider);
-        const user = result.user;
-        const idToken = await user.getIdToken();
-
-        // Gửi token chuẩn lên backend để xác thực và cấp JWT
-        const res = await fetch('/api/auth/google', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            googleToken: idToken,
-            email: user.email,
-            name: user.displayName || user.email.split('@')[0],
-            avatar: user.photoURL,
-            role: targetRole
-          })
-        });
-
-        const data = await res.json();
-        if (data.success && data.jwtToken) {
-          localStorage.setItem('jwtToken', data.jwtToken);
-          localStorage.setItem('connectcv_user', JSON.stringify(data.user));
-          window.location.href = '/';
-        } else {
-          alert(data.message || 'Lỗi đồng bộ tài khoản máy chủ.');
-        }
-      } catch (err) {
-        console.error('Lỗi Google OAuth:', err);
-        if (err.code === 'auth/popup-closed-by-user') {
-          // Người dùng chủ động đóng popup
-        } else if (err.code === 'auth/popup-blocked') {
-          alert('Trình duyệt đang chặn cửa sổ đăng nhập. Vui lòng cho phép popup trên trang web này để đăng nhập Google.');
-        } else if (err.code === 'auth/unauthorized-domain') {
-          alert('Tên miền này cần được thêm vào danh sách Authorized Domains trên Firebase Console của dự án connect-cv.');
-        } else {
-          alert('Lỗi xác thực Google: ' + (err.message || 'Vui lòng thử lại.'));
-        }
-      } finally {
-        btn.innerHTML = origText;
-        btn.disabled = false;
+    function resetGoogleButtons() {
+      const btnLogin = document.getElementById('btnLoginGoogle');
+      const btnReg = document.getElementById('btnRegGoogle');
+      const googleSvg = `
+        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+      `;
+      if (btnLogin) {
+        btnLogin.innerHTML = `${googleSvg}<span>Đăng nhập với Google</span>`;
+        btnLogin.disabled = false;
+      }
+      if (btnReg) {
+        btnReg.innerHTML = `${googleSvg}<span>Đăng ký bằng Google</span>`;
+        btnReg.disabled = false;
       }
     }
 
-    // --- 4. FORM SUBMIT BẰNG EMAIL & MẬT KHẨU ---
+    async function executeGoogleOAuth(action = 'login') {
+      const isRegister = action === 'register';
+      const targetRole = isRegister ? chosenRole : undefined;
+      const btn = isRegister ? document.getElementById('btnRegGoogle') : document.getElementById('btnLoginGoogle');
+
+      if (!googleClientId) {
+        await loadGoogleConfig();
+      }
+
+      if (!googleClientId) {
+        alert('Chưa cấu hình GOOGLE_CLIENT_ID!\n\nVui lòng kiểm tra file "backend/.env".');
+        resetGoogleButtons();
+        return;
+      }
+
+      if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+        alert('Thư viện Google SDK đang tải từ máy chủ Google, vui lòng bấm lại sau 2 giây.');
+        resetGoogleButtons();
+        return;
+      }
+
+      if (btn) {
+        btn.innerHTML = '<span>Đang mở Google...</span>';
+        btn.disabled = true;
+      }
+
+      const timer = setTimeout(resetGoogleButtons, 15000);
+
+      try {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: googleClientId,
+          scope: 'email profile openid',
+          callback: async (tokenResponse) => {
+            clearTimeout(timer);
+            if (tokenResponse.error) {
+              console.error('Lỗi phản hồi Google OAuth:', tokenResponse);
+              alert('Đăng nhập không thành công: ' + (tokenResponse.error_description || tokenResponse.error));
+              resetGoogleButtons();
+              return;
+            }
+
+            if (btn) btn.innerHTML = '<span>Đang xác thực...</span>';
+
+            try {
+              // Lấy profile trực tiếp từ Google API
+              const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+              });
+              const profile = await userInfoRes.json();
+
+              // Gửi xác thực về backend ConnectCV
+              const res = await fetch('/api/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  googleToken: tokenResponse.access_token,
+                  email: profile.email,
+                  name: profile.name,
+                  avatar: profile.picture,
+                  role: targetRole,
+                  mode: action // 'login' hoặc 'register'
+                })
+              });
+
+              const data = await res.json();
+
+              // QUY TẮC NGHIỆP VỤ: Nếu chưa đăng ký mà bấm đăng nhập -> Tự động chuyển sang tab Đăng Ký
+              if (res.status === 404 || data.code === 'USER_NOT_REGISTERED') {
+                alert('Tài khoản Google này chưa được đăng ký trong hệ thống. Vui lòng chọn vai trò để đăng ký!');
+                setAuthMode('register');
+                resetGoogleButtons();
+                return;
+              }
+
+              if (data.success && data.jwtToken) {
+                localStorage.setItem('jwtToken', data.jwtToken);
+                localStorage.setItem('connectcv_user', JSON.stringify(data.user));
+                window.location.href = '/#jobs';
+              } else {
+                alert(data.message || 'Lỗi xử lý tài khoản trên máy chủ.');
+                resetGoogleButtons();
+              }
+            } catch (err) {
+              console.error('Lỗi gửi dữ liệu xác thực:', err);
+              alert('Lỗi kết nối máy chủ xác thực: ' + err.message);
+              resetGoogleButtons();
+            }
+          },
+          error_callback: (nonOAuthError) => {
+            clearTimeout(timer);
+            console.error('Lỗi Non-OAuth Google:', nonOAuthError);
+            resetGoogleButtons();
+            if (nonOAuthError && nonOAuthError.type === 'popup_failed_to_open') {
+              alert('Trình duyệt đang chặn cửa sổ Popup!\n\nVui lòng bấm vào biểu tượng chặn popup trên thanh địa chỉ URL (góc phải trình duyệt) và chọn "Luôn cho phép popup từ trang này".');
+            } else if (nonOAuthError && nonOAuthError.type === 'popup_closed') {
+              // Người dùng tắt popup
+            } else {
+              alert('Thông báo Google: ' + (nonOAuthError.message || nonOAuthError.type || 'Không thể mở popup'));
+            }
+          }
+        });
+
+        tokenClient.requestAccessToken({ prompt: 'select_account' });
+      } catch (err) {
+        clearTimeout(timer);
+        console.error('Lỗi gọi tokenClient:', err);
+        alert('Lỗi khởi động đăng nhập Google: ' + err.message);
+        resetGoogleButtons();
+      }
+    }
+
+    // --- 4. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG EMAIL & MẬT KHẨU RIÊNG ---
     async function handleLoginSubmit(e) {
       e.preventDefault();
       const email = document.getElementById('loginEmail').value.trim();
@@ -363,10 +396,20 @@
         });
 
         const data = await res.json();
+
+        // QUY TẮC: Chưa đăng ký thì không được đăng nhập -> Chuyển sang tab Đăng Ký
+        if (res.status === 404 || data.code === 'USER_NOT_REGISTERED') {
+          alert('Tài khoản này chưa được đăng ký trong hệ thống. Vui lòng đăng ký trước khi đăng nhập!');
+          setAuthMode('register');
+          btn.innerText = origText;
+          btn.disabled = false;
+          return;
+        }
+
         if (data.success && data.jwtToken) {
           localStorage.setItem('jwtToken', data.jwtToken);
           localStorage.setItem('connectcv_user', JSON.stringify(data.user));
-          window.location.href = '/';
+          window.location.href = '/#jobs';
         } else {
           alert(data.message || 'Email hoặc mật khẩu không chính xác.');
           btn.innerText = origText;
@@ -388,11 +431,11 @@
       const origText = btn.innerText;
 
       if (!username || !email || !password) {
-        alert('Vui lòng điền đầy đủ các thông tin đăng ký.');
+        alert('Vui lòng điền đầy đủ Họ tên, Email và Mật khẩu.');
         return;
       }
 
-      btn.innerText = 'Đang khởi tạo tài khoản...';
+      btn.innerText = 'Đang tạo tài khoản...';
       btn.disabled = true;
 
       try {
@@ -411,7 +454,7 @@
         if (data.success && data.jwtToken) {
           localStorage.setItem('jwtToken', data.jwtToken);
           localStorage.setItem('connectcv_user', JSON.stringify(data.user));
-          window.location.href = '/';
+          window.location.href = '/#jobs';
         } else {
           alert(data.message || 'Đăng ký tài khoản không thành công.');
           btn.innerText = origText;

@@ -69,7 +69,7 @@
             Nộp Hồ Sơ Ngay
           </button>
           <button onclick="generateProposal()" class="btn-secondary px-4 py-2.5 text-xs font-semibold text-center text-slate-700 flex items-center justify-center gap-1.5">
-            <span>✨ Tạo Thư Chào Thầu AI</span>
+            <span>Tạo thư ứng tuyển bằng AI</span>
           </button>
         </div>
       </div>
@@ -142,11 +142,11 @@
           <div class="mt-4 pt-3 border-t border-slate-100 space-y-2">
             <div class="flex items-center justify-between text-xs">
               <span class="text-slate-600">Figma, Design System</span>
-              <span class="text-emerald-600 font-bold">✓ Khớp</span>
+              <span class="text-emerald-600 font-bold">Phù hợp</span>
             </div>
             <div class="flex items-center justify-between text-xs">
               <span class="text-slate-600">Mobile App UI</span>
-              <span class="text-emerald-600 font-bold">✓ Khớp</span>
+              <span class="text-emerald-600 font-bold">Phù hợp</span>
             </div>
           </div>
 
@@ -208,7 +208,7 @@
     <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-200">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
         <h3 class="font-heading font-bold text-base text-slate-900 flex items-center gap-1.5">
-          <span>✨ Thư Chào Thầu Tự Động (AI Proposal)</span>
+          <span>Thư ứng tuyển tự động (AI)</span>
         </h3>
         <button onclick="document.getElementById('proposalModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">&times;</button>
       </div>
@@ -262,10 +262,10 @@
         });
         const data = await res.json();
         closeApplyModal();
-        showToast('🎉 Nộp hồ sơ ứng tuyển thành công! Nhà tuyển dụng sẽ sớm liên hệ.');
+        showToast('Nộp hồ sơ ứng tuyển thành công.');
       } catch (e) {
         closeApplyModal();
-        showToast('🎉 Nộp hồ sơ thành công!');
+        showToast('Nộp hồ sơ thành công.');
       }
     }
 

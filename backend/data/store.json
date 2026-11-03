@@ -133,6 +133,17 @@
       "avatar": "https://lh3.googleusercontent.com/a/default-user",
       "aiCredits": 15,
       "createdAt": "2026-10-29T03:03:01.241Z"
+    },
+    {
+      "id": "usr_1793732984167_ajxk3",
+      "username": "BaKa Music",
+      "email": "bakamusic123@gmail.com",
+      "password_hash": null,
+      "isPro": false,
+      "role": "Student",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocL7HCdhXUa8HG2NeJqkRVAsCf50kSRr-8uwX_T5SPXShfYWeuo=s96-c",
+      "aiCredits": 20,
+      "createdAt": "2026-11-03T19:09:44.167Z"
     }
   ],
   "jobs": [
@@ -360,6 +371,24 @@
       "completedProjects": 14,
       "portfolioUrl": "/freelancer-profile.html",
       "isPro": true
+    },
+    {
+      "id": "usr_test_123",
+      "userId": "usr_test_123",
+      "name": "Tr?n Minh Qu�n",
+      "role": "Senior UI Designer",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+      "experienceYears": 2,
+      "skills": [
+        "Figma",
+        "UI/UX",
+        "ATS CV"
+      ],
+      "rating": 5,
+      "bio": "",
+      "subdomain": "minh-quan",
+      "portfolioUrl": "/p/minh-quan",
+      "isPro": false
     }
   ],
   "applications": [

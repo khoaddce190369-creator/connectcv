@@ -1,4 +1,5 @@
 # Dependencies
+**/node_modules/
 node_modules/
 backend/node_modules/
 frontend/node_modules/
@@ -9,7 +10,11 @@ frontend/node_modules/
 backend/.env
 frontend/.env.local
 
-# External import sources (đã tích hợp vào backend/features và connectcv/)
+# Subfolder & Archive (chứa tài liệu tham khảo, UI mẫu, repo cũ để tránh quá tải bộ nhớ GitHub)
+subfolder/
+Clone TOPCV/
+MyCV/
+template_CV/
 Tính năng mới/
 UI mới/
 UI mẫu/

@@ -72,9 +72,9 @@
         <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-3.5">
           <div class="flex items-center justify-between">
             <h3 class="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-1.5">
-              <span>🎁 Chia Sẻ Câu Hỏi Phỏng Vấn</span>
+              <span>Chia sẻ câu hỏi phỏng vấn</span>
             </h3>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">+5 AI Credits</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700">+5 AI Credits</span>
           </div>
 
           <p class="text-[11px] text-slate-500 leading-relaxed">
@@ -108,9 +108,9 @@
             <div class="flex items-center gap-2">
               <span class="text-slate-600 font-medium">Mức độ hài lòng:</span>
               <select id="fbRating" class="p-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-amber-600 outline-none">
-                <option value="5">⭐⭐⭐⭐⭐ (5 sao)</option>
-                <option value="4">⭐⭐⭐⭐ (4 sao)</option>
-                <option value="3">⭐⭐⭐ (3 sao)</option>
+                <option value="5">5 sao (Xuất sắc)</option>
+                <option value="4">4 sao (Tốt)</option>
+                <option value="3">3 sao (Trung bình)</option>
               </select>
             </div>
             <div>
@@ -158,10 +158,10 @@
                 <img src="${p.authorAvatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop'}" class="w-10 h-10 rounded-full object-cover border border-slate-200" alt="Avatar" />
                 <div>
                   <h4 class="font-heading font-bold text-slate-900 text-xs sm:text-sm">${p.author}</h4>
-                  <p class="text-[10px] text-slate-400">Đăng lúc ${new Date(p.createdAt).toLocaleDateString('vi-VN')}</p>
+                  <p class="text-xs text-slate-400">Đăng lúc ${new Date(p.createdAt).toLocaleDateString('vi-VN')}</p>
                 </div>
               </div>
-              <span class="px-2.5 py-0.5 rounded text-[10px] font-bold ${p.type === 'RECRUITMENT' ? 'bg-sky-50 text-sky-700 border border-sky-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}">
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold ${p.type === 'RECRUITMENT' ? 'bg-sky-50 text-sky-700 border border-sky-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}">
                 ${p.type === 'RECRUITMENT' ? 'Tuyển dụng' : 'Chào thầu Freelance'}
               </span>
             </div>

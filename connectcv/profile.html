@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trang Cá Nhân &amp; Portfolio | ConnectCV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            sans: ['Inter', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, h4, h5, .font-heading { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: white;
+      border-radius: 9999px;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #f8fafc;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+      border-radius: 9999px;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+    .btn-navy {
+      background: #0f172a;
+      color: white;
+      border-radius: 9999px;
+      transition: all 0.2s;
+    }
+    .btn-navy:hover {
+      background: #1e293b;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+    }
+    .chip-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+    .chip-cyan {
+      background: #f0f9ff;
+      color: #0369a1;
+      border-color: #bae6fd;
+    }
+    .input-field {
+      width: 100%;
+      border-radius: 0.75rem;
+      border: 1px solid #cbd5e1;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.8125rem;
+      outline: none;
+      transition: all 0.15s;
+    }
+    .input-field:focus {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- ========== TOP NAVBAR (ĐỒNG BỘ 100% VỚI INDEX.HTML) ========== -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/90 no-print transition-all">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Logo và Tên thương hiệu -->
+      <div class="flex items-center gap-10">
+        <a href="index.html#jobs" class="flex items-center gap-3 text-decoration-none group">
+          <img src="assets/logo.png" alt="ConnectCV" class="h-10 w-auto transition-transform group-hover:scale-105" />
+          <span class="font-heading font-extrabold text-xl text-slate-900 tracking-tight">
+            CONNECT<span class="text-sky-600">CV</span>
+          </span>
+        </a>
+
+        <!-- Các Tab Điều Hướng Chính -->
+        <nav class="hidden md:flex items-center gap-2.5 text-sm font-semibold text-slate-600 whitespace-nowrap">
+          <a href="index.html#jobs" class="whitespace-nowrap px-4 py-2 rounded-full hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+            Tìm Việc
+          </a>
+          <a href="index.html#portfolio" class="whitespace-nowrap px-4 py-2 rounded-full hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+            Portfolio
+          </a>
+          <a href="index.html#candidates" class="whitespace-nowrap px-4 py-2 rounded-full hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+            Ứng Viên
+          </a>
+          <a href="index.html#cv" class="whitespace-nowrap px-4 py-2 rounded-full hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+            Tạo CV
+          </a>
+          <a href="index.html#interview" class="whitespace-nowrap px-4 py-2 rounded-full hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+            Phỏng Vấn
+          </a>
+          <a href="index.html#wallet" class="whitespace-nowrap px-4 py-2 rounded-full hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+            Gói Dịch Vụ
+          </a>
+        </nav>
+      </div>
+
+      <!-- Góc Phải: Nút Đăng Tin Tuyển Dụng & Khối User Avatar -->
+      <div class="flex items-center gap-3 whitespace-nowrap">
+        <a id="btnNavPostJob" href="index.html" class="btn-primary text-xs sm:text-sm font-bold px-4 py-2 whitespace-nowrap hidden">
+          <span>Đăng Tin Tuyển Dụng</span>
+        </a>
+
+        <div id="userAuthSection" class="flex items-center gap-2 text-xs whitespace-nowrap">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN CONTAINER (LINKEDIN STYLE PROFILE - MỞ RỘNG TO TOÀN DIỆN) ========== -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- 1. HERO PROFILE CARD (COVER + AVATAR + HEADLINE + CTAS) -->
+    <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm relative">
+      
+      <!-- Ảnh bìa Cover Banner (Rộng rãi, tỷ lệ điện ảnh chuẩn LinkedIn) -->
+      <div class="relative h-56 sm:h-72 lg:h-80 w-full bg-gradient-to-r from-slate-800 via-sky-900 to-indigo-950 overflow-hidden">
+        <img id="coverImg" src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1600&fit=crop&q=80" alt="Cover" class="w-full h-full object-cover opacity-60" />
+        <button id="btnChangeCover" onclick="changeCoverImage()" class="absolute top-5 right-5 bg-slate-900/75 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-full backdrop-blur-md transition-all flex items-center gap-2 shadow-md">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/></svg>
+          <span>Đổi ảnh bìa</span>
+        </button>
+      </div>
+
+      <!-- Avatar xếp đè lên ảnh bìa + Chi tiết hồ sơ -->
+      <div class="px-6 sm:px-10 pb-8 pt-0 relative">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between -mt-20 sm:-mt-24 lg:-mt-28 gap-6 mb-5">
+          
+          <!-- Avatar hình tròn lớn có viền trắng 4px & nút camera -->
+          <div class="relative inline-block self-start">
+            <div class="w-32 h-32 sm:w-40 sm:h-40 lg:w-44 lg:h-44 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
+              <img id="userAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="Avatar" class="w-full h-full object-cover" />
+            </div>
+            <!-- Chấm Online -->
+            <span class="absolute bottom-3 right-3 w-4.5 h-4.5 rounded-full bg-emerald-500 border-2 border-white" title="Đang trực tuyến"></span>
+            <!-- Nút bấm đổi avatar nhanh -->
+            <button id="btnChangeAvatar" onclick="promptAvatarChange()" class="absolute bottom-2 -left-1 p-2.5 rounded-full bg-slate-900 text-white hover:bg-sky-600 shadow-lg transition-colors" title="Thay đổi ảnh đại diện">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/></svg>
+            </button>
+          </div>
+
+          <!-- Nút Chỉnh Sửa Hồ Sơ / Liên Hệ Tác Giả & Xem Trang Portfolio -->
+          <div id="heroCtaWrap" class="flex flex-wrap items-center gap-3 pt-2 sm:pt-0">
+            <button onclick="openEditProfileModal()" class="btn-primary text-xs sm:text-sm font-bold px-6 py-2.5 flex items-center gap-2 shadow-sm whitespace-nowrap">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
+              <span>Chỉnh Sửa Hồ Sơ</span>
+            </button>
+            <a id="btnHeroGoPortfolio" href="/p/tuan-nguyen" class="btn-secondary text-xs sm:text-sm font-bold px-5 py-2.5 flex items-center gap-2 shadow-xs whitespace-nowrap hover:border-sky-400 hover:text-sky-600 transition-all">
+              <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+              <span>Xem Trang Portfolio</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Họ tên, Danh hiệu, Huy hiệu, Địa chỉ & Subdomain -->
+        <div class="space-y-3.5">
+          <div>
+            <div class="flex flex-wrap items-center gap-3">
+              <h1 id="userFullName" class="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl text-slate-900 tracking-tight">Nguyễn Minh Tuấn</h1>
+              
+              <!-- Tích xanh xác thực Verified -->
+              <span class="inline-flex items-center text-sky-500" title="Tài khoản đã xác thực">
+                <svg class="w-6 h-6 fill-sky-500" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              </span>
+
+              <!-- Badge Gói Pro / MAX (Ẩn khi là tài khoản thông thường, không hiện 'Cơ Bản (Free)') -->
+              <span id="userPlanBadge" class="hidden px-3 py-1 rounded-full text-xs font-black bg-amber-400 text-slate-950 uppercase tracking-wide">
+                PRO
+              </span>
+
+              <!-- Badge Vai trò: Ứng viên vs Tuyển dụng -->
+              <span id="userRoleBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-800 border border-sky-200">
+                Ứng Viên / Freelancer
+              </span>
+            </div>
+
+            <!-- Headline chuyên môn (Giống LinkedIn) -->
+            <p id="userHeadline" class="text-sm sm:text-base lg:text-lg text-slate-700 font-medium mt-1.5 leading-relaxed max-w-4xl">
+              Senior UI/UX Designer &amp; Product Creator | Xây dựng Design System &amp; Tối ưu chuyển đổi giao diện số
+            </p>
+          </div>
+
+          <!-- Thông tin bổ sung: Địa chỉ, Liên hệ, Subdomain -->
+          <div class="flex flex-wrap items-center gap-y-2.5 gap-x-5 text-xs sm:text-sm text-slate-500">
+            <span id="userLocation" class="flex items-center gap-1.5 font-medium">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+              <span>Hồ Chí Minh, Việt Nam</span>
+            </span>
+
+            <span class="text-slate-300">•</span>
+
+            <span class="flex items-center gap-1.5 font-medium">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span id="userExperienceText">4 năm kinh nghiệm</span>
+            </span>
+
+            <span class="text-slate-300">•</span>
+
+            <!-- Link Subdomain cá nhân -->
+            <a id="btnPublicSubdomainLink" href="/p/tuan-nguyen" target="_blank" class="flex items-center gap-1.5 font-mono text-xs bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:text-sky-700 transition-colors" title="Xem trang Portfolio">
+              <span class="text-slate-400">connectcv.vn/p/</span>
+              <strong id="userSubdomainText" class="text-sky-700 font-bold">tuan-nguyen</strong>
+              <span class="text-sky-600 font-bold text-xs ml-0.5">↗</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- THANH TABS ĐIỀU HƯỚNG TRANG CÁ NHÂN (CHUẨN LINKEDIN - RỘNG RÃI) -->
+      <div class="border-t border-slate-200 px-6 sm:px-10 bg-slate-50/50 flex flex-wrap gap-8 text-sm font-bold text-slate-600">
+        <button id="tabBtnPortfolio" onclick="switchMainTab('portfolio')" class="py-4 border-b-2 border-sky-600 text-sky-700 flex items-center gap-2.5 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z"/></svg>
+          <span>Portfolio &amp; Dự Án</span>
+          <span id="tabPortfolioCount" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-sky-100 text-sky-800">0</span>
+        </button>
+
+        <button id="tabBtnAbout" onclick="switchMainTab('about')" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex items-center gap-2.5 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+          <span>Giới Thiệu</span>
+        </button>
+
+        <button id="tabBtnExperience" onclick="switchMainTab('experience')" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex items-center gap-2.5 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+          <span>Kinh Nghiệm &amp; Học Vấn</span>
+        </button>
+
+        <!-- Tab dành riêng cho Nhà tuyển dụng -->
+        <button id="tabBtnEmployer" onclick="switchMainTab('employer')" class="hidden py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-900 flex items-center gap-2.5 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+          <span>Thông Tin Doanh Nghiệp &amp; Tin Tuyển</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 2. NỘI DUNG TAB 1: TRANG PORTFOLIO CỦA ỨNG VIÊN (PORTFOLIO SHOWCASE) -->
+    <section id="contentTabPortfolio" class="space-y-6">
+      
+      <!-- Tiêu đề Bộ Sưu Tập Dự Án -->
+      <div class="bg-white px-7 sm:px-8 py-5 rounded-3xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="font-heading font-extrabold text-xl text-slate-900">Bộ Sưu Tập Dự Án</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Các dự án thực chiến xuất hiện trên trang portfolio cá nhân của bạn.</p>
+        </div>
+        <div>
+          <button onclick="openAddProjectModal()" class="btn-primary text-xs font-bold px-5 py-2.5 flex items-center gap-2 shadow-sm whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            <span>Thêm Dự Án Mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Lưới các dự án Portfolio của ứng viên -->
+      <div id="userProjectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+      <!-- Empty State nếu chưa có dự án -->
+      <div id="userProjectsEmpty" class="hidden text-center py-12 px-6 bg-white rounded-3xl border border-slate-200 space-y-4 shadow-xs">
+        <div class="w-16 h-16 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center mx-auto">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        </div>
+        <div class="space-y-1">
+          <h3 class="font-heading font-bold text-base text-slate-900">Chưa có dự án portfolio nào</h3>
+          <p class="text-xs text-slate-500 max-w-md mx-auto">
+            Hồ sơ có dự án thực tế giúp bạn tăng hơn 80% cơ hội nhận được lời mời làm việc từ các nhà tuyển dụng và khách hàng quốc tế.
+          </p>
+        </div>
+        <button onclick="openAddProjectModal()" class="btn-primary text-xs font-bold px-6 py-2.5 uppercase">
+          Thêm Dự Án
+        </button>
+      </div>
+
+    </section>
+
+    <!-- 3. NỘI DUNG TAB 2: GIỚI THIỆU & KỸ NĂNG (ABOUT - RỘNG RÃI CHUẨN LINKEDIN) -->
+    <section id="contentTabAbout" class="hidden space-y-6">
+      
+      <!-- Khối Giới Thiệu Bản Thân -->
+      <div class="bg-white p-7 sm:p-9 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="font-heading font-extrabold text-lg text-slate-900 flex items-center gap-2">
+            <span>Giới Thiệu</span>
+          </h3>
+          <button onclick="openEditProfileModal()" class="text-xs sm:text-sm font-bold text-sky-600 hover:underline">Chỉnh sửa</button>
+        </div>
+        <p id="userBioText" class="text-sm sm:text-base text-slate-600 leading-relaxed whitespace-pre-line">
+          Tôi là một nhà thiết kế sản phẩm số với hơn 4 năm kinh nghiệm thực chiến trong lĩnh vực UI/UX, Design System và thiết kế ứng dụng di động Fintech. Mục tiêu của tôi là kiến tạo những trải nghiệm trực quan, tinh giản và mang lại giá trị chuyển đổi doanh thu cao nhất cho doanh nghiệp.
+        </p>
+      </div>
+
+      <!-- Khối Kỹ Năng Chuyên Môn (Skills) -->
+      <div class="bg-white p-7 sm:p-9 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="font-heading font-extrabold text-lg text-slate-900">
+            Kỹ Năng Chuyên Môn &amp; Công Nghệ
+          </h3>
+          <button onclick="openEditProfileModal()" class="text-xs sm:text-sm font-bold text-sky-600 hover:underline">Chỉnh sửa kỹ năng</button>
+        </div>
+        <div id="userSkillsContainer" class="flex flex-wrap gap-2.5">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Khối Thông Tin Liên Hệ & Kết Nối -->
+      <div class="bg-white p-7 sm:p-9 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+        <h3 class="font-heading font-extrabold text-lg text-slate-900 border-b border-slate-100 pb-3">
+          Thông Tin Liên Hệ &amp; Mạng Xã Hội
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs sm:text-sm">
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+            <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">Email Liên Hệ:</span>
+            <p id="contactEmail" class="font-semibold text-slate-900 break-all">tuan.nguyen@example.com</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+            <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">Số Điện Thoại:</span>
+            <p id="contactPhone" class="font-semibold text-slate-900">0987 654 321</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+            <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">LinkedIn:</span>
+            <p id="contactLinkedin" class="font-semibold text-sky-700 break-all">linkedin.com/in/tuannguyen</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+            <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">Mức Thù Lao / Kỳ Vọng:</span>
+            <p id="contactRate" class="font-semibold text-emerald-700">35.000.000 VNĐ / tháng</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 4. NỘI DUNG TAB 3: KINH NGHIỆM & HỌC VẤN (EXPERIENCE & EDUCATION) -->
+    <section id="contentTabExperience" class="hidden space-y-6">
+      
+      <!-- Kinh nghiệm làm việc Timeline -->
+      <div class="bg-white p-7 sm:p-9 rounded-3xl border border-slate-200 shadow-xs space-y-6">
+        <h3 class="font-heading font-extrabold text-lg text-slate-900 border-b border-slate-100 pb-3">
+          Kinh Nghiệm Làm Việc
+        </h3>
+        <div class="space-y-6">
+          <div class="flex gap-4 sm:gap-5">
+            <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold text-base shrink-0">NT</div>
+            <div class="space-y-1 text-xs sm:text-sm">
+              <h4 class="font-heading font-bold text-base text-slate-900">Senior Product Designer</h4>
+              <p class="text-sky-700 font-semibold">NovaTech Solutions • Toàn thời gian</p>
+              <p class="text-slate-400 text-xs">Tháng 01/2023 - Hiện tại (2 năm)</p>
+              <p class="text-slate-600 leading-relaxed pt-1 text-sm">
+                Dẫn dắt thiết kế hệ thống Design System quy mô 200+ components, tối ưu luồng onboarding ứng dụng Fintech tăng 28% tỷ lệ kích hoạt tài khoản.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 sm:gap-5 border-t border-slate-100 pt-6">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-base shrink-0">EF</div>
+            <div class="space-y-1 text-xs sm:text-sm">
+              <h4 class="font-heading font-bold text-base text-slate-900">UI/UX Designer</h4>
+              <p class="text-indigo-700 font-semibold">EduForward Global • Toàn thời gian</p>
+              <p class="text-slate-400 text-xs">Tháng 06/2021 - Tháng 12/2022 (1.5 năm)</p>
+              <p class="text-slate-600 leading-relaxed pt-1 text-sm">
+                Thiết kế trải nghiệm học tập số EdTech, nghiên cứu người dùng và thực hiện kiểm thử A/B Testing giao diện web và mobile.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Học vấn & Bằng cấp -->
+      <div class="bg-white p-7 sm:p-9 rounded-3xl border border-slate-200 shadow-xs space-y-6">
+        <h3 class="font-heading font-extrabold text-lg text-slate-900 border-b border-slate-100 pb-3">
+          Học Vấn &amp; Chứng Chỉ
+        </h3>
+        <div class="space-y-6 text-xs sm:text-sm">
+          <div class="flex gap-4 sm:gap-5">
+            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-base shrink-0">BK</div>
+            <div class="space-y-0.5">
+              <h4 class="font-heading font-bold text-base text-slate-900">Đại Học Bách Khoa</h4>
+              <p class="text-slate-600">Cử nhân Công Nghệ Thông Tin &amp; Thiết Kế Tương Tác</p>
+              <p class="text-slate-400 text-xs">2017 - 2021 • Tốt nghiệp loại Giỏi</p>
+            </div>
+          </div>
+          <div class="flex gap-4 sm:gap-5 border-t border-slate-100 pt-5">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-base shrink-0">GG</div>
+            <div class="space-y-0.5">
+              <h4 class="font-heading font-bold text-base text-slate-900">Google UX Design Professional Certificate</h4>
+              <p class="text-slate-600">Coursera Verified Certificate</p>
+              <p class="text-slate-400 text-xs">Đã cấp Tháng 08/2022</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 5. NỘI DUNG TAB 4: DOANH NGHIỆP & NHÀ TUYỂN DỤNG -->
+    <section id="contentTabEmployer" class="hidden space-y-6">
+      
+      <div class="bg-white p-7 sm:p-9 rounded-3xl border border-slate-200 shadow-xs space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div>
+            <h3 class="font-heading font-extrabold text-lg text-slate-900">Hồ Sơ Doanh Nghiệp</h3>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Dành riêng khi bạn hoạt động với vai trò Nhà Tuyển Dụng / HR.</p>
+          </div>
+          <a href="index.html" class="btn-primary text-xs sm:text-sm font-bold px-5 py-2.5 uppercase">
+            Đăng Tin Tuyển Dụng
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 text-xs sm:text-sm">
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+            <p class="text-xs uppercase font-bold tracking-wider text-slate-500">Tên Doanh Nghiệp</p>
+            <p id="empCompanyName" class="font-heading font-bold text-slate-900 text-base mt-1">NovaTech Innovations Co.</p>
+          </div>
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+            <p class="text-xs uppercase font-bold tracking-wider text-slate-500">Lĩnh Vực Hoạt Động</p>
+            <p class="font-heading font-bold text-slate-900 text-base mt-1">SaaS, AI &amp; Fintech</p>
+          </div>
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+            <p class="text-xs uppercase font-bold tracking-wider text-slate-500">Quy Mô Công Ty</p>
+            <p class="font-heading font-bold text-slate-900 text-base mt-1">50 - 200 Nhân sự</p>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-2 text-xs sm:text-sm">
+          <h4 class="font-bold uppercase tracking-wider text-slate-700">Giới Thiệu Văn Hóa Tuyển Dụng:</h4>
+          <p class="text-slate-600 leading-relaxed p-5 bg-slate-50 rounded-2xl border border-slate-100">
+            Chúng tôi cam kết tạo ra môi trường làm việc cởi mở, minh bạch, khuyến khích sáng tạo và trao quyền cho từng cá nhân bứt phá giới hạn. Mọi vị trí đều được đãi ngộ cạnh tranh và cơ hội tiếp cận công nghệ AI tiên tiến nhất.
+          </p>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========== MODAL 1: CHỈNH SỬA THÔNG TIN CÁ NHÂN (EDIT PROFILE) ========== -->
+  <div id="modalEditProfile" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-6 sm:p-8 space-y-5 max-h-[92vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <span class="chip-pill chip-cyan text-xs font-bold uppercase mb-1">Chỉnh Sửa Hồ Sơ</span>
+          <h3 class="font-heading font-extrabold text-lg text-slate-900 mt-0.5">Cập Nhật Thông Tin Trang Cá Nhân</h3>
+        </div>
+        <button onclick="closeEditProfileModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Họ và Tên:</label>
+            <input id="inpEditFullName" type="text" class="input-field" placeholder="VD: Nguyễn Minh Tuấn" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Tiêu Đề Nghề Nghiệp (Headline):</label>
+            <input id="inpEditHeadline" type="text" class="input-field" placeholder="VD: Senior Product Designer | UI/UX &amp; AI" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Số Điện Thoại:</label>
+            <input id="inpEditPhone" type="text" class="input-field" placeholder="VD: 0987 654 321" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Địa Chỉ / Khu Vực:</label>
+            <input id="inpEditLocation" type="text" class="input-field" placeholder="VD: Hồ Chí Minh, Việt Nam" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Số Năm Kinh Nghiệm:</label>
+            <input id="inpEditExperience" type="number" min="0" max="40" class="input-field" placeholder="VD: 4" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Mức Lương / Thù Lao Kỳ Vọng:</label>
+            <input id="inpEditRate" type="text" class="input-field" placeholder="VD: 35.000.000 VNĐ / tháng" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-700 uppercase mb-1">Tên Định Danh Subdomain Riêng:</label>
+            <div class="flex items-center gap-1">
+              <span class="text-slate-400 font-mono text-xs">connectcv.vn/p/</span>
+              <input id="inpEditSubdomain" type="text" class="input-field font-mono" placeholder="minh-tuan" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Link Ảnh Đại Diện (Avatar URL):</label>
+          <div class="flex gap-2">
+            <input id="inpEditAvatar" type="text" class="input-field flex-1" placeholder="https://..." onchange="document.getElementById('userAvatar').src = this.value" />
+            <button type="button" onclick="cycleAvatarPreset()" class="btn-secondary text-xs px-3 py-1.5 font-bold whitespace-nowrap">Chọn Ảnh Mẫu</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Giới Thiệu Bản Thân (Bio):</label>
+          <textarea id="inpEditBio" rows="3" class="input-field leading-relaxed" placeholder="Chia sẻ về đam mê, kinh nghiệm và mục tiêu nghề nghiệp của bạn..."></textarea>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Kỹ Năng Chuyên Môn (Cách nhau bởi dấu phẩy):</label>
+          <input id="inpEditSkills" type="text" class="input-field" placeholder="VD: Figma, UI/UX, Design System, React, Tailwind, ATS CV, AI Prompting" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Link LinkedIn:</label>
+          <input id="inpEditLinkedin" type="text" class="input-field" placeholder="VD: linkedin.com/in/minhtuan" />
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+        <button type="button" onclick="closeEditProfileModal()" class="btn-secondary text-xs px-5 py-2">Hủy</button>
+        <button type="button" onclick="saveProfileChanges()" class="btn-primary text-xs font-bold px-6 py-2.5 uppercase shadow-sm">
+          Lưu Thay Đổi
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== MODAL 2: THÊM DỰ ÁN PORTFOLIO MỚI ========== -->
+  <div id="modalAddProject" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 sm:p-8 space-y-5 max-h-[92vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <span class="chip-pill chip-cyan text-xs font-bold uppercase mb-1">Dự Án Mới</span>
+          <h3 class="font-heading font-extrabold text-lg text-slate-900 mt-0.5">Thêm Dự Án Vào Portfolio</h3>
+        </div>
+        <button onclick="closeAddProjectModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Tiêu Đề Dự Án (*):</label>
+          <input id="inpProjTitle" type="text" class="input-field" placeholder="VD: Fintech Mobile Banking 2.0 App" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Link Ảnh Bìa Dự Án (*):</label>
+          <div class="flex gap-2">
+            <input id="inpProjImage" type="text" class="input-field flex-1" placeholder="https://images.unsplash.com/..." />
+            <button type="button" onclick="fillSampleProjImage()" class="btn-secondary text-xs px-3 py-1.5 font-bold whitespace-nowrap">Ảnh Mẫu</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Lĩnh Vực / Tags:</label>
+            <input id="inpProjTags" type="text" class="input-field" placeholder="VD: Fintech, Figma, UI/UX" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Ngân Sách / Giá Trị:</label>
+            <input id="inpProjBudget" type="text" class="input-field" placeholder="VD: $2,500 USD" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Mô Tả Kết Quả Dự Án:</label>
+          <textarea id="inpProjDesc" rows="3" class="input-field leading-relaxed" placeholder="Mô tả bối cảnh, giải pháp thiết kế và kết quả số liệu đạt được..."></textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+        <button type="button" onclick="closeAddProjectModal()" class="btn-secondary text-xs px-5 py-2">Hủy</button>
+        <button type="button" onclick="submitNewProject()" class="btn-primary text-xs font-bold px-6 py-2.5 uppercase shadow-sm">
+          Lưu Dự Án
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== MODAL XEM CHI TIẾT DỰ ÁN PORTFOLIO ========== -->
+  <div id="modalProjectDetail" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto" onclick="if(event.target === this) closeProjectDetailModal()">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full overflow-hidden max-h-[92vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Ảnh bìa dự án lớn ở trên cùng kèm nút đóng -->
+      <div class="relative w-full aspect-video sm:h-72 overflow-hidden bg-slate-900 shrink-0">
+        <img id="detailProjImage" src="" alt="Project Image" class="w-full h-full object-cover" />
+        <button onclick="closeProjectDetailModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-900/75 hover:bg-slate-900 text-white flex items-center justify-center text-xl font-bold backdrop-blur-md transition-all shadow-md z-10">&times;</button>
+        
+        <!-- Badges nổi trên ảnh -->
+        <div class="absolute bottom-4 left-4 flex flex-wrap items-center gap-2">
+          <span id="detailProjTag" class="chip-pill chip-cyan text-xs font-bold shadow-md bg-white/90 backdrop-blur-sm">Thiết kế</span>
+          <span id="detailProjBudget" class="bg-slate-900/85 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-md shadow-md">$2,500 USD</span>
+        </div>
+      </div>
+
+      <!-- Nội dung chi tiết cuộn được -->
+      <div class="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1">
+        
+        <!-- Tiêu đề & Thông tin tác giả / Lượt xem -->
+        <div class="space-y-3 border-b border-slate-100 pb-5">
+          <h3 id="detailProjTitle" class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 leading-snug">
+            Tên dự án
+          </h3>
+          
+          <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+              <img id="detailProjAuthorAvatar" src="" alt="Author" class="w-6 h-6 rounded-full object-cover border border-slate-200" />
+              <span id="detailProjAuthorName" class="font-bold text-slate-800">Tác giả</span>
+            </div>
+            <span class="text-slate-300">•</span>
+            <div class="flex items-center gap-1.5 text-slate-400">
+              <svg class="w-4 h-4 text-rose-500 fill-rose-500" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
+              <span id="detailProjLikes">248 lượt xem</span>
+            </div>
+            <span id="detailProjDurationWrap" class="flex items-center gap-1.5 text-slate-500">
+              <span class="text-slate-300">•</span>
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span id="detailProjDuration">4 tuần</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Khối Mô tả chi tiết dự án -->
+        <div class="space-y-2.5">
+          <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-2">
+            <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg>
+            <span>Mô Tả Chi Tiết Dự Án</span>
+          </h4>
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-700 text-sm leading-relaxed whitespace-pre-line" id="detailProjDesc">
+            Mô tả dự án...
+          </div>
+        </div>
+
+        <!-- Tags / Công nghệ sử dụng -->
+        <div class="space-y-2.5">
+          <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-500">Công nghệ &amp; Kỹ năng áp dụng:</h4>
+          <div id="detailProjTagsList" class="flex flex-wrap gap-2">
+            <!-- Rendered tags -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end">
+        <button type="button" onclick="closeProjectDetailModal()" class="btn-navy text-xs font-bold px-6 py-2.5 shadow-sm">
+          Đóng
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs px-5 py-3 rounded-2xl border border-slate-700 shadow-2xl transition-all">
+    <span id="toastMsg">Thông báo</span>
+  </div>
+
+  <!-- ========== SCRIPT: DỮ LIỆU & TƯƠNG TÁC PROFILE TRANG RIÊNG ========== -->
+  <script>
+    let currentUser = null;
+    let viewingUser = null;
+    let isViewingOther = false;
+    let myPortfolios = [];
+
+    // Danh bạ hồ sơ các tác giả sáng tạo trên ConnectCV
+    const KNOWN_AUTHORS = {
+      'trần quốc bảo': {
+        fullName: 'Trần Quốc Bảo',
+        username: 'quoc-bao',
+        title: 'Senior Product Designer & SaaS Specialist',
+        role: 'Student',
+        isPro: true,
+        plan: 'PRO_MONTHLY',
+        subdomain: 'quoc-bao',
+        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face',
+        bio: 'Product Designer chuyên sâu về SaaS, Dark Mode Design System và trực quan hóa dữ liệu AI real-time với hơn 5 năm kinh nghiệm thực chiến.',
+        phone: '0912 345 678',
+        email: 'bao.tran@connectcv.vn',
+        location: 'Hà Nội, Việt Nam',
+        experienceYears: 5,
+        hourlyRate: '$3,200 USD / dự án',
+        skills: ['SaaS', 'Dark Mode', 'Data Viz', 'Figma', 'UI/UX', 'Product Design'],
+        linkedin: 'linkedin.com/in/baotran-product'
+      },
+      'lê hoàng yến': {
+        fullName: 'Lê Hoàng Yến',
+        username: 'hoang-yen',
+        title: 'Brand & Visual Designer | Packaging & Eco Identity',
+        role: 'Student',
+        isPro: true,
+        plan: 'PRO_MONTHLY',
+        subdomain: 'hoang-yen',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face',
+        bio: 'Chuyên gia thiết kế nhận diện thương hiệu với niềm đam mê phát triển phong cách eco-friendly, tối giản và bền vững.',
+        phone: '0934 567 890',
+        email: 'yen.le@connectcv.vn',
+        location: 'Đà Nẵng, Việt Nam',
+        experienceYears: 3,
+        hourlyRate: '$1,200 USD / dự án',
+        skills: ['Branding', 'Packaging', 'Eco', 'Illustrator', 'Typography', 'Logo Design'],
+        linkedin: 'linkedin.com/in/yenle-brand'
+      },
+      'nguyễn minh tuấn': {
+        fullName: 'Nguyễn Minh Tuấn',
+        username: 'tuan-nguyen',
+        title: 'Senior UI/UX Designer & Fintech Architect',
+        role: 'Student',
+        isPro: true,
+        plan: 'PRO_MONTHLY',
+        subdomain: 'tuan-nguyen',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
+        bio: 'Nhà thiết kế sản phẩm số với hơn 4 năm kinh nghiệm thực chiến trong lĩnh vực UI/UX, Design System và tối ưu hóa tỷ lệ chuyển đổi cho các sản phẩm Fintech và SaaS.',
+        phone: '0987 654 321',
+        email: 'tuan.nguyen@connectcv.vn',
+        location: 'Hồ Chí Minh, Việt Nam',
+        experienceYears: 4,
+        hourlyRate: '$2,500 USD / dự án',
+        skills: ['Fintech', 'Figma', 'Design System', 'UI/UX', 'Mobile App', 'Wireframing'],
+        linkedin: 'linkedin.com/in/tuannguyen'
+      },
+      'nguyễn văn an': {
+        fullName: 'Nguyễn Văn An',
+        username: 'van-an',
+        title: 'Senior Product Designer & Design Token Expert',
+        role: 'Student',
+        isPro: false,
+        subdomain: 'van-an',
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop',
+        bio: 'Chuyên gia thiết kế kiến trúc trải nghiệm và hệ thống Design Token toàn diện cho các nền tảng thương mại điện tử quy mô lớn.',
+        phone: '0901 234 567',
+        email: 'an.nguyen@connectcv.vn',
+        location: 'Hồ Chí Minh, Việt Nam',
+        experienceYears: 4,
+        hourlyRate: '$2,500 USD / dự án',
+        skills: ['Figma', 'UI/UX', 'Design System', 'SaaS', 'Design Tokens'],
+        linkedin: 'linkedin.com/in/annguyen'
+      }
+    };
+
+    const SAMPLE_AVATARS = [
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&h=200&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=face'
+    ];
+    let sampleAvatarIdx = 0;
+
+    const SAMPLE_PROJECT_IMAGES = [
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80'
+    ];
+    let sampleProjIdx = 0;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Hỗ trợ phím Escape để đóng nhanh các popup modal
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeProjectDetailModal();
+          closeEditProfileModal();
+          closeAddProjectModal();
+        }
+      });
+
+      // 1. Phục hồi thông tin người dùng phiên làm việc từ localStorage & API
+      const stored = localStorage.getItem('connectcv_user');
+      if (stored) {
+        try { currentUser = JSON.parse(stored); } catch (e) {}
+      }
+
+      const token = localStorage.getItem('jwtToken');
+      if (token) {
+        try {
+          const res = await fetch('/api/auth/me', { headers: { 'Authorization': 'Bearer ' + token } });
+          const json = await res.json();
+          if (json.success && json.user) {
+            currentUser = json.user;
+            localStorage.setItem('connectcv_user', JSON.stringify(currentUser));
+          }
+        } catch (e) {}
+      }
+
+      // Khởi tạo thông tin mặc định nếu là khách
+      if (!currentUser) {
+        currentUser = {
+          id: 'usr_guest',
+          fullName: 'Nguyễn Minh Tuấn',
+          username: 'minhtuan',
+          email: 'tuan.nguyen@connectcv.vn',
+          title: 'Senior UI/UX Designer & Product Creator',
+          role: 'Student',
+          isPro: true,
+          plan: 'PRO_MONTHLY',
+          subdomain: 'tuan-nguyen',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
+          bio: 'Nhà thiết kế sản phẩm số với hơn 4 năm kinh nghiệm thực chiến trong lĩnh vực UI/UX, Design System và tối ưu hóa tỷ lệ chuyển đổi cho các sản phẩm Fintech và SaaS.',
+          phone: '0987 654 321',
+          location: 'Hồ Chí Minh, Việt Nam',
+          experienceYears: 4,
+          hourlyRate: '35.000.000 VNĐ / tháng',
+          skills: ['Figma', 'UI/UX', 'Design System', 'Prototyping', 'Fintech UI', 'ATS Optimization'],
+          linkedin: 'linkedin.com/in/tuannguyen'
+        };
+      }
+
+      // 2. Xác định xem đang xem hồ sơ tác giả nào (?author=... hoặc ?u=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      const authorQuery = urlParams.get('author') || urlParams.get('u') || urlParams.get('name');
+      const authorKey = authorQuery ? authorQuery.toLowerCase().trim() : null;
+
+      if (authorKey && KNOWN_AUTHORS[authorKey]) {
+        viewingUser = { ...KNOWN_AUTHORS[authorKey] };
+        isViewingOther = true;
+      } else if (authorKey) {
+        // Tìm kiếm tác giả trong API /api/portfolios
+        try {
+          const pRes = await fetch('/api/portfolios');
+          const pData = await pRes.json();
+          if (pData.success && pData.portfolios) {
+            const matched = pData.portfolios.find(p => p.author && p.author.toLowerCase().includes(authorKey));
+            if (matched) {
+              viewingUser = {
+                fullName: matched.author,
+                username: matched.subdomain || 'creator',
+                title: matched.authorRole || 'Chuyên viên Thiết Kế & Sáng Tạo',
+                role: 'Student',
+                isPro: true,
+                plan: 'PRO_MONTHLY',
+                subdomain: matched.subdomain || 'creator',
+                avatar: matched.authorAvatar || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face',
+                bio: matched.description || 'Chuyên gia sáng tạo trên nền tảng ConnectCV.',
+                location: 'Việt Nam',
+                experienceYears: 4,
+                hourlyRate: matched.budget || '$2,500 USD / dự án',
+                skills: matched.tags || ['Design', 'UI/UX', 'Creative'],
+                email: `${matched.subdomain || 'author'}@connectcv.vn`,
+                phone: '0988 123 456',
+                linkedin: `linkedin.com/in/${matched.subdomain || 'creator'}`
+              };
+              isViewingOther = true;
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (!viewingUser) {
+        viewingUser = currentUser;
+        isViewingOther = false;
+      }
+
+      renderProfileData();
+      renderNavbarAuth();
+      await loadUserPortfolios();
+    });
+
+    function renderNavbarAuth() {
+      const section = document.getElementById('userAuthSection');
+      const btnNavPostJob = document.getElementById('btnNavPostJob');
+      if (!section) return;
+
+      const backToMyProfileBtn = isViewingOther ? `
+        <a href="profile.html" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 transition-all mr-2 shadow-xs" title="Quay lại xem hồ sơ của bạn">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+          <span>Hồ Sơ Của Bạn</span>
+        </a>
+      ` : '';
+
+      if (!currentUser) {
+        section.innerHTML = `
+          ${backToMyProfileBtn}
+          <a href="index.html" class="btn-secondary text-xs px-4 py-2 font-bold">
+            Đăng Nhập
+          </a>
+        `;
+        return;
+      }
+
+      const isHR = currentUser.role === 'HR' || currentUser.role === 'Employer';
+      if (btnNavPostJob) {
+        if (isHR) btnNavPostJob.classList.remove('hidden');
+        else btnNavPostJob.classList.add('hidden');
+      }
+
+      const userPlanBadge = currentUser.isPro
+        ? (currentUser.plan && currentUser.plan.includes('MAX')
+          ? `<span class="px-1.5 py-0.5 rounded-full text-[11px] font-black bg-indigo-600 text-white uppercase tracking-wider">MAX</span>`
+          : `<span class="px-1.5 py-0.5 rounded-full text-[11px] font-black bg-amber-400 text-slate-950 uppercase tracking-wider">PRO</span>`)
+        : '';
+
+      const userAvatarImg = currentUser.avatar
+        ? `<img src="${currentUser.avatar}" alt="${currentUser.username || 'Avatar'}" class="w-8 h-8 rounded-full object-cover border border-slate-200 group-hover:ring-2 group-hover:ring-sky-500 transition-all">`
+        : `<span class="w-8 h-8 rounded-full bg-[#172554] text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:ring-2 group-hover:ring-sky-500 transition-all">${(currentUser.username || 'A')[0].toUpperCase()}</span>`;
+
+      section.innerHTML = `
+        <div class="flex items-center gap-2">
+          ${backToMyProfileBtn}
+          <div class="flex items-center gap-2 bg-white border border-slate-200 hover:border-sky-300 py-1 pl-1.5 pr-2.5 rounded-full shadow-xs transition-all group cursor-default">
+            <div class="relative shrink-0">
+              ${userAvatarImg}
+              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
+            </div>
+            
+            <div class="flex flex-col text-left leading-tight pr-1">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-slate-900 text-xs">${currentUser.fullName || currentUser.username || 'Người dùng'}</span>
+                ${userPlanBadge}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1 ml-1">
+              <button onclick="handleLogout()" class="text-slate-400 hover:text-rose-600 p-1 transition-colors" title="Đăng xuất">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderProfileData() {
+      const u = viewingUser || currentUser;
+      if (!u) return;
+
+      const isHR = u.role === 'HR' || u.role === 'Employer';
+
+      // Header overview
+      document.getElementById('userFullName').innerText = u.fullName || u.username || 'Người dùng ConnectCV';
+      document.getElementById('userHeadline').innerText = u.title || 'Chuyên viên tài năng';
+      document.getElementById('userLocation').querySelector('span').innerText = u.location || 'Việt Nam';
+      document.getElementById('userExperienceText').innerText = `${u.experienceYears || 3} năm kinh nghiệm`;
+      document.getElementById('userAvatar').src = u.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop';
+      
+      const sub = u.subdomain || 'tuan-nguyen';
+      document.getElementById('userSubdomainText').innerText = sub;
+      document.getElementById('btnPublicSubdomainLink').href = `/p/${sub}`;
+
+      // Badges
+      const planBadge = document.getElementById('userPlanBadge');
+      if (planBadge) {
+        if (u.isPro) {
+          planBadge.innerText = (u.plan && u.plan.includes('MAX')) ? 'MAX' : 'PRO';
+          planBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-400 text-slate-950 uppercase tracking-wide';
+          planBadge.classList.remove('hidden');
+        } else {
+          planBadge.classList.add('hidden');
+        }
+      }
+
+      const roleBadge = document.getElementById('userRoleBadge');
+      if (isHR) {
+        roleBadge.innerText = 'Nhà Tuyển Dụng / HR';
+        roleBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200';
+        document.getElementById('tabBtnEmployer').classList.remove('hidden');
+      } else {
+        roleBadge.innerText = 'Ứng Viên / Freelancer';
+        roleBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 border border-sky-200';
+        document.getElementById('tabBtnEmployer').classList.add('hidden');
+      }
+
+      // Xử lý các nút tương tác trên Hero Card (Xem người khác vs Xem chính mình)
+      const ctaWrap = document.getElementById('heroCtaWrap');
+      const btnCover = document.getElementById('btnChangeCover');
+      const btnAvatar = document.getElementById('btnChangeAvatar');
+
+      if (isViewingOther) {
+        if (btnCover) btnCover.classList.add('hidden');
+        if (btnAvatar) btnAvatar.classList.add('hidden');
+        if (ctaWrap) {
+          ctaWrap.innerHTML = `
+            <button onclick="openContactAuthorModal()" class="btn-primary text-xs sm:text-sm font-bold px-6 py-2.5 flex items-center gap-2 shadow-sm whitespace-nowrap">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+              <span>Liên Hệ / Gửi Tin Nhắn</span>
+            </button>
+            <a id="btnHeroGoPortfolio" href="/p/${sub}" class="btn-secondary text-xs sm:text-sm font-bold px-5 py-2.5 flex items-center gap-2 shadow-xs whitespace-nowrap hover:border-sky-400 hover:text-sky-600 transition-all">
+              <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+              <span>Xem Trang Portfolio</span>
+            </a>
+            <button onclick="copyAuthorProfileLink()" class="btn-secondary text-xs sm:text-sm font-bold px-4 py-2.5 flex items-center gap-1.5 shadow-sm whitespace-nowrap" title="Sao chép link trang cá nhân này">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093m-0.283-1.093L16.2 6.556m0 0a2.25 2.25 0 101.4 1.344m-1.4-1.344L7.5 12m8.7 5.444a2.25 2.25 0 101.4-1.344m-1.4 1.344L7.5 12"/></svg>
+              <span>Chia Sẻ</span>
+            </button>
+          `;
+        }
+      } else {
+        if (btnCover) btnCover.classList.remove('hidden');
+        if (btnAvatar) btnAvatar.classList.remove('hidden');
+        if (ctaWrap) {
+          ctaWrap.innerHTML = `
+            <button onclick="openEditProfileModal()" class="btn-primary text-xs sm:text-sm font-bold px-6 py-2.5 flex items-center gap-2 shadow-sm whitespace-nowrap">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
+              <span>Chỉnh Sửa Hồ Sơ</span>
+            </button>
+            <a id="btnHeroGoPortfolio" href="/p/${sub}" class="btn-secondary text-xs sm:text-sm font-bold px-5 py-2.5 flex items-center gap-2 shadow-xs whitespace-nowrap hover:border-sky-400 hover:text-sky-600 transition-all">
+              <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+              <span>Xem Trang Portfolio</span>
+            </a>
+          `;
+        }
+      }
+
+      // Cập nhật link nút ở tab Portfolio
+      const tabPortBtn = document.getElementById('btnTabGoPortfolio');
+      if (tabPortBtn) tabPortBtn.href = `/p/${sub}`;
+
+      // About Tab
+      document.getElementById('userBioText').innerText = u.bio || 'Chưa cập nhật phần giới thiệu bản thân.';
+      document.getElementById('contactEmail').innerText = u.email || 'Chưa cập nhật';
+      document.getElementById('contactPhone').innerText = u.phone || 'Chưa cập nhật';
+      document.getElementById('contactLinkedin').innerText = u.linkedin || 'Chưa cập nhật';
+      document.getElementById('contactRate').innerText = u.hourlyRate || 'Thỏa thuận';
+
+      // Skills
+      const skillsContainer = document.getElementById('userSkillsContainer');
+      const skills = Array.isArray(u.skills) ? u.skills : (u.skills ? u.skills.split(',') : ['Figma', 'UI/UX']);
+      skillsContainer.innerHTML = skills.map(s => `
+        <span class="chip-pill chip-cyan font-bold text-xs py-1 px-3">
+          ${s.trim()}
+        </span>
+      `).join('');
+    }
+
+    // --- TAB SWITCHING (PORTFOLIO / ABOUT / EXPERIENCE / EMPLOYER) ---
+    function switchMainTab(tabName) {
+      const tabs = ['portfolio', 'about', 'experience', 'employer'];
+      tabs.forEach(t => {
+        const sec = document.getElementById(`contentTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (sec) sec.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('border-sky-600', 'text-sky-700', 'font-bold');
+          btn.classList.add('border-transparent', 'text-slate-500');
+        }
+      });
+
+      const activeSec = document.getElementById(`contentTab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+      const activeBtn = document.getElementById(`tabBtn${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+      if (activeSec) activeSec.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.remove('border-transparent', 'text-slate-500');
+        activeBtn.classList.add('border-sky-600', 'text-sky-700', 'font-bold');
+      }
+
+      // Giữ đúng trạng thái ẩn/hiện của Tab Doanh Nghiệp (chỉ hiện khi người dùng là Nhà tuyển dụng / HR)
+      const employerBtn = document.getElementById('tabBtnEmployer');
+      if (employerBtn) {
+        const isHR = currentUser && (currentUser.role === 'HR' || currentUser.role === 'Employer');
+        if (isHR) {
+          employerBtn.classList.remove('hidden');
+        } else {
+          employerBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    // --- PORTFOLIO MANAGEMENT ---
+    async function loadUserPortfolios() {
+      const grid = document.getElementById('userProjectsGrid');
+      const empty = document.getElementById('userProjectsEmpty');
+      const countBadge = document.getElementById('tabPortfolioCount');
+
+      grid.innerHTML = '<div class="col-span-3 text-center py-8 text-slate-400">Đang tải các dự án portfolio...</div>';
+
+      try {
+        const u = viewingUser || currentUser;
+        const author = u ? (u.fullName || u.username || '') : '';
+        const userId = !isViewingOther && currentUser ? currentUser.id : '';
+        const username = !isViewingOther && currentUser ? currentUser.username : '';
+        const subdomain = u ? (u.subdomain || '') : '';
+
+        const res = await fetch(`/api/portfolios/my?author=${encodeURIComponent(author)}&userId=${encodeURIComponent(userId)}&username=${encodeURIComponent(username)}&subdomain=${encodeURIComponent(subdomain)}`);
+        const data = await res.json();
+        
+        myPortfolios = (data.success && data.portfolios && data.portfolios.length > 0) ? data.portfolios : [];
+        
+        // Nếu API rỗng nhưng chưa có dự án, tìm trong danh sách tổng
+        if (myPortfolios.length === 0) {
+          const allRes = await fetch('/api/portfolios');
+          const allData = await allRes.json();
+          if (allData.success && allData.portfolios) {
+            if (isViewingOther && author) {
+              myPortfolios = allData.portfolios.filter(p => p.author && p.author.toLowerCase().includes(author.toLowerCase()));
+            } else if (!isViewingOther) {
+              myPortfolios = allData.portfolios.slice(0, 3);
+            }
+          }
+        }
+
+        countBadge.innerText = myPortfolios.length;
+
+        if (myPortfolios.length === 0) {
+          grid.innerHTML = '';
+          grid.classList.add('hidden');
+          empty.classList.remove('hidden');
+        } else {
+          empty.classList.add('hidden');
+          grid.classList.remove('hidden');
+          grid.innerHTML = myPortfolios.map(p => `
+            <div onclick="openProjectDetailModal('${p.id}')" class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-xl hover:border-sky-300 transition-all flex flex-col justify-between group cursor-pointer">
+              <div class="relative aspect-video overflow-hidden bg-slate-100">
+                <img src="${p.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800'}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <span class="absolute top-3 left-3 chip-pill chip-cyan text-xs font-bold shadow-xs">
+                  ${(p.tags && p.tags[0]) || 'Thiết kế'}
+                </span>
+                <span class="absolute top-3 right-3 bg-slate-900/70 text-white text-xs font-bold px-2.5 py-0.5 rounded-full backdrop-blur-xs">
+                  ${p.budget || '$2,500 USD'}
+                </span>
+              </div>
+
+              <div class="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                <div class="space-y-1.5">
+                  <h4 class="font-heading font-extrabold text-base text-slate-900 line-clamp-1 group-hover:text-sky-600 transition-colors">${p.title}</h4>
+                  <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">${p.description || 'Dự án thực tế chứng minh năng lực sáng tạo và tối ưu giải pháp người dùng.'}</p>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-1 text-slate-400">
+                    <svg class="w-3.5 h-3.5 text-rose-500 fill-rose-500" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
+                    <span>${p.likes || 128} lượt xem</span>
+                  </div>
+                  ${!isViewingOther ? `
+                    <div class="flex items-center gap-2">
+                      <button onclick="event.stopPropagation(); deleteProject('${p.id}')" class="text-rose-500 hover:text-rose-700 hover:underline font-semibold text-xs py-0.5 px-1.5 rounded transition-colors" title="Xóa dự án">Xóa</button>
+                    </div>
+                  ` : `
+                    <span class="text-sky-600 font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                      <span>Xem Chi Tiết</span>
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                    </span>
+                  `}
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        grid.innerHTML = '<div class="col-span-3 text-center py-6 text-rose-500">Lỗi tải danh sách dự án.</div>';
+      }
+    }
+
+    function openContactAuthorModal() {
+      const u = viewingUser || currentUser;
+      const targetName = u ? u.fullName : 'tác giả';
+      const targetEmail = u ? (u.email || 'contact@connectcv.vn') : 'contact@connectcv.vn';
+      const msg = prompt(`Gửi tin nhắn hoặc lời mời hợp tác đến ${targetName} (${targetEmail}):`, 'Xin chào, tôi rất ấn tượng với portfolio của bạn và muốn trao đổi về cơ hội hợp tác!');
+      if (msg && msg.trim()) {
+        showToast(`Đã gửi tin nhắn đến ${targetName} thành công!`);
+      }
+    }
+
+    function copyAuthorProfileLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        showToast('Đã sao chép liên kết trang cá nhân tác giả!');
+      }).catch(() => {
+        showToast('Đã sao chép liên kết!');
+      });
+    }
+
+    // --- MODAL: XEM CHI TIẾT MÔ TẢ DỰ ÁN KHI BẤM VÀO CARD ---
+    function openProjectDetailModal(projectId) {
+      const proj = myPortfolios.find(p => String(p.id) === String(projectId));
+      if (!proj) return;
+
+      document.getElementById('detailProjImage').src = proj.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800';
+      document.getElementById('detailProjTitle').innerText = proj.title || 'Dự án Portfolio';
+      document.getElementById('detailProjTag').innerText = (proj.tags && proj.tags[0]) || 'Thiết kế';
+      document.getElementById('detailProjBudget').innerText = proj.budget || '$2,500 USD';
+      document.getElementById('detailProjLikes').innerText = `${proj.likes || 128} lượt xem`;
+
+      const dur = proj.duration || '';
+      const durWrap = document.getElementById('detailProjDurationWrap');
+      if (dur) {
+        document.getElementById('detailProjDuration').innerText = dur;
+        durWrap.classList.remove('hidden');
+      } else {
+        durWrap.classList.add('hidden');
+      }
+
+      const authorName = proj.author || (viewingUser ? (viewingUser.fullName || viewingUser.username) : 'Nguyễn Minh Tuấn');
+      const authorAvatar = proj.authorAvatar || (viewingUser ? viewingUser.avatar : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop');
+      document.getElementById('detailProjAuthorName').innerText = authorName;
+      document.getElementById('detailProjAuthorAvatar').src = authorAvatar;
+
+      document.getElementById('detailProjDesc').innerText = proj.description || 'Dự án thực tế chất lượng cao, tối ưu hóa giao diện và trải nghiệm người dùng theo các tiêu chuẩn thiết kế hiện đại.';
+
+      const tags = (Array.isArray(proj.tags) && proj.tags.length > 0) ? proj.tags : ['UI/UX', 'Portfolio', 'Thiết kế'];
+      document.getElementById('detailProjTagsList').innerHTML = tags.map(t => `
+        <span class="chip-pill chip-cyan text-xs font-semibold py-1 px-3">
+          ${t.trim()}
+        </span>
+      `).join('');
+
+      document.getElementById('modalProjectDetail').classList.remove('hidden');
+    }
+
+    function closeProjectDetailModal() {
+      document.getElementById('modalProjectDetail').classList.add('hidden');
+    }
+
+    async function deleteProject(id) {
+      if (!confirm('Bạn có chắc chắn muốn xóa dự án này khỏi portfolio của bạn?')) return;
+      try {
+        const res = await fetch(`/api/portfolios/${id}`, { method: 'DELETE' });
+        const json = await res.json();
+        if (json.success) {
+          showToast('Đã xóa dự án thành công!');
+          await loadUserPortfolios();
+        } else {
+          showToast(json.message || 'Lỗi xóa dự án.');
+        }
+      } catch (e) {
+        showToast('Lỗi kết nối khi xóa dự án.');
+      }
+    }
+
+    // --- MODAL: EDIT PROFILE ---
+    function openEditProfileModal() {
+      if (!currentUser) return;
+      document.getElementById('inpEditFullName').value = currentUser.fullName || currentUser.username || '';
+      document.getElementById('inpEditHeadline').value = currentUser.title || '';
+      document.getElementById('inpEditPhone').value = currentUser.phone || '';
+      document.getElementById('inpEditLocation').value = currentUser.location || '';
+      document.getElementById('inpEditExperience').value = currentUser.experienceYears || 3;
+      document.getElementById('inpEditRate').value = currentUser.hourlyRate || '';
+      document.getElementById('inpEditSubdomain').value = currentUser.subdomain || 'tuan-nguyen';
+      document.getElementById('inpEditAvatar').value = currentUser.avatar || '';
+      document.getElementById('inpEditBio').value = currentUser.bio || '';
+      document.getElementById('inpEditSkills').value = Array.isArray(currentUser.skills) ? currentUser.skills.join(', ') : (currentUser.skills || '');
+      document.getElementById('inpEditLinkedin').value = currentUser.linkedin || '';
+
+      document.getElementById('modalEditProfile').classList.remove('hidden');
+    }
+
+    function closeEditProfileModal() {
+      document.getElementById('modalEditProfile').classList.add('hidden');
+    }
+
+    function cycleAvatarPreset() {
+      sampleAvatarIdx = (sampleAvatarIdx + 1) % SAMPLE_AVATARS.length;
+      const url = SAMPLE_AVATARS[sampleAvatarIdx];
+      document.getElementById('inpEditAvatar').value = url;
+      document.getElementById('userAvatar').src = url;
+    }
+
+    function promptAvatarChange() {
+      openEditProfileModal();
+      document.getElementById('inpEditAvatar').focus();
+    }
+
+    function changeCoverImage() {
+      const covers = [
+        'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1600&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1600&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&fit=crop&q=80'
+      ];
+      const next = covers[Math.floor(Math.random() * covers.length)];
+      document.getElementById('coverImg').src = next;
+      showToast('Đã đổi ảnh bìa trang cá nhân!');
+    }
+
+    async function saveProfileChanges() {
+      const fullName = document.getElementById('inpEditFullName').value.trim();
+      const title = document.getElementById('inpEditHeadline').value.trim();
+      const phone = document.getElementById('inpEditPhone').value.trim();
+      const location = document.getElementById('inpEditLocation').value.trim();
+      const experienceYears = parseInt(document.getElementById('inpEditExperience').value) || 0;
+      const hourlyRate = document.getElementById('inpEditRate').value.trim();
+      const subdomain = document.getElementById('inpEditSubdomain').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+      const avatar = document.getElementById('inpEditAvatar').value.trim() || document.getElementById('userAvatar').src;
+      const bio = document.getElementById('inpEditBio').value.trim();
+      const rawSkills = document.getElementById('inpEditSkills').value.trim();
+      const skills = rawSkills ? rawSkills.split(',').map(s => s.trim()).filter(Boolean) : [];
+      const linkedin = document.getElementById('inpEditLinkedin').value.trim();
+
+      const payload = {
+        id: currentUser.id,
+        fullName,
+        title,
+        phone,
+        location,
+        experienceYears,
+        hourlyRate,
+        subdomain,
+        avatar,
+        bio,
+        skills,
+        linkedin
+      };
+
+      try {
+        const token = localStorage.getItem('jwtToken');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        const res = await fetch('/api/auth/profile', {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+          currentUser = { ...currentUser, ...data.user };
+        } else {
+          currentUser = { ...currentUser, ...payload };
+        }
+      } catch (e) {
+        currentUser = { ...currentUser, ...payload };
+      }
+
+      localStorage.setItem('connectcv_user', JSON.stringify(currentUser));
+      renderProfileData();
+      closeEditProfileModal();
+      showToast('Đã lưu thông tin trang cá nhân thành công!');
+    }
+
+    // --- MODAL: ADD PROJECT ---
+    function openAddProjectModal() {
+      document.getElementById('modalAddProject').classList.remove('hidden');
+    }
+
+    function closeAddProjectModal() {
+      document.getElementById('modalAddProject').classList.add('hidden');
+    }
+
+    function fillSampleProjImage() {
+      sampleProjIdx = (sampleProjIdx + 1) % SAMPLE_PROJECT_IMAGES.length;
+      document.getElementById('inpProjImage').value = SAMPLE_PROJECT_IMAGES[sampleProjIdx];
+    }
+
+    async function submitNewProject() {
+      const title = document.getElementById('inpProjTitle').value.trim();
+      const image = document.getElementById('inpProjImage').value.trim();
+      const tags = document.getElementById('inpProjTags').value.trim();
+      const budget = document.getElementById('inpProjBudget').value.trim();
+      const description = document.getElementById('inpProjDesc').value.trim();
+
+      if (!title || !image) {
+        alert('Vui lòng nhập đầy đủ tiêu đề và link ảnh dự án.');
+        return;
+      }
+
+      const payload = {
+        title,
+        image,
+        tags: tags ? tags.split(',').map(t => t.trim()) : ['Design'],
+        budget: budget || '$2,000 USD',
+        description: description || 'Dự án thực tế được xây dựng chuyên nghiệp.',
+        author: currentUser.fullName || currentUser.username || 'ConnectCV Creator',
+        authorRole: currentUser.title || 'Product Designer',
+        authorAvatar: currentUser.avatar,
+        authorId: currentUser.id,
+        subdomain: currentUser.subdomain || 'tuan-nguyen'
+      };
+
+      try {
+        const token = localStorage.getItem('jwtToken');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        const res = await fetch('/api/portfolios', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeAddProjectModal();
+          showToast('Đã thêm dự án mới vào Portfolio thành công!');
+          await loadUserPortfolios();
+          switchMainTab('portfolio');
+        } else {
+          alert(data.message || 'Lỗi thêm dự án.');
+        }
+      } catch (e) {
+        alert('Lỗi kết nối khi gửi dự án.');
+      }
+    }
+
+    // --- UTILITIES ---
+    function copySubdomainLink() {
+      const sub = currentUser.subdomain || 'tuan-nguyen';
+      const fullUrl = `${window.location.origin}/p/${sub}`;
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        showToast('Đã sao chép link trang Portfolio: ' + fullUrl);
+      });
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('jwtToken');
+      localStorage.removeItem('connectcv_user');
+      window.location.href = 'index.html';
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      const m = document.getElementById('toastMsg');
+      m.innerText = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => { t.classList.add('hidden'); }, 3000);
+    }
+  </script>
+</body>
+</html>

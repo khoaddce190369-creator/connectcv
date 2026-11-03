@@ -33,7 +33,7 @@
 
       <div class="flex items-center gap-3">
         <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-800 border border-blue-200">
-          🏢 Doanh Nghiệp / HR
+          Doanh Nghiệp / HR
         </span>
         <a href="post-job.html" class="btn-primary px-3.5 py-1.5 text-xs font-bold shadow-sm">
           + Đăng tin mới
@@ -76,7 +76,7 @@
             <span class="w-2 h-2 rounded-full bg-slate-400"></span>
             Ứng Tuyển Mới
           </span>
-          <span id="badgeApplied" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-slate-700 shadow-2xs">0</span>
+          <span id="badgeApplied" class="px-2 py-0.5 rounded-full text-xs font-bold bg-white text-slate-700 shadow-2xs">0</span>
         </div>
 
         <div id="colApplied" class="space-y-3 flex-1">
@@ -91,7 +91,7 @@
             <span class="w-2 h-2 rounded-full bg-amber-500"></span>
             Đạt Sơ Loại
           </span>
-          <span id="badgeShortlisted" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-slate-700 shadow-2xs">0</span>
+          <span id="badgeShortlisted" class="px-2 py-0.5 rounded-full text-xs font-bold bg-white text-slate-700 shadow-2xs">0</span>
         </div>
 
         <div id="colShortlisted" class="space-y-3 flex-1">
@@ -106,7 +106,7 @@
             <span class="w-2 h-2 rounded-full bg-sky-500"></span>
             Phỏng Vấn
           </span>
-          <span id="badgeInterview" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-slate-700 shadow-2xs">0</span>
+          <span id="badgeInterview" class="px-2 py-0.5 rounded-full text-xs font-bold bg-white text-slate-700 shadow-2xs">0</span>
         </div>
 
         <div id="colInterview" class="space-y-3 flex-1">
@@ -121,7 +121,7 @@
             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
             Nhận Việc / Đạt Yêu Cầu
           </span>
-          <span id="badgeHired" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-slate-700 shadow-2xs">0</span>
+          <span id="badgeHired" class="px-2 py-0.5 rounded-full text-xs font-bold bg-white text-slate-700 shadow-2xs">0</span>
         </div>
 
         <div id="colHired" class="space-y-3 flex-1">
@@ -166,7 +166,7 @@
         });
         const data = await res.json();
         if (data.success) {
-          showToast(`✓ Đã chuyển ứng viên sang trạng thái "${newStatus}"!`);
+          showToast(`Đã chuyển ứng viên sang trạng thái "${newStatus}".`);
           loadApplications();
         }
       } catch (err) {
