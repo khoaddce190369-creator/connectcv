@@ -3,6 +3,7 @@
 node_modules/
 backend/node_modules/
 frontend/node_modules/
+Clone TOPCV/node_modules/
 
 # Environment variables
 .env
@@ -12,7 +13,6 @@ frontend/.env.local
 
 # Subfolder & Archive (chứa tài liệu tham khảo, UI mẫu, repo cũ để tránh quá tải bộ nhớ GitHub)
 subfolder/
-Clone TOPCV/
 MyCV/
 template_CV/
 Tính năng mới/
@@ -29,9 +29,9 @@ backend/capture_*.js
 backend/test_*.js
 
 # Build output
-dist/
-build/
 frontend/dist/
+!Clone TOPCV/dist/
+!Clone TOPCV/dist/**
 
 # OS files
 .DS_Store

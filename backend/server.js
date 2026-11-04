@@ -144,12 +144,16 @@ app.get(['/admin', '/admin-dashboard'], (req, res) => {
 // ==========================================
 // 4. PHỤC VỤ TRÌNH TẠO CV CHUẨN ATS (CLONE TOPCV & MYCV SPA)
 // ==========================================
-const topcvDistPath = fs.existsSync(path.join(__dirname, '../Clone TOPCV/dist'))
-  ? path.join(__dirname, '../Clone TOPCV/dist')
-  : path.join(__dirname, '../subfolder/Clone TOPCV/dist');
+const possibleTopcvPaths = [
+  path.join(__dirname, '../Clone TOPCV/dist'),
+  path.join(__dirname, 'public/cv-assets'),
+  path.join(__dirname, '../subfolder/Clone TOPCV/dist')
+];
+const topcvDistPath = possibleTopcvPaths.find(p => fs.existsSync(p)) || possibleTopcvPaths[0];
 const topcvIndex = path.join(topcvDistPath, 'index.html');
 
 if (fs.existsSync(topcvDistPath)) {
+  console.log(`[ConnectCV] Serving CV Editor SPA from: ${topcvDistPath}`);
   app.use('/cv-assets', express.static(topcvDistPath, {
     setHeaders: (res, p) => {
       if (p.endsWith('.js') || p.endsWith('.css') || p.endsWith('.html')) {
