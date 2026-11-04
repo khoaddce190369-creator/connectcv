@@ -36,13 +36,4 @@ connectcv/
 │   ├── index.html
 │   ├── package.json
 │   └── vite.config.js
-│
-└── extension/                <-- Bảo quản lý 100% (Chrome Extension)
-    ├── icons/
-    ├── manifest.json
-    ├── content.js            <-- Đọc DOM tin tuyển dụng & Auto-fill form
-    ├── background.js         <-- Nhận token từ web và lưu vào chrome.storage
-    └── popup/
-        ├── popup.html
-        └── popup.js
 \```
