@@ -105,42 +105,23 @@ router.post('/google', async (req, res) => {
     // Tìm kiếm User trong database
     let user = UserModel.findByEmail(userEmail);
 
-    // QUY TẮC NGHIỆP VỤ: Chưa có tài khoản đăng ký thì không được đăng nhập
-    if (mode === 'login') {
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          code: 'USER_NOT_REGISTERED',
-          message: 'Tài khoản Google này chưa được đăng ký. Vui lòng đăng ký tài khoản trước!',
-          googleEmail: userEmail,
-          googleName: userName,
-          googleAvatar: userAvatar
-        });
-      }
+    // Tự động đăng nhập hoặc tạo tài khoản mới nếu chưa tồn tại (1-click Google Sign-in)
+    if (!user) {
+      const assignedRole = (role === 'HR' || role === 'Employer') ? 'HR' : 'Student';
+      user = UserModel.create({
+        id: googleId ? `usr_google_${googleId}` : undefined,
+        username: userName,
+        email: userEmail,
+        password_hash: null,
+        isPro: assignedRole === 'HR',
+        role: assignedRole,
+        avatar: userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=0284c7&color=fff`,
+        aiCredits: assignedRole === 'HR' ? 40 : 20
+      });
+    } else {
       // Người dùng đã có tài khoản: Cập nhật avatar nếu thiếu, KHÔNG ĐỔI ROLE
       if (userAvatar && !user.avatar) {
         user = UserModel.update(user.id, { avatar: userAvatar }) || user;
-      }
-    } else {
-      // mode === 'register' hoặc mặc định
-      if (!user) {
-        // Tạo tài khoản mới với Role cố định (không được đổi role sau này)
-        const assignedRole = (role === 'HR' || role === 'Employer') ? 'HR' : 'Student';
-        user = UserModel.create({
-          id: googleId ? `usr_google_${googleId}` : undefined,
-          username: userName,
-          email: userEmail,
-          password_hash: null,
-          isPro: assignedRole === 'HR',
-          role: assignedRole,
-          avatar: userAvatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop',
-          aiCredits: assignedRole === 'HR' ? 40 : 20
-        });
-      } else {
-        // Nếu tài khoản đã tồn tại thì giữ nguyên role ban đầu
-        if (userAvatar && !user.avatar) {
-          user = UserModel.update(user.id, { avatar: userAvatar }) || user;
-        }
       }
     }
 

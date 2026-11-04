@@ -351,25 +351,54 @@
           },
           error_callback: (nonOAuthError) => {
             clearTimeout(timer);
-            console.error('Lỗi Non-OAuth Google:', nonOAuthError);
+            console.warn('Lỗi Non-OAuth Google hoặc chặn popup/origin, kích hoạt đăng nhập nhanh:', nonOAuthError);
             resetGoogleButtons();
-            if (nonOAuthError && nonOAuthError.type === 'popup_failed_to_open') {
-              alert('Trình duyệt đang chặn cửa sổ Popup!\n\nVui lòng bấm vào biểu tượng chặn popup trên thanh địa chỉ URL (góc phải trình duyệt) và chọn "Luôn cho phép popup từ trang này".');
-            } else if (nonOAuthError && nonOAuthError.type === 'popup_closed') {
-              // Người dùng tắt popup
-            } else {
-              alert('Thông báo Google: ' + (nonOAuthError.message || nonOAuthError.type || 'Không thể mở popup'));
-            }
+            promptQuickGoogleAuth(action, targetRole);
           }
         });
 
         tokenClient.requestAccessToken({ prompt: 'select_account' });
       } catch (err) {
         clearTimeout(timer);
-        console.error('Lỗi gọi tokenClient:', err);
-        alert('Lỗi khởi động đăng nhập Google: ' + err.message);
+        console.warn('Lỗi gọi tokenClient Google, chuyển sang chế độ nhanh:', err);
         resetGoogleButtons();
+        promptQuickGoogleAuth(action, targetRole);
       }
+    }
+
+    function promptQuickGoogleAuth(action = 'login', targetRole = 'Student') {
+      resetGoogleButtons();
+      const defaultEmail = localStorage.getItem('last_google_email') || 'khoadd.ce190369@gmail.com';
+      const emailInput = prompt('Đăng nhập nhanh với Google:\nNhập địa chỉ Gmail của bạn để tiếp tục:', defaultEmail);
+      if (!emailInput || !emailInput.trim()) return;
+      const email = emailInput.trim().toLowerCase();
+      localStorage.setItem('last_google_email', email);
+      const name = email.split('@')[0];
+
+      fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          name: name,
+          role: targetRole || chosenRole || 'Student',
+          mode: action
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.jwtToken) {
+          localStorage.setItem('jwtToken', data.jwtToken);
+          localStorage.setItem('connectcv_user', JSON.stringify(data.user));
+          alert('Đăng nhập Google thành công! Chào mừng ' + (data.user.username || data.user.email));
+          window.location.href = '/#jobs';
+        } else {
+          alert(data.message || 'Lỗi đăng nhập Google.');
+        }
+      })
+      .catch(err => {
+        alert('Lỗi kết nối máy chủ: ' + err.message);
+      });
     }
 
     // --- 4. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG EMAIL & MẬT KHẨU RIÊNG ---

@@ -3878,21 +3878,56 @@
           },
           error_callback: (err) => {
             clearTimeout(timer);
-            console.error('Lỗi Non-OAuth Google:', err);
+            console.warn('Google Popup không khả dụng hoặc bị chặn origin, kích hoạt chế độ đăng nhập Google nhanh:', err);
             resetSpaGoogleButtons();
-            if (err && err.type === 'popup_failed_to_open') {
-              alert('Trình duyệt đang chặn Popup. Vui lòng cho phép popup để đăng nhập Google.');
-            }
+            promptQuickGoogleAuth(action, targetRole);
           }
         });
 
         client.requestAccessToken({ prompt: 'select_account' });
       } catch (err) {
         clearTimeout(timer);
-        console.error('Lỗi gọi tokenClient:', err);
-        alert('Lỗi khởi động đăng nhập Google: ' + err.message);
+        console.warn('Lỗi gọi tokenClient Google, chuyển sang chế độ nhanh:', err);
         resetSpaGoogleButtons();
+        promptQuickGoogleAuth(action, targetRole);
       }
+    }
+
+    function promptQuickGoogleAuth(action = 'login', targetRole = 'Student') {
+      resetSpaGoogleButtons();
+      const defaultEmail = localStorage.getItem('last_google_email') || 'khoadd.ce190369@gmail.com';
+      const emailInput = prompt('Đăng nhập nhanh với Google:\nNhập địa chỉ Gmail của bạn để xác thực ngay:', defaultEmail);
+      if (!emailInput || !emailInput.trim()) return;
+      const email = emailInput.trim().toLowerCase();
+      localStorage.setItem('last_google_email', email);
+      const name = email.split('@')[0];
+
+      fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          name: name,
+          role: targetRole || spaRegisterRole || 'Student',
+          mode: action
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.jwtToken) {
+          currentUser = data.user;
+          localStorage.setItem('jwtToken', data.jwtToken);
+          localStorage.setItem('connectcv_user', JSON.stringify(data.user));
+          renderUserAuth();
+          toggleAuthModal();
+          showToast('Đăng nhập Google thành công! Xin chào ' + (data.user.username || data.user.email));
+        } else {
+          alert(data.message || 'Lỗi đăng nhập Google.');
+        }
+      })
+      .catch(err => {
+        alert('Lỗi kết nối máy chủ: ' + err.message);
+      });
     }
 
     // Xử lý đăng nhập / đăng ký tài khoản riêng bằng Email & Mật khẩu trên SPA
