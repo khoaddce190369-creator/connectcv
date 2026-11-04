@@ -26,7 +26,7 @@ function generateToken(user) {
 router.get('/config', (req, res) => {
   return res.json({
     success: true,
-    googleClientId: process.env.GOOGLE_CLIENT_ID || ''
+    googleClientId: process.env.GOOGLE_CLIENT_ID || '72336868787-9tlektnct22a92fddqenh3e6rfr5gkc7.apps.googleusercontent.com'
   });
 });
 
