@@ -1,9 +1,8 @@
 /* ==========================================================================
-   ConnectCV — Modern Tech Design System (Dub / Linear / Aceternity Inspired)
-   - Brand Colors: Deep Obsidian Navy (#090d16 / #0f172a) & Electric Tech Blue (#2563eb / #1d4ed8)
-   - Luminous Micro-Interactions, Subtle Dot Matrix Grid Canvas, Layered Shadows
-   - High-contrast typography with Plus Jakarta Sans & Inter
-   - Smooth Physics-based Animations & Keyframes (Shimmer, Radar, Heart Pop, Soundwaves)
+   ConnectCV — Cruip JobBoard Modern Tech Design System
+   - Brand Colors: Cruip Indigo (#4f46e5 / #4338ca), Slate/Gray (#111827 / #4b5563)
+   - Clean 1px fine borders, soft layered shadows, subtle hero gradient
+   - High-contrast typography with Inter & Plus Jakarta Sans
    - Strictly NO Emojis (100% SVG Icons), NO Over-rounded Pills on Cards
    ========================================================================== */
 
@@ -14,14 +13,15 @@
   --font-heading: 'Plus Jakarta Sans', 'Inter', 'Be Vietnam Pro', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  /* Primary Brand Palette */
+  /* Primary Brand Palette (Cruip Indigo) */
   --brand-navy: #0f172a;
   --brand-navy-dark: #090d16;
   --brand-navy-deep: #05080f;
-  --brand-blue: #2563eb;
-  --brand-blue-hover: #1d4ed8;
-  --brand-blue-light: #eff6ff;
-  --brand-blue-border: #bfdbfe;
+  
+  --brand-blue: #4f46e5;
+  --brand-blue-hover: #4338ca;
+  --brand-blue-light: #eef2ff;
+  --brand-blue-border: #c7d2fe;
   
   --brand-cyan: #0284c7;
   --brand-cyan-hover: #0369a1;
@@ -39,13 +39,13 @@
   --brand-rose: #f43f5e;
   --brand-rose-light: #fff1f2;
   
-  --brand-border: #e2e8f0;
-  --brand-border-dark: #cbd5e1;
-  --brand-bg: #f8fafc;
+  --brand-border: #e5e7eb;
+  --brand-border-dark: #d1d5db;
+  --brand-bg: #ffffff;
   --brand-card-bg: #ffffff;
-  --brand-text: #0f172a;
-  --brand-text-muted: #475569;
-  --brand-text-light: #64748b;
+  --brand-text: #111827;
+  --brand-text-muted: #4b5563;
+  --brand-text-light: #6b7280;
 
   --radius-xs: 4px;
   --radius-sm: 6px;
@@ -58,8 +58,8 @@
   /* Elevation Shadows */
   --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
   --shadow-card: 0 4px 6px -1px rgba(15, 23, 42, 0.04), 0 2px 4px -2px rgba(15, 23, 42, 0.03);
-  --shadow-hover: 0 16px 32px -8px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(37, 99, 235, 0.06);
-  --shadow-glow-blue: 0 0 20px -3px rgba(37, 99, 235, 0.25);
+  --shadow-hover: 0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(79, 70, 229, 0.06);
+  --shadow-glow-blue: 0 0 20px -3px rgba(79, 70, 229, 0.25);
 }
 
 html {
@@ -71,16 +71,10 @@ html {
   scroll-behavior: smooth;
 }
 
-/* ==========================================================================
-   CANVAS BACKGROUND WITH SUBTLE TECH DOT GRID (LINEAR / DUB STYLE)
-   ========================================================================== */
 body {
   font-family: var(--font-sans);
   color: var(--brand-text);
   background-color: #ffffff;
-  background-image: radial-gradient(#e2e8f0 1.2px, transparent 1.2px);
-  background-size: 24px 24px;
-  background-position: 0 0;
   line-height: 1.6;
   letter-spacing: -0.011em;
   margin: 0;
@@ -139,7 +133,7 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
    ========================================================================== */
 .btn-primary {
   font-family: var(--font-heading);
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  background: #4f46e5 !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   font-weight: 600;
@@ -155,8 +149,8 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 8px -1px rgba(37, 99, 235, 0.35), 0 1px 2px rgba(37, 99, 235, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(79, 70, 229, 0.25);
 }
 
 /* Glossy Shimmer Streak on Primary Buttons */
@@ -178,14 +172,14 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px -2px rgba(37, 99, 235, 0.45), 0 2px 4px rgba(37, 99, 235, 0.2);
+  background: #4338ca !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.35);
 }
 
 .btn-primary:active {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2);
 }
 
 .btn-navy {
@@ -206,14 +200,14 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15);
 }
 .btn-navy:hover {
   background-color: var(--brand-navy-dark) !important;
-  border-color: rgba(96, 165, 250, 0.3) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px -2px rgba(15, 23, 42, 0.3), 0 0 0 1px rgba(96, 165, 250, 0.2);
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.25);
 }
 .btn-navy:active {
   transform: translateY(0);
@@ -222,8 +216,8 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
 .btn-secondary {
   font-family: var(--font-heading);
   background-color: #ffffff !important;
-  color: var(--brand-text) !important;
-  border: 1px solid var(--brand-border-dark) !important;
+  color: #374151 !important;
+  border: 1px solid #e5e7eb !important;
   font-weight: 600;
   font-size: 13.5px;
   letter-spacing: -0.01em;
@@ -235,15 +229,15 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
   justify-content: center;
   gap: 8px;
   text-decoration: none;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 .btn-secondary:hover {
-  background-color: #ffffff !important;
-  border-color: #60a5fa !important;
-  color: #2563eb !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.12);
+  background-color: #f9fafb !important;
+  border-color: #c7d2fe !important;
+  color: #4f46e5 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(79, 70, 229, 0.12);
 }
 .btn-secondary:active {
   transform: translateY(0);
