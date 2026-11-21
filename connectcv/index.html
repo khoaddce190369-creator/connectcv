@@ -62,56 +62,59 @@
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
 
   <!-- ==========================================================================
-       THANH CHUYỂN HƯỚNG CỐ ĐỊNH (UPWORK AIR 3.0 DUAL-TIER NAVBAR)
+       THANH CHUYỂN HƯỚNG CỐ ĐỊNH (MODERN DUAL-TIER NAVBAR - LUÔN HIỂN THỊ TABS)
        ========================================================================== -->
   <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/90 no-print transition-all">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
       
       <!-- Logo và Tên thương hiệu -->
-      <div class="flex items-center gap-10">
+      <div class="flex items-center gap-4 shrink-0">
         <a href="#jobs" onclick="switchTab('jobs')" class="flex items-center gap-3 text-decoration-none group">
           <img src="assets/logo.png" alt="ConnectCV" class="h-10 w-auto transition-transform group-hover:scale-105" />
           <span class="font-heading font-extrabold text-xl text-slate-900 tracking-tight">
-            CONNECT<span class="text-sky-600">CV</span>
+            CONNECT<span class="text-blue-600">CV</span>
           </span>
         </a>
-
-        <!-- Các Tab Điều Hướng Chính -->
-        <nav class="hidden md:flex items-center gap-1.5 text-xs font-semibold text-slate-600 whitespace-nowrap">
-          <button id="nav-jobs" onclick="switchTab('jobs')" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-blue-600 text-white font-bold shadow-sm shadow-blue-500/25 border border-blue-500 transition-all">
-            Việc làm
-          </button>
-          <button id="nav-portfolio" onclick="switchTab('portfolio')" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
-            Portfolio
-          </button>
-          <button id="nav-candidates" onclick="switchTab('candidates')" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
-            Ứng viên
-          </button>
-          <button id="nav-cv" onclick="switchTab('cv')" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
-            Tạo CV
-          </button>
-          <button id="nav-interview" onclick="switchTab('interview')" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
-            Phỏng vấn
-          </button>
-          <button id="nav-wallet" onclick="switchTab('wallet')" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
-            Gói dịch vụ
-          </button>
-        </nav>
       </div>
 
+      <!-- Các Tab Điều Hướng Chính: LUÔN HIỂN THỊ TRÊN MỌI THIẾT BỊ -->
+      <nav id="mainNavTabs" class="flex items-center gap-1 sm:gap-2 text-xs font-semibold text-slate-600 whitespace-nowrap overflow-x-auto py-1 px-1">
+        <button id="nav-jobs" onclick="switchTab('jobs')" class="whitespace-nowrap px-3.5 py-2 rounded-lg bg-blue-600 text-white font-bold shadow-sm shadow-blue-500/25 border border-blue-500 transition-all">
+          Việc làm
+        </button>
+        <button id="nav-portfolio" onclick="switchTab('portfolio')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+          Portfolio
+        </button>
+        <button id="nav-candidates" onclick="switchTab('candidates')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+          Ứng viên
+        </button>
+        <button id="nav-cv" onclick="switchTab('cv')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+          Tạo CV
+        </button>
+        <button id="nav-interview" onclick="switchTab('interview')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+          Phỏng vấn
+        </button>
+        <button id="nav-wallet" onclick="switchTab('wallet')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold">
+          Gói dịch vụ
+        </button>
+      </nav>
+
       <!-- Góc Phải: Nút Đăng Tin & Tài Khoản -->
-      <div class="flex items-center gap-2.5 whitespace-nowrap">
-        <button id="btnNavPostJob" onclick="openPostJobModal()" class="btn-primary btn-shimmer text-xs font-semibold px-4 py-1.5 whitespace-nowrap shadow-sm">
+      <div class="flex items-center gap-2 sm:gap-3 whitespace-nowrap shrink-0">
+        <button id="btnNavPostJob" onclick="openPostJobModal()" class="btn-primary btn-shimmer text-xs font-semibold px-4 py-2 whitespace-nowrap shadow-sm">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
           <span>Đăng tin</span>
         </button>
 
         <div id="userAuthSection" class="flex items-center gap-2 text-xs whitespace-nowrap">
-          <button onclick="toggleAuthModal()" id="btnUserAccount" class="btn-secondary text-xs px-3.5 py-1.5 font-semibold whitespace-nowrap">
+          <button onclick="toggleAuthModal()" id="btnUserAccount" class="btn-secondary text-xs px-3.5 py-2 font-semibold whitespace-nowrap">
             Đăng nhập
           </button>
         </div>
       </div>
+
+    </div>
+  </header>
 
     </div>
   </header>
