@@ -2316,7 +2316,7 @@
         if (el) el.classList.add('hidden');
         const navBtn = document.getElementById(`nav-${v}`);
         if (navBtn) {
-          navBtn.className = 'whitespace-nowrap px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold';
+          navBtn.className = 'whitespace-nowrap px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all font-semibold';
         }
       });
 
@@ -2331,7 +2331,7 @@
 
       const activeNav = document.getElementById(`nav-${tabName}`);
       if (activeNav) {
-        activeNav.className = 'whitespace-nowrap px-4 py-2 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 shadow-xs transition-all';
+        activeNav.className = 'whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-sky-50 text-sky-700 font-bold border border-sky-200 shadow-xs transition-all';
       }
 
       // Xử lý nạp dữ liệu khi vào từng tab
@@ -2351,8 +2351,6 @@
     // ==========================================================================
     // --- 0. MẠNG XÃ HỘI THU NHỎ & SHOWCASE CỘNG ĐỒNG SÁNG TẠO ---
     // ==========================================================================
-    let allPortfoliosList = [];
-    let currentViewingPortfolio = null;
     let activeSocialCat = 'all';
     let socialSearchQuery = '';
     let socialSortMode = 'newest';
