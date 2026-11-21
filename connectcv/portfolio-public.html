@@ -48,27 +48,24 @@
   <style>
     * { -webkit-font-smoothing: antialiased; }
     
-    /* Smooth custom scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.6); }
 
-    /* Floating Glass Dock */
     .glass-dock {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(229, 231, 235, 0.8);
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
     }
     .dark .glass-dock {
-      background: rgba(23, 23, 23, 0.85);
+      background: rgba(23, 23, 23, 0.88);
       border: 1px solid rgba(64, 64, 64, 0.6);
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
-    /* Subdued cards */
     .card-clean {
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -86,7 +83,7 @@
       <span>ConnectCV</span>
     </a>
 
-    <!-- Quick Controls: Template Style & Add Project -->
+    <!-- Top Right: Chỉnh sửa hồ sơ + Mẫu layout + Dark mode -->
     <div class="flex items-center gap-2">
       <!-- Minimalist Template Pill -->
       <div class="relative inline-flex items-center p-0.5 bg-neutral-100 dark:bg-neutral-900 rounded-full border border-neutral-200 dark:border-neutral-800 text-[11px] font-medium text-neutral-600 dark:text-neutral-400">
@@ -98,9 +95,10 @@
         </button>
       </div>
 
-      <!-- Add Project Action -->
-      <button onclick="openAddProjectModal()" class="w-7 h-7 rounded-full flex items-center justify-center bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900 transition-all shadow-xs" title="Thêm dự án mới">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      <!-- Nút Chỉnh Sửa Từng Phần (Section Customizer) -->
+      <button onclick="openCustomizerModal('profile')" class="px-3 py-1 rounded-full text-xs font-semibold bg-neutral-900 hover:bg-neutral-800 dark:bg-neutral-100 dark:hover:bg-white text-white dark:text-neutral-900 transition-all flex items-center gap-1.5 shadow-xs" title="Chỉnh sửa toàn bộ thông tin portfolio">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
+        <span>Chỉnh Sửa</span>
       </button>
 
       <!-- Theme Switcher -->
@@ -143,8 +141,8 @@
         </div>
 
         <!-- Right: Avatar Circle -->
-        <div class="relative shrink-0">
-          <img id="pubAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&h=240&fit=crop" alt="Avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-1 ring-neutral-200 dark:ring-neutral-800 shadow-sm" />
+        <div class="relative shrink-0 group cursor-pointer" onclick="openCustomizerModal('profile')" title="Bấm để đổi ảnh">
+          <img id="pubAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&h=240&fit=crop" alt="Avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-1 ring-neutral-200 dark:ring-neutral-800 shadow-sm group-hover:opacity-90 transition-opacity" />
         </div>
 
       </div>
@@ -157,9 +155,14 @@
 
     <!-- 2. ABOUT & SKILLS -->
     <section id="skills" class="space-y-3 animate-fade-up" style="animation-delay: 100ms;">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-mono">
-        Skills &amp; Tech Stack
-      </h2>
+      <div class="flex items-center justify-between">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-mono">
+          Skills &amp; Tech Stack
+        </h2>
+        <button onclick="openCustomizerModal('skills')" class="text-[11px] font-mono text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+          + Sửa kỹ năng
+        </button>
+      </div>
       <div id="pubSkillsContainer" class="flex flex-wrap gap-1.5">
         <!-- Rendered dynamically -->
       </div>
@@ -171,7 +174,12 @@
         <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-mono">
           Featured Projects
         </h2>
-        <span id="pubProjectCount" class="text-xs font-mono text-neutral-400">0 projects</span>
+        <div class="flex items-center gap-3">
+          <span id="pubProjectCount" class="text-xs font-mono text-neutral-400">0 projects</span>
+          <button onclick="openCustomizerModal('projects')" class="text-[11px] font-mono text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+            + Thêm dự án
+          </button>
+        </div>
       </div>
 
       <!-- Projects Container -->
@@ -182,7 +190,7 @@
       <!-- Empty State -->
       <div id="pubEmptyState" class="hidden text-center py-8 px-4 rounded-xl border border-dashed border-neutral-200 dark:border-neutral-800 space-y-2">
         <p class="text-xs text-neutral-500">Chưa có dự án nào được thêm.</p>
-        <button onclick="openAddProjectModal()" class="text-xs font-semibold text-neutral-900 dark:text-white underline">
+        <button onclick="openCustomizerModal('projects')" class="text-xs font-semibold text-neutral-900 dark:text-white underline">
           Thêm dự án đầu tiên
         </button>
       </div>
@@ -208,52 +216,39 @@
       </div>
     </section>
 
-    <!-- 5. WORK EXPERIENCE -->
+    <!-- 5. WORK EXPERIENCE (DÂY CHUYỀN RENDER ĐỘNG) -->
     <section id="experience" class="space-y-4 animate-fade-up" style="animation-delay: 250ms;">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-mono">
-        Work Experience
-      </h2>
+      <div class="flex items-center justify-between">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-mono">
+          Work Experience
+        </h2>
+        <button onclick="openCustomizerModal('experience')" class="text-[11px] font-mono text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+          + Thêm kinh nghiệm
+        </button>
+      </div>
 
-      <div class="space-y-6">
-        <!-- Job 1 -->
-        <div class="flex items-start justify-between gap-4 group">
-          <div class="space-y-1">
-            <h3 class="font-heading font-semibold text-sm text-neutral-900 dark:text-white">
-              Senior Fullstack Engineer
-            </h3>
-            <p class="text-xs text-neutral-500">
-              TechVanguard Solutions &bull; Toàn thời gian
-            </p>
-            <p class="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed pt-1">
-              Phát triển kiến trúc Frontend và tích hợp AI APIs cho hệ thống tuyển dụng và quản trị nhân sự.
-            </p>
-          </div>
-          <span class="text-xs font-mono text-neutral-400 shrink-0">
-            2024 — Nay
-          </span>
-        </div>
-
-        <!-- Job 2 -->
-        <div class="flex items-start justify-between gap-4 group">
-          <div class="space-y-1">
-            <h3 class="font-heading font-semibold text-sm text-neutral-900 dark:text-white">
-              Frontend Developer
-            </h3>
-            <p class="text-xs text-neutral-500">
-              Nova Digital Studio &bull; Hợp đồng
-            </p>
-            <p class="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed pt-1">
-              Xây dựng giao diện web SaaS và dashboard phân tích dữ liệu bằng Next.js, Tailwind CSS và TypeScript.
-            </p>
-          </div>
-          <span class="text-xs font-mono text-neutral-400 shrink-0">
-            2022 — 2024
-          </span>
-        </div>
+      <div id="experienceContainer" class="space-y-6">
+        <!-- Rendered dynamically -->
       </div>
     </section>
 
-    <!-- 6. CONTACT -->
+    <!-- 6. EDUCATION (HỌC VẤN RENDER ĐỘNG) -->
+    <section id="education" class="space-y-4 animate-fade-up" style="animation-delay: 280ms;">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-mono">
+          Education
+        </h2>
+        <button onclick="openCustomizerModal('education')" class="text-[11px] font-mono text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+          + Thêm học vấn
+        </button>
+      </div>
+
+      <div id="educationContainer" class="space-y-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- 7. CONTACT -->
     <section id="contact" class="space-y-3 pt-4 border-t border-neutral-200/80 dark:border-neutral-800 animate-fade-up" style="animation-delay: 300ms;">
       <h2 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-mono">
         Get in Touch
@@ -298,9 +293,9 @@
       <!-- Divider -->
       <span class="w-[1px] h-4 bg-neutral-200 dark:bg-neutral-800 my-auto"></span>
 
-      <!-- Edit Subdomain / Settings -->
-      <button onclick="openEditSubdomainModal()" class="w-9 h-9 rounded-full flex items-center justify-center text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all hover:scale-110 active:scale-95" title="Đổi tên link subdomain">
-        <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg>
+      <!-- Nút Tùy Biến Từng Phần (Section Customizer) -->
+      <button onclick="openCustomizerModal('profile')" class="w-9 h-9 rounded-full flex items-center justify-center text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all hover:scale-110 active:scale-95" title="Tùy biến từng phần hồ sơ">
+        <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg>
       </button>
 
       <!-- Email Contact -->
@@ -311,83 +306,162 @@
     </div>
   </aside>
 
-  <!-- ==================== MODAL: THÊM DỰ ÁN MỚI ==================== -->
-  <div id="modalAddProject" class="fixed inset-0 z-50 hidden bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto" onclick="if(event.target === this) closeAddProjectModal()">
-    <div class="bg-white dark:bg-neutral-900 rounded-2xl max-w-md w-full p-6 space-y-4 border border-neutral-200 dark:border-neutral-800 shadow-2xl animate-fade-up text-xs text-neutral-800 dark:text-neutral-200">
+  <!-- ==================== MODAL: QUẢN LÝ & CHỈNH SỬA TỪNG PHẦN (SECTION CUSTOMIZER) ==================== -->
+  <div id="modalCustomizer" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto" onclick="if(event.target === this) closeCustomizerModal()">
+    <div class="bg-white dark:bg-neutral-900 rounded-2xl max-w-xl w-full p-6 space-y-5 border border-neutral-200 dark:border-neutral-800 shadow-2xl animate-fade-up text-xs text-neutral-800 dark:text-neutral-200 max-h-[92vh] overflow-y-auto">
       
+      <!-- Top Title -->
       <div class="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-3">
-        <h3 class="font-heading font-semibold text-sm text-neutral-900 dark:text-white">Thêm Dự Án Mới</h3>
-        <button onclick="closeAddProjectModal()" class="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 text-lg leading-none">&times;</button>
+        <div>
+          <h3 class="font-heading font-semibold text-sm text-neutral-900 dark:text-white">Tùy Biến Portfolio</h3>
+          <p class="text-[11px] text-neutral-400">Chỉnh sửa nội dung từng phần hiển thị trên portfolio công khai của bạn.</p>
+        </div>
+        <button onclick="closeCustomizerModal()" class="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 text-xl leading-none">&times;</button>
       </div>
 
-      <div class="space-y-3">
-        <div>
-          <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tiêu Đề Dự Án (*):</label>
-          <input id="inpProjTitle" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" placeholder="VD: AI Career Copilot" />
+      <!-- Navigation Tabs Inside Modal -->
+      <div class="flex items-center gap-1.5 border-b border-neutral-100 dark:border-neutral-800 pb-2 text-xs font-medium overflow-x-auto">
+        <button onclick="switchCustomTab('profile')" id="custTabBtn-profile" class="px-3 py-1.5 rounded-lg bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-semibold transition-all">
+          1. Thông Tin
+        </button>
+        <button onclick="switchCustomTab('experience')" id="custTabBtn-experience" class="px-3 py-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-all">
+          2. Kinh Nghiệm
+        </button>
+        <button onclick="switchCustomTab('education')" id="custTabBtn-education" class="px-3 py-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-all">
+          3. Học Vấn
+        </button>
+        <button onclick="switchCustomTab('skills')" id="custTabBtn-skills" class="px-3 py-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-all">
+          4. Kỹ Năng
+        </button>
+        <button onclick="switchCustomTab('projects')" id="custTabBtn-projects" class="px-3 py-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-all">
+          5. Dự Án
+        </button>
+      </div>
+
+      <!-- TAB 1: THÔNG TIN CÁ NHÂN & MẠNG XÃ HỘI -->
+      <div id="custTab-profile" class="space-y-3.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Họ và Tên (*):</label>
+            <input id="inpCustName" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" />
+          </div>
+          <div>
+            <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Chức Danh / Vị Trí (*):</label>
+            <input id="inpCustRole" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Địa Điểm / Thành Phố:</label>
+            <input id="inpCustLocation" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" />
+          </div>
+          <div>
+            <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Định Danh Đường Dẫn (Slug):</label>
+            <div class="flex items-center border border-neutral-200 dark:border-neutral-700 rounded-lg px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-800">
+              <span class="text-neutral-400 font-mono text-[10px]">connectcv.vn/p/</span>
+              <input id="inpCustSubdomain" type="text" class="bg-transparent font-mono font-medium outline-none flex-1 text-xs ml-1" />
+            </div>
+          </div>
         </div>
 
         <div>
-          <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Ảnh Bìa / Mockup (*):</label>
+          <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Ảnh Đại Diện (Avatar URL):</label>
           <div class="flex gap-1.5">
-            <input id="inpProjImage" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white flex-1" placeholder="https://images.unsplash.com/..." />
-            <button type="button" onclick="fillSampleProjImage()" class="px-2.5 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-lg font-medium hover:bg-neutral-200">Mẫu</button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Live Demo URL:</label>
-            <input id="inpProjDemo" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" placeholder="https://..." />
-          </div>
-          <div>
-            <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">GitHub Repo URL:</label>
-            <input id="inpProjGithub" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" placeholder="https://github.com/..." />
+            <input id="inpCustAvatar" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white flex-1" />
+            <button type="button" onclick="cycleCustAvatar()" class="px-2.5 py-1.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 rounded-lg font-medium whitespace-nowrap">Ảnh Mẫu</button>
           </div>
         </div>
 
         <div>
-          <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Công Nghệ (cách nhau bởi dấu phẩy):</label>
-          <input id="inpProjTags" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" placeholder="Next.js, TypeScript, Tailwind" />
+          <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Giới Thiệu Bản Thân (Bio):</label>
+          <textarea id="inpCustBio" rows="3" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white leading-relaxed"></textarea>
         </div>
 
-        <div>
-          <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Mô Tả Ngắn Gọn:</label>
-          <textarea id="inpProjDesc" rows="3" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" placeholder="Mô tả mục tiêu và giải pháp của dự án trong 1-2 câu..."></textarea>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-neutral-100 dark:border-neutral-800">
+          <div>
+            <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">GitHub Username:</label>
+            <input id="inpCustGithub" type="text" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" placeholder="VD: tuannguyen-dev" />
+          </div>
+          <div>
+            <label class="block font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email Liên Hệ:</label>
+            <input id="inpCustEmail" type="email" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white" placeholder="contact@domain.com" />
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 border-t border-neutral-100 dark:border-neutral-800 pt-3">
-        <button type="button" onclick="closeAddProjectModal()" class="px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 font-medium">Hủy</button>
-        <button type="button" onclick="submitNewProject()" class="px-4 py-1.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold shadow-xs">
-          Lưu Dự Án
+      <!-- TAB 2: KINH NGHIỆM LÀM VIỆC (EXPERIENCE BUILDER) -->
+      <div id="custTab-experience" class="hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="font-medium text-neutral-500">Danh sách kinh nghiệm:</span>
+          <button type="button" onclick="addExperienceRow()" class="px-2.5 py-1 rounded bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 text-neutral-800 dark:text-white font-semibold text-xs flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            <span>Thêm Mục Mới</span>
+          </button>
+        </div>
+        <div id="custExpList" class="space-y-3">
+          <!-- Dynamically populated rows -->
+        </div>
+      </div>
+
+      <!-- TAB 3: HỌC VẤN (EDUCATION BUILDER) -->
+      <div id="custTab-education" class="hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="font-medium text-neutral-500">Danh sách học vấn &amp; trường:</span>
+          <button type="button" onclick="addEducationRow()" class="px-2.5 py-1 rounded bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 text-neutral-800 dark:text-white font-semibold text-xs flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            <span>Thêm Trường Mới</span>
+          </button>
+        </div>
+        <div id="custEduList" class="space-y-3">
+          <!-- Dynamically populated rows -->
+        </div>
+      </div>
+
+      <!-- TAB 4: KỸ NĂNG (SKILLS BUILDER) -->
+      <div id="custTab-skills" class="hidden space-y-3">
+        <label class="block font-medium text-neutral-700 dark:text-neutral-300">
+          Kỹ Năng &amp; Công Nghệ (Nhập cách nhau bởi dấu phẩy):
+        </label>
+        <textarea id="inpCustSkills" rows="4" class="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white leading-relaxed font-mono" placeholder="TypeScript, Next.js, React, Tailwind CSS, FastAPI, PostgreSQL, Docker"></textarea>
+        <p class="text-[11px] text-neutral-400">Các kỹ năng này sẽ tự động hiển thị dạng tags tối giản ở mục Skills.</p>
+      </div>
+
+      <!-- TAB 5: DỰ ÁN (PROJECTS BUILDER) -->
+      <div id="custTab-projects" class="hidden space-y-4">
+        <div class="p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800/50 space-y-3">
+          <span class="font-semibold text-neutral-900 dark:text-white block">Thêm dự án mới:</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input id="inpNewPTitle" type="text" placeholder="Tiêu đề dự án (*)" class="w-full px-2.5 py-1.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs" />
+            <input id="inpNewPImage" type="text" placeholder="Link ảnh bìa (*)" class="w-full px-2.5 py-1.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs" />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input id="inpNewPDemo" type="text" placeholder="Live Demo URL (https://...)" class="w-full px-2.5 py-1.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs" />
+            <input id="inpNewPGithub" type="text" placeholder="GitHub Repo URL (https://...)" class="w-full px-2.5 py-1.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs" />
+          </div>
+          <input id="inpNewPTags" type="text" placeholder="Tags (VD: Next.js, TypeScript)" class="w-full px-2.5 py-1.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs" />
+          <textarea id="inpNewPDesc" rows="2" placeholder="Mô tả dự án trong 1-2 câu..." class="w-full px-2.5 py-1.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg text-xs"></textarea>
+          <button type="button" onclick="submitQuickProject()" class="px-3.5 py-1.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-xs">
+            + Thêm Vào Danh Sách
+          </button>
+        </div>
+
+        <div class="space-y-2">
+          <span class="font-medium text-neutral-500">Dự án hiện có:</span>
+          <div id="custProjList" class="space-y-2">
+            <!-- Dynamically populated projects list with delete button -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="flex items-center justify-between border-t border-neutral-100 dark:border-neutral-800 pt-3">
+        <button type="button" onclick="closeCustomizerModal()" class="px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 font-medium">Đóng</button>
+        <button type="button" onclick="saveAllCustomizations()" class="px-5 py-1.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold shadow-xs">
+          Lưu Toàn Bộ Hồ Sơ
         </button>
       </div>
 
-    </div>
-  </div>
-
-  <!-- ==================== MODAL: ĐỔI TÊN SUBDOMAIN ==================== -->
-  <div id="modalEditSubdomain" class="fixed inset-0 z-50 hidden bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto" onclick="if(event.target === this) closeEditSubdomainModal()">
-    <div class="bg-white dark:bg-neutral-900 rounded-2xl max-w-sm w-full p-6 space-y-4 border border-neutral-200 dark:border-neutral-800 shadow-2xl animate-fade-up text-xs">
-      <div class="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-2">
-        <h3 class="font-heading font-semibold text-sm text-neutral-900 dark:text-white">Đổi Tên Đường Dẫn (Slug)</h3>
-        <button onclick="closeEditSubdomainModal()" class="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 text-lg leading-none">&times;</button>
-      </div>
-
-      <div class="space-y-2">
-        <p class="text-neutral-500">Định danh link công khai của bạn:</p>
-        <div class="flex items-center border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 bg-neutral-50 dark:bg-neutral-800">
-          <span class="text-neutral-400 font-mono text-[11px]">connectcv.vn/p/</span>
-          <input id="inpNewSubdomain" type="text" class="bg-transparent font-mono font-semibold text-neutral-900 dark:text-white outline-none flex-1 ml-1" placeholder="ten-cua-ban" />
-        </div>
-      </div>
-
-      <div class="flex items-center justify-end gap-2 border-t border-neutral-100 dark:border-neutral-800 pt-3">
-        <button type="button" onclick="closeEditSubdomainModal()" class="px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700">Hủy</button>
-        <button type="button" onclick="saveNewSubdomain()" class="px-4 py-1.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold shadow-xs">
-          Lưu
-        </button>
-      </div>
     </div>
   </div>
 
@@ -401,15 +475,17 @@
     let currentSubdomain = 'tuan-nguyen';
     let currentProfile = null;
     let currentProjects = [];
-    let currentTemplate = 'magic'; // 'magic' (minimalist list) or 'bento' (grid)
+    let currentExperiences = [];
+    let currentEducations = [];
+    let currentTemplate = 'magic';
 
-    const SAMPLE_PROJECT_IMAGES = [
-      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80'
+    const SAMPLE_AVATARS = [
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&h=240&fit=crop',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=240&h=240&fit=crop',
+      'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=240&h=240&fit=crop',
+      'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=240&h=240&fit=crop'
     ];
-    let sampleImgIdx = 0;
+    let sampleAvtIdx = 0;
 
     const LANG_COLORS = {
       TypeScript: '#3178c6',
@@ -431,7 +507,7 @@
         document.documentElement.classList.remove('dark');
       }
 
-      // 2. Parse subdomain từ URL (/p/:subdomain) hoặc query param (?u=...)
+      // 2. Parse subdomain
       const pathParts = window.location.pathname.split('/');
       let sub = pathParts[pathParts.length - 1];
       if (!sub || sub === 'portfolio-public.html' || sub === 'p' || sub === 'portfolio') {
@@ -462,8 +538,7 @@
       // 5. Phím Escape
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          closeAddProjectModal();
-          closeEditSubdomainModal();
+          closeCustomizerModal();
         }
       });
     });
@@ -479,7 +554,7 @@
       }
     }
 
-    // --- TEMPLATE SWITCHER (MAGIC VS BENTO) ---
+    // --- TEMPLATE SWITCHER ---
     function setTemplate(tpl, notify = true) {
       currentTemplate = tpl;
       localStorage.setItem('portfolio_template', tpl);
@@ -501,51 +576,103 @@
       }
     }
 
-    // --- TẢI HỒ SƠ VÀ DỰ ÁN TỪ API ---
+    // --- TẢI DỮ LIỆU TỔNG HỢP ---
     async function loadPortfolioData(subdomain) {
+      // Kiểm tra xem người dùng có bản tùy biến cục bộ đã lưu không
+      const localCustom = localStorage.getItem(`portfolio_custom_${subdomain}`);
+      if (localCustom) {
+        try {
+          const parsed = JSON.parse(localCustom);
+          currentProfile = parsed.profile;
+          currentProjects = parsed.projects || [];
+          currentExperiences = parsed.experiences || [];
+          currentEducations = parsed.educations || [];
+          renderAll();
+          return;
+        } catch (e) {}
+      }
+
       try {
         const res = await fetch(`/api/portfolios/by-subdomain/${subdomain}`);
         const data = await res.json();
         if (data.success && data.profile) {
           currentProfile = data.profile;
           currentProjects = data.projects || [];
-          renderProfile(data.profile);
-        } else {
-          // Dữ liệu mẫu chuẩn cao cấp
-          currentProfile = {
-            name: 'Nguyễn Minh Tuấn',
-            role: 'Senior Software Engineer & Product Creator',
-            bio: 'Chuyên xây dựng các ứng dụng web tốc độ cao, giao diện tối giản tinh tế và hệ thống AI tương tác. Đam mê thiết kế mã nguồn sạch và tối ưu hóa trải nghiệm sản phẩm.',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&h=240&fit=crop',
-            skills: ['TypeScript', 'Next.js', 'React', 'Node.js', 'FastAPI', 'Tailwind CSS', 'PostgreSQL', 'Docker', 'OpenAI'],
-            githubUsername: 'tuannguyen-dev',
-            location: 'Hồ Chí Minh, Việt Nam'
-          };
-          currentProjects = [
-            {
-              id: 'p1',
-              title: 'AI Career Copilot',
-              description: 'Nền tảng hỗ trợ ứng viên tối ưu CV chuẩn ATS, luyện phỏng vấn giọng nói STAR và đồng bộ portfolio tự động.',
-              image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
-              tags: ['Next.js', 'TypeScript', 'Tailwind', 'OpenAI'],
-              demoUrl: 'https://connectcv.id.vn',
-              githubUrl: 'https://github.com/khoadeveloper/ai-career-copilot'
-            },
-            {
-              id: 'p2',
-              title: 'Fintech Cashflow Analytics',
-              description: 'Dashboard trực quan hóa dòng tiền và dự báo tài chính theo thời gian thực với độ trễ thấp.',
-              image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
-              tags: ['React', 'FastAPI', 'PostgreSQL', 'Tailwind'],
-              demoUrl: 'https://connectcv.id.vn',
-              githubUrl: 'https://github.com'
-            }
-          ];
-          renderProfile(currentProfile);
         }
-      } catch (e) {
-        console.error('Lỗi load portfolio:', e);
+      } catch (e) {}
+
+      // Dữ liệu mặc định nếu chưa có
+      if (!currentProfile) {
+        currentProfile = {
+          name: 'Nguyễn Minh Tuấn',
+          role: 'Senior Software Engineer & Product Creator',
+          bio: 'Chuyên xây dựng các ứng dụng web tốc độ cao, giao diện tối giản tinh tế và hệ thống AI tương tác. Đam mê thiết kế mã nguồn sạch và tối ưu hóa trải nghiệm sản phẩm.',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&h=240&fit=crop',
+          skills: ['TypeScript', 'Next.js', 'React', 'Node.js', 'FastAPI', 'Tailwind CSS', 'PostgreSQL', 'Docker', 'OpenAI'],
+          githubUsername: 'tuannguyen-dev',
+          location: 'Hồ Chí Minh, Việt Nam',
+          email: 'tuan.nguyen@example.com'
+        };
       }
+
+      if (!currentExperiences || currentExperiences.length === 0) {
+        currentExperiences = [
+          {
+            title: 'Senior Fullstack Engineer',
+            company: 'TechVanguard Solutions',
+            period: '2024 — Nay',
+            description: 'Phát triển kiến trúc Frontend và tích hợp AI APIs cho hệ thống tuyển dụng và quản trị nhân sự.'
+          },
+          {
+            title: 'Frontend Developer',
+            company: 'Nova Digital Studio',
+            period: '2022 — 2024',
+            description: 'Xây dựng giao diện web SaaS và dashboard phân tích dữ liệu bằng Next.js, Tailwind CSS và TypeScript.'
+          }
+        ];
+      }
+
+      if (!currentEducations || currentEducations.length === 0) {
+        currentEducations = [
+          {
+            school: 'Đại Học FPT Cần Thơ',
+            degree: 'Kỹ sư Kỹ thuật Phần mềm (Software Engineering)',
+            period: '2020 — 2024'
+          }
+        ];
+      }
+
+      if (!currentProjects || currentProjects.length === 0) {
+        currentProjects = [
+          {
+            id: 'p1',
+            title: 'AI Career Copilot',
+            description: 'Nền tảng hỗ trợ ứng viên tối ưu CV chuẩn ATS, luyện phỏng vấn giọng nói STAR và đồng bộ portfolio tự động.',
+            image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
+            tags: ['Next.js', 'TypeScript', 'Tailwind', 'OpenAI'],
+            demoUrl: 'https://connectcv.id.vn',
+            githubUrl: 'https://github.com/khoadeveloper/ai-career-copilot'
+          },
+          {
+            id: 'p2',
+            title: 'Fintech Cashflow Analytics',
+            description: 'Dashboard trực quan hóa dòng tiền và dự báo tài chính theo thời gian thực với độ trễ thấp.',
+            image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
+            tags: ['React', 'FastAPI', 'PostgreSQL', 'Tailwind'],
+            demoUrl: 'https://connectcv.id.vn',
+            githubUrl: 'https://github.com'
+          }
+        ];
+      }
+
+      renderAll();
+    }
+
+    function renderAll() {
+      renderProfile(currentProfile);
+      renderExperiences(currentExperiences);
+      renderEducations(currentEducations);
+      renderProjects();
     }
 
     function renderProfile(profile) {
@@ -557,27 +684,74 @@
       document.getElementById('pubLocation').innerText = profile.location || 'Việt Nam';
       document.getElementById('pubSubdomainBadge').innerText = `connectcv.vn/p/${profile.subdomain || currentSubdomain}`;
 
-      // Skills tags
       const skillsContainer = document.getElementById('pubSkillsContainer');
-      const skills = profile.skills || ['TypeScript', 'Next.js', 'React', 'Tailwind CSS', 'Node.js', 'PostgreSQL'];
+      const skills = profile.skills || ['TypeScript', 'Next.js', 'React', 'Tailwind CSS'];
       skillsContainer.innerHTML = skills.map(s => `
         <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200/60 dark:border-neutral-700/60">
           ${s}
         </span>
       `).join('');
 
-      // Social links
       const ghUser = profile.githubUsername || profile.subdomain || 'facebook';
-      const ghUrl = `https://github.com/${ghUser}`;
-      document.getElementById('dockGithubLink').href = ghUrl;
+      document.getElementById('dockGithubLink').href = `https://github.com/${ghUser}`;
       const inpGh = document.getElementById('inpGithubUser');
       if (inpGh) inpGh.value = ghUser;
       fetchGithubRepos(ghUser);
 
-      renderProjects();
+      const email = profile.email || 'contact@connectcv.vn';
+      document.getElementById('btnContactEmail').href = `mailto:${email}`;
+      document.getElementById('contactEmailText').innerText = email;
     }
 
-    // --- RENDER DỰ ÁN (HỖ TRỢ 2 TEMPLATE: MINIMALIST LIST & BENTO GRID) ---
+    function renderExperiences(exps) {
+      const container = document.getElementById('experienceContainer');
+      if (!exps || exps.length === 0) {
+        container.innerHTML = '<p class="text-xs text-neutral-500">Chưa có mục kinh nghiệm nào.</p>';
+        return;
+      }
+      container.innerHTML = exps.map(exp => `
+        <div class="flex items-start justify-between gap-4 group">
+          <div class="space-y-1">
+            <h3 class="font-heading font-semibold text-sm text-neutral-900 dark:text-white">
+              ${exp.title}
+            </h3>
+            <p class="text-xs text-neutral-500">
+              ${exp.company}
+            </p>
+            <p class="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed pt-1">
+              ${exp.description || ''}
+            </p>
+          </div>
+          <span class="text-xs font-mono text-neutral-400 shrink-0">
+            ${exp.period}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    function renderEducations(edus) {
+      const container = document.getElementById('educationContainer');
+      if (!edus || edus.length === 0) {
+        container.innerHTML = '<p class="text-xs text-neutral-500">Chưa có thông tin học vấn.</p>';
+        return;
+      }
+      container.innerHTML = edus.map(edu => `
+        <div class="flex items-start justify-between gap-4 group">
+          <div class="space-y-0.5">
+            <h3 class="font-heading font-semibold text-sm text-neutral-900 dark:text-white">
+              ${edu.school}
+            </h3>
+            <p class="text-xs text-neutral-500">
+              ${edu.degree}
+            </p>
+          </div>
+          <span class="text-xs font-mono text-neutral-400 shrink-0">
+            ${edu.period}
+          </span>
+        </div>
+      `).join('');
+    }
+
     function renderProjects() {
       const container = document.getElementById('pubProjectsContainer');
       const empty = document.getElementById('pubEmptyState');
@@ -594,7 +768,6 @@
       if (countEl) countEl.innerText = `${currentProjects.length} projects`;
 
       if (currentTemplate === 'bento') {
-        // Bento Grid 2 Columns
         container.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
         container.innerHTML = currentProjects.map(p => `
           <div class="card-clean rounded-xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900/60 overflow-hidden flex flex-col justify-between group">
@@ -623,7 +796,6 @@
           </div>
         `).join('');
       } else {
-        // Minimalist List Layout (Magic UI / Lee Robinson Style)
         container.className = 'space-y-3';
         container.innerHTML = currentProjects.map(p => `
           <div class="card-clean rounded-xl p-4 border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
@@ -631,11 +803,9 @@
             <div class="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
               <img src="${p.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=200'}" alt="${p.title}" class="w-12 h-12 rounded-lg object-cover ring-1 ring-neutral-200 dark:ring-neutral-800 shrink-0" />
               <div class="space-y-0.5 min-w-0">
-                <div class="flex items-center gap-2">
-                  <h3 class="font-heading font-semibold text-sm text-neutral-900 dark:text-white truncate">
-                    ${p.title}
-                  </h3>
-                </div>
+                <h3 class="font-heading font-semibold text-sm text-neutral-900 dark:text-white truncate">
+                  ${p.title}
+                </h3>
                 <p class="text-xs text-neutral-500 line-clamp-1">
                   ${p.description || 'Dự án hoàn thiện chuẩn thực tế.'}
                 </p>
@@ -645,7 +815,6 @@
               </div>
             </div>
 
-            <!-- Action Pill Links -->
             <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
               ${p.demoUrl ? `
                 <a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-md text-[11px] font-medium bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white transition-colors inline-flex items-center gap-1">
@@ -666,7 +835,7 @@
       }
     }
 
-    // --- TỰ ĐỘNG LẤY GITHUB REPOS (CẤP ĐỘ 2) ---
+    // --- GITHUB REPOS SYNC ---
     async function fetchGithubRepos(usernameOverride) {
       const username = usernameOverride || document.getElementById('inpGithubUser').value.trim() || 'facebook';
       const container = document.getElementById('githubReposGrid');
@@ -681,23 +850,20 @@
         }
       } catch (e) {}
 
-      // Fallback repos nếu offline hoặc rate-limited
       renderGithubRepos([
         {
           name: 'ai-career-copilot',
           html_url: `https://github.com/${username}/ai-career-copilot`,
           description: 'AI platform for ATS resume optimization, STAR interview coaching, and portfolio showcase.',
           language: 'TypeScript',
-          stargazers_count: 142,
-          forks_count: 28
+          stargazers_count: 142
         },
         {
           name: 'minimal-portfolio-starter',
           html_url: `https://github.com/${username}/minimal-portfolio-starter`,
           description: 'Clean developer portfolio template inspired by Magic UI and Lee Robinson personal sites.',
           language: 'JavaScript',
-          stargazers_count: 89,
-          forks_count: 15
+          stargazers_count: 89
         }
       ]);
     }
@@ -725,122 +891,265 @@
                 <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${langColor};"></span>
                 <span class="text-neutral-600 dark:text-neutral-400">${repo.language || 'Code'}</span>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="inline-flex items-center gap-0.5">
-                  <svg class="w-3 h-3 fill-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                  <span>${repo.stargazers_count || 0}</span>
-                </span>
-              </div>
+              <span class="inline-flex items-center gap-0.5">
+                <svg class="w-3 h-3 fill-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <span>${repo.stargazers_count || 0}</span>
+              </span>
             </div>
           </a>
         `;
       }).join('');
     }
 
-    // --- MODAL & SUBMIT DỰ ÁN ---
-    function openAddProjectModal() {
-      document.getElementById('inpProjTitle').value = '';
-      document.getElementById('inpProjImage').value = '';
-      document.getElementById('inpProjDemo').value = '';
-      document.getElementById('inpProjGithub').value = '';
-      document.getElementById('inpProjTags').value = '';
-      document.getElementById('inpProjDesc').value = '';
-      document.getElementById('modalAddProject').classList.remove('hidden');
+    // --- MODAL SECTION CUSTOMIZER LOGIC ---
+    function openCustomizerModal(tab = 'profile') {
+      // 1. Điền thông tin profile hiện tại
+      document.getElementById('inpCustName').value = currentProfile?.name || '';
+      document.getElementById('inpCustRole').value = currentProfile?.role || '';
+      document.getElementById('inpCustLocation').value = currentProfile?.location || 'Việt Nam';
+      document.getElementById('inpCustSubdomain').value = currentProfile?.subdomain || currentSubdomain;
+      document.getElementById('inpCustAvatar').value = currentProfile?.avatar || '';
+      document.getElementById('inpCustBio').value = currentProfile?.bio || '';
+      document.getElementById('inpCustGithub').value = currentProfile?.githubUsername || '';
+      document.getElementById('inpCustEmail').value = currentProfile?.email || '';
+
+      // 2. Điền skills
+      document.getElementById('inpCustSkills').value = (currentProfile?.skills || []).join(', ');
+
+      // 3. Render experience list in modal
+      renderCustExpList();
+
+      // 4. Render education list in modal
+      renderCustEduList();
+
+      // 5. Render projects list in modal
+      renderCustProjList();
+
+      // Mở modal và chuyển tab tương ứng
+      switchCustomTab(tab);
+      document.getElementById('modalCustomizer').classList.remove('hidden');
     }
 
-    function closeAddProjectModal() {
-      document.getElementById('modalAddProject').classList.add('hidden');
+    function closeCustomizerModal() {
+      document.getElementById('modalCustomizer').classList.add('hidden');
     }
 
-    function fillSampleProjImage() {
-      document.getElementById('inpProjImage').value = SAMPLE_PROJECT_IMAGES[sampleImgIdx % SAMPLE_PROJECT_IMAGES.length];
-      sampleImgIdx++;
+    function switchCustomTab(tabName) {
+      ['profile', 'experience', 'education', 'skills', 'projects'].forEach(t => {
+        const btn = document.getElementById(`custTabBtn-${t}`);
+        const pane = document.getElementById(`custTab-${t}`);
+        if (t === tabName) {
+          btn.className = 'px-3 py-1.5 rounded-lg bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 font-semibold transition-all';
+          pane.classList.remove('hidden');
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-all';
+          pane.classList.add('hidden');
+        }
+      });
     }
 
-    async function submitNewProject() {
-      const title = document.getElementById('inpProjTitle').value.trim();
-      const image = document.getElementById('inpProjImage').value.trim();
-      const demoUrl = document.getElementById('inpProjDemo').value.trim();
-      const githubUrl = document.getElementById('inpProjGithub').value.trim();
-      const tagsStr = document.getElementById('inpProjTags').value.trim();
-      const description = document.getElementById('inpProjDesc').value.trim();
+    function cycleCustAvatar() {
+      sampleAvtIdx = (sampleAvtIdx + 1) % SAMPLE_AVATARS.length;
+      document.getElementById('inpCustAvatar').value = SAMPLE_AVATARS[sampleAvtIdx];
+    }
+
+    // Experience CRUD in Modal
+    function renderCustExpList() {
+      const container = document.getElementById('custExpList');
+      if (currentExperiences.length === 0) {
+        container.innerHTML = '<p class="text-xs text-neutral-400">Chưa có mục nào. Hãy bấm "Thêm Mục Mới" phía trên.</p>';
+        return;
+      }
+      container.innerHTML = currentExperiences.map((exp, idx) => `
+        <div class="p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-neutral-900 dark:text-white">Kinh nghiệm #${idx + 1}</span>
+            <button type="button" onclick="removeExperienceRow(${idx})" class="text-rose-500 hover:text-rose-700 text-xs font-semibold">Xóa</button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" value="${exp.title}" oninput="currentExperiences[${idx}].title = this.value" placeholder="Vị trí (VD: Fullstack Developer)" class="w-full px-2 py-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded text-xs" />
+            <input type="text" value="${exp.company}" oninput="currentExperiences[${idx}].company = this.value" placeholder="Tên công ty" class="w-full px-2 py-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded text-xs" />
+          </div>
+          <input type="text" value="${exp.period}" oninput="currentExperiences[${idx}].period = this.value" placeholder="Thời gian (VD: 2024 — Nay)" class="w-full px-2 py-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded text-xs" />
+          <textarea rows="2" oninput="currentExperiences[${idx}].description = this.value" placeholder="Mô tả công việc..." class="w-full px-2 py-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded text-xs">${exp.description || ''}</textarea>
+        </div>
+      `).join('');
+    }
+
+    function addExperienceRow() {
+      currentExperiences.unshift({
+        title: 'Software Developer',
+        company: 'Công Ty Mới',
+        period: '2025 — Nay',
+        description: 'Mô tả đóng góp và kết quả dự án.'
+      });
+      renderCustExpList();
+    }
+
+    function removeExperienceRow(idx) {
+      currentExperiences.splice(idx, 1);
+      renderCustExpList();
+    }
+
+    // Education CRUD in Modal
+    function renderCustEduList() {
+      const container = document.getElementById('custEduList');
+      if (currentEducations.length === 0) {
+        container.innerHTML = '<p class="text-xs text-neutral-400">Chưa có thông tin học vấn.</p>';
+        return;
+      }
+      container.innerHTML = currentEducations.map((edu, idx) => `
+        <div class="p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-neutral-900 dark:text-white">Trường #${idx + 1}</span>
+            <button type="button" onclick="removeEducationRow(${idx})" class="text-rose-500 hover:text-rose-700 text-xs font-semibold">Xóa</button>
+          </div>
+          <input type="text" value="${edu.school}" oninput="currentEducations[${idx}].school = this.value" placeholder="Tên trường (VD: ĐH FPT)" class="w-full px-2 py-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded text-xs" />
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" value="${edu.degree}" oninput="currentEducations[${idx}].degree = this.value" placeholder="Bằng cấp / Ngành" class="w-full px-2 py-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded text-xs" />
+            <input type="text" value="${edu.period}" oninput="currentEducations[${idx}].period = this.value" placeholder="Niên khóa (VD: 2020 — 2024)" class="w-full px-2 py-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded text-xs" />
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addEducationRow() {
+      currentEducations.unshift({
+        school: 'Đại Học Quốc Gia',
+        degree: 'Cử nhân Công nghệ Thông tin',
+        period: '2021 — 2025'
+      });
+      renderCustEduList();
+    }
+
+    function removeEducationRow(idx) {
+      currentEducations.splice(idx, 1);
+      renderCustEduList();
+    }
+
+    // Projects CRUD in Modal
+    function renderCustProjList() {
+      const container = document.getElementById('custProjList');
+      if (currentProjects.length === 0) {
+        container.innerHTML = '<p class="text-xs text-neutral-400">Chưa có dự án nào.</p>';
+        return;
+      }
+      container.innerHTML = currentProjects.map((p, idx) => `
+        <div class="p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 truncate">
+            <img src="${p.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100'}" class="w-8 h-8 rounded object-cover shrink-0" />
+            <div class="truncate">
+              <p class="font-semibold text-neutral-900 dark:text-white truncate">${p.title}</p>
+              <p class="text-[11px] text-neutral-400 truncate">${(p.tags || []).join(', ')}</p>
+            </div>
+          </div>
+          <button type="button" onclick="removeProject(${idx})" class="text-rose-500 hover:text-rose-700 text-xs font-semibold shrink-0">Xóa</button>
+        </div>
+      `).join('');
+    }
+
+    function submitQuickProject() {
+      const title = document.getElementById('inpNewPTitle').value.trim();
+      const image = document.getElementById('inpNewPImage').value.trim();
+      const demoUrl = document.getElementById('inpNewPDemo').value.trim();
+      const githubUrl = document.getElementById('inpNewPGithub').value.trim();
+      const tagsStr = document.getElementById('inpNewPTags').value.trim();
+      const desc = document.getElementById('inpNewPDesc').value.trim();
 
       if (!title || !image) {
-        alert('Vui lòng nhập tiêu đề dự án và đường dẫn ảnh bìa.');
+        alert('Vui lòng nhập tiêu đề dự án và ảnh bìa.');
         return;
       }
 
       const newProj = {
+        id: `p_${Date.now()}`,
         title,
         image,
         demoUrl,
         githubUrl,
-        tags: tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(Boolean) : ['Next.js', 'React'],
-        description: description || 'Dự án thực tế hoàn thành xuất sắc chứng minh năng lực chuyên môn.',
-        subdomain: currentSubdomain,
-        author: currentProfile ? currentProfile.name : 'Nguyễn Minh Tuấn'
+        tags: tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(Boolean) : ['React'],
+        description: desc || 'Dự án thực tế.'
       };
 
-      try {
-        const token = localStorage.getItem('jwtToken');
-        const res = await fetch('/api/portfolios', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': 'Bearer ' + token } : {})
-          },
-          body: JSON.stringify(newProj)
-        });
+      currentProjects.unshift(newProj);
+      renderCustProjList();
 
-        const json = await res.json();
-        if (json.success && json.portfolio) {
-          currentProjects.unshift(json.portfolio);
-        } else {
-          newProj.id = 'pf_mock_' + Date.now();
-          currentProjects.unshift(newProj);
-        }
-      } catch (e) {
-        newProj.id = 'pf_mock_' + Date.now();
-        currentProjects.unshift(newProj);
-      }
-
-      renderProjects();
-      closeAddProjectModal();
-      showToast('Đã thêm dự án mới thành công!');
+      document.getElementById('inpNewPTitle').value = '';
+      document.getElementById('inpNewPImage').value = '';
+      document.getElementById('inpNewPDemo').value = '';
+      document.getElementById('inpNewPGithub').value = '';
+      document.getElementById('inpNewPTags').value = '';
+      document.getElementById('inpNewPDesc').value = '';
+      showToast('Đã thêm dự án vào danh sách!');
     }
 
-    // --- MODAL: ĐỔI TÊN SUBDOMAIN ---
-    function openEditSubdomainModal() {
-      document.getElementById('inpNewSubdomain').value = currentSubdomain;
-      document.getElementById('modalEditSubdomain').classList.remove('hidden');
+    function removeProject(idx) {
+      currentProjects.splice(idx, 1);
+      renderCustProjList();
     }
 
-    function closeEditSubdomainModal() {
-      document.getElementById('modalEditSubdomain').classList.add('hidden');
-    }
+    // SAVE ALL CUSTOMIZATIONS
+    async function saveAllCustomizations() {
+      const name = document.getElementById('inpCustName').value.trim();
+      const role = document.getElementById('inpCustRole').value.trim();
+      const location = document.getElementById('inpCustLocation').value.trim();
+      const subdomain = document.getElementById('inpCustSubdomain').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+      const avatar = document.getElementById('inpCustAvatar').value.trim();
+      const bio = document.getElementById('inpCustBio').value.trim();
+      const githubUsername = document.getElementById('inpCustGithub').value.trim();
+      const email = document.getElementById('inpCustEmail').value.trim();
+      const rawSkills = document.getElementById('inpCustSkills').value.trim();
+      const skills = rawSkills ? rawSkills.split(',').map(s => s.trim()).filter(Boolean) : ['TypeScript', 'React'];
 
-    async function saveNewSubdomain() {
-      const val = document.getElementById('inpNewSubdomain').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
-      if (!val) {
-        alert('Vui lòng nhập định danh hợp lệ.');
+      if (!name || !role) {
+        alert('Họ tên và chức danh không được để trống.');
         return;
       }
 
-      currentSubdomain = val;
-      document.getElementById('pubSubdomainBadge').innerText = `connectcv.vn/p/${val}`;
-      window.history.pushState(null, '', `/p/${val}`);
+      currentProfile = {
+        name,
+        role,
+        location: location || 'Việt Nam',
+        subdomain: subdomain || currentSubdomain,
+        avatar: avatar || currentProfile?.avatar,
+        bio,
+        githubUsername,
+        email,
+        skills
+      };
 
+      if (subdomain && subdomain !== currentSubdomain) {
+        currentSubdomain = subdomain;
+        window.history.pushState(null, '', `/p/${subdomain}`);
+      }
+
+      // Lưu cục bộ tức thời
+      const fullCustomData = {
+        profile: currentProfile,
+        projects: currentProjects,
+        experiences: currentExperiences,
+        educations: currentEducations
+      };
+
+      localStorage.setItem(`portfolio_custom_${currentSubdomain}`, JSON.stringify(fullCustomData));
+
+      // Lưu vào user profile nếu đang đăng nhập
       try {
         const userStored = localStorage.getItem('connectcv_user');
         if (userStored) {
           const u = JSON.parse(userStored);
-          u.subdomain = val;
+          u.fullName = name;
+          u.title = role;
+          u.subdomain = currentSubdomain;
+          u.avatar = avatar;
+          u.github = githubUsername;
           localStorage.setItem('connectcv_user', JSON.stringify(u));
         }
       } catch (e) {}
 
-      closeEditSubdomainModal();
-      showToast(`Đã đổi link: connectcv.vn/p/${val}`);
+      renderAll();
+      closeCustomizerModal();
+      showToast('Đã cập nhật toàn bộ hồ sơ thành công!');
     }
 
     function copySubdomainUrl() {
