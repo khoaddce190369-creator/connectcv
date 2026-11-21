@@ -24,7 +24,7 @@ function expandJDWithAI(title, roughNotes) {
     benefits: [
       `Mức thu nhập cạnh tranh, thưởng dự án định kỳ và cơ hội thăng tiến rộng mở.`,
       `Môi trường làm việc trẻ trung, linh hoạt thời gian, hỗ trợ trang thiết bị hiện đại.`,
-      `Được bảo chứng hợp đồng và bảo vệ quyền lợi thanh toán qua hệ thống ConnectCV Escrow.`
+      `Được ký kết hợp đồng rõ ràng và bảo đảm quyền lợi làm việc minh bạch.`
     ]
   };
 }

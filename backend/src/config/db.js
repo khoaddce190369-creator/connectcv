@@ -190,7 +190,7 @@ const initialData = {
       author: 'NovaTech Solutions',
       authorAvatar: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop',
       title: 'Tuyển Senior UI Designer làm việc dự án Fintech Mobile',
-      content: 'Cần tìm 1 bạn Senior UI Designer chuyên mảng Fintech, dự án kéo dài 2 tháng, ngân sách 30tr VNĐ. Có bảo chứng hợp đồng qua ConnectCV Escrow.',
+      content: 'Cần tìm 1 bạn Senior UI Designer chuyên mảng Fintech, dự án kéo dài 2 tháng, ngân sách 30tr VNĐ. Hợp đồng rõ ràng, thanh toán đúng hạn.',
       budget: '30.000.000 VNĐ',
       contact: 'hr@novatech.vn',
       likes: 18,
