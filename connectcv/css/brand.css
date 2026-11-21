@@ -648,3 +648,50 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
 button:active:not(:disabled), a.btn-primary:active, a.btn-navy:active, a.btn-secondary:active {
   transform: scale(0.98);
 }
+
+/* ==========================================================================
+   10. Floo Design System (Concentric Radar Rings, Cyan Radiance & Form Elements)
+   ========================================================================== */
+@keyframes orbitRotateSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes orbitRotateReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+.animate-orbit-cw {
+  transform-origin: 50% 50%;
+  animation: orbitRotateSlow 28s linear infinite;
+}
+.animate-orbit-ccw {
+  transform-origin: 50% 50%;
+  animation: orbitRotateReverse 36s linear infinite;
+}
+
+.floo-input {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+.floo-input:focus, .floo-input:focus-within {
+  border-color: #00d2f7 !important;
+  box-shadow: 0 0 0 4px rgba(0, 210, 247, 0.18) !important;
+  outline: none !important;
+}
+
+.btn-floo-cyan {
+  background: linear-gradient(135deg, #00daf7 0%, #00c2f8 50%, #0099f7 100%);
+  box-shadow: 0 10px 25px -5px rgba(0, 210, 247, 0.4), 0 8px 10px -6px rgba(0, 210, 247, 0.25);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-floo-cyan:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 14px 28px -4px rgba(0, 210, 247, 0.5), 0 10px 14px -6px rgba(0, 210, 247, 0.35);
+  transform: translateY(-1px);
+}
+.btn-floo-cyan:active {
+  transform: scale(0.99) translateY(0);
+  filter: brightness(0.98);
+}
+
