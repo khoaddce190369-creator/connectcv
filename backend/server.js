@@ -62,8 +62,8 @@ const featureAuthBridge = (req, res, next) => {
 // ==========================================
 app.use('/api/auth', require('./src/routes/auth'));
 app.use('/api/cv', require('./src/routes/cv'));
-app.use('/api/interview', require('./src/routes/interview'));
-app.use('/api/freelance', require('./src/routes/interview')); // Hỗ trợ POST /api/freelance/proposal
+// /api/interview được tích hợp và bảo mật đầy đủ trong module AI Studio (mountFeatures bên dưới)
+app.use('/api/freelance', require('./features/connectcv/src/routes/interview')); // Hỗ trợ POST /api/freelance/proposal
 app.use('/api/jobs', require('./src/routes/jobs'));
 app.use('/api/filter/jobs', (req, res, next) => {
   req.url = '/filter';

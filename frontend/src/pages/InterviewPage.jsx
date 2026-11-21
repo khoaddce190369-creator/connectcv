@@ -26,6 +26,8 @@ export default function InterviewPage() {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [currentQuestionId, setCurrentQuestionId] = useState(null);
+  const [askedQuestionIds, setAskedQuestionIds] = useState([]);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -36,29 +38,67 @@ export default function InterviewPage() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
+  const handleSend = async () => {
+    const textToSend = inputValue.trim();
+    if (!textToSend || isTyping) return;
     
     const newUserMsg = {
       id: Date.now(),
       type: 'user',
-      text: inputValue,
+      text: textToSend,
       time: "Just now"
     };
     
-    setMessages(prev => [...prev, newUserMsg]);
+    const updatedMessages = [...messages, newUserMsg];
+    setMessages(updatedMessages);
     setInputValue("");
     setIsTyping(true);
-    
-    setTimeout(() => {
-      setIsTyping(false);
+
+    try {
+      const history = updatedMessages.map(m => ({
+        role: m.type === 'user' ? 'candidate' : 'interviewer',
+        message: m.text
+      }));
+
+      const res = await fetch('/api/interview/live-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobTitle: 'UI/UX Designer',
+          level: 'junior',
+          action: 'reply',
+          message: textToSend,
+          history,
+          currentQuestionId,
+          askedQuestionIds
+        })
+      });
+
+      const data = await res.json();
+      if (data.success && data.data) {
+        const reply = data.data.interviewerReply || data.data.reply;
+        if (data.data.currentQuestion?.id) setCurrentQuestionId(data.data.currentQuestion.id);
+        if (data.data.askedQuestionIds) setAskedQuestionIds(data.data.askedQuestionIds);
+
+        setMessages(prev => [...prev, {
+          id: Date.now() + 1,
+          type: 'ai',
+          text: reply,
+          tags: data.data.interviewPhase === 'completed' ? ["Completed"] : ["Technical Assessment"]
+        }]);
+      } else {
+        throw new Error(data.message || 'API error');
+      }
+    } catch (err) {
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
         type: 'ai',
-        text: "That's a solid answer! Can you share a specific example from a past project and what was the biggest challenge?",
+        text: "Đã ghi nhận câu trả lời của bạn. Bạn có thể chia sẻ thêm về số liệu hoặc bài học kinh nghiệm cụ thể trong dự án này không?",
         tags: ["Follow-up"]
       }]);
-    }, 1500);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleKeyDown = (e) => {

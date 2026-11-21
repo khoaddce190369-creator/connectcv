@@ -218,4 +218,61 @@ router.delete('/:id', optionalAuth, (req, res) => {
   }
 });
 
+/**
+ * @route   POST /api/portfolios/:id/like
+ * @desc    Tăng hoặc giảm lượt thích sản phẩm
+ */
+router.post('/:id/like', optionalAuth, (req, res) => {
+  try {
+    const list = db.get('portfolios') || [];
+    const item = list.find(p => p.id === req.params.id);
+    if (!item) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm.' });
+    }
+    const delta = req.body.delta !== undefined ? Number(req.body.delta) : 1;
+    item.likes = Math.max(0, (item.likes || 0) + delta);
+    db.saveData();
+    return res.json({ success: true, likes: item.likes });
+  } catch (error) {
+    console.error('Lỗi POST /api/portfolios/:id/like:', error);
+    return res.status(500).json({ success: false, message: 'Lỗi cập nhật lượt thích.' });
+  }
+});
+
+/**
+ * @route   POST /api/portfolios/:id/comment
+ * @desc    Thêm bình luận vào sản phẩm trong cộng đồng
+ */
+router.post('/:id/comment', optionalAuth, (req, res) => {
+  try {
+    const list = db.get('portfolios') || [];
+    const item = list.find(p => p.id === req.params.id);
+    if (!item) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm.' });
+    }
+    const content = (req.body.content || '').trim();
+    if (!content) {
+      return res.status(400).json({ success: false, message: 'Nội dung bình luận không được để trống.' });
+    }
+    const author = req.body.author || req.user?.username || 'Thành viên ConnectCV';
+    const avatar = req.body.avatar || req.user?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&h=60&fit=crop';
+    if (!Array.isArray(item.comments)) {
+      item.comments = [];
+    }
+    const newComment = {
+      id: `cmt_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      author,
+      avatar,
+      content,
+      createdAt: new Date().toISOString()
+    };
+    item.comments.push(newComment);
+    db.saveData();
+    return res.status(201).json({ success: true, comment: newComment, comments: item.comments });
+  } catch (error) {
+    console.error('Lỗi POST /api/portfolios/:id/comment:', error);
+    return res.status(500).json({ success: false, message: 'Lỗi gửi bình luận.' });
+  }
+});
+
 module.exports = router;

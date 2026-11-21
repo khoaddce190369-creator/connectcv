@@ -247,74 +247,193 @@
     {
       "id": "pf_1",
       "title": "Fintech Mobile Banking 2.0",
-      "author": "Nguyễn Minh Tuấn",
+      "category": "uiux",
+      "categoryName": "UI/UX & App",
+      "author": "Nguyen Minh Tuan",
+      "subdomain": "tuan-nguyen",
       "authorAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
       "authorRole": "Senior UI/UX Designer",
       "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80",
       "tags": [
         "Fintech",
         "Figma",
-        "Design System"
+        "Design System",
+        "iOS"
       ],
-      "budget": "$2,500 USD",
-      "duration": "4 tuần",
+      "budget": ",500 USD",
+      "duration": "4 tuan",
       "likes": 248,
-      "description": "Hệ thống thiết kế và giao diện ngân hàng số thế hệ mới, tối ưu hóa tỷ lệ chuyển đổi dòng tiền 35%."
+      "views": "2.4k",
+      "description": "He thong thiet ke va giao dien ngan hang so the he moi, toi uu hoa ty le chuyen doi dong tien 35% voi hon 40 man hinh va design tokens chuan WCAG.",
+      "comments": [
+        {
+          "id": "cmt_101",
+          "author": "Tran Quoc Bao",
+          "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
+          "content": "Bo micro-interactions phan thanh toan rat muot ma, phoi mau xanh navy rat trang nha!",
+          "createdAt": "2026-11-18T10:30:00Z"
+        },
+        {
+          "id": "cmt_102",
+          "author": "Le Hoang Yen",
+          "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+          "content": "Typography va hierarchy thong tin tai chinh rat ro rang, de doc tren dien thoai.",
+          "createdAt": "2026-11-19T14:15:00Z"
+        }
+      ],
+      "createdAt": "2026-11-15T08:00:00Z"
     },
     {
       "id": "pf_2",
       "title": "GreenEats Organic Brand Identity",
-      "author": "Lê Hoàng Yến",
+      "category": "branding",
+      "categoryName": "Thuong hieu & Logo",
+      "author": "Le Hoang Yen",
+      "subdomain": "hoang-yen",
       "authorAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
       "authorRole": "Brand & Visual Designer",
       "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80",
       "tags": [
         "Branding",
         "Packaging",
-        "Eco"
+        "Eco",
+        "Illustrator"
       ],
-      "budget": "$1,200 USD",
-      "duration": "3 tuần",
-      "likes": 182,
-      "description": "Bộ nhận diện tối giản kết hợp gam màu đất và giấy tái chế chuẩn phong cách eco-friendly quốc tế."
+      "budget": ",800 USD",
+      "duration": "3 tuan",
+      "likes": 195,
+      "views": "1.9k",
+      "description": "Bo nhan dien thuong hieu thuc pham huu co toi gian ket hop gam mau dat moc mac va giay tai che than thien moi truong.",
+      "comments": [
+        {
+          "id": "cmt_201",
+          "author": "Vu Quynh Anh",
+          "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face",
+          "content": "Chat lieu mockup giay kraft rat hop voi concept eco-friendly.",
+          "createdAt": "2026-11-19T09:00:00Z"
+        }
+      ],
+      "createdAt": "2026-11-16T11:20:00Z"
     },
     {
       "id": "pf_3",
-      "title": "AI Dashboard & Analytics SaaS",
-      "author": "Trần Quốc Bảo",
+      "title": "AI Dashboard & Analytics SaaS Platform",
+      "category": "web",
+      "categoryName": "Website & Code",
+      "author": "Tran Quoc Bao",
+      "subdomain": "quoc-bao",
       "authorAvatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-      "authorRole": "Product Designer",
+      "authorRole": "Senior Full-Stack & UI Engineer",
       "image": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&auto=format&fit=crop&q=80",
       "tags": [
         "SaaS",
-        "Dark Mode",
+        "React",
+        "Tailwind",
         "Data Viz"
       ],
-      "budget": "$3,200 USD",
-      "duration": "6 tuần",
+      "budget": ",200 USD",
+      "duration": "6 tuan",
       "likes": 315,
-      "description": "Bảng điều khiển trực quan hóa dữ liệu AI real-time, tích hợp dark mode tinh xảo và UX micro-interactions."
+      "views": "3.1k",
+      "description": "Bang dieu khien truc quan hoa du lieu AI theo thoi gian thuc, tich hop che do Dark Mode tinh te va hieu nang render 60fps.",
+      "comments": [
+        {
+          "id": "cmt_301",
+          "author": "Nguyen Minh Tuan",
+          "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+          "content": "Data visualization bo tri khoa hoc, bieu do line va bar do nhieu rat ro.",
+          "createdAt": "2026-11-17T16:40:00Z"
+        }
+      ],
+      "createdAt": "2026-11-17T14:00:00Z"
     },
     {
-      "id": "pf_1793049409482_qxp0",
-      "title": "Design System cho Sàn Thương Mại Điện Tử",
-      "subdomain": "hoang-anh",
-      "author": "Nguyễn Văn An",
-      "authorAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-      "authorRole": "Senior Product Designer",
-      "authorId": "usr_1793049409482",
-      "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80",
+      "id": "pf_4",
+      "title": "Matte Titanium Wireless Earbuds 3D Render",
+      "category": "3d",
+      "categoryName": "3D & Motion",
+      "author": "Dang Tuan Anh",
+      "subdomain": "tuan-anh-3d",
+      "authorAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face",
+      "authorRole": "3D Artist & Motion Designer",
+      "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80",
       "tags": [
-        "Figma",
-        "UI/UX",
-        "Design System",
-        "SaaS"
+        "Cinema4D",
+        "Octane",
+        "3D Product",
+        "Lighting"
       ],
-      "budget": "$2,500 USD",
-      "duration": "4 tuần",
-      "likes": 1,
-      "description": "Xây dựng kiến trúc trải nghiệm và hệ thống Design Token toàn diện từ zero to one. Giúp tăng tỷ lệ hoàn thành tác vụ người dùng lên 42%.",
-      "createdAt": "2026-10-26T21:16:49.482Z"
+      "budget": ",500 USD",
+      "duration": "2 tuan",
+      "likes": 420,
+      "views": "4.5k",
+      "description": "Ket xu 3D thuong mai studio chuyen nghiep cho dong tai nghe khong day cao cap, gia lap anh sang softbox va vat lieu kim loai titan nham.",
+      "comments": [
+        {
+          "id": "cmt_401",
+          "author": "Linh Tran",
+          "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+          "content": "Material kim loai nham va specular highlights qua dinh!",
+          "createdAt": "2026-11-18T20:10:00Z"
+        }
+      ],
+      "createdAt": "2026-11-18T10:00:00Z"
+    },
+    {
+      "id": "pf_5",
+      "title": "Artisan Coffee Roasters Organic Packaging",
+      "category": "packaging",
+      "categoryName": "Bao bi & In an",
+      "author": "Vu Quynh Anh",
+      "subdomain": "quynh-anh",
+      "authorAvatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face",
+      "authorRole": "Packaging & Print Specialist",
+      "image": "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&auto=format&fit=crop&q=80",
+      "tags": [
+        "Packaging",
+        "Print",
+        "Typography",
+        "Minimal"
+      ],
+      "budget": ",400 USD",
+      "duration": "3 tuan",
+      "likes": 288,
+      "views": "2.8k",
+      "description": "Tron bo bao bi tui ca phe giay kraft moc, tem nhan chai cold-brew va hop qua Tet sang trong, phong cach toi gian thanh lich.",
+      "comments": [
+        {
+          "id": "cmt_501",
+          "author": "Le Hoang Yen",
+          "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+          "content": "Font serif ket hop rat hai hoa voi giay kraft vang moc.",
+          "createdAt": "2026-11-19T11:00:00Z"
+        }
+      ],
+      "createdAt": "2026-11-18T15:30:00Z"
+    },
+    {
+      "id": "pf_6",
+      "title": "Neon Cyberpunk Music Festival Key Visual",
+      "category": "branding",
+      "categoryName": "Visual & Poster",
+      "author": "Linh Tran",
+      "subdomain": "linh-tran",
+      "authorAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+      "authorRole": "Key Visual & Art Director",
+      "image": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=80",
+      "tags": [
+        "Photoshop",
+        "Key Visual",
+        "Cyberpunk",
+        "Event"
+      ],
+      "budget": ",100 USD",
+      "duration": "3 tuan",
+      "likes": 376,
+      "views": "3.9k",
+      "description": "Key Visual chu de am nhac dien tu quy mo 10.000 nguoi, ket hop ky thuat 3D va digital painting tao do tuong phan cao.",
+      "comments": [],
+      "createdAt": "2026-11-19T08:00:00Z"
     }
   ],
   "candidates": [
