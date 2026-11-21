@@ -77,8 +77,8 @@ html {
 body {
   font-family: var(--font-sans);
   color: var(--brand-text);
-  background-color: var(--brand-bg);
-  background-image: radial-gradient(rgba(148, 163, 184, 0.28) 1.1px, transparent 1.1px);
+  background-color: #ffffff;
+  background-image: radial-gradient(#e2e8f0 1.2px, transparent 1.2px);
   background-size: 24px 24px;
   background-position: 0 0;
   line-height: 1.6;
@@ -405,28 +405,21 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
 }
 
 /* ==========================================================================
-   UPWORK HERO SECTION (DARK OBSIDIAN TECH GRADIENT)
+   HERO SECTION (DUB.CO / VERCEL CLEAN LIGHT TECH CANVAS)
    ========================================================================== */
 .upwork-hero {
-  background: radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.18) 0%, transparent 45%),
-              radial-gradient(circle at 15% 85%, rgba(37, 99, 235, 0.22) 0%, transparent 50%),
-              #090d16 !important;
-  border-radius: var(--radius-xl);
-  color: #ffffff;
+  background: transparent !important;
+  border-radius: 0;
+  color: var(--brand-text);
   position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 20px 40px -15px rgba(9, 13, 22, 0.4);
+  overflow: visible;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .upwork-hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.4), transparent);
+  display: none !important;
 }
 
 /* ==========================================================================
