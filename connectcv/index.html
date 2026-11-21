@@ -82,7 +82,7 @@
             Việc làm
           </button>
           <button id="nav-portfolio" onclick="switchTab('portfolio')" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
-            Cộng đồng
+            Portfolio
           </button>
           <button id="nav-candidates" onclick="switchTab('candidates')" class="whitespace-nowrap px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
             Ứng viên
@@ -485,7 +485,7 @@
   </section>
 
   <!-- ==========================================================================
-       VIEW: CỘNG ĐỒNG SÁNG TẠO & MẠNG XÃ HỘI THU NHỎ
+       VIEW: VISUAL PORTFOLIO SHOWCASE & CỘNG ĐỒNG SÁNG TẠO
        ========================================================================== -->
   <section id="view-portfolio" class="view-animate hidden flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
     
@@ -493,23 +493,23 @@
     <div class="bg-white px-5 sm:px-7 py-5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div class="space-y-1">
         <div class="flex items-center gap-2">
-          <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-100 uppercase tracking-wider">Cộng Đồng ConnectCV</span>
+          <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-100 uppercase tracking-wider">Visual Portfolio Showcase</span>
           <span class="text-xs text-slate-400">Mạng xã hội dự án &amp; kỹ năng</span>
         </div>
         <h2 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 tracking-tight">
-          Cộng Đồng Sáng Tạo
+          Portfolio &amp; Cộng Đồng Sáng Tạo
         </h2>
-        <p class="text-xs text-slate-500">Khám phá sản phẩm thực chiến, chia sẻ tác phẩm và kết nối trực tiếp với nhà tuyển dụng.</p>
+        <p class="text-xs text-slate-500">Khám phá hồ sơ năng lực thực chiến, trưng bày dự án và kết nối trực tiếp với nhà tuyển dụng.</p>
       </div>
 
       <div class="flex items-center gap-2.5 w-full sm:w-auto">
         <button onclick="openCreatePortfolioModal()" class="btn-primary text-xs font-bold px-4 py-2.5 flex-1 sm:flex-none flex items-center justify-center gap-2 shadow-xs whitespace-nowrap">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-          <span>Đăng sản phẩm</span>
+          <span>Đăng dự án mới</span>
         </button>
         <button onclick="openMyPortfolioPage()" class="btn-secondary text-xs font-bold px-4 py-2.5 flex-1 sm:flex-none flex items-center justify-center gap-2 whitespace-nowrap">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
-          <span>Hồ sơ cá nhân</span>
+          <span>Trang Portfolio của bạn</span>
         </button>
       </div>
     </div>
@@ -520,7 +520,7 @@
         <!-- Ô tìm kiếm realtime -->
         <div class="relative flex-1">
           <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
-          <input id="socialSearchInput" oninput="handleSocialSearch(this.value)" type="text" placeholder="Tìm kiếm tác phẩm, ý tưởng, công nghệ hoặc tên tác giả..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"/>
+          <input id="socialSearchInput" oninput="handleSocialSearch(this.value)" type="text" placeholder="Tìm kiếm dự án, công nghệ, chủ đề Fintech, SaaS hoặc tác giả..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"/>
         </div>
         
         <!-- Sắp xếp -->
@@ -538,11 +538,12 @@
       <div class="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-100">
         <div class="flex flex-wrap items-center gap-1.5 text-xs" id="socialCatFilterGroup">
           <button onclick="filterSocialCategory('all')" id="socialCatAll" class="chip-pill chip-cyan font-bold">Tất cả</button>
+          <button onclick="filterSocialCategory('fintech')" id="socialCatFintech" class="chip-pill font-medium">Fintech</button>
+          <button onclick="filterSocialCategory('branding')" id="socialCatBranding" class="chip-pill font-medium">Branding</button>
+          <button onclick="filterSocialCategory('saas')" id="socialCatSaas" class="chip-pill font-medium">SaaS &amp; AI</button>
           <button onclick="filterSocialCategory('uiux')" id="socialCatUiux" class="chip-pill font-medium">UI/UX &amp; App</button>
-          <button onclick="filterSocialCategory('web')" id="socialCatWeb" class="chip-pill font-medium">Website &amp; Code</button>
-          <button onclick="filterSocialCategory('branding')" id="socialCatBranding" class="chip-pill font-medium">Thương hiệu &amp; Logo</button>
-          <button onclick="filterSocialCategory('3d')" id="socialCat3d" class="chip-pill font-medium">3D &amp; Motion</button>
-          <button onclick="filterSocialCategory('packaging')" id="socialCatPackaging" class="chip-pill font-medium">Bao bì &amp; In ấn</button>
+          <button onclick="filterSocialCategory('design-system')" id="socialCatDesignSystem" class="chip-pill font-medium">Design System</button>
+          <button onclick="filterSocialCategory('3d')" id="socialCat3d" class="chip-pill font-medium">3D &amp; Bao bì</button>
         </div>
         <span id="portfolioCountText" class="text-xs font-semibold text-slate-500">Đang tải sản phẩm...</span>
       </div>
@@ -2511,12 +2512,15 @@
       // Lọc danh mục
       if (activeSocialCat !== 'all') {
         filtered = filtered.filter(p => {
-          if (p.category && p.category.toLowerCase() === activeSocialCat.toLowerCase()) return true;
-          if (activeSocialCat === 'uiux' && (p.tags || []).some(t => /ui|ux|app|figma/i.test(t))) return true;
-          if (activeSocialCat === 'web' && (p.tags || []).some(t => /web|saas|react|code|frontend/i.test(t))) return true;
-          if (activeSocialCat === 'branding' && (p.tags || []).some(t => /brand|logo|poster|visual/i.test(t))) return true;
-          if (activeSocialCat === '3d' && (p.tags || []).some(t => /3d|render|motion|c4d/i.test(t))) return true;
-          if (activeSocialCat === 'packaging' && (p.tags || []).some(t => /packaging|bao bì|print/i.test(t))) return true;
+          const cat = (p.category || '').toLowerCase();
+          const target = activeSocialCat.toLowerCase();
+          if (cat === target) return true;
+          if (target === 'fintech' && (p.tags || []).some(t => /fintech|bank|finance|tiền/i.test(t))) return true;
+          if (target === 'branding' && (p.tags || []).some(t => /brand|logo|poster|visual|nhận diện/i.test(t))) return true;
+          if (target === 'saas' && (p.tags || []).some(t => /saas|ai|dashboard|analytics/i.test(t))) return true;
+          if (target === 'uiux' && (p.tags || []).some(t => /ui|ux|app|figma/i.test(t))) return true;
+          if (target === 'design-system' && (p.tags || []).some(t => /design system|system|tokens/i.test(t))) return true;
+          if (target === '3d' && (p.tags || []).some(t => /3d|render|motion|c4d|packaging|bao bì|print/i.test(t))) return true;
           return false;
         });
       }
@@ -2652,11 +2656,12 @@
       activeSocialCat = cat;
       const buttons = [
         { id: 'socialCatAll', cat: 'all' },
-        { id: 'socialCatUiux', cat: 'uiux' },
-        { id: 'socialCatWeb', cat: 'web' },
+        { id: 'socialCatFintech', cat: 'fintech' },
         { id: 'socialCatBranding', cat: 'branding' },
-        { id: 'socialCat3d', cat: '3d' },
-        { id: 'socialCatPackaging', cat: 'packaging' }
+        { id: 'socialCatSaas', cat: 'saas' },
+        { id: 'socialCatUiux', cat: 'uiux' },
+        { id: 'socialCatDesignSystem', cat: 'design-system' },
+        { id: 'socialCat3d', cat: '3d' }
       ];
 
       buttons.forEach(b => {
@@ -2671,6 +2676,17 @@
       });
 
       applySocialFiltersAndRender();
+    }
+
+    function filterPortfolioTag(tag) {
+      const mapping = {
+        'all': 'all',
+        'Fintech': 'fintech',
+        'Branding': 'branding',
+        'SaaS': 'saas',
+        'Design System': 'design-system'
+      };
+      filterSocialCategory(mapping[tag] || tag.toLowerCase());
     }
 
     function handleSocialSearch(val) {
