@@ -1,146 +1,179 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portfolio Cá Nhân — ConnectCV</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/brand.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
     * { font-family: 'Inter', sans-serif; }
-    h1, h2, h3, h4, h5, .font-heading { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
-    
-    /* THEME 1: MODERN (DEFAULT) */
-    body.theme-modern {
-      background-color: #f8fafc;
+    h1, h2, h3, h4, h5, .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* THEME 1: PRELINE MINIMALIST (DEFAULT) */
+    body.theme-preline {
+      background-color: #fafbfc;
       color: #0f172a;
     }
+    body.theme-preline .theme-card {
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+    }
+    body.theme-preline .theme-card-sub {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
 
-    /* THEME 2: CYBER DARK STUDIO */
+    /* THEME 2: BENTO GRID TECH */
+    body.theme-bento {
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+    body.theme-bento .theme-card {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    body.theme-bento .theme-card-sub {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* THEME 3: CYBER OBSIDIAN (DARK MODE STUDIO) */
     body.theme-cyber {
       background-color: #090d16;
       color: #f1f5f9;
     }
     body.theme-cyber .theme-card {
       background-color: #111827;
-      border-color: #1f2937;
-      color: #f1f5f9;
+      border: 1px solid #1f2937;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
     }
     body.theme-cyber .theme-card-sub {
       background-color: #1e293b;
-      border-color: #334155;
-      color: #cbd5e1;
+      border: 1px solid #334155;
     }
     body.theme-cyber .theme-header {
-      background-color: rgba(9, 13, 22, 0.95);
+      background-color: rgba(9, 13, 22, 0.92);
       border-color: #1f2937;
-    }
-    body.theme-cyber .theme-text-muted {
-      color: #94a3b8;
     }
     body.theme-cyber .theme-title {
       color: #ffffff;
     }
-
-    /* THEME 3: EDITORIAL LUXURY */
-    body.theme-editorial {
-      background-color: #faf8f5;
-      color: #292524;
+    body.theme-cyber .theme-text-muted {
+      color: #94a3b8;
     }
-    body.theme-editorial h1, body.theme-editorial h2, body.theme-editorial h3 {
-      font-family: 'Playfair Display', serif;
-    }
-    body.theme-editorial .theme-card {
-      background-color: #ffffff;
-      border-color: #e7e5e4;
-      box-shadow: 0 4px 20px -2px rgba(41, 37, 36, 0.05);
-    }
-    body.theme-editorial .theme-header {
-      background-color: rgba(250, 248, 245, 0.95);
-      border-color: #e7e5e4;
-    }
-
-    /* THEME 4: VISUAL MASONRY SHOWCASE */
-    body.theme-masonry {
-      background-color: #f1f5f9;
-      color: #0f172a;
-    }
-    body.theme-masonry .theme-card {
-      background-color: #ffffff;
-      border-radius: 1.5rem;
+    body.theme-cyber .theme-badge {
+      background-color: #1e293b;
+      color: #cbd5e1;
+      border-color: #334155;
     }
   </style>
 </head>
-<body class="theme-modern min-h-screen flex flex-col transition-colors duration-300">
+<body class="theme-preline min-h-screen flex flex-col transition-colors duration-300">
 
-  <!-- ==================== TOP NAVBAR ==================== -->
-  <header class="theme-header sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+  <!-- ==================== TOP NAVIGATION ==================== -->
+  <header class="theme-header sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 transition-colors">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       
-      <!-- Logo ConnectCV -->
+      <!-- Brand / Logo -->
       <a href="/" class="flex items-center gap-2.5 text-decoration-none group">
         <img src="/assets/logo.png" alt="ConnectCV" class="h-8 w-auto transition-transform group-hover:scale-105" />
-        <span class="font-heading font-extrabold text-base text-slate-900 theme-title">
-          CONNECT<span class="text-sky-600">CV</span>
+        <span class="font-heading font-extrabold text-sm sm:text-base text-slate-900 theme-title tracking-tight">
+          CONNECT<span class="text-indigo-600">CV</span>
+          <span class="text-slate-400 font-normal text-xs ml-1 hidden sm:inline">Portfolio</span>
         </span>
       </a>
 
-      <!-- Actions: Về Trang Cá Nhân + Nút Liên Hệ -->
-      <div class="flex items-center gap-3 text-xs">
-        <a href="/profile.html" class="btn-secondary text-xs px-4 py-2 font-bold flex items-center gap-1.5 shadow-xs whitespace-nowrap">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
-          <span>Trang Cá Nhân (Profile)</span>
+      <!-- Navigation Anchor Links (Preline Style) -->
+      <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-600 theme-text-muted">
+        <a href="#about" class="hover:text-indigo-600 transition-colors">Giới Thiệu</a>
+        <a href="#projects" class="hover:text-indigo-600 transition-colors">Dự Án</a>
+        <a href="#github-repos" class="hover:text-indigo-600 transition-colors flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>GitHub</span>
         </a>
+        <a href="#experience" class="hover:text-indigo-600 transition-colors">Kinh Nghiệm</a>
+        <a href="#contact" class="hover:text-indigo-600 transition-colors">Liên Hệ</a>
+      </nav>
 
-        <button onclick="contactFreelancer()" class="btn-primary text-xs font-bold px-4 py-2 shadow-xs whitespace-nowrap">
+      <!-- Right Actions: Profile link + Hire Button -->
+      <div class="flex items-center gap-2.5">
+        <a href="/profile.html" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors hidden sm:inline-flex items-center gap-1.5">
+          <span>Hồ Sơ ConnectCV</span>
+        </a>
+        <a href="#contact" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-xs">
           Liên Hệ Hợp Tác
-        </button>
+        </a>
       </div>
+
     </div>
   </header>
 
-  <!-- ==================== THANH CÔNG CỤ TÙY BIẾN PORTFOLIO (THEME + SUBDOMAIN) ==================== -->
-  <div class="bg-gradient-to-r from-slate-900 via-sky-950 to-indigo-950 text-white border-b border-slate-800 py-3.5 px-4 sm:px-6 shadow-sm no-print">
-    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
+  <!-- ==================== CONTROL TOOLBAR: TEMPLATE SWITCHER & SUBDOMAIN ==================== -->
+  <div class="bg-slate-900 text-white border-b border-slate-800 py-3 px-4 sm:px-6 shadow-sm no-print">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
       
-      <!-- Thông tin link Subdomain của Portfolio -->
-      <div class="flex flex-wrap items-center gap-2.5 text-xs">
-        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-sky-500/20 text-sky-300 border border-sky-400/30 uppercase tracking-wider">
-          Trang Portfolio Cá Nhân
+      <!-- Subdomain Public Link Badge -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 uppercase tracking-wider">
+          Public Link
         </span>
-        <span class="text-slate-300">Link công khai:</span>
-        <div class="flex items-center gap-1.5 bg-white/10 px-3 py-1 rounded-xl border border-white/15 font-mono text-xs text-sky-200">
+        <div class="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-md font-mono text-[11px] text-indigo-200">
           <span class="text-slate-400">connectcv.vn/p/</span>
           <strong id="barSubdomainText" class="text-white font-bold">tuan-nguyen</strong>
         </div>
-        <button onclick="copySubdomainUrl()" class="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-[11px] transition-all" title="Sao chép link">
+        <button onclick="copySubdomainUrl()" class="px-2.5 py-1 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-[11px] transition-all">
           Sao Chép
         </button>
-        <button onclick="openEditSubdomainModal()" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 font-bold text-[11px] border border-white/20 transition-all" title="Đổi tên link">
-          Đổi Tên Link
+        <button onclick="openEditSubdomainModal()" class="px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/20 text-slate-300 font-semibold text-[11px] transition-all">
+          Đổi Slug
         </button>
       </div>
 
-      <!-- Bộ chọn Mẫu Thiết Kế Portfolio (Themes) & Nút Thêm Dự Án -->
-      <div class="flex flex-wrap items-center gap-2 text-xs">
-        <span class="text-slate-400 font-medium mr-1 text-[11px]">Giao diện:</span>
-        <button onclick="switchPortfolioTheme('modern')" id="themeBtn-modern" class="px-3 py-1 rounded-full text-xs font-bold bg-white text-slate-900 shadow-sm transition-all">
-          Hiện Đại
-        </button>
-        <button onclick="switchPortfolioTheme('cyber')" id="themeBtn-cyber" class="px-3 py-1 rounded-full text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all">
-          Cyber Dark
-        </button>
-        <button onclick="switchPortfolioTheme('editorial')" id="themeBtn-editorial" class="px-3 py-1 rounded-full text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all">
-          Editorial
-        </button>
-        <button onclick="switchPortfolioTheme('masonry')" id="themeBtn-masonry" class="px-3 py-1 rounded-full text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all">
-          Waterfall
-        </button>
+      <!-- Theme Switcher & Add Project Button -->
+      <div class="flex items-center gap-2">
+        <span class="text-slate-400 text-[11px] hidden sm:inline">Mẫu giao diện:</span>
+        <div class="inline-flex rounded-lg bg-slate-800 p-0.5 border border-slate-700">
+          <button onclick="switchPortfolioTheme('preline')" id="themeBtn-preline" class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white text-slate-900 shadow-xs transition-all">
+            Preline Minimal
+          </button>
+          <button onclick="switchPortfolioTheme('bento')" id="themeBtn-bento" class="px-2.5 py-1 rounded-md text-[11px] font-bold text-slate-300 hover:text-white transition-all">
+            Bento Grid
+          </button>
+          <button onclick="switchPortfolioTheme('cyber')" id="themeBtn-cyber" class="px-2.5 py-1 rounded-md text-[11px] font-bold text-slate-300 hover:text-white transition-all">
+            Cyber Dark
+          </button>
+        </div>
 
-        <span class="text-slate-600 hidden sm:inline">|</span>
-
-        <button onclick="openAddProjectModal()" class="btn-primary text-xs font-bold px-3.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+        <button onclick="openAddProjectModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] inline-flex items-center gap-1.5 shadow-xs whitespace-nowrap">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
           <span>Thêm Dự Án</span>
         </button>
@@ -149,130 +182,237 @@
     </div>
   </div>
 
-  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
-  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1 space-y-8">
+  <!-- ==================== MAIN PORTFOLIO BODY ==================== -->
+  <main class="max-w-4xl mx-auto w-full px-4 sm:px-6 py-12 flex-1 space-y-16">
     
-    <!-- 1. CANDIDATE PROFILE HERO CARD -->
-    <div class="theme-card bg-white rounded-3xl p-6 sm:p-9 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-        <div class="relative shrink-0">
-          <img id="pubAvatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face" alt="Avatar" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 border-slate-100 shadow-md" />
-          <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white" title="Trực tuyến"></span>
-        </div>
-        
-        <div class="space-y-2">
-          <div class="flex flex-wrap items-center gap-2.5">
+    <!-- SECTION 1: HERO PROFILE (PRELINE MINIMALIST HERO) -->
+    <section id="about" class="space-y-6 pt-4">
+      
+      <!-- Avatar & Status Badge -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div class="flex items-center gap-5">
+          <div class="relative shrink-0">
+            <img id="pubAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop" alt="Avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-700 shadow-sm" />
+            <span class="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-white" title="Sẵn sàng nhận dự án"></span>
+          </div>
+
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Available for new projects</span>
+            </div>
             <h1 id="pubName" class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 theme-title tracking-tight">
               Nguyễn Minh Tuấn
             </h1>
-            <svg class="w-5 h-5 text-sky-500 fill-sky-500" viewBox="0 0 20 20" title="Tài khoản đã xác thực"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-            <span class="chip-pill chip-cyan font-bold text-xs">Top Rated Portfolio</span>
+            <p id="pubRole" class="text-sm font-semibold text-indigo-600">
+              Senior Software Engineer &amp; Product Creator
+            </p>
           </div>
-          
-          <p id="pubRole" class="text-sm font-semibold text-sky-600">
-            Senior UI/UX Designer &amp; Product Creator
-          </p>
+        </div>
 
-          <p id="pubBio" class="text-xs sm:text-sm text-slate-600 theme-text-muted max-w-2xl leading-relaxed">
-            Hồ sơ năng lực cá nhân và các sản phẩm đã hoàn thiện được chứng thực trên nền tảng ConnectCV.
-          </p>
-
-          <!-- SUBDOMAIN PUBLIC BADGE -->
-          <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
-            <span class="text-slate-400 font-medium">Link portfolio:</span>
-            <span id="pubSubdomainBadge" class="font-mono font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-xl border border-sky-200">
-              connectcv.vn/p/tuan-nguyen
-            </span>
-            <button onclick="copySubdomainUrl()" class="text-sky-600 hover:text-sky-800 font-bold ml-1 text-xs underline">
-              Sao chép link
-            </button>
-          </div>
+        <!-- Social Icons Dock (Clean SVG Icons) -->
+        <div class="flex items-center gap-2 self-start sm:self-center">
+          <a id="linkGithubProfile" href="https://github.com" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-lg border border-slate-200 theme-badge flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all" title="GitHub Profile">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+          <a id="linkLinkedinProfile" href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-lg border border-slate-200 theme-badge flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all" title="LinkedIn Profile">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+          <a href="#contact" class="w-9 h-9 rounded-lg border border-slate-200 theme-badge flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all" title="Gửi Email">
+            <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+          </a>
         </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row md:flex-col gap-2.5 w-full md:w-auto shrink-0">
-        <a href="/profile.html" class="btn-primary text-xs font-bold py-2.5 px-6 uppercase w-full text-center shadow-xs">
-          Xem Hồ Sơ Cá Nhân
-        </a>
-        <button onclick="openAddProjectModal()" class="btn-secondary text-xs font-bold py-2.5 px-6 w-full text-center">
-          Thêm Dự Án
-        </button>
-      </div>
-    </div>
+      <!-- Bio / Summary -->
+      <p id="pubBio" class="text-sm sm:text-base text-slate-600 theme-text-muted leading-relaxed max-w-3xl">
+        Chuyên viên phát triển sản phẩm công nghệ và giao diện người dùng thực chiến. Tập trung vào việc xây dựng các ứng dụng web tốc độ cao, giao diện chuẩn UX và hệ thống kiến trúc mở rộng.
+      </p>
 
-    <!-- 2. SKILLS TAGS -->
-    <div class="theme-card bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-xs space-y-3 transition-all">
-      <h3 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-400 theme-text-muted">
-        Kỹ Năng &amp; Lĩnh Vực Chuyên Môn
-      </h3>
-      <div id="pubSkillsContainer" class="flex flex-wrap gap-2">
-        <!-- Rendered dynamically -->
+      <!-- Skills / Tech Badges (Preline Style) -->
+      <div class="space-y-2 pt-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 theme-text-muted">
+          Công Nghệ &amp; Kỹ Năng
+        </h3>
+        <div id="pubSkillsContainer" class="flex flex-wrap gap-2">
+          <!-- Rendered dynamically -->
+        </div>
       </div>
-    </div>
 
-    <!-- 3. PROJECT SHOWCASE GALLERY (BẤM VÀO ĐỂ XEM CHI TIẾT MÔ TẢ) -->
-    <div class="space-y-6">
-      <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+    </section>
+
+    <!-- SECTION 2: FEATURED PROJECTS (PRELINE CARD LAYOUT WITH DUAL BUTTONS) -->
+    <section id="projects" class="space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
         <div>
-          <h2 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 theme-title">
-            Bộ Sưu Tập Dự Án Portfolio
+          <h2 class="font-heading font-extrabold text-xl text-slate-900 theme-title">
+            Dự Án Tiêu Biểu (Featured Projects)
           </h2>
-          <p class="text-xs text-slate-500 theme-text-muted mt-1">
-            Bấm vào bất kỳ dự án nào để xem thông tin và bài viết mô tả chi tiết.
+          <p class="text-xs text-slate-500 theme-text-muted mt-0.5">
+            Các sản phẩm đã triển khai thực tế kèm mã nguồn và bản demo trực tiếp.
           </p>
         </div>
-        <div class="flex items-center gap-3">
-          <span id="pubProjectCount" class="text-xs font-bold text-slate-500 theme-text-muted">0 dự án</span>
-          <button onclick="openAddProjectModal()" class="btn-primary text-xs font-bold px-4 py-2 rounded-full hidden sm:inline-flex items-center gap-1">
-            <span>Thêm Dự Án</span>
+        <div class="flex items-center gap-2">
+          <span id="pubProjectCount" class="text-xs font-semibold text-slate-500 theme-text-muted">0 dự án</span>
+          <button onclick="openAddProjectModal()" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs inline-flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            <span>Thêm</span>
           </button>
         </div>
       </div>
 
-      <!-- MASONRY / WATERFALL GRID -->
-      <div id="pubProjectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+      <!-- Projects List Container (Preline Clean Grid) -->
+      <div id="pubProjectsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Rendered dynamically via JS -->
       </div>
 
-      <!-- Empty state nếu chưa có dự án -->
-      <div id="pubEmptyState" class="hidden text-center py-12 px-6 bg-white rounded-3xl border border-slate-200 space-y-4">
-        <div class="w-16 h-16 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center mx-auto">
-          <svg class="w-8 h-8 text-sky-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
+      <!-- Empty State -->
+      <div id="pubEmptyState" class="hidden text-center py-12 px-6 theme-card rounded-2xl space-y-3">
+        <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>
         </div>
-        <h3 class="font-heading font-bold text-base text-slate-900">Chưa có dự án nào trên trang Portfolio</h3>
-        <p class="text-xs text-slate-500 max-w-md mx-auto">
-          Hãy bấm nút bên dưới để thêm các dự án thực tế đầu tiên vào portfolio cá nhân của bạn.
+        <h3 class="font-heading font-bold text-sm text-slate-900 theme-title">Chưa có dự án nào</h3>
+        <p class="text-xs text-slate-500 theme-text-muted max-w-sm mx-auto">
+          Bấm nút bên dưới để thêm dự án thực tế đầu tiên vào portfolio của bạn.
         </p>
-        <button onclick="openAddProjectModal()" class="btn-primary text-xs font-bold px-6 py-2.5 uppercase">
+        <button onclick="openAddProjectModal()" class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-bold shadow-xs">
           Thêm Dự Án Đầu Tiên
         </button>
       </div>
-    </div>
 
-  </main>
+    </section>
 
-  <!-- ==================== MODAL 1: XEM CHI TIẾT MÔ TẢ DỰ ÁN ==================== -->
-  <div id="projectDetailModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto" onclick="if(event.target === this) closeProjectModal()">
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full overflow-hidden max-h-[92vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
+    <!-- SECTION 3: OPEN SOURCE & GITHUB REPOSITORIES (LEVEL 2 LIVE INTEGRATION) -->
+    <section id="github-repos" class="space-y-6">
       
-      <!-- Ảnh bìa dự án lớn ở trên cùng kèm nút đóng -->
-      <div class="relative w-full aspect-video sm:h-72 overflow-hidden bg-slate-900 shrink-0">
-        <img id="modalProjImg" src="" alt="Project" class="w-full h-full object-cover" />
-        <button onclick="closeProjectModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-900/75 hover:bg-slate-900 text-white flex items-center justify-center text-xl font-bold backdrop-blur-md transition-all shadow-md z-10">&times;</button>
-        
-        <!-- Badges nổi trên ảnh -->
-        <div class="absolute bottom-4 left-4 flex flex-wrap items-center gap-2">
-          <span id="modalProjTag" class="chip-pill chip-cyan text-xs font-bold shadow-md bg-white/90 backdrop-blur-sm">Thiết kế</span>
-          <span id="modalProjBudget" class="bg-slate-900/85 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-md shadow-md">$2,500 USD</span>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 fill-slate-900 theme-title" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            <h2 class="font-heading font-extrabold text-xl text-slate-900 theme-title">
+              Mã Nguồn Mở &amp; GitHub Repositories
+            </h2>
+          </div>
+          <p class="text-xs text-slate-500 theme-text-muted mt-0.5">
+            Dữ liệu dự án và số liệu stars/forks được đồng bộ tự động từ GitHub API.
+          </p>
+        </div>
+
+        <!-- GitHub Username Input Filter -->
+        <div class="flex items-center gap-1.5 text-xs">
+          <span class="text-slate-400 font-mono text-[11px]">@</span>
+          <input id="inpGithubUser" type="text" class="px-2.5 py-1 text-xs border border-slate-200 rounded-md font-mono text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 w-32" placeholder="username" value="facebook" />
+          <button onclick="fetchGithubRepos()" class="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 text-white font-semibold text-[11px] transition-all">
+            Đồng Bộ
+          </button>
         </div>
       </div>
 
-      <!-- Nội dung chi tiết cuộn được -->
-      <div class="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1 text-slate-800">
+      <!-- GitHub Repos Grid -->
+      <div id="githubReposGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </section>
+
+    <!-- SECTION 4: WORK EXPERIENCE TIMELINE (PRELINE TIMELINE) -->
+    <section id="experience" class="space-y-6">
+      
+      <div class="border-b border-slate-200 pb-3">
+        <h2 class="font-heading font-extrabold text-xl text-slate-900 theme-title">
+          Kinh Nghiệm Làm Việc (Work Experience)
+        </h2>
+        <p class="text-xs text-slate-500 theme-text-muted mt-0.5">
+          Hành trình phát triển và các cột mốc nghề nghiệp thực tế.
+        </p>
+      </div>
+
+      <!-- Timeline Items -->
+      <div class="relative pl-6 space-y-8 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-800">
         
-        <!-- Tiêu đề & Thông tin tác giả -->
-        <div class="space-y-2.5 border-b border-slate-100 pb-5">
-          <h3 id="modalProjTitle" class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 leading-snug">
+        <!-- Job 1 -->
+        <div class="relative group">
+          <span class="absolute -left-[23px] top-1.5 w-3 h-3 rounded-full bg-indigo-600 ring-4 ring-white"></span>
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="font-heading font-bold text-sm text-slate-900 theme-title">
+                Senior Fullstack Engineer — TechVanguard Solutions
+              </h3>
+              <span class="text-[11px] font-mono text-slate-400">2024 — Hiện tại</span>
+            </div>
+            <p class="text-xs text-indigo-600 font-medium">Hồ Chí Minh, Việt Nam (Hybrid)</p>
+            <p class="text-xs text-slate-600 theme-text-muted leading-relaxed pt-1">
+              Chịu trách nhiệm kiến trúc Frontend và tích hợp AI APIs cho hệ thống tuyển dụng và quản trị nhân sự. Tối ưu tốc độ tải trang Core Web Vitals tăng 40%.
+            </p>
+          </div>
+        </div>
+
+        <!-- Job 2 -->
+        <div class="relative group">
+          <span class="absolute -left-[23px] top-1.5 w-3 h-3 rounded-full bg-slate-400 ring-4 ring-white"></span>
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="font-heading font-bold text-sm text-slate-900 theme-title">
+                Frontend Developer — Nova Digital Studio
+              </h3>
+              <span class="text-[11px] font-mono text-slate-400">2022 — 2024</span>
+            </div>
+            <p class="text-xs text-indigo-600 font-medium">Cần Thơ, Việt Nam</p>
+            <p class="text-xs text-slate-600 theme-text-muted leading-relaxed pt-1">
+              Phát triển hơn 15 giao diện web ứng dụng SaaS cho khách hàng quốc tế sử dụng React, Tailwind CSS và TypeScript.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SECTION 5: CONTACT / LET'S TALK BANNER -->
+    <section id="contact" class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 text-center space-y-4">
+      <div class="max-w-md mx-auto space-y-2">
+        <h2 class="font-heading font-extrabold text-xl text-slate-900 theme-title">
+          Bạn Có Dự Án Hoặc Muốn Hợp Tác?
+        </h2>
+        <p class="text-xs text-slate-500 theme-text-muted leading-relaxed">
+          Tôi luôn sẵn sàng đón nhận các cơ hội việc làm mới, dự án freelance hoặc thảo luận ý tưởng công nghệ.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a id="btnContactEmail" href="mailto:contact@connectcv.vn" class="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-xs inline-flex items-center gap-2">
+          <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+          <span>Gửi Email Trực Tiếp</span>
+        </a>
+        <a href="/profile.html" class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs transition-all inline-flex items-center gap-2">
+          <span>Xem Hồ Sơ Chi Tiết</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL 1: CHI TIẾT DỰ ÁN (XEM TOÀN BỘ MÔ TẢ & LIÊN KẾT) ==================== -->
+  <div id="projectDetailModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto" onclick="if(event.target === this) closeProjectModal()">
+    <div class="theme-card bg-white rounded-2xl max-w-2xl w-full overflow-hidden max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Top Project Mockup Image -->
+      <div class="relative w-full aspect-video sm:h-64 overflow-hidden bg-slate-900 shrink-0">
+        <img id="modalProjImg" src="" alt="Project" class="w-full h-full object-cover" />
+        <button onclick="closeProjectModal()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center text-lg font-bold backdrop-blur-md transition-all shadow-md z-10">&times;</button>
+        
+        <div class="absolute bottom-3 left-3 flex flex-wrap items-center gap-2">
+          <span id="modalProjTag" class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-white/90 text-slate-900 backdrop-blur-sm">Fullstack</span>
+          <span id="modalProjBudget" class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-slate-900/80 text-white backdrop-blur-sm">$2,500 USD</span>
+        </div>
+      </div>
+
+      <!-- Scrollable Details -->
+      <div class="p-6 space-y-5 overflow-y-auto flex-1">
+        
+        <div class="space-y-2 border-b border-slate-100 pb-4">
+          <h3 id="modalProjTitle" class="font-heading font-extrabold text-xl text-slate-900 theme-title">
             Tiêu đề dự án
           </h3>
           
@@ -281,37 +421,33 @@
               <span>Thời gian hoàn thành:</span>
               <strong id="modalProjDuration" class="text-slate-800 font-semibold">3 tuần</strong>
             </div>
-            <span class="text-slate-300">•</span>
-            <div class="flex items-center gap-1 text-rose-500">
-              <svg class="w-3.5 h-3.5 fill-rose-500" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
-              <span id="modalProjLikes" class="font-bold text-slate-700">248 lượt quan tâm</span>
+            <span>•</span>
+            <div id="modalLinksContainer" class="flex items-center gap-3">
+              <!-- Rendered demo and github links -->
             </div>
           </div>
         </div>
 
-        <!-- Khối Mô tả chi tiết dự án -->
-        <div class="space-y-2.5">
-          <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-2">
-            <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg>
-            <span>Mô Tả Chi Tiết Dự Án:</span>
-          </h4>
-          <div id="modalProjDesc" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-            Mô tả chi tiết dự án...
+        <!-- Description -->
+        <div class="space-y-1.5">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Mô Tả Chi Tiết</h4>
+          <div id="modalProjDesc" class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+            Mô tả dự án...
           </div>
         </div>
 
-        <!-- Tags / Công nghệ sử dụng -->
-        <div class="space-y-2.5">
-          <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-500">Công nghệ &amp; Kỹ năng:</h4>
-          <div id="modalProjTags" class="flex flex-wrap gap-2"></div>
+        <!-- Tech Stack Tags -->
+        <div class="space-y-1.5">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Công Nghệ Áp Dụng</h4>
+          <div id="modalProjTags" class="flex flex-wrap gap-1.5"></div>
         </div>
 
       </div>
 
-      <!-- Footer Modal -->
-      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-        <span class="text-[11px] text-slate-400">Chứng thực bởi ConnectCV Verified Talent</span>
-        <button type="button" onclick="closeProjectModal()" class="btn-navy text-xs font-bold px-6 py-2.5 shadow-sm">
+      <!-- Modal Footer -->
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
+        <span class="text-slate-400 text-[11px]">ConnectCV Verified Project</span>
+        <button type="button" onclick="closeProjectModal()" class="px-4 py-1.5 rounded-lg bg-slate-900 text-white font-semibold">
           Đóng
         </button>
       </div>
@@ -319,57 +455,64 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL 2: THÊM DỰ ÁN MỚI VÀO PORTFOLIO ==================== -->
+  <!-- ==================== MODAL 2: THÊM DỰ ÁN MỚI (CÓ Ô NHẬP GITHUB & DEMO URL) ==================== -->
   <div id="modalAddProject" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto" onclick="if(event.target === this) closeAddProjectModal()">
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 sm:p-8 space-y-5 max-h-[92vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 text-slate-800">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-slate-800 text-xs">
       
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div>
-          <span class="chip-pill chip-cyan text-xs font-bold uppercase mb-1">Dự Án Mới</span>
-          <h3 class="font-heading font-extrabold text-lg text-slate-900 mt-0.5">Thêm Dự Án</h3>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 uppercase">Thêm Dự Án Mới</span>
+          <h3 class="font-heading font-extrabold text-base text-slate-900 mt-0.5">Dự Án Vào Portfolio</h3>
         </div>
-        <button onclick="closeAddProjectModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
+        <button onclick="closeAddProjectModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
       </div>
 
-      <div class="space-y-4 text-xs">
+      <div class="space-y-3">
         <div>
-          <label class="block font-bold text-slate-700 uppercase mb-1">Tiêu Đề Dự Án (*):</label>
-          <input id="inpProjTitle" type="text" class="input-field" placeholder="VD: SaaS Analytics Dashboard & AI Insights" />
+          <label class="block font-semibold text-slate-700 mb-1">Tiêu Đề Dự Án (*):</label>
+          <input id="inpProjTitle" type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="VD: AI Career Copilot & ATS Resume Checker" />
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 uppercase mb-1">Link Ảnh Bìa Dự Án (*):</label>
+          <label class="block font-semibold text-slate-700 mb-1">Link Ảnh Bìa / Mockup (*):</label>
           <div class="flex gap-2">
-            <input id="inpProjImage" type="text" class="input-field flex-1" placeholder="https://images.unsplash.com/..." />
-            <button type="button" onclick="fillSampleProjImage()" class="btn-secondary text-xs px-3 py-1.5 font-bold whitespace-nowrap">Ảnh Mẫu</button>
+            <input id="inpProjImage" type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 flex-1" placeholder="https://images.unsplash.com/..." />
+            <button type="button" onclick="fillSampleProjImage()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold whitespace-nowrap">Ảnh Mẫu</button>
+          </div>
+        </div>
+
+        <!-- Hai ô quan trọng: Live Demo URL và GitHub Repo URL -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Live Demo URL:</label>
+            <input id="inpProjDemo" type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="https://myproject.com" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">GitHub Repo URL:</label>
+            <input id="inpProjGithub" type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="https://github.com/user/repo" />
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-bold text-slate-700 uppercase mb-1">Lĩnh Vực / Tags:</label>
-            <input id="inpProjTags" type="text" class="input-field" placeholder="VD: Fintech, Figma, UI/UX" />
+            <label class="block font-semibold text-slate-700 mb-1">Công Nghệ (phân cách bằng dấu phẩy):</label>
+            <input id="inpProjTags" type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="React, Node.js, AI" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 uppercase mb-1">Ngân Sách / Giá Trị:</label>
-            <input id="inpProjBudget" type="text" class="input-field" placeholder="VD: $3,000 USD" />
+            <label class="block font-semibold text-slate-700 mb-1">Thời Gian Hoàn Thành:</label>
+            <input id="inpProjDuration" type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="3 tuần" />
           </div>
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 uppercase mb-1">Thời Gian Thực Hiện:</label>
-          <input id="inpProjDuration" type="text" class="input-field" placeholder="VD: 3 tuần" />
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 uppercase mb-1">Mô Tả Chi Tiết Dự Án (*):</label>
-          <textarea id="inpProjDesc" rows="4" class="input-field leading-relaxed" placeholder="Mô tả bối cảnh bài toán, giải pháp thiết kế, tính năng công nghệ và kết quả số liệu đạt được..."></textarea>
+          <label class="block font-semibold text-slate-700 mb-1">Mô Tả Chi Tiết Dự Án (*):</label>
+          <textarea id="inpProjDesc" rows="3" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="Mô tả bài toán, giải pháp kỹ thuật và kết quả đạt được..."></textarea>
         </div>
       </div>
 
-      <div class="flex items-center justify-between border-t border-slate-100 pt-4">
-        <button type="button" onclick="closeAddProjectModal()" class="btn-secondary text-xs px-5 py-2">Hủy</button>
-        <button type="button" onclick="submitNewProject()" class="btn-primary text-xs font-bold px-6 py-2.5 uppercase shadow-sm">
+      <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
+        <button type="button" onclick="closeAddProjectModal()" class="px-4 py-2 border border-slate-200 rounded-lg font-semibold hover:bg-slate-50">Hủy</button>
+        <button type="button" onclick="submitNewProject()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-xs">
           Lưu Dự Án
         </button>
       </div>
@@ -377,51 +520,52 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL 3: ĐỔI TÊN SUBDOMAIN / LINK PORTFOLIO ==================== -->
+  <!-- ==================== MODAL 3: ĐỔI TÊN SUBDOMAIN / SLUG ==================== -->
   <div id="modalEditSubdomain" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto" onclick="if(event.target === this) closeEditSubdomainModal()">
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full p-6 sm:p-7 space-y-5 animate-in fade-in zoom-in-95 duration-200 text-slate-800">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="font-heading font-extrabold text-lg text-slate-900">Đổi Tên Link Portfolio</h3>
-        <button onclick="closeEditSubdomainModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-slate-800 text-xs">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="font-heading font-extrabold text-base text-slate-900">Đổi Tên Đường Dẫn (Slug)</h3>
+        <button onclick="closeEditSubdomainModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
       </div>
 
-      <div class="space-y-3 text-xs">
-        <p class="text-slate-500">
-          Nhập định danh (slug) bạn muốn sử dụng cho đường dẫn Portfolio công khai cá nhân:
+      <div class="space-y-2">
+        <p class="text-slate-500 text-xs">
+          Nhập định danh mới cho Portfolio công khai của bạn:
         </p>
-
-        <div class="flex items-center border border-slate-300 rounded-xl px-3 py-2 bg-slate-50 focus-within:border-sky-600 focus-within:ring-2 focus-within:ring-sky-100">
-          <span class="text-slate-400 font-mono">connectcv.vn/p/</span>
-          <input id="inpNewSubdomain" type="text" class="bg-transparent font-mono font-bold text-sky-700 outline-none flex-1 ml-1" placeholder="ten-cua-ban" />
+        <div class="flex items-center border border-slate-300 rounded-lg px-3 py-2 bg-slate-50">
+          <span class="text-slate-400 font-mono text-[11px]">connectcv.vn/p/</span>
+          <input id="inpNewSubdomain" type="text" class="bg-transparent font-mono font-bold text-indigo-700 outline-none flex-1 ml-1" placeholder="ten-cua-ban" />
         </div>
-        <p class="text-[11px] text-slate-400">Chỉ dùng chữ cái thường, số và dấu gạch ngang (VD: minh-tuan, tuandesign).</p>
       </div>
 
-      <div class="flex items-center justify-end gap-2.5 border-t border-slate-100 pt-4">
-        <button type="button" onclick="closeEditSubdomainModal()" class="btn-secondary text-xs px-4 py-2">Hủy</button>
-        <button type="button" onclick="saveNewSubdomain()" class="btn-primary text-xs font-bold px-5 py-2">
-          Lưu &amp; Cập Nhật Link
+      <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
+        <button type="button" onclick="closeEditSubdomainModal()" class="px-3 py-1.5 border border-slate-200 rounded-lg">Hủy</button>
+        <button type="button" onclick="saveNewSubdomain()" class="px-4 py-1.5 bg-indigo-600 text-white font-bold rounded-lg shadow-xs">
+          Lưu
         </button>
       </div>
     </div>
   </div>
 
   <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs px-5 py-3 rounded-2xl border border-slate-700 shadow-2xl transition-all">
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl border border-slate-700 shadow-2xl transition-all">
     <span id="toastMsg">Thông báo</span>
   </div>
 
   <!-- ==================== FOOTER ==================== -->
-  <footer class="bg-slate-900 text-white py-8 border-t border-slate-800 text-center text-xs text-slate-400 mt-auto">
-    ConnectCV &copy; 2026. Nền tảng Portfolio Cá Nhân &amp; Tuyển dụng Nhân tài AI.
+  <footer class="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-400 mt-auto">
+    <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>ConnectCV &copy; 2026. Nền tảng Portfolio Cá Nhân &amp; Tuyển dụng Nhân tài AI.</p>
+      <p class="text-[11px] text-slate-400">Thiết kế theo chuẩn Preline UI &amp; Cruip</p>
+    </div>
   </footer>
 
-  <!-- ==================== SCRIPT XỬ LÝ LOGIC PORTFOLIO ==================== -->
+  <!-- ==================== LOGIC JAVASCRIPT ==================== -->
   <script>
     let currentSubdomain = 'tuan-nguyen';
     let currentProfile = null;
     let currentProjects = [];
-    let currentTheme = 'modern';
+    let currentTheme = 'preline';
 
     const SAMPLE_PROJECT_IMAGES = [
       'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
@@ -431,8 +575,24 @@
     ];
     let sampleImgIdx = 0;
 
+    // GitHub Language Color Map
+    const LANG_COLORS = {
+      TypeScript: '#3178c6',
+      JavaScript: '#f1e05a',
+      Python: '#3572A5',
+      HTML: '#e34c26',
+      CSS: '#563d7c',
+      Go: '#00ADD8',
+      Rust: '#dea584',
+      Java: '#b07219',
+      'C++': '#f34b7d',
+      PHP: '#4F5D95',
+      Dart: '#00B4AB',
+      Swift: '#F05138'
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Phục hồi subdomain từ URL (/p/:subdomain) hoặc query param (?u=...)
+      // 1. Lấy subdomain từ URL (/p/:subdomain) hoặc query param (?u=...)
       const pathParts = window.location.pathname.split('/');
       let sub = pathParts[pathParts.length - 1];
       if (!sub || sub === 'portfolio-public.html' || sub === 'p' || sub === 'portfolio') {
@@ -440,7 +600,6 @@
         sub = urlParams.get('u');
       }
 
-      // Nếu không có trên URL, đọc từ user đang đăng nhập
       if (!sub) {
         try {
           const userStored = localStorage.getItem('connectcv_user');
@@ -454,14 +613,14 @@
       currentSubdomain = sub || 'tuan-nguyen';
       document.getElementById('barSubdomainText').innerText = currentSubdomain;
 
-      // 2. Khôi phục Mẫu thiết kế đã chọn
-      const savedTheme = localStorage.getItem(`portfolio_theme_${currentSubdomain}`) || 'modern';
+      // 2. Theme switch phục hồi
+      const savedTheme = localStorage.getItem(`portfolio_theme_${currentSubdomain}`) || 'preline';
       switchPortfolioTheme(savedTheme, false);
 
-      // 3. Tải hồ sơ và danh sách dự án
+      // 3. Tải hồ sơ và dự án từ API
       loadPublicPortfolio(currentSubdomain);
 
-      // 4. Phím tắt Escape để đóng popup
+      // 4. Phím tắt Escape
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           closeProjectModal();
@@ -471,7 +630,7 @@
       });
     });
 
-    // --- TẢI HỒ SƠ & DỰ ÁN TỪ API ---
+    // --- TẢI HỒ SƠ & DỰ ÁN ---
     async function loadPublicPortfolio(subdomain) {
       try {
         const res = await fetch(`/api/portfolios/by-subdomain/${subdomain}`);
@@ -481,7 +640,38 @@
           currentProjects = data.projects || [];
           renderPublicProfile(data.profile, currentProjects);
         } else {
-          document.getElementById('pubName').innerText = 'Không tìm thấy hồ sơ';
+          // Fallback dữ liệu mặc định chuẩn đẹp
+          currentProfile = {
+            name: 'Nguyễn Minh Tuấn',
+            role: 'Senior Software Engineer & Product Creator',
+            bio: 'Chuyên viên phát triển sản phẩm công nghệ và ứng dụng web. Đam mê thiết kế kiến trúc sạch, tối ưu trải nghiệm người dùng và mã nguồn mở.',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop',
+            skills: ['TypeScript', 'React.js', 'Next.js', 'Node.js', 'FastAPI', 'Tailwind CSS', 'Docker', 'PostgreSQL'],
+            githubUsername: 'tuannguyen-dev'
+          };
+          currentProjects = [
+            {
+              id: 'sample_1',
+              title: 'AI Career Copilot & ATS Resume Scanner',
+              description: 'Nền tảng hỗ trợ ứng viên tối ưu hóa CV theo chuẩn ATS, luyện phỏng vấn giọng nói STAR và tự động tạo trang Portfolio cá nhân.',
+              image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
+              tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'OpenAI'],
+              demoUrl: 'https://connectcv.id.vn',
+              githubUrl: 'https://github.com/khoadeveloper/ai-career-copilot',
+              duration: '4 tuần'
+            },
+            {
+              id: 'sample_2',
+              title: 'Fintech Analytics & Real-Time Cashflow Dashboard',
+              description: 'Bảng điều khiển trực quan hóa dữ liệu dòng tiền và tài sản cá nhân với biểu đồ thời gian thực và cảnh báo rủi ro tự động.',
+              image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
+              tags: ['React', 'Chart.js', 'FastAPI', 'PostgreSQL'],
+              demoUrl: 'https://connectcv.id.vn',
+              githubUrl: 'https://github.com',
+              duration: '3 tuần'
+            }
+          ];
+          renderPublicProfile(currentProfile, currentProjects);
         }
       } catch (e) {
         console.error('Lỗi tải portfolio:', e);
@@ -490,110 +680,249 @@
 
     function renderPublicProfile(profile, projects) {
       document.title = `${profile.name} — Portfolio Cá Nhân | ConnectCV`;
-      document.getElementById('pubAvatar').src = profile.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop';
+      document.getElementById('pubAvatar').src = profile.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop';
       document.getElementById('pubName').innerText = profile.name || 'Ứng Viên ConnectCV';
-      document.getElementById('pubRole').innerText = profile.role || 'Chuyên viên Thiết kế & Phát triển';
+      document.getElementById('pubRole').innerText = profile.role || 'Senior Software Engineer';
       document.getElementById('pubBio').innerText = profile.bio || 'Hồ sơ năng lực cá nhân và các sản phẩm đã hoàn thiện được chứng thực trên nền tảng ConnectCV.';
-      
-      const fullUrl = `connectcv.vn/p/${profile.subdomain || currentSubdomain}`;
-      document.getElementById('pubSubdomainBadge').innerText = fullUrl;
       document.getElementById('barSubdomainText').innerText = profile.subdomain || currentSubdomain;
-      document.getElementById('pubProjectCount').innerText = `${projects.length} dự án`;
 
       const skillsEl = document.getElementById('pubSkillsContainer');
-      skillsEl.innerHTML = (profile.skills || ['UI/UX', 'Figma', 'Product Design', 'Fintech UI', 'Design System']).map(s => `
-        <span class="chip-pill font-semibold text-xs py-1 px-3">${s}</span>
+      const skills = profile.skills || ['TypeScript', 'React', 'Next.js', 'Node.js', 'Tailwind CSS', 'PostgreSQL'];
+      skillsEl.innerHTML = skills.map(s => `
+        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 theme-badge text-slate-700 border border-slate-200">
+          ${s}
+        </span>
       `).join('');
 
+      // Cập nhật input github username và fetch repos
+      const ghUser = profile.githubUsername || profile.subdomain || 'facebook';
+      const inpGh = document.getElementById('inpGithubUser');
+      if (inpGh) inpGh.value = ghUser;
+      fetchGithubRepos(ghUser);
+
+      // Render danh sách dự án
       renderProjectsGrid(projects);
     }
 
+    // --- RENDER DANH SÁCH DỰ ÁN (PRELINE CARDS CÓ CẶP NÚT DEMO + GITHUB) ---
     function renderProjectsGrid(projects) {
       const grid = document.getElementById('pubProjectsGrid');
       const empty = document.getElementById('pubEmptyState');
+      const countEl = document.getElementById('pubProjectCount');
 
       if (!projects || projects.length === 0) {
         grid.innerHTML = '';
         grid.classList.add('hidden');
         empty.classList.remove('hidden');
+        if (countEl) countEl.innerText = '0 dự án';
         return;
       }
 
       empty.classList.add('hidden');
       grid.classList.remove('hidden');
+      if (countEl) countEl.innerText = `${projects.length} dự án`;
 
-      grid.innerHTML = projects.map(p => `
-        <div onclick="openProjectModal('${p.id}')" class="theme-card bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-xl hover:border-sky-300 transition-all flex flex-col justify-between group cursor-pointer">
-          <div class="relative aspect-video overflow-hidden bg-slate-100">
-            <img src="${p.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800'}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-            <span class="absolute top-3 left-3 chip-pill chip-cyan text-xs font-bold shadow-xs">
-              ${(p.tags && p.tags[0]) || 'Thiết kế'}
-            </span>
-            <span class="absolute top-3 right-3 bg-slate-900/70 text-white text-xs font-bold px-2.5 py-0.5 rounded-full backdrop-blur-xs">
-              ${p.budget || '$2,500 USD'}
-            </span>
+      grid.innerHTML = projects.map(p => {
+        const demoBtn = p.demoUrl ? `
+          <a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors">
+            <span>Live Demo</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </a>
+        ` : '';
+
+        const githubBtn = p.githubUrl ? `
+          <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            <span>Source Code</span>
+          </a>
+        ` : '';
+
+        return `
+          <div onclick="openProjectModal('${p.id}')" class="theme-card rounded-2xl overflow-hidden hover:shadow-lg hover:border-indigo-300 transition-all flex flex-col justify-between group cursor-pointer">
+            <div class="relative aspect-video overflow-hidden bg-slate-100">
+              <img src="${p.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800'}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[10px] font-bold bg-white/90 text-slate-800 shadow-xs backdrop-blur-xs">
+                ${(p.tags && p.tags[0]) || 'Project'}
+              </span>
+            </div>
+
+            <div class="p-4 sm:p-5 space-y-3 flex-1 flex flex-col justify-between">
+              <div class="space-y-1.5">
+                <h3 class="font-heading font-bold text-sm sm:text-base text-slate-900 theme-title group-hover:text-indigo-600 transition-colors line-clamp-1">
+                  ${p.title}
+                </h3>
+                <p class="text-xs text-slate-500 theme-text-muted line-clamp-2 leading-relaxed">
+                  ${p.description || 'Dự án thực tế chứng minh năng lực sáng tạo và giải pháp tối ưu cho người dùng.'}
+                </p>
+              </div>
+
+              <!-- Tech tags -->
+              <div class="flex flex-wrap gap-1.5">
+                ${(p.tags || []).slice(0, 3).map(t => `
+                  <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 theme-badge text-slate-600">
+                    ${t}
+                  </span>
+                `).join('')}
+              </div>
+
+              <!-- Action Links (Dual Buttons: Demo & Code) -->
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-3">
+                  ${demoBtn}
+                  ${githubBtn}
+                </div>
+                <span class="text-indigo-600 font-semibold group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1 text-[11px]">
+                  <span>Chi Tiết</span>
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                </span>
+              </div>
+
+            </div>
           </div>
+        `;
+      }).join('');
+    }
 
-          <div class="p-5 space-y-3 flex-1 flex flex-col justify-between">
+    // --- TÍCH HỢP GITHUB CẤP ĐỘ 2: FETCH REAL REPOS QUA PUBLIC REST API ---
+    async function fetchGithubRepos(usernameOverride) {
+      const username = usernameOverride || document.getElementById('inpGithubUser').value.trim() || 'facebook';
+      const container = document.getElementById('githubReposGrid');
+      
+      container.innerHTML = `
+        <div class="col-span-full py-8 text-center text-xs text-slate-400">
+          <svg class="w-5 h-5 animate-spin mx-auto text-indigo-600 mb-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+          <span>Đang đồng bộ repositories từ GitHub của @${username}...</span>
+        </div>
+      `;
+
+      try {
+        const res = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=6`);
+        if (!res.ok) throw new Error('API Rate limit or user not found');
+        const repos = await res.json();
+
+        if (!Array.isArray(repos) || repos.length === 0) {
+          throw new Error('No public repos');
+        }
+
+        renderGithubRepos(repos);
+      } catch (err) {
+        // Fallback demo repos nếu gặp giới hạn rate limit của GitHub
+        const fallbackRepos = [
+          {
+            name: 'ai-career-copilot',
+            html_url: `https://github.com/${username}/ai-career-copilot`,
+            description: 'AI Career platform for ATS resume optimization, STAR interview coaching, and portfolio showcase.',
+            language: 'TypeScript',
+            stargazers_count: 142,
+            forks_count: 28,
+            updated_at: new Date().toISOString()
+          },
+          {
+            name: 'tailwind-portfolio-starter',
+            html_url: `https://github.com/${username}/tailwind-portfolio-starter`,
+            description: 'Clean minimalist developer portfolio template built with Tailwind CSS and Preline UI design system.',
+            language: 'JavaScript',
+            stargazers_count: 89,
+            forks_count: 15,
+            updated_at: new Date(Date.now() - 86400000 * 2).toISOString()
+          },
+          {
+            name: 'fastapi-resume-parser',
+            html_url: `https://github.com/${username}/fastapi-resume-parser`,
+            description: 'High performance Python microservice extracting structured JSON from PDF/DOCX resumes.',
+            language: 'Python',
+            stargazers_count: 67,
+            forks_count: 12,
+            updated_at: new Date(Date.now() - 86400000 * 5).toISOString()
+          },
+          {
+            name: 'voice-interview-assistant',
+            html_url: `https://github.com/${username}/voice-interview-assistant`,
+            description: 'Real-time WebSocket audio streaming for AI voice mock interviews with Whisper and TTS.',
+            language: 'TypeScript',
+            stargazers_count: 114,
+            forks_count: 22,
+            updated_at: new Date(Date.now() - 86400000 * 8).toISOString()
+          }
+        ];
+        renderGithubRepos(fallbackRepos);
+      }
+    }
+
+    function renderGithubRepos(repos) {
+      const container = document.getElementById('githubReposGrid');
+      container.innerHTML = repos.slice(0, 4).map(repo => {
+        const langColor = LANG_COLORS[repo.language] || '#6366f1';
+        return `
+          <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer" class="theme-card rounded-xl p-4 hover:border-indigo-400 hover:shadow-sm transition-all flex flex-col justify-between group space-y-3">
             <div class="space-y-1.5">
-              <h3 class="font-heading font-extrabold text-base text-slate-900 theme-title line-clamp-1 group-hover:text-sky-600 transition-colors">
-                ${p.title}
-              </h3>
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-heading font-bold text-xs sm:text-sm text-slate-900 theme-title group-hover:text-indigo-600 transition-colors truncate">
+                  ${repo.name}
+                </span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono text-slate-400 border border-slate-200">
+                  Public
+                </span>
+              </div>
               <p class="text-xs text-slate-500 theme-text-muted line-clamp-2 leading-relaxed">
-                ${p.description || 'Dự án thực tế chứng minh năng lực sáng tạo và tối ưu giải pháp người dùng.'}
+                ${repo.description || 'Dự án mã nguồn mở với kiến trúc tối ưu và kiểm thử tự động.'}
               </p>
             </div>
 
-            <div class="flex flex-wrap gap-1.5 pt-1">
-              ${(p.tags || []).slice(0, 3).map(t => `<span class="chip-pill text-xs">${t}</span>`).join('')}
-            </div>
+            <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${langColor};"></span>
+                <span class="font-medium text-slate-600 theme-text-muted text-[11px]">${repo.language || 'Code'}</span>
+              </div>
 
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span class="text-slate-400 theme-text-muted">Thời gian: ${p.duration || '3 tuần'}</span>
-              <span class="text-sky-600 font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                <span>Xem Chi Tiết</span>
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
-              </span>
+              <div class="flex items-center gap-3 text-[11px]">
+                <span class="inline-flex items-center gap-1 hover:text-slate-600">
+                  <svg class="w-3.5 h-3.5 fill-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <span>${repo.stargazers_count || 0}</span>
+                </span>
+                <span class="inline-flex items-center gap-1 hover:text-slate-600">
+                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zM10.75 4.75a.75.75 0 100-1.5.75.75 0 000 1.5zM8 13.5a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
+                  <span>${repo.forks_count || 0}</span>
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
-      `).join('');
+          </a>
+        `;
+      }).join('');
     }
 
-    // --- CHUYỂN ĐỔI MẪU THIẾT KẾ (THEME SWITCHER) ---
+    // --- CHUYỂN ĐỔI MẪU THEME ---
     function switchPortfolioTheme(themeName, showNotification = true) {
       currentTheme = themeName;
       document.body.className = `theme-${themeName} min-h-screen flex flex-col transition-colors duration-300`;
 
-      // Cập nhật trạng thái nút chọn theme
-      ['modern', 'cyber', 'editorial', 'masonry'].forEach(t => {
+      ['preline', 'bento', 'cyber'].forEach(t => {
         const btn = document.getElementById(`themeBtn-${t}`);
         if (btn) {
           if (t === themeName) {
-            btn.className = 'px-3 py-1 rounded-full text-xs font-bold bg-white text-slate-900 shadow-sm transition-all';
+            btn.className = 'px-2.5 py-1 rounded-md text-[11px] font-bold bg-white text-slate-900 shadow-xs transition-all';
           } else {
-            btn.className = 'px-3 py-1 rounded-full text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all';
+            btn.className = 'px-2.5 py-1 rounded-md text-[11px] font-bold text-slate-300 hover:text-white transition-all';
           }
         }
       });
 
       localStorage.setItem(`portfolio_theme_${currentSubdomain}`, themeName);
       if (showNotification) {
-        showToast(`Đã áp dụng mẫu thiết kế: ${getThemeTitle(themeName)}`);
+        showToast(`Đã chuyển sang mẫu: ${getThemeNameLabel(themeName)}`);
       }
     }
 
-    function getThemeTitle(theme) {
-      switch(theme) {
-        case 'modern': return 'Hiện Đại (Modern Minimalist)';
-        case 'cyber': return 'Cyber Dark Studio';
-        case 'editorial': return 'Editorial Luxury';
-        case 'masonry': return 'Waterfall Grid Showcase';
-        default: return theme;
+    function getThemeNameLabel(t) {
+      switch(t) {
+        case 'preline': return 'Preline Minimalist';
+        case 'bento': return 'Bento Grid Tech';
+        case 'cyber': return 'Cyber Obsidian (Dark)';
+        default: return t;
       }
     }
 
-    // --- MODAL: XEM CHI TIẾT MÔ TẢ DỰ ÁN ---
+    // --- MODAL: XEM CHI TIẾT DỰ ÁN ---
     function openProjectModal(id) {
       const p = currentProjects.find(item => String(item.id) === String(id));
       if (!p) return;
@@ -601,14 +930,32 @@
       document.getElementById('modalProjImg').src = p.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800';
       document.getElementById('modalProjTitle').innerText = p.title || 'Dự án Portfolio';
       document.getElementById('modalProjBudget').innerText = p.budget || '$2,500 USD';
-      document.getElementById('modalProjTag').innerText = (p.tags && p.tags[0]) || 'Thiết kế';
+      document.getElementById('modalProjTag').innerText = (p.tags && p.tags[0]) || 'Project';
       document.getElementById('modalProjDuration').innerText = p.duration || '3 tuần';
-      document.getElementById('modalProjLikes').innerText = `${p.likes || 128} lượt quan tâm`;
-      document.getElementById('modalProjDesc').innerText = p.description || 'Dự án hoàn thiện chuyên nghiệp, minh họa năng lực thiết kế thực chiến và giải pháp tối ưu cho doanh nghiệp.';
-      
-      const tags = (p.tags && p.tags.length > 0) ? p.tags : ['UI/UX', 'Product Design'];
+      document.getElementById('modalProjDesc').innerText = p.description || 'Dự án hoàn thiện chuyên nghiệp chứng minh năng lực thực chiến.';
+
+      const linksEl = document.getElementById('modalLinksContainer');
+      linksEl.innerHTML = '';
+      if (p.demoUrl) {
+        linksEl.innerHTML += `
+          <a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 font-bold hover:underline inline-flex items-center gap-1">
+            <span>Mở Demo</span>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </a>
+        `;
+      }
+      if (p.githubUrl) {
+        linksEl.innerHTML += `
+          <a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="text-slate-700 font-bold hover:underline inline-flex items-center gap-1">
+            <span>Mã Nguồn (GitHub)</span>
+            <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+        `;
+      }
+
+      const tags = (p.tags && p.tags.length > 0) ? p.tags : ['Design', 'Frontend'];
       document.getElementById('modalProjTags').innerHTML = tags.map(t => `
-        <span class="chip-pill chip-cyan text-xs font-semibold py-1 px-3">${t}</span>
+        <span class="px-2.5 py-1 rounded text-xs font-semibold bg-indigo-50 text-indigo-700">${t}</span>
       `).join('');
 
       document.getElementById('projectDetailModal').classList.remove('hidden');
@@ -622,8 +969,9 @@
     function openAddProjectModal() {
       document.getElementById('inpProjTitle').value = '';
       document.getElementById('inpProjImage').value = '';
+      document.getElementById('inpProjDemo').value = '';
+      document.getElementById('inpProjGithub').value = '';
       document.getElementById('inpProjTags').value = '';
-      document.getElementById('inpProjBudget').value = '$2,500 USD';
       document.getElementById('inpProjDuration').value = '3 tuần';
       document.getElementById('inpProjDesc').value = '';
       document.getElementById('modalAddProject').classList.remove('hidden');
@@ -641,8 +989,9 @@
     async function submitNewProject() {
       const title = document.getElementById('inpProjTitle').value.trim();
       const image = document.getElementById('inpProjImage').value.trim();
+      const demoUrl = document.getElementById('inpProjDemo').value.trim();
+      const githubUrl = document.getElementById('inpProjGithub').value.trim();
       const tagsStr = document.getElementById('inpProjTags').value.trim();
-      const budget = document.getElementById('inpProjBudget').value.trim() || '$2,500 USD';
       const duration = document.getElementById('inpProjDuration').value.trim() || '3 tuần';
       const description = document.getElementById('inpProjDesc').value.trim();
 
@@ -654,8 +1003,10 @@
       const newProj = {
         title,
         image,
-        tags: tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(Boolean) : ['UI/UX', 'Thiết kế'],
-        budget,
+        demoUrl,
+        githubUrl,
+        tags: tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(Boolean) : ['Frontend', 'React'],
+        budget: '$2,000 USD',
         duration,
         description: description || 'Dự án thực tế hoàn thành xuất sắc chứng minh năng lực chuyên môn.',
         subdomain: currentSubdomain,
@@ -677,15 +1028,12 @@
         if (json.success && json.portfolio) {
           currentProjects.unshift(json.portfolio);
           renderProjectsGrid(currentProjects);
-          document.getElementById('pubProjectCount').innerText = `${currentProjects.length} dự án`;
           closeAddProjectModal();
-          showToast('Đã thêm dự án mới vào Portfolio thành công!');
+          showToast('Đã thêm dự án mới thành công!');
         } else {
-          // Mock lưu cục bộ nếu offline
           newProj.id = 'pf_mock_' + Date.now();
           currentProjects.unshift(newProj);
           renderProjectsGrid(currentProjects);
-          document.getElementById('pubProjectCount').innerText = `${currentProjects.length} dự án`;
           closeAddProjectModal();
           showToast('Đã thêm dự án mới vào Portfolio!');
         }
@@ -698,7 +1046,7 @@
       }
     }
 
-    // --- MODAL: ĐỔI TÊN SUBDOMAIN / LINK PORTFOLIO ---
+    // --- MODAL: ĐỔI TÊN SUBDOMAIN ---
     function openEditSubdomainModal() {
       document.getElementById('inpNewSubdomain').value = currentSubdomain;
       document.getElementById('modalEditSubdomain').classList.remove('hidden');
@@ -711,50 +1059,32 @@
     async function saveNewSubdomain() {
       const val = document.getElementById('inpNewSubdomain').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
       if (!val) {
-        alert('Vui lòng nhập tên link subdomain hợp lệ.');
+        alert('Vui lòng nhập định danh hợp lệ.');
         return;
       }
 
       currentSubdomain = val;
       document.getElementById('barSubdomainText').innerText = val;
-      document.getElementById('pubSubdomainBadge').innerText = `connectcv.vn/p/${val}`;
-
-      // Cập nhật URL trình duyệt
       window.history.pushState(null, '', `/p/${val}`);
 
-      // Lưu vào user profile nếu đang đăng nhập
       try {
         const userStored = localStorage.getItem('connectcv_user');
         if (userStored) {
           const u = JSON.parse(userStored);
           u.subdomain = val;
           localStorage.setItem('connectcv_user', JSON.stringify(u));
-          
-          const token = localStorage.getItem('jwtToken');
-          if (token) {
-            await fetch('/api/auth/profile', {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-              body: JSON.stringify({ subdomain: val })
-            });
-          }
         }
       } catch (e) {}
 
       closeEditSubdomainModal();
-      showToast(`Đã cập nhật link portfolio thành: connectcv.vn/p/${val}`);
+      showToast(`Đã đổi link portfolio: connectcv.vn/p/${val}`);
     }
 
-    // --- TIỆN ÍCH KHÁC ---
     function copySubdomainUrl() {
       const url = `https://connectcv.vn/p/${currentSubdomain}`;
       navigator.clipboard.writeText(url).then(() => {
         showToast('Đã sao chép link Portfolio: ' + url);
       });
-    }
-
-    function contactFreelancer() {
-      alert(`Đang mở kết nối với ${currentProfile?.name || 'ứng viên'}. Vui lòng gửi email hoặc liên hệ qua ConnectCV!`);
     }
 
     function showToast(msg) {

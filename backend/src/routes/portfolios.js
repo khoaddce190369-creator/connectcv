@@ -53,6 +53,7 @@ router.get('/by-subdomain/:subdomain', optionalAuth, (req, res) => {
       avatar: authorAvatar,
       bio: candidate ? candidate.bio : (firstProject ? firstProject.description : 'Chuyên gia giàu kinh nghiệm thực chiến trên nền tảng ConnectCV.'),
       skills: candidate ? candidate.skills : (firstProject ? firstProject.tags : ['Design', 'Frontend', 'Creative']),
+      githubUsername: candidate?.githubUsername || candidate?.github || firstProject?.githubUsername || subdomain,
       rating: candidate ? candidate.rating : 4.9,
       experienceYears: candidate ? candidate.experienceYears : 3,
       verified: true,
@@ -150,7 +151,10 @@ router.post('/', optionalAuth, (req, res) => {
       tags, 
       budget, 
       duration, 
-      description 
+      description,
+      githubUrl,
+      demoUrl,
+      githubUsername
     } = req.body;
 
     if (!title || !image) {
@@ -180,6 +184,9 @@ router.post('/', optionalAuth, (req, res) => {
       duration: duration || '3 tuần',
       likes: 1,
       description: description || 'Dự án hoàn thiện chuyên nghiệp, minh họa năng lực thiết kế thực chiến.',
+      githubUrl: githubUrl || '',
+      demoUrl: demoUrl || '',
+      githubUsername: githubUsername || '',
       createdAt: new Date().toISOString()
     };
 

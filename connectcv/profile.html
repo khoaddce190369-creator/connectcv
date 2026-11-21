@@ -536,9 +536,15 @@
           <input id="inpEditSkills" type="text" class="input-field" placeholder="VD: Figma, UI/UX, Design System, React, Tailwind, ATS CV, AI Prompting" />
         </div>
 
-        <div>
-          <label class="block font-bold text-slate-700 uppercase mb-1">Link LinkedIn:</label>
-          <input id="inpEditLinkedin" type="text" class="input-field" placeholder="VD: linkedin.com/in/minhtuan" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Link LinkedIn:</label>
+            <input id="inpEditLinkedin" type="text" class="input-field" placeholder="VD: linkedin.com/in/minhtuan" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">GitHub Username / Profile:</label>
+            <input id="inpEditGithub" type="text" class="input-field" placeholder="VD: tuannguyen-dev" />
+          </div>
         </div>
       </div>
 
@@ -1258,6 +1264,7 @@
       document.getElementById('inpEditBio').value = currentUser.bio || '';
       document.getElementById('inpEditSkills').value = Array.isArray(currentUser.skills) ? currentUser.skills.join(', ') : (currentUser.skills || '');
       document.getElementById('inpEditLinkedin').value = currentUser.linkedin || '';
+      document.getElementById('inpEditGithub').value = currentUser.github || currentUser.githubUsername || '';
 
       document.getElementById('modalEditProfile').classList.remove('hidden');
     }
@@ -1303,6 +1310,7 @@
       const rawSkills = document.getElementById('inpEditSkills').value.trim();
       const skills = rawSkills ? rawSkills.split(',').map(s => s.trim()).filter(Boolean) : [];
       const linkedin = document.getElementById('inpEditLinkedin').value.trim();
+      const github = document.getElementById('inpEditGithub').value.trim();
 
       const payload = {
         id: currentUser.id,
@@ -1316,7 +1324,8 @@
         avatar,
         bio,
         skills,
-        linkedin
+        linkedin,
+        github
       };
 
       try {
