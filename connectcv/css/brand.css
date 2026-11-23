@@ -115,27 +115,23 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
   font-variant-numeric: tabular-nums;
 }
 
-/* Gradient Text Accent */
+/* Solid Text Accent - NO GRADIENTS */
 .text-gradient-tech {
-  background: linear-gradient(135deg, #0f172a 0%, #2563eb 60%, #0284c7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #0f172a;
 }
 
 .text-gradient-glow {
-  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 50%, #93c5fd 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ffffff;
 }
 
 /* ==========================================================================
-   BUTTONS (MODERN TECH ELEVATED & GRADIENT SHADOW CTA)
+   BUTTONS (MODERN TECH SOLID COLORS - NO GRADIENTS)
    ========================================================================== */
 .btn-primary, .btn-pricing-blue {
   font-family: var(--font-heading);
-  background: linear-gradient(to top, #2563eb, #3b82f6) !important;
+  background: #2563eb !important;
   color: #ffffff !important;
-  border: 1px solid #60a5fa !important;
+  border: 1px solid #1d4ed8 !important;
   font-weight: 600;
   font-size: 13.5px;
   letter-spacing: -0.01em;
@@ -149,44 +145,26 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.35), 0 4px 6px -2px rgba(37, 99, 235, 0.2);
-}
-
-/* Glossy Shimmer Streak on Primary Buttons */
-.btn-primary::after, .btn-shimmer::after {
-  content: '';
-  position: absolute;
-  top: -60%;
-  left: -60%;
-  width: 220%;
-  height: 220%;
-  background: linear-gradient(60deg, transparent 35%, rgba(255, 255, 255, 0.28) 50%, transparent 65%);
-  transform: translateX(-120%);
-  transition: transform 0.75s ease-in-out;
-  pointer-events: none;
-}
-
-.btn-primary:hover::after, .btn-shimmer:hover::after {
-  transform: translateX(120%);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.25);
 }
 
 .btn-primary:hover, .btn-pricing-blue:hover {
-  filter: brightness(1.08);
-  transform: translateY(-1.5px);
-  box-shadow: 0 14px 24px -5px rgba(37, 99, 235, 0.45), 0 6px 10px -2px rgba(37, 99, 235, 0.25);
+  background: #1d4ed8 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -2px rgba(37, 99, 235, 0.35);
 }
 
 .btn-primary:active, .btn-pricing-blue:active {
   transform: scale(0.98);
-  box-shadow: 0 4px 10px -2px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 2px 6px -1px rgba(37, 99, 235, 0.2);
 }
 
 .btn-pricing-dark {
   font-family: var(--font-heading);
-  background: linear-gradient(to top, #171717, #404040) !important;
+  background: #0f172a !important;
   color: #ffffff !important;
-  border: 1px solid #525252 !important;
+  border: 1px solid #1e293b !important;
   font-weight: 600;
   font-size: 13.5px;
   letter-spacing: -0.01em;
@@ -198,6 +176,13 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
   justify-content: center;
   gap: 8px;
   text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.25);
+}
+.btn-pricing-dark:hover {
+  background: #1e293b !important;
+  transform: translateY(-1px);
+}
   position: relative;
   overflow: hidden;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -639,7 +624,7 @@ h4 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #2563eb, #38bdf8, #6366f1);
+  background: #2563eb;
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
 }
@@ -681,17 +666,84 @@ button:active:not(:disabled), a.btn-primary:active, a.btn-navy:active, a.btn-sec
 }
 
 .btn-floo-cyan {
-  background: linear-gradient(135deg, #00daf7 0%, #00c2f8 50%, #0099f7 100%);
-  box-shadow: 0 10px 25px -5px rgba(0, 210, 247, 0.4), 0 8px 10px -6px rgba(0, 210, 247, 0.25);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #00c2f8;
+  color: #ffffff;
+  box-shadow: 0 4px 14px -2px rgba(0, 194, 248, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn-floo-cyan:hover {
-  filter: brightness(1.05);
-  box-shadow: 0 14px 28px -4px rgba(0, 210, 247, 0.5), 0 10px 14px -6px rgba(0, 210, 247, 0.35);
+  background: #00aee0;
+  box-shadow: 0 6px 18px -2px rgba(0, 194, 248, 0.5);
   transform: translateY(-1px);
 }
 .btn-floo-cyan:active {
   transform: scale(0.99) translateY(0);
-  filter: brightness(0.98);
+}
+
+/* ==========================================================================
+   11. HERO BANNER ANIMATIONS (MODERN, CLEAN, SUBTLE & HIGH PERFORMANCE)
+   ========================================================================== */
+@keyframes heroFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFloatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes heroPulseBadge {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
+}
+
+@keyframes tickerFadeSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anim-hero-fade-up {
+  animation: heroFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-hero-float {
+  animation: heroFloatSlow 4s ease-in-out infinite;
+}
+
+.anim-hero-pulse {
+  animation: heroPulseBadge 2.4s ease-in-out infinite;
+}
+
+.anim-ticker-slide {
+  animation: tickerFadeSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Crisp Clean Tech Grid Pattern (SVG Solid Grid, Zero Gradients) */
+.hero-clean-grid {
+  background-color: #f8fafc;
+  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M32 0H0v32h1V1h31V0z' fill='%23e2e8f0' fill-opacity='0.6'/%3E%3C/svg%3E");
 }
 
