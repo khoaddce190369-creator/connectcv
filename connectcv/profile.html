@@ -346,7 +346,7 @@
         <h3 class="font-heading font-extrabold text-lg text-slate-900 border-b border-slate-100 pb-3">
           Thông Tin Liên Hệ &amp; Mạng Xã Hội
         </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs sm:text-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
           <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
             <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">Email Liên Hệ:</span>
             <p id="contactEmail" class="font-semibold text-slate-900 break-all">tuan.nguyen@example.com</p>
@@ -358,6 +358,14 @@
           <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
             <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">LinkedIn:</span>
             <p id="contactLinkedin" class="font-semibold text-sky-700 break-all">linkedin.com/in/tuannguyen</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+            <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">Facebook / Zalo:</span>
+            <p id="contactFacebook" class="font-semibold text-sky-700 break-all">Chưa cập nhật</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+            <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">Blog / Website:</span>
+            <p id="contactBlog" class="font-semibold text-sky-700 break-all">Chưa cập nhật</p>
           </div>
           <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
             <span class="text-slate-500 font-bold uppercase tracking-wider text-xs">Mức Thù Lao / Kỳ Vọng:</span>
@@ -544,6 +552,14 @@
           <div>
             <label class="block font-bold text-slate-700 uppercase mb-1">GitHub Username / Profile:</label>
             <input id="inpEditGithub" type="text" class="input-field" placeholder="VD: tuannguyen-dev" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Facebook / Zalo:</label>
+            <input id="inpEditFacebook" type="text" class="input-field" placeholder="VD: facebook.com/minhtuan" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Blog Cá Nhân / Portfolio Web:</label>
+            <input id="inpEditBlog" type="text" class="input-field" placeholder="VD: https://tuannguyen.design" />
           </div>
         </div>
       </div>
@@ -1045,6 +1061,8 @@
       document.getElementById('contactEmail').innerText = u.email || 'Chưa cập nhật';
       document.getElementById('contactPhone').innerText = u.phone || 'Chưa cập nhật';
       document.getElementById('contactLinkedin').innerText = u.linkedin || 'Chưa cập nhật';
+      if (document.getElementById('contactFacebook')) document.getElementById('contactFacebook').innerText = u.facebook || 'Chưa cập nhật';
+      if (document.getElementById('contactBlog')) document.getElementById('contactBlog').innerText = u.blog || 'Chưa cập nhật';
       document.getElementById('contactRate').innerText = u.hourlyRate || 'Thỏa thuận';
 
       // Skills
@@ -1265,6 +1283,8 @@
       document.getElementById('inpEditSkills').value = Array.isArray(currentUser.skills) ? currentUser.skills.join(', ') : (currentUser.skills || '');
       document.getElementById('inpEditLinkedin').value = currentUser.linkedin || '';
       document.getElementById('inpEditGithub').value = currentUser.github || currentUser.githubUsername || '';
+      if (document.getElementById('inpEditFacebook')) document.getElementById('inpEditFacebook').value = currentUser.facebook || '';
+      if (document.getElementById('inpEditBlog')) document.getElementById('inpEditBlog').value = currentUser.blog || '';
 
       document.getElementById('modalEditProfile').classList.remove('hidden');
     }
@@ -1311,6 +1331,8 @@
       const skills = rawSkills ? rawSkills.split(',').map(s => s.trim()).filter(Boolean) : [];
       const linkedin = document.getElementById('inpEditLinkedin').value.trim();
       const github = document.getElementById('inpEditGithub').value.trim();
+      const facebook = document.getElementById('inpEditFacebook') ? document.getElementById('inpEditFacebook').value.trim() : '';
+      const blog = document.getElementById('inpEditBlog') ? document.getElementById('inpEditBlog').value.trim() : '';
 
       const payload = {
         id: currentUser.id,
@@ -1325,7 +1347,9 @@
         bio,
         skills,
         linkedin,
-        github
+        github,
+        facebook,
+        blog
       };
 
       try {
