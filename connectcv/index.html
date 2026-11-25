@@ -493,78 +493,124 @@
   <!-- ==========================================================================
        VIEW: VISUAL PORTFOLIO SHOWCASE & CỘNG ĐỒNG SÁNG TẠO
        ========================================================================== -->
-  <section id="view-portfolio" class="view-animate hidden flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
+  <section id="view-portfolio" class="view-animate hidden flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-6">
     
-    <!-- Top Bar: Tiêu đề & Hành động đăng sản phẩm (Tinh gọn, Chuyên nghiệp) -->
-    <div class="bg-white px-5 sm:px-7 py-5 rounded-2xl border border-neutral-200/90 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div class="space-y-1">
-        <h2 class="font-heading font-bold text-xl sm:text-2xl text-neutral-900 tracking-tight">
-          Cộng Đồng Dự Án
-        </h2>
-        <p class="text-xs sm:text-sm text-neutral-500 font-normal">
-          Không gian chia sẻ sản phẩm thực chiến và kết nối cùng nhà tuyển dụng.
-        </p>
-      </div>
-
-      <div class="flex items-center gap-2.5 w-full sm:w-auto">
-        <!-- Nút Xem Kho Mẫu Portfolio -->
-        <button onclick="openPortfolioTemplateModal()" class="px-4 py-2.5 rounded-xl border border-neutral-200/90 bg-white hover:bg-neutral-50 text-neutral-800 text-xs font-semibold shadow-2xs transition-all flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer">
-          <svg class="w-4 h-4 text-neutral-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
-          <span>Mẫu Portfolio</span>
-        </button>
-
-        <!-- Nút Đăng Dự Án Mới -->
-        <button onclick="openCreatePortfolioModal()" class="px-4 py-2.5 rounded-xl border border-neutral-200/90 bg-white hover:bg-neutral-50 text-neutral-800 text-xs font-semibold shadow-2xs transition-all flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer">
-          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-          <span>Đăng dự án</span>
-        </button>
-
-        <!-- Nút Hành Động Thông Minh: Tạo Portfolio nếu chưa có, hoặc Xem Portfolio nếu đã có -->
-        <button id="btnHeaderPortfolioAction" onclick="handleHeaderPortfolioAction()" class="px-5 py-2.5 rounded-xl text-white font-semibold text-xs bg-blue-600 hover:bg-blue-700 border border-blue-600 shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
-          <span>Tạo Portfolio</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Toolbar: Tìm kiếm, Bộ lọc danh mục & Sắp xếp -->
-    <div class="bg-white p-4 rounded-xl border border-slate-200/90 shadow-xs space-y-3.5">
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <!-- Ô tìm kiếm realtime -->
-        <div class="relative flex-1">
-          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
-          <input id="socialSearchInput" oninput="handleSocialSearch(this.value)" type="text" placeholder="Tìm kiếm dự án, công nghệ, chủ đề Fintech, SaaS hoặc tác giả..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all"/>
-        </div>
+    <!-- TELEGRAM WEB CHANNEL LAYOUT (2 COLUMNS: LEFT CHANNEL SIDEBAR + RIGHT MESSAGE FEED) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      
+      <!-- CỘT TRÁI: THÔNG TIN KÊNH, TÌM KIẾM & CHỦ ĐỀ (TELEGRAM SIDEBAR) -->
+      <aside class="lg:col-span-4 sticky top-24 space-y-4">
         
-        <!-- Sắp xếp -->
-        <div class="flex items-center gap-2 shrink-0">
-          <span class="text-xs text-slate-400 font-medium hidden sm:inline">Sắp xếp:</span>
-          <select id="socialSortSelect" onchange="handleSocialSort(this.value)" class="bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 px-3 py-2 focus:outline-none focus:bg-white focus:border-sky-500 cursor-pointer">
-            <option value="newest">Mới nhất</option>
-            <option value="likes">Nhiều lượt thích</option>
-            <option value="comments">Nhiều bình luận</option>
-          </select>
-        </div>
-      </div>
+        <!-- Channel Header & Quick Actions -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-blue-600 text-white flex items-center justify-center font-heading font-bold text-base shrink-0 shadow-xs">
+              C
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1">
+                <h2 class="font-heading font-bold text-base text-slate-900 truncate">Cộng Đồng Dự Án</h2>
+                <svg class="w-4 h-4 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/></svg>
+              </div>
+              <p class="text-xs text-slate-500 truncate">@connectcv_showcase</p>
+            </div>
+          </div>
 
-      <!-- Category Filter Pills -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-100">
-        <div class="flex flex-wrap items-center gap-1.5 text-xs" id="socialCatFilterGroup">
-          <button onclick="filterSocialCategory('all')" id="socialCatAll" class="chip-pill filter-pill active font-bold">Tất cả</button>
-          <button onclick="filterSocialCategory('fintech')" id="socialCatFintech" class="chip-pill filter-pill font-medium">Fintech</button>
-          <button onclick="filterSocialCategory('branding')" id="socialCatBranding" class="chip-pill filter-pill font-medium">Branding</button>
-          <button onclick="filterSocialCategory('saas')" id="socialCatSaas" class="chip-pill filter-pill font-medium">SaaS &amp; AI</button>
-          <button onclick="filterSocialCategory('uiux')" id="socialCatUiux" class="chip-pill filter-pill font-medium">UI/UX &amp; App</button>
-          <button onclick="filterSocialCategory('design-system')" id="socialCatDesignSystem" class="chip-pill filter-pill font-medium">Design System</button>
-          <button onclick="filterSocialCategory('3d')" id="socialCat3d" class="chip-pill filter-pill font-medium">3D &amp; Bao bì</button>
-        </div>
-        <span id="portfolioCountText" class="text-xs font-semibold text-slate-500">Đang tải sản phẩm...</span>
-      </div>
-    </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Kênh chia sẻ sản phẩm thực chiến, case study và portfolio cá nhân của cộng đồng ConnectCV.
+          </p>
 
-    <!-- Grid danh sách sản phẩm / bài đăng cộng đồng -->
-    <div id="portfolioGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <!-- Dynamic Social Post Cards -->
+          <!-- Action Buttons -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="openPortfolioTemplateModal()" class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+              <span>Mẫu Portfolio</span>
+            </button>
+            <button onclick="openCreatePortfolioModal()" class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+              <span>Đăng dự án</span>
+            </button>
+          </div>
+
+          <button id="btnHeaderPortfolioAction" onclick="handleHeaderPortfolioAction()" class="w-full px-4 py-2.5 rounded-xl text-white font-semibold text-xs bg-blue-600 hover:bg-blue-700 border border-blue-600 shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+            <span>Tạo Portfolio</span>
+          </button>
+        </div>
+
+        <!-- Search, Sort & Channel Topics -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3.5">
+          <div class="relative">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
+            <input id="socialSearchInput" oninput="handleSocialSearch(this.value)" type="text" placeholder="Tìm trong kênh..." class="w-full pl-9 pr-3 py-2 bg-slate-100 border border-transparent rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 transition-all"/>
+          </div>
+
+          <div class="flex items-center justify-between text-xs border-b border-slate-100 pb-2.5">
+            <span class="text-slate-500 font-semibold">Sắp xếp:</span>
+            <select id="socialSortSelect" onchange="handleSocialSort(this.value)" class="bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 px-2.5 py-1 focus:outline-none cursor-pointer">
+              <option value="newest">Mới nhất</option>
+              <option value="likes">Nhiều cảm xúc</option>
+              <option value="comments">Nhiều bình luận</option>
+            </select>
+          </div>
+
+          <div class="space-y-1 text-xs" id="socialCatFilterGroup">
+            <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2 pb-1">Chủ đề kênh</span>
+            <button onclick="filterSocialCategory('all')" id="socialCatAll" class="w-full text-left px-3 py-2 rounded-xl font-semibold bg-blue-600 text-white transition-all flex items-center justify-between cursor-pointer">
+              <span># Tất cả bài đăng</span>
+            </button>
+            <button onclick="filterSocialCategory('fintech')" id="socialCatFintech" class="w-full text-left px-3 py-2 rounded-xl font-medium text-slate-700 hover:bg-slate-100 transition-all cursor-pointer">
+              <span># Fintech</span>
+            </button>
+            <button onclick="filterSocialCategory('branding')" id="socialCatBranding" class="w-full text-left px-3 py-2 rounded-xl font-medium text-slate-700 hover:bg-slate-100 transition-all cursor-pointer">
+              <span># Branding</span>
+            </button>
+            <button onclick="filterSocialCategory('saas')" id="socialCatSaas" class="w-full text-left px-3 py-2 rounded-xl font-medium text-slate-700 hover:bg-slate-100 transition-all cursor-pointer">
+              <span># SaaS &amp; AI</span>
+            </button>
+            <button onclick="filterSocialCategory('uiux')" id="socialCatUiux" class="w-full text-left px-3 py-2 rounded-xl font-medium text-slate-700 hover:bg-slate-100 transition-all cursor-pointer">
+              <span># UI/UX &amp; App</span>
+            </button>
+            <button onclick="filterSocialCategory('design-system')" id="socialCatDesignSystem" class="w-full text-left px-3 py-2 rounded-xl font-medium text-slate-700 hover:bg-slate-100 transition-all cursor-pointer">
+              <span># Design System</span>
+            </button>
+            <button onclick="filterSocialCategory('3d')" id="socialCat3d" class="w-full text-left px-3 py-2 rounded-xl font-medium text-slate-700 hover:bg-slate-100 transition-all cursor-pointer">
+              <span># 3D &amp; Bao bì</span>
+            </button>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- CỘT PHẢI: LUỒNG BÀI ĐĂNG KÊNH TELEGRAM (CHANNEL MESSAGE STREAM) -->
+      <main class="lg:col-span-8">
+        <div class="bg-[#eef2f6] rounded-2xl border border-slate-200/90 overflow-hidden">
+          
+          <!-- Channel Top Bar -->
+          <div class="bg-white px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 anim-hero-pulse"></span>
+              <span class="font-bold text-slate-900">Kênh Trưng Bày Portfolio</span>
+              <span class="text-slate-300">&bull;</span>
+              <span id="portfolioCountText" class="text-slate-500 font-medium">Đang tải...</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">Cập nhật theo thời gian thực</span>
+          </div>
+
+          <!-- Feed Container -->
+          <div class="p-3.5 sm:p-5 space-y-4">
+            <div class="flex justify-center">
+              <span class="px-3 py-0.5 rounded-full bg-slate-200/90 text-slate-600 text-[11px] font-semibold">Hôm nay</span>
+            </div>
+
+            <div id="portfolioGridContainer" class="space-y-4 max-w-2xl mx-auto">
+              <!-- Dynamic Telegram Channel Post Bubbles -->
+            </div>
+          </div>
+
+        </div>
+      </main>
+
     </div>
 
   </section>
@@ -2780,101 +2826,113 @@
     function renderPortfoliosList(list) {
       const container = document.getElementById('portfolioGridContainer');
       const countEl = document.getElementById('portfolioCountText');
-      if (countEl) countEl.innerText = `${list.length} sản phẩm`;
+      if (countEl) countEl.innerText = `${list.length} bài đăng`;
 
       if (!container) return;
 
       if (list.length === 0) {
         container.innerHTML = `
-          <div class="col-span-full bg-white p-10 rounded-xl border border-slate-200 text-center space-y-3">
-            <div class="w-12 h-12 mx-auto rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
+          <div class="bg-white p-10 rounded-2xl border border-slate-200 text-center space-y-3">
+            <div class="w-12 h-12 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2a7.5 7.5 0 010 14.65z"/></svg>
             </div>
-            <p class="text-xs font-semibold text-slate-700">Chưa tìm thấy sản phẩm phù hợp</p>
-            <p class="text-[11px] text-slate-400">Hãy thử từ khóa khác hoặc bấm "+ Đăng sản phẩm" để chia sẻ tác phẩm của bạn!</p>
+            <p class="text-xs font-semibold text-slate-700">Chưa tìm thấy bài đăng phù hợp trong kênh</p>
+            <p class="text-[11px] text-slate-400">Thử từ khóa khác hoặc bấm "Đăng dự án" ở cột bên trái để chia sẻ!</p>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = list.map(p => {
+      container.innerHTML = list.map((p, idx) => {
         const liked = isSocialPostLiked(p.id);
         const commentCount = (p.comments || []).length;
         const catBadgeText = p.categoryName || (p.category === 'uiux' ? 'UI/UX & App' : p.category === 'web' ? 'Website' : p.category === '3d' ? '3D & Motion' : p.category === 'packaging' ? 'Bao bì' : 'Sáng tạo');
+        const viewsText = ((p.likes || 120) * 4 + 310).toLocaleString('en-US');
+        const postTime = ['10:42', '09:15', 'Hôm qua', '2 ngày trước'][idx % 4];
+        const hashtagsHtml = (p.tags || []).slice(0, 4).map(t => `<span class="text-blue-600 hover:underline font-medium">#${t.replace(/[^a-zA-Z0-9\u00C0-\u1EF9]/g, '')}</span>`).join(' ');
 
         return `
-          <div class="card-modern overflow-hidden flex flex-col group cursor-pointer" onclick="openPortfolioModal('${p.id}')">
+          <article class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden hover:border-blue-300 transition-all anim-hero-fade-up" style="animation-delay: ${Math.min(idx * 40, 280)}ms;">
             
-            <!-- Phần ảnh hiển thị kèm Tag danh mục & Nút thả tim nhanh -->
-            <div class="portfolio-card-img-wrap bg-slate-100 aspect-16/10 relative">
-              <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy" />
-              
-              <!-- Badge phân loại góc trên trái -->
-              <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-white/95 text-slate-800 shadow-sm border border-slate-200/80 backdrop-blur-md">
+            <!-- Post Header (Telegram Channel Author Line) -->
+            <div class="px-4 pt-3.5 pb-2.5 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0 cursor-pointer" onclick="window.location.href = 'profile.html?author=' + encodeURIComponent('${p.author}')">
+                <img src="${p.authorAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop'}" class="w-9 h-9 rounded-full object-cover border border-slate-200 shrink-0" alt="${p.author}" />
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1">
+                    <span class="font-bold text-sm text-blue-600 hover:underline truncate">${p.author}</span>
+                    <svg class="w-3.5 h-3.5 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <span class="text-[11px] text-slate-400 block leading-none mt-0.5">@${p.subdomain || 'creator'}</span>
+                </div>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 shrink-0">
                 ${catBadgeText}
               </span>
-
-              <!-- Nút thả tim nhanh góc trên phải -->
-              <button type="button" onclick="event.stopPropagation(); toggleLikeSocialPost('${p.id}', event)" class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-md bg-white/95 hover:bg-white text-slate-600 hover:text-rose-600 transition-all shadow-sm flex items-center gap-1.5 text-[11px] font-bold backdrop-blur-md active:scale-90" title="Thích sản phẩm">
-                <svg id="card-heart-${p.id}" class="w-3.5 h-3.5 ${liked ? 'fill-rose-500 text-rose-500' : 'text-slate-500'}" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
-                </svg>
-                <span id="card-like-${p.id}" class="${liked ? 'text-rose-600 font-bold' : 'text-slate-600'}">${p.likes || 0}</span>
-              </button>
             </div>
 
-            <!-- Thân bài đăng -->
-            <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
-              <div>
-                <h3 class="font-heading font-bold text-sm text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-                  ${p.title}
-                </h3>
+            <!-- Media Attachment -->
+            <div class="bg-slate-100 cursor-pointer overflow-hidden" onclick="openPortfolioModal('${p.id}')">
+              <img src="${p.image}" alt="${p.title}" class="w-full max-h-[380px] object-cover hover:scale-[1.01] transition-transform duration-300" loading="lazy" />
+            </div>
 
-                <!-- Tác giả -->
-                <div class="flex items-center gap-2 mt-1.5 text-xs text-slate-500">
-                  <div class="flex items-center gap-1.5 min-w-0" onclick="event.stopPropagation(); window.location.href = 'profile.html?author=' + encodeURIComponent('${p.author}')">
-                    <img src="${p.authorAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&h=60&fit=crop'}" class="w-5 h-5 rounded-full object-cover border border-slate-200 shrink-0" alt="${p.author}" />
-                    <span class="font-semibold text-slate-800 hover:text-sky-600 truncate">${p.author}</span>
-                    <svg class="w-3 h-3 text-sky-500 fill-sky-500 shrink-0" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                  </div>
-                  <span class="text-slate-300">•</span>
-                  <span class="text-sky-600 font-mono text-[11px] truncate">@${p.subdomain || 'creator'}</span>
+            <!-- Message Body -->
+            <div class="p-4 space-y-2.5">
+              <h3 class="font-heading font-bold text-base text-slate-900 hover:text-blue-600 transition-colors cursor-pointer leading-snug" onclick="openPortfolioModal('${p.id}')">
+                ${p.title}
+              </h3>
+
+              <p class="text-xs sm:text-[13px] text-slate-700 leading-relaxed">
+                ${p.description}
+              </p>
+
+              ${hashtagsHtml ? `<div class="text-xs pt-0.5 flex flex-wrap gap-1.5">${hashtagsHtml}</div>` : ''}
+
+              <!-- Telegram Link Preview Box -->
+              <div onclick="openPortfolioModal('${p.id}')" class="mt-1 pl-3 pr-3.5 py-2 bg-slate-50 hover:bg-blue-50/60 border-l-[3px] border-blue-600 rounded-r-xl flex items-center justify-between gap-3 cursor-pointer transition-colors group/link">
+                <div class="min-w-0">
+                  <div class="text-[11px] font-bold text-blue-600 uppercase tracking-wide">Xem Case Study &amp; Hồ Sơ</div>
+                  <div class="text-xs font-medium text-slate-700 truncate">/p/${p.subdomain || 'creator'} &bull; ${p.author}</div>
                 </div>
-
-                <!-- Mô tả ngắn gọn -->
-                <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mt-2">
-                  ${p.description}
-                </p>
+                <svg class="w-4 h-4 text-blue-600 shrink-0 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
               </div>
 
-              <!-- Thẻ tags kỹ năng & footer -->
-              <div class="space-y-2.5 pt-2 border-t border-slate-100">
-                <div class="flex flex-wrap gap-1">
-                  ${(p.tags || []).slice(0, 3).map(t => `<span class="chip-pill text-[10px] py-0.5 px-2">${t}</span>`).join('')}
+              <!-- Reactions & Telegram Views Footer -->
+              <div class="pt-2 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <!-- Reaction Pill -->
+                  <button type="button" onclick="toggleLikeSocialPost('${p.id}', event)" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all active:scale-95 cursor-pointer ${liked ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-transparent'}">
+                    <svg id="card-heart-${p.id}" class="w-3.5 h-3.5 ${liked ? 'fill-rose-500 text-rose-500' : 'text-rose-500'}" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
+                    </svg>
+                    <span id="card-like-${p.id}" class="tabular-nums">${p.likes || 0}</span>
+                  </button>
+
+                  <!-- Quick Comment Pill -->
+                  <button type="button" onclick="openPortfolioModal('${p.id}')" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.53 1.11.237 1.638-.344.622-.843 1.344-1.42 1.956 1.109.07 2.253-.16 3.167-.655.432-.234.954-.25 1.405-.078.966.368 2.02.559 3.091.559z"/></svg>
+                    <span id="card-comment-count-${p.id}" class="tabular-nums">${commentCount}</span>
+                  </button>
                 </div>
 
-                <!-- Footer tương tác & liên kết chi tiết -->
-                <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
-                  <div class="flex items-center gap-3">
-                    <span class="flex items-center gap-1 font-semibold ${liked ? 'text-rose-600' : 'text-slate-500'}">
-                      <svg class="w-3.5 h-3.5 ${liked ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                      <span>${p.likes || 0}</span>
-                    </span>
-                    <span class="flex items-center gap-1 font-medium text-slate-400">
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.53 1.11.237 1.638-.344.622-.843 1.344-1.42 1.956 1.109.07 2.253-.16 3.167-.655.432-.234.954-.25 1.405-.078.966.368 2.02.559 3.091.559z"/></svg>
-                      <span id="card-comment-count-${p.id}">${commentCount}</span>
-                    </span>
-                  </div>
-
-                  <span class="text-sky-600 font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                    <span>Chi tiết</span>
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                <!-- Telegram Views & Timestamp -->
+                <div class="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+                  <span class="inline-flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <span class="tabular-nums">${viewsText}</span>
                   </span>
+                  <span>&bull;</span>
+                  <span>${postTime}</span>
                 </div>
               </div>
-
             </div>
-          </div>
+
+            <!-- Telegram-style Comment Strip at Bottom -->
+            <div onclick="openPortfolioModal('${p.id}')" class="px-4 py-2.5 bg-slate-50/70 hover:bg-slate-100 border-t border-slate-100 flex items-center justify-between text-xs text-blue-600 font-semibold cursor-pointer transition-colors">
+              <span>${commentCount > 0 ? `Xem ${commentCount} bình luận` : 'Để lại bình luận đầu tiên'}</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            </div>
+          </article>
         `;
       }).join('');
     }
@@ -2895,9 +2953,9 @@
         const el = document.getElementById(b.id);
         if (el) {
           if (b.cat === cat) {
-            el.className = 'chip-pill filter-pill active font-bold';
+            el.className = 'w-full text-left px-3 py-2 rounded-xl font-semibold bg-blue-600 text-white transition-all flex items-center justify-between cursor-pointer';
           } else {
-            el.className = 'chip-pill filter-pill font-medium';
+            el.className = 'w-full text-left px-3 py-2 rounded-xl font-medium text-slate-700 hover:bg-slate-100 transition-all cursor-pointer';
           }
         }
       });
