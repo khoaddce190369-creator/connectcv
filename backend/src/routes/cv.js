@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
+const db = require('../config/db');
 const { optionalAuth } = require('../middlewares/authMiddleware');
 
 let callGeminiJSON = null;
@@ -603,13 +604,58 @@ router.get('/templates', (req, res) => {
       }
     ];
 
+    const likeRecords = db.get('cvTemplateLikes') || [];
+    const likeMap = new Map(likeRecords.map(item => [String(item.id), Number(item.likes || 0)]));
+    const enriched = templates.map(tpl => ({
+      ...tpl,
+      likes: likeMap.get(String(tpl.id)) || 0
+    }));
+
     return res.json({
       success: true,
-      count: templates.length,
-      templates
+      count: enriched.length,
+      templates: enriched
     });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Lỗi tải danh mục template.' });
+  }
+});
+
+/**
+ * @route   POST /api/cv/templates/:id/like
+ * @desc    Ghi nhận lượt yêu thích hoặc sử dụng mẫu CV và lưu vào store
+ */
+router.post('/templates/:id/like', (req, res) => {
+  try {
+    const id = String(req.params.id || '').trim();
+    if (!id) {
+      return res.status(400).json({ success: false, message: 'Thiếu mã mẫu CV.' });
+    }
+    const action = req.body && req.body.action ? String(req.body.action) : 'like';
+    const delta = action === 'unlike' ? -1 : 1;
+
+    const list = db.get('cvTemplateLikes');
+    const existing = list.find(item => String(item.id) === id);
+    let nextLikes = 0;
+
+    if (existing) {
+      nextLikes = Math.max(0, Number(existing.likes || 0) + delta);
+      db.update('cvTemplateLikes', item => String(item.id) === id, {
+        likes: nextLikes,
+        updatedAt: new Date().toISOString()
+      });
+    } else {
+      nextLikes = Math.max(0, delta);
+      db.insert('cvTemplateLikes', {
+        id,
+        likes: nextLikes,
+        updatedAt: new Date().toISOString()
+      });
+    }
+
+    return res.json({ success: true, id, likes: nextLikes });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Lỗi cập nhật lượt yêu thích mẫu CV.' });
   }
 });
 
