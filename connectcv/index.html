@@ -202,46 +202,45 @@
         </div>
 
         <!-- ====================================================================
-             KHU VỰC BẢN TIN & QUẢNG CÁO CONNECTCV (GỌN GÀNG, KHÔNG BADGE/HASHTAG RƯỜM RÀ)
+             KHU VỰC BẢN TIN & QUẢNG CÁO CONNECTCV (PHONG CÁCH THREADS / TELEGRAM)
              ==================================================================== -->
-        <div class="pt-2 max-w-3xl mx-auto text-left anim-hero-fade-up" style="animation-delay: 0.25s;" onmouseenter="pauseHeroPromoSlider()" onmouseleave="resumeHeroPromoSlider()">
+        <div class="pt-2 max-w-2xl mx-auto text-left anim-hero-fade-up" style="animation-delay: 0.25s;" onmouseenter="pauseHeroPromoSlider()" onmouseleave="resumeHeroPromoSlider()">
           <div class="relative bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all hover:border-slate-300">
-            <div class="p-4 sm:p-5">
-              
-              <!-- Top Controls Row of News Card (Minimal & Clean) -->
-              <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3 text-xs">
-                <div class="flex items-center gap-2 text-slate-700 font-bold">
-                  <span class="w-2 h-2 rounded-full bg-blue-600 anim-hero-pulse"></span>
-                  <span>Bản tin ConnectCV</span>
-                </div>
+            
+            <!-- Top Channel Bar -->
+            <div class="px-4 py-2.5 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2 text-slate-700 font-bold">
+                <span class="w-2 h-2 rounded-full bg-blue-600 anim-hero-pulse"></span>
+                <span>Bản tin ConnectCV</span>
+              </div>
 
-                <!-- Indicators, Prev/Next & Manage Button -->
-                <div class="flex items-center gap-2">
-                  <div id="heroPromoIndicators" class="flex items-center gap-1"></div>
-                  <span id="heroPromoCounter" class="text-[11px] font-bold text-slate-400 tabular-nums">1/4</span>
-                  
-                  <div class="flex items-center gap-1 border-l border-slate-200 pl-2">
-                    <button type="button" onclick="prevHeroPromoSlide()" class="w-6 h-6 rounded-md border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-600 transition-all cursor-pointer" title="Tin trước">
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-                    </button>
-                    <button type="button" onclick="nextHeroPromoSlide()" class="w-6 h-6 rounded-md border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-600 transition-all cursor-pointer" title="Tin kế tiếp">
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                    </button>
-                  </div>
-
-                  <!-- Nút Cập Nhật Bản Tin & Quảng Cáo (Direct User Update) -->
-                  <button type="button" onclick="openCreateAdModal()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer" title="Cập nhật bản tin hoặc đăng bài quảng cáo">
-                    <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
-                    <span class="hidden sm:inline">Cập nhật bản tin &amp; quảng cáo</span>
+              <!-- Indicators, Prev/Next & Manage Button -->
+              <div class="flex items-center gap-2">
+                <div id="heroPromoIndicators" class="flex items-center gap-1"></div>
+                <span id="heroPromoCounter" class="text-[11px] font-bold text-slate-400 tabular-nums">1/4</span>
+                
+                <div class="flex items-center gap-1 border-l border-slate-200 pl-2">
+                  <button type="button" onclick="prevHeroPromoSlide()" class="w-6 h-6 rounded-md bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-600 transition-all cursor-pointer" title="Tin trước">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                  </button>
+                  <button type="button" onclick="nextHeroPromoSlide()" class="w-6 h-6 rounded-md bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-600 transition-all cursor-pointer" title="Tin kế tiếp">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                   </button>
                 </div>
-              </div>
 
-              <!-- Main Slide Content Area (Animated via JS) -->
-              <div id="heroPromoContentArea" class="min-h-[84px] flex items-center">
-                <!-- Rendered via JS renderHeroPromoSlide() with smooth animation -->
+                <!-- Nút Cập Nhật Bản Tin & Quảng Cáo -->
+                <button type="button" onclick="openCreateAdModal()" class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition-all cursor-pointer" title="Cập nhật bản tin hoặc đăng bài quảng cáo">
+                  <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
+                  <span class="hidden sm:inline">Cập nhật bản tin</span>
+                </button>
               </div>
+            </div>
 
+            <div class="p-4 sm:p-5">
+              <!-- Main Slide Content Area (Threads / Telegram Feed Post) -->
+              <div id="heroPromoContentArea" class="min-h-[120px]">
+                <!-- Rendered via JS renderHeroPromoSlide() -->
+              </div>
             </div>
 
             <!-- Auto-slide Progress Bar (Solid Blue) -->
@@ -6063,38 +6062,82 @@
         progEl.classList.add('anim-news-progress');
       }
 
-      // Render Body Content with Smooth Transition (Clean & Compact, No Clutter Pills)
+      // Render Body Content in Threads / Telegram Channel Post Style
       if (containerEl) {
         const actionCall = item.ctaUrl 
           ? `window.open('${item.ctaUrl}', '_blank')` 
           : (item.ctaAction || `openAdDetailModal('${item.id}')`);
 
+        const authorName = item.author || 'ConnectCV Channel';
+        const authorInitial = authorName.charAt(0).toUpperCase();
+        const likedIds = JSON.parse(localStorage.getItem('connectcv_liked_news') || '[]');
+        const isLiked = likedIds.includes(String(item.id));
+        const baseLikes = 24 + (heroPromoCurrentIndex * 11);
+        const likeCount = baseLikes + (isLiked ? 1 : 0);
+        const viewCount = ['1.4K', '2.1K', '980', '1.8K'][heroPromoCurrentIndex % 4];
+        const postTime = item.isCustom ? 'Vừa đăng' : ['2 giờ trước', 'Hôm nay', '1 ngày trước', '2 ngày trước'][heroPromoCurrentIndex % 4];
+
         containerEl.innerHTML = `
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center anim-ticker-slide w-full">
-            <!-- Cột trái: Tác giả, Tiêu đề, Mô tả ngắn -->
-            <div class="lg:col-span-8 xl:col-span-9 space-y-1.5">
-              <div class="flex items-center gap-2 text-slate-500 text-xs font-medium">
-                <span class="truncate">${item.author || 'ConnectCV Partner'}</span>
-                ${item.isCustom ? '<span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Mới</span>' : ''}
+          <div class="flex gap-3 sm:gap-3.5 anim-ticker-slide w-full">
+            <!-- Cột Trái: Avatar + Đường nối Thread dọc -->
+            <div class="flex flex-col items-center shrink-0">
+              <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-heading font-bold text-sm shadow-2xs border border-slate-200">
+                ${authorInitial}
               </div>
-
-              <h2 class="font-heading font-bold text-base sm:text-lg text-slate-900 leading-snug hover:text-blue-600 transition-colors cursor-pointer" onclick="${actionCall}">
-                ${item.title}
-              </h2>
-
-              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed line-clamp-2 font-normal">
-                ${item.desc}
-              </p>
+              <div class="w-[2px] flex-1 bg-slate-200/80 rounded-full mt-2 min-h-[24px]"></div>
             </div>
 
-            <!-- Cột phải: Nút CTA & Thông tin phụ -->
-            <div class="lg:col-span-4 xl:col-span-3 flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-center gap-1.5 pt-1 lg:pt-0">
-              <button onclick="${actionCall}" class="btn-primary text-xs font-semibold px-5 py-2.5 w-full sm:w-auto lg:w-full text-center justify-center">
-                <span>${item.ctaText || 'Xem Chi Tiết'}</span>
-                <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-              </button>
+            <!-- Cột Phải: Nội dung bài đăng phong cách Threads / Telegram -->
+            <div class="flex-1 min-w-0 pb-1">
+              <!-- Author Header + Verified Tick + Time -->
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="font-bold text-sm text-slate-900 truncate">${authorName}</span>
+                  <svg class="w-3.5 h-3.5 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="currentColor" title="Đã xác thực"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/></svg>
+                  <span class="text-slate-300">&bull;</span>
+                  <span class="text-xs text-slate-400 font-normal shrink-0">${postTime}</span>
+                </div>
+              </div>
 
-              ${item.secondaryText ? `<span class="text-[11px] text-slate-400 font-medium text-left lg:text-right">${item.secondaryText}</span>` : ''}
+              <!-- Title & Post Text -->
+              <h2 class="font-heading font-bold text-sm sm:text-[15px] text-slate-900 leading-snug mt-1 hover:text-blue-600 transition-colors cursor-pointer" onclick="${actionCall}">
+                ${item.title}
+              </h2>
+              <p class="text-slate-600 text-xs sm:text-[13px] leading-relaxed line-clamp-2 mt-1 font-normal">
+                ${item.desc}
+              </p>
+
+              <!-- Telegram-style Link Preview Box -->
+              <div onclick="${actionCall}" class="mt-2.5 pl-3 pr-3.5 py-2 bg-slate-50 hover:bg-blue-50/60 border-l-[3px] border-blue-600 rounded-r-xl flex items-center justify-between gap-3 cursor-pointer transition-colors group/link">
+                <div class="min-w-0">
+                  <div class="text-[11px] font-bold text-blue-600 uppercase tracking-wide">${item.ctaText || 'Xem chi tiết'}</div>
+                  <div class="text-xs font-medium text-slate-700 truncate">${item.secondaryText || item.title}</div>
+                </div>
+                <svg class="w-4 h-4 text-blue-600 shrink-0 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+              </div>
+
+              <!-- Threads / Telegram Engagement Bar -->
+              <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
+                <div class="flex items-center gap-4">
+                  <button type="button" onclick="toggleHeroNewsLike(event, '${item.id}')" class="inline-flex items-center gap-1.5 ${isLiked ? 'text-rose-600 font-semibold' : 'hover:text-rose-600'} transition-colors cursor-pointer">
+                    <svg class="w-4 h-4" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                    <span class="tabular-nums">${likeCount}</span>
+                  </button>
+                  <button type="button" onclick="${actionCall}" class="inline-flex items-center gap-1.5 hover:text-blue-600 transition-colors cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z"/></svg>
+                    <span>Chi tiết</span>
+                  </button>
+                  <button type="button" onclick="copyHeroNewsLink(event)" class="inline-flex items-center gap-1 hover:text-slate-900 transition-colors cursor-pointer" title="Chia sẻ bản tin">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"/></svg>
+                  </button>
+                </div>
+
+                <!-- Telegram Views Counter -->
+                <div class="inline-flex items-center gap-1 text-[11px] text-slate-400 font-medium">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span class="tabular-nums">${viewCount}</span>
+                </div>
+              </div>
             </div>
           </div>
         `;
@@ -6124,6 +6167,28 @@
     function goToHeroPromoSlide(index) {
       heroPromoCurrentIndex = index;
       renderHeroPromoSlide();
+    }
+
+    function toggleHeroNewsLike(e, id) {
+      if (e) e.stopPropagation();
+      const strId = String(id);
+      let liked = [];
+      try { liked = JSON.parse(localStorage.getItem('connectcv_liked_news') || '[]'); } catch(err) {}
+      if (liked.includes(strId)) {
+        liked = liked.filter(x => x !== strId);
+      } else {
+        liked.push(strId);
+      }
+      localStorage.setItem('connectcv_liked_news', JSON.stringify(liked));
+      renderHeroPromoSlide();
+    }
+
+    function copyHeroNewsLink(e) {
+      if (e) e.stopPropagation();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.href).catch(() => {});
+      }
+      showToast('Đã sao chép liên kết bản tin!');
     }
 
     // --- Modal Đăng Bài Quảng Cáo & Giới Thiệu Nhóm ---
