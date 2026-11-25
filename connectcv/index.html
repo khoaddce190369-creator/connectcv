@@ -694,82 +694,107 @@
   <!-- ==========================================================================
        VIEW 3: LUYỆN PHỎNG VẤN GIỌNG NÓI AI (CHUYÊN NGHIỆP, HIỆN ĐẠI, THUẦN TIẾNG VIỆT)
        ========================================================================== -->
-  <section id="view-interview" class="view-animate hidden flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
+  <section id="view-interview" class="view-animate hidden flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
     
     <!-- Bước 1: Setup Vị Trí -->
-    <div id="intSetupBox" class="bg-white p-6 sm:p-7 rounded-xl border border-slate-200/90 shadow-xs space-y-6">
-      <div class="border-b border-slate-100 pb-4">
-        <span class="chip-pill chip-cyan font-bold uppercase tracking-wide text-xs mb-2">Mô phỏng phỏng vấn</span>
-        <h2 class="font-heading font-extrabold text-lg sm:text-xl text-slate-900 mt-1">
-          Phòng Luyện phỏng vấn AI Chuẩn Mô Hình STAR
-        </h2>
-        <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
-          Phỏng vấn giọng nói tương tác trực tiếp với AI. Nhận phản hồi tức thì và báo cáo đánh giá năng lực chi tiết.
-        </p>
+    <div id="intSetupBox" class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/90 shadow-sm space-y-6 anim-hero-fade-up">
+      <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-5">
+        <div class="flex items-center gap-3.5">
+          <div class="relative w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white anim-hero-pulse"></span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg>
+          </div>
+          <h2 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900 tracking-tight">
+            Luyện phỏng vấn
+          </h2>
+        </div>
+        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+          <span>4 chặng · Giọng nói AI</span>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Chọn nhanh vị trí -->
+      <div class="space-y-2.5">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">Gợi ý:</span>
+          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">UI/UX Designer</button>
+          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Frontend Developer</button>
+          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Backend Developer</button>
+          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Product Manager</button>
+          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Sales B2B</button>
+          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Marketing</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Vị trí mục tiêu</label>
-          <input id="intJobTitleInput" type="text" value="UI/UX Designer" class="input-upwork w-full font-semibold" />
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Vị trí</label>
+          <input id="intJobTitleInput" type="text" value="UI/UX Designer" placeholder="Nhập vị trí..." class="input-upwork w-full font-semibold transition-all focus:ring-2 focus:ring-blue-500/20" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Cấp độ phỏng vấn</label>
-          <select id="intDifficultySelect" class="input-upwork w-full font-semibold">
-            <option value="Intern">Thực tập sinh (Intern) — Tư duy cơ bản</option>
-            <option value="Fresher">Mới tốt nghiệp (Fresher) — Chuyên môn &amp; Quy trình</option>
-            <option value="Junior" selected>Có kinh nghiệm (Junior/Mid) — Tình huống &amp; Số liệu</option>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Cấp độ</label>
+          <select id="intDifficultySelect" class="input-upwork w-full font-semibold cursor-pointer">
+            <option value="Intern">Intern</option>
+            <option value="Fresher">Fresher</option>
+            <option value="Junior" selected>Junior / Mid</option>
           </select>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Giọng đọc AI</label>
-          <select id="intVoiceSelect" class="input-upwork w-full font-semibold">
-            <option value="vi-VN-HoaiMyNeural" selected>Giọng Nữ miền Bắc (Hoài My - Tự nhiên)</option>
-            <option value="vi-VN-NamMinhNeural">Giọng Nam miền Nam (Nam Minh - Chuyên nghiệp)</option>
+          <select id="intVoiceSelect" class="input-upwork w-full font-semibold cursor-pointer">
+            <option value="vi-VN-HoaiMyNeural" selected>Nữ (Hoài My)</option>
+            <option value="vi-VN-NamMinhNeural">Nam (Nam Minh)</option>
           </select>
         </div>
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Mô tả công việc (JD) hoặc ghi chú năng lực (Tùy chọn)</label>
-        <textarea id="intJdInput" rows="2" class="input-upwork w-full" placeholder="Dán nội dung JD hoặc yêu cầu tuyển dụng để AI phỏng vấn sát nhất..."></textarea>
+        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">JD hoặc yêu cầu (tùy chọn)</label>
+        <textarea id="intJdInput" rows="2" class="input-upwork w-full transition-all focus:ring-2 focus:ring-blue-500/20" placeholder="Dán JD để AI hỏi sát thực tế hơn..."></textarea>
       </div>
 
-      <div class="pt-2 text-right">
-        <button onclick="startSpaVoiceInterview()" id="btnStartSpaVoice" class="btn-primary px-7 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg>
+      <div class="pt-1 flex items-center justify-end">
+        <button onclick="startSpaVoiceInterview()" id="btnStartSpaVoice" class="btn-primary btn-shimmer px-7 py-3 text-xs sm:text-sm font-bold tracking-wide hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg>
           <span>Bắt đầu phỏng vấn</span>
         </button>
       </div>
     </div>
 
     <!-- Bước 2: Phòng Phỏng Vấn Giọng Nói Live -->
-    <div id="intRoomBox" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div id="intRoomBox" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start anim-hero-fade-up">
       
       <!-- Cột Trái: Thông tin Chặng & Tiến độ (4 cols) -->
-      <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Đang phỏng vấn vị trí</span>
-          <h3 id="spaIntJobTitle" class="font-heading font-extrabold text-base text-slate-900 mt-1">UI/UX Designer</h3>
-          <p id="spaIntDifficulty" class="text-xs text-slate-500 mt-0.5">Cấp độ: Junior</p>
-        </div>
-
-        <div class="border-t border-slate-100 pt-4 space-y-2.5">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">4 Chặng Phỏng Vấn</span>
-          <div id="intStage-1" class="p-3 rounded-xl border border-sky-200 bg-sky-50 text-sky-800 text-xs font-bold flex items-center justify-between">
-            <span>1. Giới thiệu bản thân &amp; Định hướng</span>
-            <span class="text-xs px-2 py-0.5 rounded-full bg-sky-200 text-sky-800 font-extrabold">Hiện tại</span>
+      <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5 lg:sticky lg:top-20">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Vị trí phỏng vấn</span>
+            <h3 id="spaIntJobTitle" class="font-heading font-extrabold text-lg text-slate-900 mt-0.5">UI/UX Designer</h3>
+            <p id="spaIntDifficulty" class="text-xs font-medium text-slate-500 mt-0.5">Cấp độ: Junior</p>
           </div>
-          <div id="intStage-2" class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-xs font-medium">2. Kỹ năng chuyên môn &amp; Quy trình</div>
-          <div id="intStage-3" class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-xs font-medium">3. Xử lý tình huống theo chuẩn STAR</div>
-          <div id="intStage-4" class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-xs font-medium">4. Tổng kết &amp; Đóng góp kỳ vọng</div>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 anim-hero-pulse"></span>
+            Live
+          </span>
         </div>
 
         <div class="border-t border-slate-100 pt-4 space-y-2">
-          <button onclick="endSpaInterview()" class="w-full py-2.5 px-4 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition-all flex items-center justify-center gap-2">
-            <span>Kết thúc &amp; Xem báo cáo</span>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Tiến trình</span>
+          <div id="intStage-1" class="p-3 rounded-xl border border-sky-200 bg-sky-50 text-sky-800 text-xs font-bold flex items-center justify-between transition-all">
+            <span>1. Giới thiệu &amp; Định hướng</span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-sky-200 text-sky-800 font-extrabold">Hiện tại</span>
+          </div>
+          <div id="intStage-2" class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-xs font-medium transition-all">2. Chuyên môn &amp; Quy trình</div>
+          <div id="intStage-3" class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-xs font-medium transition-all">3. Tình huống thực tế</div>
+          <div id="intStage-4" class="p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-xs font-medium transition-all">4. Tổng kết</div>
+        </div>
+
+        <div class="border-t border-slate-100 pt-4 space-y-2">
+          <button onclick="endSpaInterview()" class="w-full py-2.5 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition-all hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center gap-2">
+            <span>Kết thúc &amp; Xem đánh giá</span>
           </button>
-          <button onclick="resetSpaInterview()" class="btn-ghost w-full py-2 text-xs font-semibold text-center">
+          <button onclick="resetSpaInterview()" class="btn-ghost w-full py-2 text-xs font-semibold text-center rounded-xl">
             Thiết lập lại
           </button>
         </div>
@@ -779,16 +804,16 @@
       <div class="lg:col-span-8 space-y-4">
         
         <!-- Khối Trạng Thái Giọng Nói Studio -->
-        <div class="bg-slate-900 p-8 rounded-xl text-white border border-slate-800 space-y-5 text-center relative overflow-hidden shadow-lg">
+        <div class="bg-slate-900 p-7 sm:p-8 rounded-2xl text-white border border-slate-800 space-y-5 text-center relative overflow-hidden shadow-lg">
           
           <!-- Hộp trạng thái chính -->
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800 border border-sky-400/80 text-sky-300 font-bold text-xs uppercase tracking-wider shadow-sm">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800 border border-sky-400/70 text-sky-300 font-bold text-xs uppercase tracking-wider shadow-sm">
             <span class="w-2 h-2 rounded-full bg-sky-400 radar-dot"></span>
             <span id="spaLiveStatusText">AI sẵn sàng</span>
           </div>
 
           <!-- Animated Soundwave Visualizer -->
-          <div class="flex items-center justify-center gap-1.5 h-8 py-1">
+          <div class="flex items-center justify-center gap-1.5 h-9 py-1">
             <span class="soundwave-bar"></span>
             <span class="soundwave-bar"></span>
             <span class="soundwave-bar"></span>
@@ -800,7 +825,7 @@
 
           <!-- Thanh đo âm lượng Micro -->
           <div id="spaMicMeterBox" class="hidden max-w-sm mx-auto items-center gap-3 bg-slate-800/90 px-4 py-2 rounded-full border border-slate-700 text-xs">
-            <span class="font-bold text-xs text-slate-300 uppercase tracking-wide">Âm lượng Mic:</span>
+            <span class="font-bold text-xs text-slate-300 uppercase tracking-wide">Mic:</span>
             <div class="flex-1 bg-slate-700 rounded-full h-2 overflow-hidden">
               <div id="spaMicMeterBar" class="bg-sky-400 h-full w-0 transition-all duration-75 rounded-full"></div>
             </div>
@@ -808,9 +833,9 @@
           </div>
 
           <!-- Phụ đề thời gian thực -->
-          <div class="p-4 bg-slate-800/80 rounded-xl border border-slate-700/80 text-xs leading-relaxed min-h-[56px] flex items-center justify-center text-center">
-            <p id="spaLiveCaption" class="italic text-slate-300">
-              Bấm nút "Bật Micro" hoặc gõ câu trả lời bên dưới để bắt đầu...
+          <div class="p-4 bg-slate-800/80 rounded-xl border border-slate-700/80 text-xs sm:text-sm leading-relaxed min-h-[56px] flex items-center justify-center text-center">
+            <p id="spaLiveCaption" class="text-slate-200">
+              Bấm "Bật Micro" hoặc "Gõ chữ" để bắt đầu trả lời.
             </p>
           </div>
 
@@ -821,43 +846,43 @@
         </div>
 
         <!-- Thanh Điều Khiển Micro Dưới Cùng -->
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-          <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
-            <input id="spaHandsfreeToggle" type="checkbox" checked class="w-4 h-4 accent-sky-600 rounded" />
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+          <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer select-none">
+            <input id="spaHandsfreeToggle" type="checkbox" checked class="w-4 h-4 accent-blue-600 rounded" />
             <span>Tự động gửi khi ngừng nói</span>
           </label>
 
-          <div class="flex items-center gap-2">
-            <button id="btnSpaMicToggle" onclick="toggleSpaMic()" class="btn-primary text-xs font-bold px-5 py-2 uppercase">
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btnSpaMicToggle" onclick="toggleSpaMic()" class="btn-primary text-xs font-bold px-5 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
               Bật Micro
             </button>
-            <button onclick="toggleSpaKeyboardInput()" class="btn-secondary text-xs font-bold px-4 py-2">
-              Gõ Chữ
+            <button onclick="toggleSpaKeyboardInput()" class="btn-secondary text-xs font-bold px-4 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+              Gõ chữ
             </button>
-            <button onclick="replaySpaLastQuestion()" class="btn-secondary text-xs font-bold px-4 py-2">
-              Nghe Lại Câu Hỏi
+            <button onclick="replaySpaLastQuestion()" class="btn-secondary text-xs font-bold px-4 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+              Nghe lại
             </button>
           </div>
         </div>
 
         <!-- Ô gõ phím dự phòng -->
-        <div id="spaKeyboardInputCard" class="hidden bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5">
+        <div id="spaKeyboardInputCard" class="hidden bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5 anim-hero-fade-up">
           <div class="flex items-center justify-between text-xs font-bold text-slate-800">
-            <span>Nhập câu trả lời bằng bàn phím:</span>
+            <span>Nhập câu trả lời:</span>
             <button onclick="toggleSpaKeyboardInput()" class="text-slate-400 hover:text-slate-700 text-xs font-bold">Đóng &times;</button>
           </div>
           <div class="flex gap-2.5">
-            <textarea id="spaTypedAnswerInput" rows="2" class="input-upwork flex-1 text-xs resize-none" placeholder="Gõ câu trả lời của bạn tại đây..."></textarea>
-            <button id="btnSpaSendTyped" onclick="sendSpaTypedAnswer()" class="btn-navy px-6 text-xs font-bold uppercase flex-shrink-0">
+            <textarea id="spaTypedAnswerInput" rows="2" class="input-upwork flex-1 text-xs resize-none" placeholder="Nhập câu trả lời của bạn..."></textarea>
+            <button id="btnSpaSendTyped" onclick="sendSpaTypedAnswer()" class="btn-navy px-6 text-xs font-bold uppercase flex-shrink-0 rounded-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all">
               Gửi
             </button>
           </div>
         </div>
 
         <!-- Danh sách hội thoại đối thoại -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-800 border-b border-slate-100 pb-2">
-            Hội Thoại Buổi Phỏng Vấn
+        <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+          <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2.5">
+            Nội dung hội thoại
           </h4>
           <div id="spaTranscriptList" class="space-y-3 max-h-[320px] overflow-y-auto text-xs pr-1">
             <!-- Messages rendered dynamically -->
