@@ -104,8 +104,13 @@
         </button>
       </nav>
 
-      <!-- Góc Phải: Tài Khoản -->
+      <!-- Góc Phải: Nút Đăng Tin & Tài Khoản -->
       <div class="flex items-center gap-2 sm:gap-3 whitespace-nowrap shrink-0">
+        <button id="btnNavPostJob" onclick="openPostJobModal()" class="btn-primary btn-shimmer text-xs font-semibold px-4 py-2 whitespace-nowrap shadow-sm">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          <span>Đăng tin</span>
+        </button>
+
         <div id="userAuthSection" class="flex items-center gap-2 text-xs whitespace-nowrap">
           <button onclick="toggleAuthModal()" id="btnUserAccount" class="btn-secondary text-xs px-3.5 py-2 font-semibold whitespace-nowrap">
             Đăng nhập
@@ -5393,8 +5398,11 @@
             Đăng Nhập
           </button>
         `;
-        // Mặc định khách vãng lai
-        if (btnNavPostJob) btnNavPostJob.classList.remove('hidden');
+        // Mặc định khách vãng lai: hiện nút Đăng tin
+        if (btnNavPostJob) {
+          btnNavPostJob.classList.remove('hidden');
+          btnNavPostJob.style.display = '';
+        }
         if (btnOpenCreatePortfolio) btnOpenCreatePortfolio.classList.remove('hidden');
         if (modalApplyFooter) modalApplyFooter.classList.remove('hidden');
         if (modalHrApplyNotice) modalHrApplyNotice.classList.add('hidden');
@@ -5406,13 +5414,19 @@
       // RBAC: Phân quyền giao diện
       if (isHR) {
         // Nhà tuyển dụng: ĐƯỢC đăng tin tuyển dụng, KHÔNG ĐƯỢC tạo portfolio, KHÔNG ĐƯỢC nộp proposal ứng tuyển
-        if (btnNavPostJob) btnNavPostJob.classList.remove('hidden');
+        if (btnNavPostJob) {
+          btnNavPostJob.classList.remove('hidden');
+          btnNavPostJob.style.display = '';
+        }
         if (btnOpenCreatePortfolio) btnOpenCreatePortfolio.classList.add('hidden');
         if (modalApplyFooter) modalApplyFooter.classList.add('hidden');
         if (modalHrApplyNotice) modalHrApplyNotice.classList.remove('hidden');
       } else {
         // Ứng viên / Freelancer: KHÔNG ĐƯỢC đăng tin tuyển dụng, ĐƯỢC tạo portfolio, ĐƯỢC nộp ứng tuyển
-        if (btnNavPostJob) btnNavPostJob.classList.add('hidden');
+        if (btnNavPostJob) {
+          btnNavPostJob.classList.add('hidden');
+          btnNavPostJob.style.display = 'none';
+        }
         if (btnOpenCreatePortfolio) btnOpenCreatePortfolio.classList.remove('hidden');
         if (modalApplyFooter) modalApplyFooter.classList.remove('hidden');
         if (modalHrApplyNotice) modalHrApplyNotice.classList.add('hidden');
