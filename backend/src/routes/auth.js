@@ -21,13 +21,190 @@ function generateToken(user) {
 
 /**
  * @route   GET /api/auth/config
- * @desc    Cung cấp cấu hình công khai (Google Client ID) cho frontend
+ * @desc    Cung cấp cấu hình công khai (Google Client ID & GitHub OAuth status) cho frontend
  */
 router.get('/config', (req, res) => {
   return res.json({
     success: true,
-    googleClientId: process.env.GOOGLE_CLIENT_ID || '72336868787-9tlektnct22a92fddqenh3e6rfr5gkc7.apps.googleusercontent.com'
+    googleClientId: process.env.GOOGLE_CLIENT_ID || '72336868787-9tlektnct22a92fddqenh3e6rfr5gkc7.apps.googleusercontent.com',
+    githubEnabled: Boolean(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET)
   });
+});
+
+/**
+ * @route   GET /api/auth/github/login
+ * @desc    Chuyển hướng người dùng sang trang xác thực GitHub OAuth
+ */
+router.get('/github/login', (req, res) => {
+  const clientId = process.env.GITHUB_CLIENT_ID;
+  const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    return res.status(503).send(`
+      <!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>Chưa cấu hình GitHub OAuth</title></head>
+      <body style="font-family:sans-serif;padding:32px;max-width:520px;margin:auto;color:#0f172a;">
+        <h2 style="margin-bottom:8px;">Chưa cấu hình GitHub OAuth</h2>
+        <p style="color:#475569;font-size:14px;line-height:1.6;">
+          Vui lòng thêm <code>GITHUB_CLIENT_ID</code> và <code>GITHUB_CLIENT_SECRET</code> vào Environment Variables trên Render (hoặc file <code>.env</code>).
+        </p>
+        <button onclick="window.close()" style="margin-top:16px;padding:10px 18px;background:#2563eb;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Đóng cửa sổ</button>
+      </body></html>
+    `);
+  }
+
+  const role = (req.query.role === 'HR' || req.query.role === 'Employer') ? 'HR' : 'Student';
+  const mode = req.query.mode === 'register' ? 'register' : 'login';
+  const state = Buffer.from(JSON.stringify({ role, mode })).toString('base64url');
+  const proto = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+  const host = req.headers['x-forwarded-host'] || req.get('host');
+  const redirectUri = `${proto}://${host}/api/auth/github/callback`;
+
+  const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=read:user%20user:email&state=${encodeURIComponent(state)}`;
+  return res.redirect(githubAuthUrl);
+});
+
+/**
+ * @route   GET /api/auth/github/callback
+ * @desc    Nhận code từ GitHub, đổi lấy access_token, xác thực user & trả JWT về Frontend
+ */
+router.get('/github/callback', async (req, res) => {
+  try {
+    const { code, state, error } = req.query;
+    if (error || !code) {
+      return res.send(`
+        <script>
+          if (window.opener) {
+            window.opener.postMessage({ type: 'GITHUB_AUTH_ERROR', message: 'Bạn đã hủy đăng nhập GitHub.' }, window.location.origin);
+            window.close();
+          } else {
+            window.location.href = '/?auth_error=github_cancelled';
+          }
+        </script>
+      `);
+    }
+
+    let role = 'Student';
+    let mode = 'login';
+    if (state) {
+      try {
+        const parsed = JSON.parse(Buffer.from(String(state), 'base64url').toString('utf8'));
+        if (parsed.role === 'HR') role = 'HR';
+        if (parsed.mode === 'register') mode = 'register';
+      } catch (e) {}
+    }
+
+    const clientId = process.env.GITHUB_CLIENT_ID;
+    const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+
+    const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code: String(code)
+      })
+    });
+    const tokenData = await tokenRes.json();
+    const accessToken = tokenData.access_token;
+
+    if (!accessToken) {
+      throw new Error(tokenData.error_description || 'Không thể lấy access token từ GitHub.');
+    }
+
+    const userRes = await fetch('https://api.github.com/user', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'User-Agent': 'ConnectCV-App'
+      }
+    });
+    const ghUser = await userRes.json();
+
+    let email = ghUser.email;
+    if (!email) {
+      const emailsRes = await fetch('https://api.github.com/user/emails', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'User-Agent': 'ConnectCV-App'
+        }
+      });
+      if (emailsRes.ok) {
+        const emails = await emailsRes.json();
+        const primary = Array.isArray(emails) ? (emails.find(e => e.primary && e.verified) || emails.find(e => e.verified) || emails[0]) : null;
+        if (primary) email = primary.email;
+      }
+    }
+
+    if (!email) {
+      email = `${ghUser.login}@users.noreply.github.com`;
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const displayName = ghUser.name || ghUser.login || normalizedEmail.split('@')[0];
+
+    let user = UserModel.findByEmail(normalizedEmail);
+    if (!user) {
+      user = UserModel.create({
+        id: ghUser.id ? `usr_github_${ghUser.id}` : undefined,
+        username: displayName,
+        email: normalizedEmail,
+        password_hash: null,
+        isPro: role === 'HR',
+        role: role,
+        github: ghUser.login || '',
+        avatar: ghUser.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0f172a&color=fff`,
+        aiCredits: role === 'HR' ? 40 : 20
+      });
+    } else {
+      const updates = {};
+      if (ghUser.avatar_url && !user.avatar) updates.avatar = ghUser.avatar_url;
+      if (ghUser.login && !user.github) updates.github = ghUser.login;
+      if (Object.keys(updates).length > 0) {
+        user = UserModel.update(user.id, updates) || user;
+      }
+    }
+
+    const jwtToken = generateToken(user);
+    const publicUser = UserModel.toPublicJSON(user);
+
+    return res.send(`
+      <!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><title>Đăng nhập thành công</title></head>
+      <body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;color:#0f172a;">
+        <p style="font-size:14px;font-weight:600;">Đang hoàn tất đăng nhập GitHub...</p>
+        <script>
+          const payload = {
+            type: 'GITHUB_AUTH_SUCCESS',
+            jwtToken: ${JSON.stringify(jwtToken)},
+            user: ${JSON.stringify(publicUser)},
+            message: ${JSON.stringify(mode === 'register' ? 'Đăng ký bằng GitHub thành công!' : 'Đăng nhập GitHub thành công!')}
+          };
+          if (window.opener) {
+            window.opener.postMessage(payload, window.location.origin);
+            window.close();
+          } else {
+            localStorage.setItem('jwtToken', payload.jwtToken);
+            localStorage.setItem('connectcv_user', JSON.stringify(payload.user));
+            window.location.href = '/';
+          }
+        </script>
+      </body></html>
+    `);
+  } catch (err) {
+    console.error('Lỗi GitHub OAuth callback:', err);
+    return res.status(500).send(`
+      <script>
+        if (window.opener) {
+          window.opener.postMessage({ type: 'GITHUB_AUTH_ERROR', message: 'Lỗi xác thực GitHub: ${err.message.replace(/'/g, "\\'")}' }, window.location.origin);
+          window.close();
+        } else {
+          window.location.href = '/?auth_error=github_failed';
+        }
+      </script>
+    `);
+  }
 });
 
 /**
@@ -146,48 +323,14 @@ router.post('/google', async (req, res) => {
 
 /**
  * @route   POST /api/auth/register
- * @desc    Đăng ký tài khoản mới (Ứng viên hoặc Doanh nghiệp)
+ * @desc    Đã tắt đăng ký trực tiếp — Chỉ hỗ trợ đăng ký qua Google hoặc GitHub OAuth
  */
-router.post('/register', async (req, res) => {
-  try {
-    const { username, email, password, role } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Vui lòng nhập đầy đủ Email và Mật khẩu.'
-      });
-    }
-
-    const existingUser = UserModel.findByEmail(email);
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email này đã được đăng ký tài khoản trên hệ thống. Vui lòng đăng nhập.'
-      });
-    }
-
-    const assignedRole = role === 'HR' || role === 'Employer' ? 'HR' : 'Student';
-    const newUser = UserModel.create({
-      username: username || email.split('@')[0],
-      email: email.toLowerCase(),
-      password_hash: password,
-      role: assignedRole,
-      isPro: false,
-      aiCredits: assignedRole === 'HR' ? 40 : 20
-    });
-
-    const jwtToken = generateToken(newUser);
-    return res.status(201).json({
-      success: true,
-      message: 'Đăng ký tài khoản thành công.',
-      jwtToken,
-      user: UserModel.toPublicJSON(newUser)
-    });
-  } catch (error) {
-    console.error('Lỗi POST /api/auth/register:', error);
-    return res.status(500).json({ success: false, message: 'Lỗi đăng ký tài khoản.' });
-  }
+router.post('/register', (req, res) => {
+  return res.status(403).json({
+    success: false,
+    code: 'OAUTH_ONLY',
+    message: 'Hệ thống chỉ hỗ trợ đăng ký bằng tài khoản Google hoặc GitHub.'
+  });
 });
 
 /**
@@ -205,57 +348,14 @@ router.get('/users', optionalAuth, (req, res) => {
 
 /**
  * @route   POST /api/auth/login
- * @desc    Đăng nhập bằng Email & Mật khẩu (Kiểm tra nghiêm ngặt tài khoản đã đăng ký)
+ * @desc    Đã tắt đăng nhập trực tiếp — Chỉ hỗ trợ đăng nhập qua Google hoặc GitHub OAuth
  */
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        code: 'MISSING_FIELDS',
-        message: 'Vui lòng nhập đầy đủ Email và Mật khẩu.'
-      });
-    }
-
-    const user = UserModel.findByEmail(email.toLowerCase().trim());
-
-    // QUY TẮC: Chưa có tài khoản đăng ký thì không được đăng nhập
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        code: 'USER_NOT_REGISTERED',
-        message: 'Tài khoản này chưa được đăng ký trong hệ thống. Vui lòng đăng ký trước khi đăng nhập!'
-      });
-    }
-
-    // Kiểm tra mật khẩu nếu tài khoản có mật khẩu
-    if (user.password_hash && user.password_hash !== password) {
-      return res.status(401).json({
-        success: false,
-        code: 'INVALID_PASSWORD',
-        message: 'Mật khẩu không chính xác.'
-      });
-    }
-
-    const jwtToken = generateToken(user);
-    const publicUser = UserModel.toPublicJSON(user);
-
-    return res.json({
-      success: true,
-      message: 'Đăng nhập thành công.',
-      jwtToken,
-      user: publicUser
-    });
-  } catch (error) {
-    console.error('Lỗi POST /api/auth/login:', error);
-    return res.status(500).json({
-      success: false,
-      code: 'LOGIN_FAILED',
-      message: 'Lỗi đăng nhập. Vui lòng thử lại.'
-    });
-  }
+router.post('/login', (req, res) => {
+  return res.status(403).json({
+    success: false,
+    code: 'OAUTH_ONLY',
+    message: 'Hệ thống chỉ hỗ trợ đăng nhập bằng tài khoản Google hoặc GitHub.'
+  });
 });
 
 /**
