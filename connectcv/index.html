@@ -2416,69 +2416,65 @@
        FOOTER CHUẨN UPWORK (DEEP NAVY MEGA FOOTER)
        ========================================================================== -->
   <footer class="bg-slate-950 text-white mt-auto no-print border-t border-slate-800/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 lg:py-12">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-xs">
         
         <!-- Cột 1: Ứng viên -->
         <div class="space-y-3">
           <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Ứng viên</h4>
           <ul class="space-y-2 text-slate-400">
-            <li><a href="#jobs" onclick="switchTab('jobs')" class="hover:text-white transition-colors">Tìm kiếm việc làm &amp; Dự án</a></li>
-            <li><a href="#cv" onclick="switchTab('cv')" class="hover:text-white transition-colors">Tạo CV Chuẩn ATS Live Editor</a></li>
-            <li><a href="#interview" onclick="switchTab('interview')" class="hover:text-white transition-colors">Luyện phỏng vấn AI giọng nói</a></li>
-            <li><a href="#jobs" onclick="switchTab('jobs')" class="hover:text-white transition-colors">Hướng dẫn viết Proposal thắng thầu</a></li>
+            <li><a href="#jobs" onclick="switchTab('jobs'); window.scrollTo({top:0,behavior:'smooth'});" class="hover:text-white transition-colors">Tìm kiếm việc làm</a></li>
+            <li><a href="#cv" onclick="switchTab('cv'); window.scrollTo({top:0,behavior:'smooth'});" class="hover:text-white transition-colors">Mẫu CV xin việc</a></li>
+            <li><a href="#interview" onclick="switchTab('interview'); window.scrollTo({top:0,behavior:'smooth'});" class="hover:text-white transition-colors">Luyện phỏng vấn AI</a></li>
+            <li><a href="#community" onclick="switchTab('community'); window.scrollTo({top:0,behavior:'smooth'});" class="hover:text-white transition-colors">Cộng đồng &amp; Chia sẻ</a></li>
+            <li><a href="#portfolio" onclick="switchTab('portfolio'); window.scrollTo({top:0,behavior:'smooth'});" class="hover:text-white transition-colors">Portfolio cá nhân</a></li>
           </ul>
         </div>
 
-        <!-- Cột 2: Dành Cho Doanh Nghiệp -->
+        <!-- Cột 2: Nhà Tuyển Dụng -->
         <div class="space-y-3">
           <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Nhà Tuyển Dụng</h4>
           <ul class="space-y-2 text-slate-400">
             <li><a href="javascript:void(0)" onclick="openPostJobModal()" class="hover:text-white transition-colors">Đăng tin tuyển dụng</a></li>
-            <li><a href="#candidates" onclick="switchTab('candidates')" class="hover:text-white transition-colors">Sàn tìm kiếm Freelancer</a></li>
-            <li><a href="javascript:void(0)" onclick="openPostJobModal()" class="hover:text-white transition-colors">AI Trợ lý chuẩn hóa JD</a></li>
-            <li><a href="#wallet" onclick="switchTab('wallet')" class="hover:text-white transition-colors">Bảng giá gói tuyển dụng</a></li>
+            <li><a href="#candidates" onclick="switchTab('candidates'); window.scrollTo({top:0,behavior:'smooth'});" class="hover:text-white transition-colors">Tìm kiếm ứng viên</a></li>
+            <li><a href="#wallet" onclick="switchTab('wallet'); switchPlanCategory('business'); window.scrollTo({top:0,behavior:'smooth'});" class="hover:text-white transition-colors">Gói dịch vụ doanh nghiệp</a></li>
           </ul>
         </div>
 
-        <!-- Cột 3: Công Nghệ AI -->
-        <div class="space-y-3">
-          <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Công Nghệ &amp; AI</h4>
-          <ul class="space-y-2 text-slate-400">
-            <li><a href="#cv" onclick="switchTab('cv')" class="hover:text-white transition-colors">Thuật toán ATS Keyword Matching</a></li>
-            <li><a href="#interview" onclick="switchTab('interview')" class="hover:text-white transition-colors">Mô hình STAR Competency AI</a></li>
-            <li><a href="#interview" onclick="switchTab('interview')" class="hover:text-white transition-colors">Công nghệ Voice-to-Voice AI</a></li>
-            <li><a href="#wallet" onclick="switchTab('wallet')" class="hover:text-white transition-colors">Nâng cấp gói trực tiếp VietQR</a></li>
-          </ul>
-        </div>
-
-        <!-- Cột 4: Về ConnectCV -->
+        <!-- Cột 3: Về ConnectCV -->
         <div class="space-y-3">
           <h4 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Về ConnectCV</h4>
           <ul class="space-y-2 text-slate-400">
-            <li><a href="javascript:void(0)" onclick="openTeamDetailModal()" class="hover:text-white transition-colors">Về Dự án ConnectCV (FPT EXE)</a></li>
-            <li><a href="#jobs" class="hover:text-white transition-colors">Chính sách bảo mật dữ liệu PII</a></li>
-            <li><a href="#jobs" class="hover:text-white transition-colors">Điều khoản dịch vụ</a></li>
-            <li><a href="#wallet" onclick="switchTab('wallet')" class="hover:text-white transition-colors">Trung tâm trợ giúp 24/7</a></li>
+            <li><a href="javascript:void(0)" onclick="openFooterInfoModal('about')" class="hover:text-white transition-colors">Giới thiệu dự án ConnectCV</a></li>
+            <li><a href="#wallet" onclick="switchTab('wallet'); window.scrollTo({top:0,behavior:'smooth'});" class="hover:text-white transition-colors">Bảng giá dịch vụ</a></li>
+            <li><a href="javascript:void(0)" onclick="openFooterInfoModal('terms')" class="hover:text-white transition-colors">Điều khoản sử dụng</a></li>
+            <li><a href="javascript:void(0)" onclick="openFooterInfoModal('contact')" class="hover:text-white transition-colors">Liên hệ hỗ trợ</a></li>
           </ul>
         </div>
 
       </div>
 
       <!-- Bottom Line -->
-      <div class="mt-12 pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="mt-10 pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
         <div class="flex items-center gap-3">
           <img src="assets/logo.png" alt="ConnectCV" class="h-6 w-auto brightness-200" />
-          <span>ConnectCV &copy; 2026. Nền tảng kết nối nhân tài, tạo CV chuẩn ATS &amp; phỏng vấn AI.</span>
-        </div>
-        <div class="flex items-center gap-6 text-slate-400">
-          <span class="hover:text-white cursor-pointer">Bảo mật thông tin</span>
-          <span class="hover:text-white cursor-pointer">Điều khoản sử dụng</span>
-          <span class="hover:text-white cursor-pointer">Tiêu chuẩn quốc tế</span>
+          <span>ConnectCV &copy; 2026 — Nền tảng tạo CV chuẩn ATS, Portfolio &amp; Luyện phỏng vấn AI.</span>
         </div>
       </div>
     </div>
   </footer>
+
+  <!-- Modal Thông Tin Chân Trang (About / Terms / Contact) -->
+  <div id="footerInfoModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this) closeFooterInfoModal()">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 modal-animate relative">
+      <button type="button" onclick="closeFooterInfoModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-100 text-xl font-semibold">&times;</button>
+      <h3 id="footerInfoModalTitle" class="font-heading font-extrabold text-lg text-slate-900 pr-8">Thông tin</h3>
+      <div id="footerInfoModalBody" class="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-3"></div>
+      <div class="pt-2 text-right">
+        <button type="button" onclick="closeFooterInfoModal()" class="btn-primary text-xs font-bold px-5 py-2">Đóng</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        JAVASCRIPT SINGLE-PAGE APPLICATION CORE SCRIPT
@@ -6696,6 +6692,60 @@
 
     function closeAdDetailModal() {
       const modal = document.getElementById('adDetailModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function openFooterInfoModal(type) {
+      const modal = document.getElementById('footerInfoModal');
+      const title = document.getElementById('footerInfoModalTitle');
+      const body = document.getElementById('footerInfoModalBody');
+      if (!modal || !title || !body) return;
+
+      const contentMap = {
+        about: {
+          title: 'Giới thiệu dự án ConnectCV',
+          html: `
+            <p><strong>ConnectCV</strong> là nền tảng hỗ trợ nghề nghiệp tích hợp AI dành cho sinh viên, người tìm việc, freelancer và doanh nghiệp vừa và nhỏ (SME), được phát triển bởi nhóm dự án khởi nghiệp sinh viên Đại học FPT Cần Thơ.</p>
+            <ul class="list-disc pl-5 space-y-1.5 text-slate-600">
+              <li><strong>Tạo &amp; Tối ưu CV chuẩn ATS:</strong> Chỉnh sửa trực tiếp trên giao diện A4, trợ lý AI chuẩn hóa văn phong và bám sát JD.</li>
+              <li><strong>Portfolio Cá nhân:</strong> Khởi tạo và xuất bản trang trưng bày dự án kèm link riêng.</li>
+              <li><strong>Luyện phỏng vấn AI:</strong> Thực hành phỏng vấn giọng nói theo tình huống thực tế và nhận đánh giá chi tiết.</li>
+              <li><strong>Kết nối Việc làm &amp; Cộng đồng:</strong> Chia sẻ sản phẩm, kết nối trực tiếp với nhà tuyển dụng.</li>
+            </ul>
+          `
+        },
+        terms: {
+          title: 'Điều khoản sử dụng',
+          html: `
+            <p>Khi sử dụng nền tảng ConnectCV, bạn đồng ý tuân thủ các nguyên tắc cơ bản sau:</p>
+            <ul class="list-disc pl-5 space-y-1.5 text-slate-600">
+              <li>Thông tin hồ sơ, CV, dự án Portfolio và tin tuyển dụng đăng tải cần đảm bảo tính trung thực và không vi phạm bản quyền.</li>
+              <li>Không sử dụng nền tảng để đăng tải nội dung spam, lừa đảo hoặc tuyển dụng trái quy định pháp luật.</li>
+              <li>Các gói dịch vụ nâng cấp qua VietQR được kích hoạt theo đúng chu kỳ đã chọn và không tự động gia hạn trừ tiền.</li>
+            </ul>
+          `
+        },
+        contact: {
+          title: 'Liên hệ hỗ trợ',
+          html: `
+            <p>Nếu bạn cần hỗ trợ kỹ thuật, góp ý tính năng hoặc hợp tác doanh nghiệp, vui lòng liên hệ đội ngũ ConnectCV qua:</p>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs">
+              <p><strong>Đơn vị phát triển:</strong> Nhóm ConnectCV — ĐH FPT Cần Thơ</p>
+              <p><strong>Email hỗ trợ:</strong> <a href="mailto:support@connectcv.id.vn" class="text-blue-600 hover:underline font-semibold">support@connectcv.id.vn</a></p>
+              <p><strong>Website:</strong> <a href="https://connectcv.id.vn" class="text-blue-600 hover:underline font-semibold">https://connectcv.id.vn</a></p>
+            </div>
+          `
+        }
+      };
+
+      const selected = contentMap[type] || contentMap.about;
+      title.innerText = selected.title;
+      body.innerHTML = selected.html;
+      modal.classList.remove('hidden');
+    }
+
+    function closeFooterInfoModal() {
+      const modal = document.getElementById('footerInfoModal');
       if (modal) modal.classList.add('hidden');
     }
 
