@@ -303,49 +303,20 @@
       </div>
     </div>
 
-    <!-- 5. MAIN JOB FEED (CRUIP JOBBOARD 2-COLUMN SIGNATURE LAYOUT) -->
-    <div class="max-w-5xl mx-auto w-full pt-2" id="mainJobsFeedSection">
+    <!-- 5. MAIN JOB FEED (CLEAN 2-COLUMN PRO LAYOUT: LEFT FILTER + RIGHT COMPACT JOB CARDS) -->
+    <div class="max-w-6xl mx-auto w-full pt-2" id="mainJobsFeedSection">
       
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- CỘT CHÍNH: DANH SÁCH VIỆC LÀM (8 COLS) -->
-        <main class="lg:col-span-8 space-y-4">
+        <!-- CỘT TRÁI: LỌC NÂNG CAO (STICKY SIDEBAR - 4/3 COLS) -->
+        <aside class="lg:col-span-4 xl:col-span-3 sticky top-24 space-y-4">
           
-          <!-- Thanh điều khiển: Tiêu đề, Tabs & Sắp xếp -->
-          <div class="bg-white px-4 py-3 rounded-xl border border-gray-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div>
-              <h2 class="font-heading font-bold text-sm text-gray-900" id="jobResultsCount">
-                Việc làm công nghệ tuyển chọn
-              </h2>
-            </div>
-            
-            <div class="flex items-center gap-3 text-xs w-full sm:w-auto justify-between sm:justify-end">
-              <div class="flex items-center gap-1 bg-gray-100 p-0.5 rounded-lg font-semibold text-gray-600">
-                <button onclick="filterByTabType('all')" id="tabFilterAll" class="px-2.5 py-1 rounded-md bg-white text-gray-900 shadow-2xs transition-all">Tất cả</button>
-                <button onclick="filterByTabType('Freelance')" id="tabFilterFreelance" class="px-2.5 py-1 rounded-md hover:text-gray-900 transition-all">Freelance</button>
-                <button onclick="filterByTabType('Full-time')" id="tabFilterFulltime" class="px-2.5 py-1 rounded-md hover:text-gray-900 transition-all">Toàn thời gian</button>
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg>
+                <span class="font-heading font-bold text-sm text-slate-900">Lọc nâng cao</span>
               </div>
-
-              <select id="sortSelect" onchange="sortJobsList()" class="text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1 text-gray-700 outline-none">
-                <option value="newest">Mới nhất</option>
-                <option value="salary">Mức lương cao nhất</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Danh sách thẻ việc làm Cruip JobBoard Feed -->
-          <div id="jobsFeedContainer" class="bg-white rounded-xl border border-gray-200 shadow-2xs divide-y divide-gray-100 overflow-hidden">
-            <!-- Rendered dynamically via renderJobsList -->
-          </div>
-
-        </main>
-
-        <!-- CỘT PHỤ: BỘ LỌC TÌM KIẾM (4 COLS - STICKY CRUIP ASIDE) -->
-        <aside class="lg:col-span-4 sticky top-24 space-y-5">
-          
-          <div class="bg-white p-5 rounded-2xl border border-neutral-200/90 shadow-2xs space-y-5">
-            <div class="flex items-center justify-between border-b border-neutral-100 pb-3">
-              <span class="font-heading font-bold text-xs text-neutral-900 uppercase tracking-wider">Bộ lọc tìm kiếm</span>
               <button onclick="resetFilters()" class="text-xs text-blue-600 font-semibold hover:underline cursor-pointer">
                 Đặt lại
               </button>
@@ -353,82 +324,136 @@
 
             <!-- Hình thức công việc -->
             <div class="space-y-2">
-              <span class="block text-xs font-bold text-neutral-800">Hình Thức Công Việc</span>
+              <span class="block text-xs font-bold text-slate-800">Hình thức làm việc</span>
               <div class="space-y-1.5 text-xs">
-                <label class="flex items-center gap-2 cursor-pointer text-neutral-700 hover:text-neutral-900">
+                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
                   <input type="radio" name="jobTypeFilter" value="all" checked onchange="filterJobs()" class="w-4 h-4 accent-blue-600" />
-                  <span>Tất cả hình thức</span>
+                  <span>Không lọc</span>
                 </label>
-                <label class="flex items-center gap-2 cursor-pointer text-neutral-700 hover:text-neutral-900">
-                  <input type="radio" name="jobTypeFilter" value="Freelance" onchange="filterJobs()" class="w-4 h-4 accent-blue-600" />
-                  <span>Dự án Freelance</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer text-neutral-700 hover:text-neutral-900">
+                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
                   <input type="radio" name="jobTypeFilter" value="Full-time" onchange="filterJobs()" class="w-4 h-4 accent-blue-600" />
                   <span>Toàn thời gian</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
+                  <input type="radio" name="jobTypeFilter" value="Freelance" onchange="filterJobs()" class="w-4 h-4 accent-blue-600" />
+                  <span>Dự án Freelance</span>
                 </label>
               </div>
             </div>
 
             <!-- Mức thu nhập tối thiểu -->
-            <div class="space-y-2 border-t border-neutral-100 pt-4">
-              <span class="block text-xs font-bold text-neutral-800">Mức Thu Nhập Tối Thiểu</span>
-              <select id="minBudgetFilter" onchange="filterJobs()" class="w-full text-xs font-medium p-2 bg-neutral-50 border border-neutral-200 rounded-lg outline-none focus:bg-white focus:border-blue-500 cursor-pointer">
-                <option value="0">Tất cả mức thu nhập</option>
-                <option value="10000000">Từ 10 triệu / tháng</option>
-                <option value="20000000">Từ 20 triệu / tháng</option>
-                <option value="35000000">Từ 35 triệu / tháng</option>
-              </select>
+            <div class="space-y-2 border-t border-slate-100 pt-3.5">
+              <span class="block text-xs font-bold text-slate-800">Mức lương tối thiểu</span>
+              <input type="hidden" id="minBudgetFilter" value="0" />
+              <div class="space-y-1.5 text-xs">
+                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
+                  <input type="radio" name="minBudgetRadio" value="0" checked onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="w-4 h-4 accent-blue-600" />
+                  <span>Không lọc</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
+                  <input type="radio" name="minBudgetRadio" value="10000000" onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="w-4 h-4 accent-blue-600" />
+                  <span>Từ 10 triệu / tháng</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
+                  <input type="radio" name="minBudgetRadio" value="20000000" onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="w-4 h-4 accent-blue-600" />
+                  <span>Từ 20 triệu / tháng</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
+                  <input type="radio" name="minBudgetRadio" value="35000000" onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="w-4 h-4 accent-blue-600" />
+                  <span>Từ 35 triệu / tháng</span>
+                </label>
+              </div>
             </div>
 
             <!-- Kỹ năng chuyên môn -->
-            <div class="space-y-2 border-t border-neutral-100 pt-4">
-              <span class="block text-xs font-bold text-neutral-800">Kỹ Năng &amp; Công Nghệ</span>
+            <div class="space-y-2 border-t border-slate-100 pt-3.5">
+              <span class="block text-xs font-bold text-slate-800">Kỹ năng chuyên môn</span>
               <div class="grid grid-cols-2 gap-2 text-xs">
-                <label class="flex items-center gap-2 text-neutral-700 hover:text-neutral-900 cursor-pointer">
+                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
                   <input type="checkbox" value="Figma" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
                   <span>Figma</span>
                 </label>
-                <label class="flex items-center gap-2 text-neutral-700 hover:text-neutral-900 cursor-pointer">
+                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
                   <input type="checkbox" value="UI/UX" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
                   <span>UI/UX</span>
                 </label>
-                <label class="flex items-center gap-2 text-neutral-700 hover:text-neutral-900 cursor-pointer">
+                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
                   <input type="checkbox" value="React" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
                   <span>React</span>
                 </label>
-                <label class="flex items-center gap-2 text-neutral-700 hover:text-neutral-900 cursor-pointer">
+                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
                   <input type="checkbox" value="AI" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
                   <span>AI Prompt</span>
                 </label>
-                <label class="flex items-center gap-2 text-neutral-700 hover:text-neutral-900 cursor-pointer">
+                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
                   <input type="checkbox" value="Tailwind" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
                   <span>Tailwind CSS</span>
                 </label>
-                <label class="flex items-center gap-2 text-neutral-700 hover:text-neutral-900 cursor-pointer">
+                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
                   <input type="checkbox" value="Design System" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
                   <span>Design System</span>
                 </label>
               </div>
             </div>
 
-            <button onclick="filterJobs()" class="w-full py-2.5 text-xs font-bold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl shadow-2xs transition-all uppercase tracking-wide cursor-pointer">
-              Áp dụng bộ lọc
-            </button>
+            <!-- Action buttons: Xóa lọc / Áp dụng -->
+            <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+              <button type="button" onclick="resetFilters()" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-all cursor-pointer">
+                Xóa lọc
+              </button>
+              <button type="button" onclick="filterJobs()" class="flex-1 py-2 text-xs font-semibold text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer">
+                Áp dụng
+              </button>
+            </div>
           </div>
 
-          <!-- Cruip Promo Mini Box -->
-          <div class="bg-blue-50/70 p-5 rounded-2xl border border-blue-100 text-left space-y-2.5">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-blue-700 bg-white px-2 py-0.5 rounded-md border border-blue-200 inline-block">AI Career Copilot</span>
-            <h4 class="font-heading font-bold text-sm text-neutral-900">Tối ưu CV chuẩn ATS cùng AI</h4>
-            <p class="text-xs text-neutral-600 leading-relaxed">Phân tích điểm mạnh, gợi ý chỉnh sửa bám sát mô tả công việc (JD) để tăng cơ hội trúng tuyển.</p>
-            <a href="#cv" onclick="switchTab('cv')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 pt-1">
-              <span>Bắt đầu tạo CV ngay</span>
+          <!-- Promo Mini Box (Solid Clean Card) -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 inline-block">AI Career Copilot</span>
+            <h4 class="font-heading font-bold text-xs text-slate-900">Tối ưu CV chuẩn ATS cùng AI</h4>
+            <p class="text-[11px] text-slate-600 leading-relaxed">Phân tích điểm mạnh, gợi ý chỉnh sửa bám sát mô tả công việc (JD).</p>
+            <a href="#cv" onclick="switchTab('cv')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 pt-0.5">
+              <span>Tạo CV ngay</span>
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
           </div>
 
         </aside>
+
+        <!-- CỘT PHẢI: DANH SÁCH VIỆC LÀM (8/9 COLS) -->
+        <main class="lg:col-span-8 xl:col-span-9 space-y-3.5">
+          
+          <!-- Thanh điều khiển: Tiêu đề, Tabs & Sắp xếp -->
+          <div class="bg-white px-4 py-3 rounded-xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="font-heading font-bold text-sm text-slate-900" id="jobResultsCount">
+                Việc làm tuyển chọn
+              </h2>
+            </div>
+            
+            <div class="flex items-center gap-2.5 text-xs w-full sm:w-auto justify-between sm:justify-end">
+              <div class="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg font-semibold text-slate-600">
+                <button onclick="filterByTabType('all')" id="tabFilterAll" class="px-2.5 py-1 rounded-md bg-white text-slate-900 shadow-2xs transition-all">Tất cả</button>
+                <button onclick="filterByTabType('Freelance')" id="tabFilterFreelance" class="px-2.5 py-1 rounded-md hover:text-slate-900 transition-all">Freelance</button>
+                <button onclick="filterByTabType('Full-time')" id="tabFilterFulltime" class="px-2.5 py-1 rounded-md hover:text-slate-900 transition-all">Toàn thời gian</button>
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <span class="text-slate-400 font-medium hidden sm:inline">Sắp xếp:</span>
+                <select id="sortSelect" onchange="sortJobsList()" class="text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-700 outline-none cursor-pointer">
+                  <option value="newest">Mới nhất</option>
+                  <option value="salary">Lương cao nhất</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Danh sách thẻ việc làm gọn gàng, chuyên nghiệp -->
+          <div id="jobsFeedContainer" class="space-y-3">
+            <!-- Rendered dynamically via renderJobsList -->
+          </div>
+
+        </main>
 
       </div>
 
@@ -3434,6 +3459,14 @@
       }
     }
 
+    function getSavedJobIds() {
+      try {
+        return JSON.parse(localStorage.getItem('connectcv_saved_jobs') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
     function renderJobsList(jobs) {
       const container = document.getElementById('jobsFeedContainer');
       const countEl = document.getElementById('jobResultsCount');
@@ -3441,12 +3474,14 @@
 
       if (!jobs || jobs.length === 0) {
         container.innerHTML = `
-          <div class="p-12 text-center text-xs text-neutral-400">
+          <div class="bg-white rounded-xl border border-slate-200 p-12 text-center text-xs text-slate-400">
             Không tìm thấy công việc phù hợp với tiêu chí lọc của bạn. Hãy thử thay đổi từ khóa hoặc đặt lại bộ lọc.
           </div>
         `;
         return;
       }
+
+      const savedIds = getSavedJobIds();
 
       container.innerHTML = jobs.map(j => {
         const companyName = j.company || 'Doanh Nghiệp Đối Tác';
@@ -3455,53 +3490,47 @@
         const locText = j.location || 'Từ xa';
         const typeText = j.type === 'Freelance' ? 'Dự án Freelance' : 'Toàn thời gian';
         const timeText = formatJobTime(j.createdAt);
+        const isSaved = savedIds.includes(String(j.id));
 
-        // Hiển thị tối đa 2 tag kỹ năng tiêu biểu
         const rawSkills = j.skills || j.tags || [];
-        const skillTagsHtml = rawSkills.slice(0, 2).map(s => 
-          `<span class="text-xs font-medium text-neutral-600 bg-neutral-100/90 px-2 py-0.5 rounded-md whitespace-nowrap">${s}</span>`
-        ).join('');
+        const skillsDisplay = rawSkills.length > 0
+          ? rawSkills.slice(0, 3).join(' • ') + (rawSkills.length > 3 ? ` • +${rawSkills.length - 3}` : '')
+          : 'Phỏng vấn ngay • Phản hồi nhanh';
 
         const logoHtml = j.logo && j.logo.startsWith('http')
-          ? `<img src="${j.logo}" alt="${companyName}" class="w-11 h-11 rounded-xl object-cover border border-neutral-200/80 shadow-2xs group-hover:border-neutral-300 transition-colors" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'w-11 h-11 rounded-xl bg-neutral-100 border border-neutral-200/80 flex items-center justify-center font-bold text-sm text-neutral-800 shadow-2xs\\'>${initial}</div>'" />`
-          : `<div class="w-11 h-11 rounded-xl bg-neutral-100 border border-neutral-200/80 flex items-center justify-center font-bold text-sm text-neutral-800 shadow-2xs group-hover:border-neutral-300 transition-colors">${initial}</div>`;
+          ? `<img src="${j.logo}" alt="${companyName}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-contain border border-slate-200 bg-white p-1.5 shrink-0" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center font-bold text-lg text-slate-700 shrink-0\\'>${initial}</div>'" />`
+          : `<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center font-bold text-lg text-slate-700 shrink-0">${initial}</div>`;
 
         return `
-          <div class="p-4 sm:p-5 hover:bg-neutral-50/70 transition-all group cursor-pointer" onclick="openJobDetailModal('${j.id}')">
-            <div class="sm:flex items-center space-y-3 sm:space-y-0 sm:space-x-4">
+          <div class="bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-sm p-4 transition-all group cursor-pointer" onclick="openJobDetailModal('${j.id}')">
+            <div class="flex items-start gap-3.5 sm:gap-4">
               <div class="shrink-0">
                 ${logoHtml}
               </div>
-              <div class="grow lg:flex items-center justify-between space-y-3 lg:space-x-4 lg:space-y-0">
-                <div class="space-y-1">
-                  <!-- Thông tin công ty & địa điểm (Sạch sẽ, Không Emoji, Không Badge AI thừa) -->
-                  <div class="flex items-center gap-1.5 text-xs text-neutral-500 font-medium">
-                    <span class="text-neutral-700 font-semibold">${companyName}</span>
-                    <span class="text-neutral-300">&bull;</span>
-                    <span>${locText}</span>
-                    <span class="text-neutral-300">&bull;</span>
-                    <span class="text-neutral-400 font-normal">${timeText}</span>
-                  </div>
-                  <!-- Tiêu đề công việc chuẩn Cruip JobBoard -->
-                  <div>
-                    <h3 class="font-heading font-bold text-[15px] sm:text-base text-neutral-900 group-hover:text-blue-600 transition-colors leading-snug tracking-tight">
-                      ${j.title}
-                    </h3>
-                  </div>
-                  <!-- Hàng thẻ thông tin tối giản (Mức lương & Hình thức & Kỹ năng) -->
-                  <div class="flex flex-wrap items-center gap-1.5 pt-1">
-                    <span class="text-xs font-semibold text-emerald-700 bg-emerald-50/80 border border-emerald-200/60 px-2 py-0.5 rounded-md whitespace-nowrap">${salaryText}</span>
-                    <span class="text-xs font-medium text-neutral-600 bg-neutral-100/90 px-2 py-0.5 rounded-md whitespace-nowrap">${typeText}</span>
-                    ${skillTagsHtml}
-                  </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-2">
+                  <h3 class="font-heading font-bold text-[15px] sm:text-base text-slate-900 group-hover:text-blue-600 transition-colors leading-snug line-clamp-2 flex items-center gap-1.5">
+                    <span>${j.title}</span>
+                    <svg class="w-4 h-4 text-blue-600 shrink-0 inline-block" viewBox="0 0 24 24" fill="currentColor" title="Tin đã xác thực"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/></svg>
+                  </h3>
                 </div>
-                <!-- Nút Ứng tuyển Solid Tech Blue -->
-                <div class="min-w-[110px] flex items-center lg:justify-end shrink-0">
-                  <button onclick="event.stopPropagation(); openJobDetailModal('${j.id}')" class="text-xs font-semibold px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 border border-blue-600 rounded-xl shadow-sm active:scale-[0.98] transition-all flex items-center gap-1.5 whitespace-nowrap">
-                    <span>Ứng tuyển</span>
-                    <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-                  </button>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mt-0.5 truncate">${companyName}</p>
+                
+                <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">${salaryText}</span>
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 whitespace-nowrap">${locText}</span>
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 whitespace-nowrap">${typeText}</span>
                 </div>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100 mt-3 pt-2.5 flex items-center justify-between gap-3 text-xs">
+              <span class="text-slate-500 truncate">${skillsDisplay}</span>
+              <div class="flex items-center gap-2.5 shrink-0">
+                <span class="text-slate-400">${timeText}</span>
+                <button type="button" onclick="toggleSaveJob(event, '${j.id}')" class="w-8 h-8 rounded-full border ${isSaved ? 'border-rose-200 bg-rose-50 text-rose-500' : 'border-slate-200 text-slate-400 hover:border-blue-500 hover:text-blue-600'} flex items-center justify-center transition-all cursor-pointer" title="${isSaved ? 'Bỏ lưu tin' : 'Lưu tin'}">
+                  <svg class="w-4 h-4" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                </button>
               </div>
             </div>
           </div>
@@ -3509,8 +3538,19 @@
       }).join('');
     }
 
-    function toggleSaveJob(id) {
-      showToast('Đã lưu công việc vào mục yêu thích');
+    function toggleSaveJob(e, id) {
+      if (e) e.stopPropagation();
+      const strId = String(id);
+      let saved = getSavedJobIds();
+      if (saved.includes(strId)) {
+        saved = saved.filter(item => item !== strId);
+        showToast('Đã bỏ lưu công việc');
+      } else {
+        saved.push(strId);
+        showToast('Đã lưu công việc vào mục yêu thích');
+      }
+      localStorage.setItem('connectcv_saved_jobs', JSON.stringify(saved));
+      filterJobs();
     }
 
     let activeJobCategory = 'all';
@@ -3607,6 +3647,8 @@
 
       const budgetSel = document.getElementById('minBudgetFilter');
       if (budgetSel) budgetSel.value = '0';
+      const budgetRadio = document.querySelector('input[name="minBudgetRadio"][value="0"]');
+      if (budgetRadio) budgetRadio.checked = true;
 
       document.querySelectorAll('.jobSkillCheckbox').forEach(cb => cb.checked = false);
 
