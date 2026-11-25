@@ -763,3 +763,21 @@ button:active:not(:disabled), a.btn-primary:active, a.btn-navy:active, a.btn-sec
   animation: newsProgressFill 5.5s linear infinite;
 }
 
+/* Navbar Tabs, Logo & Avatar Micro-Animations */
+@keyframes navTabPop {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+.nav-tab-active {
+  animation: navTabPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes avatarStatusPing {
+  0% { transform: scale(1); opacity: 0.8; }
+  75%, 100% { transform: scale(2.1); opacity: 0; }
+}
+.anim-avatar-ping {
+  animation: avatarStatusPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
