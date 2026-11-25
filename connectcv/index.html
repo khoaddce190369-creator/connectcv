@@ -962,48 +962,48 @@
           </button>
         </div>
 
-        <!-- Switch Tháng vs Năm (Chuẩn pricing-section.tsx) -->
+        <!-- Switch Tháng vs Quý -->
         <div class="relative flex items-center p-1 rounded-full bg-neutral-100 border border-neutral-200/90 shadow-inner">
           <button id="btnPeriodMonthly" type="button" onclick="setBillingPeriod('monthly')" class="relative z-10 px-5 py-2 rounded-full text-xs font-semibold text-white bg-blue-600 border border-blue-600 shadow-sm transition-all">
             Theo tháng
           </button>
           <button id="btnPeriodYearly" type="button" onclick="setBillingPeriod('yearly')" class="relative z-10 px-5 py-2 rounded-full text-xs font-medium text-neutral-500 hover:text-neutral-900 transition-all flex items-center gap-1.5">
-            <span>Theo năm</span>
+            <span>Theo quý</span>
             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase">
-              -36%
+              -25%
             </span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- KHỐI 3 GÓI DỊCH VỤ DẠNG CỘT Ô VUÔNG XẾP THEO HÀNG (Theo phong cách ảnh mẫu 2, màu sắc ConnectCV) -->
+    <!-- KHỐI 3 GÓI DỊCH VỤ -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch pt-2">
       
       <!-- CỘT 1: GÓI CƠ BẢN (MIỄN PHÍ) -->
       <div class="card-modern p-6 sm:p-7 flex flex-col justify-between relative">
-        <div class="space-y-6">
+        <div class="space-y-5">
           <div>
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
+              <span id="planFreeBadge" class="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
                 Khởi Đầu
               </span>
               <span id="badgeCurrentFree" class="hidden px-2.5 py-0.5 rounded-md text-xs font-bold bg-sky-50 text-sky-700 border border-sky-200">
                 Gói Hiện Tại
               </span>
             </div>
-            <h3 class="font-heading font-extrabold text-2xl text-slate-900 mt-3">Miễn Phí</h3>
-            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-              Bộ công cụ tìm việc và tạo CV chuẩn ATS cơ bản.
+            <h3 id="planFreeTitle" class="font-heading font-extrabold text-2xl text-slate-900 mt-3">Free</h3>
+            <p id="planFreeDesc" class="text-xs text-slate-500 mt-1 leading-relaxed">
+              Trải nghiệm tạo CV chuẩn ATS và phỏng vấn AI cơ bản.
             </p>
           </div>
 
           <div class="pt-2 border-t border-slate-100">
             <div class="flex items-baseline gap-1">
-              <span class="font-heading font-extrabold text-4xl text-slate-900 tabular-nums">0đ</span>
-              <span class="text-xs text-slate-400 font-medium">/ vĩnh viễn</span>
+              <span id="planFreePrice" class="font-heading font-extrabold text-4xl text-slate-900 tabular-nums">0đ</span>
+              <span id="planFreeUnit" class="text-xs text-slate-400 font-medium">/ trọn đời</span>
             </div>
-            <p class="text-[11px] text-slate-500 mt-1">Hoàn toàn miễn phí, không yêu cầu thẻ ngân hàng</p>
+            <p id="planFreeSubtext" class="text-[11px] text-slate-500 mt-1">Không yêu cầu thẻ thanh toán</p>
           </div>
 
           <button id="btnPlanFreeAction" type="button" class="w-full py-3 px-4 rounded-xl text-xs font-bold border border-neutral-200 bg-neutral-100 text-neutral-600 transition-all cursor-default text-center">
@@ -1011,173 +1011,143 @@
           </button>
 
           <div class="space-y-3 pt-3 border-t border-slate-100 text-xs">
-            <p class="font-bold text-[11px] uppercase tracking-wider text-slate-700">Quyền lợi cơ bản bao gồm:</p>
-            <ul class="space-y-2.5 text-slate-600">
+            <p class="font-bold text-[11px] uppercase tracking-wider text-slate-700">Bao gồm:</p>
+            <ul id="planFreeFeatures" class="space-y-2.5 text-slate-600">
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span>Tạo <strong>01 CV</strong> chuẩn ATS xuất định dạng PDF</span>
-              </li>
-              <li class="flex items-start gap-2.5">
-                <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span>Ứng tuyển tối đa <strong>03 công việc / tháng</strong></span>
+                <span><strong>01 Master Profile</strong> &amp; xuất 01 mẫu CV chuẩn ATS</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>01 lượt</strong> luyện phỏng vấn AI giọng nói thử nghiệm</span>
+                <span><strong>01 lượt</strong> kiểm tra độ khớp JD / tuần</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span>Xem hồ sơ công khai &amp; kết nối nhà tuyển dụng</span>
+                <span><strong>01 phiên</strong> phỏng vấn thử AI ngắn (3–5 phút)</span>
               </li>
-              <li class="flex items-start gap-2.5 text-slate-400">
-                <svg class="w-4 h-4 text-slate-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                <span class="line-through">Không giới hạn AI tối ưu ATS Match Score</span>
-              </li>
-              <li class="flex items-start gap-2.5 text-slate-400">
-                <svg class="w-4 h-4 text-slate-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                <span class="line-through">Portfolio Subdomain riêng biệt (/p/ten-ban)</span>
+              <li class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span>Tham gia cộng đồng &amp; tìm việc làm</span>
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- CỘT 2: GÓI PRO (NỔI BẬT NHẤT - BEST CHOICE / RECOMMENDED) -->
+      <!-- CỘT 2: GÓI STUDENT PASS / PRO RECRUITER (NỔI BẬT NHẤT) -->
       <div class="card-modern pro-card-featured p-6 sm:p-7 flex flex-col justify-between relative">
-        
-        <!-- Huy hiệu nổi bật trên đỉnh thẻ (Theo mẫu ảnh) -->
-        <div class="absolute -top-3 left-1/2 -translate-y-1/2 bg-blue-600 text-white text-[11px] font-bold px-3 py-0.5 rounded-md shadow-xs uppercase tracking-wider whitespace-nowrap">
+        <div id="planProTopBadge" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[11px] font-bold px-3 py-0.5 rounded-md shadow-xs uppercase tracking-wider whitespace-nowrap">
           Phổ biến nhất
         </div>
 
-        <div class="space-y-6">
+        <div class="space-y-5">
           <div>
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
-                Khuyên Dùng
+              <span id="planProBadge" class="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+                Ưu Đãi Sinh Viên
               </span>
               <span id="badgeCurrentPro" class="hidden px-2.5 py-0.5 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                 Đang sử dụng
               </span>
             </div>
-            <h3 class="font-heading font-extrabold text-2xl text-slate-900 mt-3 flex items-center gap-2">
-              <span>ConnectCV Pro</span>
-            </h3>
-            <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-              Tối ưu hồ sơ không giới hạn, nâng cao cơ hội phỏng vấn và tiếp cận nhà tuyển dụng.
+            <h3 id="planProTitle" class="font-heading font-extrabold text-2xl text-slate-900 mt-3">Student Pass</h3>
+            <p id="planProDesc" class="text-xs text-slate-600 mt-1 leading-relaxed">
+              Trợ giá học đường 45% dành cho sinh viên thực tập &amp; mới tốt nghiệp.
             </p>
           </div>
 
           <div class="pt-2 border-t border-slate-100">
             <div class="flex items-baseline gap-2">
-              <span id="planProOldPrice" class="text-sm text-slate-500 font-medium line-through">35.000đ</span>
-              <span id="planProPrice" class="font-heading font-extrabold text-4xl text-blue-600 tabular-nums">20.000đ</span>
+              <span id="planProOldPrice" class="text-sm text-slate-400 font-medium line-through">89.000đ</span>
+              <span id="planProPrice" class="font-heading font-extrabold text-4xl text-blue-600 tabular-nums">49.000đ</span>
               <span id="planProUnit" class="text-xs text-slate-500 font-medium">/ tháng</span>
             </div>
             <p id="planProSubtext" class="text-[11px] text-emerald-600 font-bold mt-1">
-              Tiết kiệm 43% • Kích hoạt ngay lập tức
+              Tiết kiệm 45% khi xác thực Thẻ Sinh viên
             </p>
           </div>
 
           <button id="btnUpgradePro" type="button" onclick="triggerUpgradePlan('PRO')" class="w-full py-3 px-4 rounded-xl text-xs font-bold uppercase text-white bg-blue-600 hover:bg-blue-700 border border-blue-600 shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-            <span>Nâng cấp Pro</span>
+            <span>Nâng cấp ngay</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
           </button>
 
           <div class="space-y-3 pt-3 border-t border-slate-100 text-xs">
-            <p class="font-bold text-[11px] uppercase tracking-wider text-slate-800">Bao gồm toàn bộ gói Miễn Phí, cộng thêm:</p>
-            <ul class="space-y-2.5 text-slate-700">
+            <p class="font-bold text-[11px] uppercase tracking-wider text-slate-800">Bao gồm gói Free, cộng thêm:</p>
+            <ul id="planProFeatures" class="space-y-2.5 text-slate-700">
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>Không giới hạn tối ưu ATS</strong>: Chấm điểm Match Score và viết lại CV bằng AI</span>
+                <span><strong>Không giới hạn</strong> tối ưu CV chuẩn ATS theo từng JD</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>Luyện phỏng vấn AI giọng nói VIP</strong> không giới hạn số lượt</span>
+                <span><strong>Luyện phỏng vấn Voice AI</strong> mô hình STAR không giới hạn</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span>Toàn bộ ngân hàng câu hỏi tình huống thực chiến &amp; <strong>báo cáo STAR chi tiết</strong></span>
+                <span><strong>Portfolio Subdomain riêng</strong> (<code class="text-sky-700 bg-sky-50 px-1 py-0.5 rounded font-mono">/p/ten-ban</code>)</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>Ưu tiên hiển thị hồ sơ</strong> trước 500+ nhà tuyển dụng uy tín</span>
-              </li>
-              <li class="flex items-start gap-2.5">
-                <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>Portfolio Subdomain riêng</strong> (<code class="text-sky-700 bg-sky-50 px-1 py-0.5 rounded font-mono">/p/ten-ban</code>) với Waterfall Grid</span>
-              </li>
-              <li class="flex items-start gap-2.5">
-                <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>Tạo bằng AI</strong> chào thầu chuyên nghiệp chuẩn Upwork</span>
+                <span>Báo cáo phân tích điểm mạnh/yếu sau mỗi phiên</span>
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- CỘT 3: GÓI MAX (DOANH NGHIỆP / CAO CẤP) -->
+      <!-- CỘT 3: GÓI PREMIUM / ENTERPRISE -->
       <div class="card-modern p-6 sm:p-7 flex flex-col justify-between relative">
-        <div class="space-y-6">
+        <div class="space-y-5">
           <div>
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-slate-900 text-white">
-                MAX
+              <span id="planMaxBadge" class="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-slate-900 text-white">
+                Toàn Năng
               </span>
               <span id="badgeCurrentMax" class="hidden px-2.5 py-0.5 rounded-md text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
                 Đang sử dụng
               </span>
             </div>
-            <h3 class="font-heading font-extrabold text-2xl text-slate-900 mt-3 flex items-center gap-2">
-              <span>ConnectCV MAX</span>
-            </h3>
-            <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-              Dành cho Freelancer chuyên nghiệp, Mentor và Doanh nghiệp tuyển dụng.
+            <h3 id="planMaxTitle" class="font-heading font-extrabold text-2xl text-slate-900 mt-3">Premium</h3>
+            <p id="planMaxDesc" class="text-xs text-slate-500 mt-1 leading-relaxed">
+              Dành cho ứng viên đi làm &amp; Freelancer tối ưu cơ hội nghề nghiệp.
             </p>
           </div>
 
           <div class="pt-2 border-t border-slate-100">
             <div class="flex items-baseline gap-2">
-              <span id="planMaxOldPrice" class="text-sm text-slate-500 font-medium line-through">79.000đ</span>
-              <span id="planMaxPrice" class="font-heading font-extrabold text-4xl text-slate-900 tabular-nums">49.000đ</span>
+              <span id="planMaxOldPrice" class="text-sm text-slate-400 font-medium line-through">129.000đ</span>
+              <span id="planMaxPrice" class="font-heading font-extrabold text-4xl text-slate-900 tabular-nums">89.000đ</span>
               <span id="planMaxUnit" class="text-xs text-slate-500 font-medium">/ tháng</span>
             </div>
             <p id="planMaxSubtext" class="text-[11px] text-indigo-600 font-bold mt-1">
-              Đầy đủ mọi tính năng nâng cao
+              Hoặc 199.000đ / quý (Tiết kiệm 25%)
             </p>
           </div>
 
           <button id="btnUpgradeMax" type="button" onclick="triggerUpgradePlan('MAX')" class="w-full py-3 px-4 rounded-xl text-xs font-bold uppercase text-white bg-slate-900 hover:bg-black border border-slate-900 shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-            <span>Nâng cấp MAX</span>
+            <span>Nâng cấp Premium</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
           </button>
 
           <div class="space-y-3 pt-3 border-t border-slate-100 text-xs">
-            <p class="font-bold text-[11px] uppercase tracking-wider text-slate-800">Bao gồm toàn bộ gói Pro, cộng thêm:</p>
-            <ul class="space-y-2.5 text-slate-700">
+            <p class="font-bold text-[11px] uppercase tracking-wider text-slate-800">Bao gồm Student Pass, cộng thêm:</p>
+            <ul id="planMaxFeatures" class="space-y-2.5 text-slate-700">
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>Huy hiệu độc quyền "Verified Talent"</strong> gắn trực tiếp trên hồ sơ</span>
+                <span><strong>Dynamic CV Tailoring</strong> chuẩn ATS 85–90%+</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>Đưa lên Top 1 sàn ứng viên</strong> ưu tiên hiển thị trước các dự án lớn</span>
+                <span><strong>Voice AI Studio</strong> luyện kỹ thuật Gài mồi &amp; bẫy tình huống</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span>Xuất CV &amp; Portfolio định dạng <strong>High-Res PDF</strong> không watermark</span>
+                <span>AI tự động tạo <strong>bài chào thầu (Proposal)</strong> Freelance</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span>Đăng tin tuyển dụng &amp; tìm kiếm nhân tài không giới hạn (cho Doanh nghiệp)</span>
-              </li>
-              <li class="flex items-start gap-2.5">
-                <svg class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span>AI tư vấn định giá mức thù lao &amp; phân tích xu hướng thị trường lao động</span>
-              </li>
-              <li class="flex items-start gap-2.5">
-                <svg class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>Hỗ trợ 1-1 chuyên sâu 24/7</strong> từ chuyên gia hướng nghiệp ConnectCV</span>
+                <span><strong>Ưu tiên hiển thị hồ sơ</strong> trước nhà tuyển dụng</span>
               </li>
             </ul>
           </div>
@@ -4797,23 +4767,81 @@
     const PRICING_CONFIG = {
       individual: {
         monthly: {
-          proOld: '35.000đ', proPrice: '20.000đ', proUnit: '/ tháng', proSub: 'Tiết kiệm 43% • Kích hoạt ngay', proAmount: 20000, proPkg: 'PRO_MONTHLY',
-          maxOld: '79.000đ', maxPrice: '49.000đ', maxUnit: '/ tháng', maxSub: 'Đầy đủ mọi tính năng nâng cao', maxAmount: 49000, maxPkg: 'MAX_MONTHLY'
+          proOld: '89.000đ', proPrice: '49.000đ', proUnit: '/ tháng', proSub: 'Tiết kiệm 45% khi xác thực Thẻ Sinh viên', proAmount: 49000, proPkg: 'PRO_MONTHLY',
+          maxOld: '129.000đ', maxPrice: '89.000đ', maxUnit: '/ tháng', maxSub: 'Hoặc 199.000đ / quý (Tiết kiệm 25%)', maxAmount: 89000, maxPkg: 'MAX_MONTHLY'
         },
         yearly: {
-          proOld: '420.000đ', proPrice: '199.000đ', proUnit: '/ năm', proSub: 'Chỉ ~16.500đ/tháng • Tiết kiệm 36%', proAmount: 199000, proPkg: 'PRO_YEARLY',
-          maxOld: '948.000đ', maxPrice: '399.000đ', maxUnit: '/ năm', maxSub: 'Chỉ ~33.000đ/tháng • Tặng 2 tháng VIP', maxAmount: 399000, maxPkg: 'MAX_YEARLY'
+          proOld: '267.000đ', proPrice: '119.000đ', proUnit: '/ quý', proSub: 'Chỉ ~39.500đ/tháng cho Sinh viên', proAmount: 119000, proPkg: 'PRO_YEARLY',
+          maxOld: '267.000đ', maxPrice: '199.000đ', maxUnit: '/ quý', maxSub: 'Chỉ ~66.000đ/tháng • Tiết kiệm 25%', maxAmount: 199000, maxPkg: 'MAX_YEARLY'
         }
       },
       business: {
         monthly: {
-          proOld: '149.000đ', proPrice: '99.000đ', proUnit: '/ tháng', proSub: 'Lọc ứng viên & mở khóa kết nối trực tiếp', proAmount: 99000, proPkg: 'PRO_MONTHLY',
-          maxOld: '499.000đ', maxPrice: '299.000đ', maxUnit: '/ tháng', maxSub: 'Tuyển dụng không giới hạn & Verified Employer', maxAmount: 299000, maxPkg: 'MAX_MONTHLY'
+          proOld: '699.000đ', proPrice: '499.000đ', proUnit: '/ tháng', proSub: 'Miễn phí 3 tháng đầu cho doanh nghiệp SME', proAmount: 499000, proPkg: 'PRO_MONTHLY',
+          maxOld: '1.990.000đ', maxPrice: '1.490.000đ', maxUnit: '/ tháng', maxSub: 'Tối ưu cho phòng Nhân sự & Tập đoàn', maxAmount: 1490000, maxPkg: 'MAX_MONTHLY'
         },
         yearly: {
-          proOld: '1.788.000đ', proPrice: '890.000đ', proUnit: '/ năm', proSub: 'Tiết kiệm 50% cho doanh nghiệp vừa và nhỏ', proAmount: 890000, proPkg: 'PRO_YEARLY',
-          maxOld: '5.988.000đ', maxPrice: '2.490.000đ', maxUnit: '/ năm', maxSub: 'Trọn gói tuyển dụng AI doanh nghiệp lớn', maxAmount: 2490000, maxPkg: 'MAX_YEARLY'
+          proOld: '1.497.000đ', proPrice: '1.190.000đ', proUnit: '/ quý', proSub: 'Tiết kiệm 20% khi thanh toán theo quý', proAmount: 1190000, proPkg: 'PRO_YEARLY',
+          maxOld: '4.470.000đ', maxPrice: '3.490.000đ', maxUnit: '/ quý', maxSub: 'Tiết kiệm 1.000.000đ mỗi quý', maxAmount: 3490000, maxPkg: 'MAX_YEARLY'
         }
+      }
+    };
+
+    const PRICING_COPY = {
+      individual: {
+        freeBadge: 'Khởi Đầu', freeTitle: 'Free', freeDesc: 'Trải nghiệm tạo CV chuẩn ATS và phỏng vấn AI cơ bản.',
+        freeUnit: '/ trọn đời', freeSub: 'Không yêu cầu thẻ thanh toán',
+        freeFeatures: [
+          '<strong>01 Master Profile</strong> &amp; xuất 01 mẫu CV chuẩn ATS',
+          '<strong>01 lượt</strong> kiểm tra độ khớp JD / tuần',
+          '<strong>01 phiên</strong> phỏng vấn thử AI ngắn (3–5 phút)',
+          'Tham gia cộng đồng &amp; tìm việc làm'
+        ],
+        proTopBadge: 'Phổ biến nhất', proBadge: 'Ưu Đãi Sinh Viên', proTitle: 'Student Pass',
+        proDesc: 'Trợ giá học đường 45% dành cho sinh viên thực tập &amp; mới tốt nghiệp.',
+        proBtn: 'Nâng cấp ngay',
+        proFeatures: [
+          '<strong>Không giới hạn</strong> tối ưu CV chuẩn ATS theo từng JD',
+          '<strong>Luyện phỏng vấn Voice AI</strong> mô hình STAR không giới hạn',
+          '<strong>Portfolio Subdomain riêng</strong> (<code class="text-sky-700 bg-sky-50 px-1 py-0.5 rounded font-mono">/p/ten-ban</code>)',
+          'Báo cáo phân tích điểm mạnh/yếu sau mỗi phiên'
+        ],
+        maxBadge: 'Toàn Năng', maxTitle: 'Premium',
+        maxDesc: 'Dành cho ứng viên đi làm &amp; Freelancer tối ưu cơ hội nghề nghiệp.',
+        maxBtn: 'Nâng cấp Premium',
+        maxFeatures: [
+          '<strong>Dynamic CV Tailoring</strong> chuẩn ATS 85–90%+',
+          '<strong>Voice AI Studio</strong> luyện kỹ thuật Gài mồi &amp; bẫy tình huống',
+          'AI tự động tạo <strong>bài chào thầu (Proposal)</strong> Freelance',
+          '<strong>Ưu tiên hiển thị hồ sơ</strong> trước nhà tuyển dụng'
+        ]
+      },
+      business: {
+        freeBadge: 'Dùng Thử', freeTitle: 'Free Recruiter', freeDesc: 'Dành cho nhà tuyển dụng mới trải nghiệm đăng tin.',
+        freeUnit: '/ tháng', freeSub: 'Khởi tạo tài khoản Doanh nghiệp miễn phí',
+        freeFeatures: [
+          'Đăng tối đa <strong>01 tin tuyển dụng / tháng</strong>',
+          'Nhận hồ sơ ứng tuyển trực tiếp từ ứng viên',
+          'Quản lý &amp; lọc hồ sơ ứng viên thủ công'
+        ],
+        proTopBadge: 'Khuyên dùng SME', proBadge: 'Tuyển Dụng AI', proTitle: 'Pro Recruiter',
+        proDesc: 'Tuyển dụng tinh gọn bằng AI, rút ngắn 70% thời gian sàng lọc hồ sơ.',
+        proBtn: 'Đăng ký Pro Recruiter',
+        proFeatures: [
+          '<strong>Đăng tin tuyển dụng không giới hạn</strong>',
+          'AI hỗ trợ <strong>soạn bài đăng tin</strong> tuyển dụng chuẩn hóa',
+          'AI tự động quét &amp; <strong>chấm điểm độ khớp CV – JD</strong>',
+          'Tiếp cận ứng viên đã qua <strong>sơ loại Voice AI</strong>'
+        ],
+        maxBadge: 'Doanh Nghiệp', maxTitle: 'Enterprise',
+        maxDesc: 'Giải pháp tuyển dụng quy mô lớn cho đội ngũ HR chuyên nghiệp.',
+        maxBtn: 'Đăng ký Enterprise',
+        maxFeatures: [
+          'Toàn bộ quyền lợi Pro Recruiter cho <strong>nhiều tài khoản HR</strong>',
+          '<strong>Huy hiệu Doanh nghiệp xác thực</strong> &amp; ưu tiên tin đăng',
+          'Xuất báo cáo đánh giá năng lực ứng viên chi tiết',
+          'Hỗ trợ triển khai &amp; tích hợp quy trình riêng'
+        ]
       }
     };
 
@@ -4853,26 +4881,45 @@
 
     function renderPricingCards() {
       const cfg = PRICING_CONFIG[currentPlanCategory][currentBillingPeriod];
+      const copy = PRICING_COPY[currentPlanCategory];
 
-      const pProOld = document.getElementById('planProOldPrice');
-      const pProPrice = document.getElementById('planProPrice');
-      const pProUnit = document.getElementById('planProUnit');
-      const pProSub = document.getElementById('planProSubtext');
+      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+      const renderList = (id, items, colorClass) => {
+        const ul = document.getElementById(id);
+        if (!ul) return;
+        ul.innerHTML = items.map(txt => `
+          <li class="flex items-start gap-2.5">
+            <svg class="w-4 h-4 ${colorClass} shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            <span>${txt}</span>
+          </li>
+        `).join('');
+      };
 
-      const pMaxOld = document.getElementById('planMaxOldPrice');
-      const pMaxPrice = document.getElementById('planMaxPrice');
-      const pMaxUnit = document.getElementById('planMaxUnit');
-      const pMaxSub = document.getElementById('planMaxSubtext');
+      setTxt('planFreeBadge', copy.freeBadge);
+      setTxt('planFreeTitle', copy.freeTitle);
+      setTxt('planFreeDesc', copy.freeDesc);
+      setTxt('planFreeUnit', copy.freeUnit);
+      setTxt('planFreeSubtext', copy.freeSub);
+      renderList('planFreeFeatures', copy.freeFeatures, 'text-emerald-500');
 
-      if (pProOld) pProOld.innerText = cfg.proOld;
-      if (pProPrice) pProPrice.innerText = cfg.proPrice;
-      if (pProUnit) pProUnit.innerText = cfg.proUnit;
-      if (pProSub) pProSub.innerText = cfg.proSub;
+      setTxt('planProTopBadge', copy.proTopBadge);
+      setTxt('planProBadge', copy.proBadge);
+      setTxt('planProTitle', copy.proTitle);
+      setTxt('planProDesc', copy.proDesc);
+      setTxt('planProOldPrice', cfg.proOld);
+      setTxt('planProPrice', cfg.proPrice);
+      setTxt('planProUnit', cfg.proUnit);
+      setTxt('planProSubtext', cfg.proSub);
+      renderList('planProFeatures', copy.proFeatures, 'text-emerald-600');
 
-      if (pMaxOld) pMaxOld.innerText = cfg.maxOld;
-      if (pMaxPrice) pMaxPrice.innerText = cfg.maxPrice;
-      if (pMaxUnit) pMaxUnit.innerText = cfg.maxUnit;
-      if (pMaxSub) pMaxSub.innerText = cfg.maxSub;
+      setTxt('planMaxBadge', copy.maxBadge);
+      setTxt('planMaxTitle', copy.maxTitle);
+      setTxt('planMaxDesc', copy.maxDesc);
+      setTxt('planMaxOldPrice', cfg.maxOld);
+      setTxt('planMaxPrice', cfg.maxPrice);
+      setTxt('planMaxUnit', cfg.maxUnit);
+      setTxt('planMaxSubtext', cfg.maxSub);
+      renderList('planMaxFeatures', copy.maxFeatures, 'text-indigo-600');
 
       updatePricingStatusBadges();
     }
@@ -4883,6 +4930,7 @@
       const badgeMax = document.getElementById('badgeCurrentMax');
       const btnPro = document.getElementById('btnUpgradePro');
       const btnMax = document.getElementById('btnUpgradeMax');
+      const copy = PRICING_COPY[currentPlanCategory];
 
       const isProUser = currentUser && currentUser.isPro;
       const userPlan = (currentUser && currentUser.plan) || (isProUser ? 'PRO_MONTHLY' : 'FREE');
@@ -4891,21 +4939,21 @@
         if (badgeFree) badgeFree.classList.remove('hidden');
         if (badgePro) badgePro.classList.add('hidden');
         if (badgeMax) badgeMax.classList.add('hidden');
-        if (btnPro) btnPro.innerHTML = `<span>Nâng cấp Pro</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>`;
-        if (btnMax) btnMax.innerHTML = `<span>Nâng cấp MAX</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>`;
+        if (btnPro) btnPro.innerHTML = `<span>${copy.proBtn}</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>`;
+        if (btnMax) btnMax.innerHTML = `<span>${copy.maxBtn}</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>`;
       } else if (userPlan.includes('MAX')) {
         if (badgeFree) badgeFree.classList.add('hidden');
         if (badgePro) badgePro.classList.add('hidden');
         if (badgeMax) badgeMax.classList.remove('hidden');
-        if (btnMax) btnMax.innerHTML = `<span>Đang sử dụng gói MAX</span>`;
-        if (btnPro) btnPro.innerHTML = `<span>Gói Đi Kèm MAX</span>`;
+        if (btnMax) btnMax.innerHTML = `<span>Đang sử dụng ${copy.maxTitle}</span>`;
+        if (btnPro) btnPro.innerHTML = `<span>Đã bao gồm trong ${copy.maxTitle}</span>`;
       } else {
         // Pro user
         if (badgeFree) badgeFree.classList.add('hidden');
         if (badgePro) badgePro.classList.remove('hidden');
         if (badgeMax) badgeMax.classList.add('hidden');
-        if (btnPro) btnPro.innerHTML = `<span>Đang sử dụng gói Pro</span>`;
-        if (btnMax) btnMax.innerHTML = `<span>Nâng cấp MAX</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>`;
+        if (btnPro) btnPro.innerHTML = `<span>Đang sử dụng ${copy.proTitle}</span>`;
+        if (btnMax) btnMax.innerHTML = `<span>${copy.maxBtn}</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>`;
       }
     }
 
