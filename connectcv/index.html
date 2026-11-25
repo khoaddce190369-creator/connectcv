@@ -2237,83 +2237,21 @@
         </button>
       </div>
 
-      <!-- FORM TẠO BÀI ĐĂNG MỚI -->
+      <!-- FORM TẠO BÀI ĐĂNG MỚI (SIÊU GỌN: CHỈ 2 Ô NHẬP NHANH) -->
       <form id="createAdForm" onsubmit="saveNewBannerAd(event)" class="space-y-4 text-xs">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Mục đích bài đăng *</label>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <label class="cursor-pointer">
-              <input type="radio" name="adCategory" value="team" class="peer sr-only" checked />
-              <div class="p-2.5 rounded-xl border border-slate-200 peer-checked:border-sky-500 peer-checked:bg-sky-50 text-center peer-checked:text-sky-700 font-bold transition-all">
-                Đội ngũ
-              </div>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="adCategory" value="ad" class="peer sr-only" />
-              <div class="p-2.5 rounded-xl border border-slate-200 peer-checked:border-sky-500 peer-checked:bg-sky-50 text-center peer-checked:text-sky-700 font-bold transition-all">
-                Quảng cáo
-              </div>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="adCategory" value="event" class="peer sr-only" />
-              <div class="p-2.5 rounded-xl border border-slate-200 peer-checked:border-sky-500 peer-checked:bg-sky-50 text-center peer-checked:text-sky-700 font-bold transition-all">
-                Workshop
-              </div>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="adCategory" value="service" class="peer sr-only" />
-              <div class="p-2.5 rounded-xl border border-slate-200 peer-checked:border-sky-500 peer-checked:bg-sky-50 text-center peer-checked:text-sky-700 font-bold transition-all">
-                Dịch vụ
-              </div>
-            </label>
-          </div>
+          <label class="block font-bold text-slate-700 mb-1.5">Tiêu đề bản tin *</label>
+          <input id="newAdTitle" type="text" required placeholder="VD: Cập nhật mẫu CV mới hoặc thông báo tuyển dụng..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-xs font-semibold transition-all" />
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Tiêu đề bài viết *</label>
-          <input id="newAdTitle" type="text" required placeholder="VD: Giới thiệu nhóm AI Hackathon 2026 / Ưu đãi 50% Khóa học..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-sky-500 outline-none text-xs font-semibold" />
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Tên Nhóm / Tác giả / Thương hiệu *</label>
-            <input id="newAdAuthor" type="text" required placeholder="VD: AI Pioneers / TechLab..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-sky-500 outline-none text-xs" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Thẻ Badge / Tagline hiển thị</label>
-            <input id="newAdTag" type="text" placeholder="VD: ĐỘI NGŨ SÁNG TẠO / TÀI TRỢ HOT" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-sky-500 outline-none text-xs" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Mô tả ngắn gọn (hiển thị trên thẻ banner) *</label>
-          <textarea id="newAdDesc" rows="3" required placeholder="Mô tả súc tích về năng lực nhóm, dự án hoặc quyền lợi hấp dẫn của bài quảng cáo..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-sky-500 outline-none text-xs leading-relaxed"></textarea>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Các điểm nổi bật / Chỉ số (ngăn cách bằng dấu phẩy)</label>
-          <input id="newAdHighlights" type="text" placeholder="VD: 5 Kỹ sư AI, Đạt giải Hackathon, Miễn phí tham gia" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-sky-500 outline-none text-xs" />
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Tên nút bấm (CTA)</label>
-            <input id="newAdCtaText" type="text" placeholder="VD: Xem Chi Tiết, Nhận Ưu Đãi..." value="Xem Chi Tiết" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-sky-500 outline-none text-xs font-semibold" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Link liên kết (URL / Web / Zalo)</label>
-            <input id="newAdCtaUrl" type="text" placeholder="https://... hoặc để trống để mở modal" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-sky-500 outline-none text-xs" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Thông tin liên hệ (Email / Hotline / Telegram)</label>
-          <input id="newAdContact" type="text" placeholder="VD: contact@myteam.vn | 0988.xxx.xxx" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-sky-500 outline-none text-xs" />
+          <label class="block font-bold text-slate-700 mb-1.5">Nội dung bài đăng *</label>
+          <textarea id="newAdDesc" rows="4" required placeholder="Viết nội dung ngắn gọn hiển thị lên bảng tin (có thể kèm link liên hệ)..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-xs leading-relaxed transition-all"></textarea>
         </div>
 
         <div class="pt-2 flex items-center justify-end gap-3 border-t border-slate-100">
-          <button type="button" onclick="closeCreateAdModal()" class="btn-ghost text-xs px-4 py-2 font-bold">Hủy bỏ</button>
-          <button type="submit" class="btn-primary text-xs font-bold px-6 py-2.5 uppercase">
+          <button type="button" onclick="closeCreateAdModal()" class="btn-ghost text-xs px-4 py-2 font-bold">Hủy</button>
+          <button type="submit" class="btn-primary text-xs font-semibold px-6 py-2.5">
             Đăng bài
           </button>
         </div>
@@ -6275,14 +6213,14 @@
       const catEl = document.querySelector('input[name="adCategory"]:checked');
       const catVal = catEl ? catEl.value : 'team';
 
-      const title = (document.getElementById('newAdTitle').value || '').trim();
-      const author = (document.getElementById('newAdAuthor').value || '').trim();
-      const tag = (document.getElementById('newAdTag').value || '').trim();
-      const desc = (document.getElementById('newAdDesc').value || '').trim();
-      const highlightsRaw = (document.getElementById('newAdHighlights').value || '').trim();
-      const ctaText = (document.getElementById('newAdCtaText').value || 'Xem Chi Tiết').trim();
-      const ctaUrl = (document.getElementById('newAdCtaUrl').value || '').trim();
-      const contact = (document.getElementById('newAdContact').value || '').trim();
+      const title = (document.getElementById('newAdTitle')?.value || '').trim();
+      const author = (document.getElementById('newAdAuthor')?.value || (typeof currentUser !== 'undefined' && currentUser ? (currentUser.fullName || currentUser.username) : '') || 'ConnectCV Channel').trim();
+      const tag = (document.getElementById('newAdTag')?.value || '').trim();
+      const desc = (document.getElementById('newAdDesc')?.value || '').trim();
+      const highlightsRaw = (document.getElementById('newAdHighlights')?.value || '').trim();
+      const ctaText = (document.getElementById('newAdCtaText')?.value || 'Xem Chi Tiết').trim();
+      const ctaUrl = (document.getElementById('newAdCtaUrl')?.value || '').trim();
+      const contact = (document.getElementById('newAdContact')?.value || '').trim();
 
       let badgeText = tag;
       let badgeColor = 'bg-sky-50 text-sky-800 border-sky-200';
