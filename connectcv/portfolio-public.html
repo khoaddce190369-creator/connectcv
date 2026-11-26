@@ -73,16 +73,16 @@
       transform: translateY(-2px);
     }
 
-    /* Tactile Gradient Button Styles */
+    /* Solid Brand Blue Button (ZERO GRADIENTS) */
     .btn-tactile-blue {
-      background: linear-gradient(to top, #2563eb, #3b82f6) !important;
-      border: 1px solid rgba(96, 165, 250, 0.6) !important;
-      box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.35) !important;
+      background: #2563eb !important;
+      border: 1px solid #1d4ed8 !important;
+      box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.25) !important;
       color: #ffffff !important;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .btn-tactile-blue:hover {
-      filter: brightness(1.08);
+      background: #1d4ed8 !important;
       transform: translateY(-1px);
     }
     .btn-tactile-blue:active {
@@ -567,39 +567,65 @@
         }
       } catch (e) {}
 
-      // Dữ liệu chuẩn mực mặc định có đầy đủ mạng xã hội
+      const isDemoProfile = (subdomain === 'tuan-nguyen') || (new URLSearchParams(window.location.search).get('demo') === '1');
+      let savedUser = null;
+      try { savedUser = JSON.parse(localStorage.getItem('connectcv_user') || 'null'); } catch (e) {}
+
+      // Chỉ nạp dữ liệu demo khi xem trang mẫu p/tuan-nguyen; tài khoản thật dùng dữ liệu thật hoặc để trống cho user tự chỉnh
       if (!currentProfile) {
-        currentProfile = {
-          name: 'Nguyễn Minh Tuấn',
-          role: 'Senior Product Designer & Frontend Engineer',
-          bio: 'Chuyên xây dựng các ứng dụng web thế hệ mới, tối ưu hóa giao diện người dùng và ứng dụng AI tương tác. 5+ năm kiến tạo giải pháp số tác động tới hàng trăm nghìn người dùng.',
-          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=320&h=320&fit=crop',
-          skills: ['Figma', 'UI/UX Design', 'React', 'TypeScript', 'Next.js', 'Tailwind CSS', 'Node.js', 'AI Prompting', 'Design System'],
-          githubUsername: 'tuannguyen-dev',
-          location: 'Hồ Chí Minh, Việt Nam (Hybrid / Remote)',
-          email: 'tuan.nguyen@connectcv.vn',
-          phone: '0912 345 678',
-          socials: {
-            linkedin: 'https://linkedin.com/in/tuannguyen-creator',
-            facebook: 'https://facebook.com/tuannguyen.design',
-            blog: 'https://tuannguyen.dev',
-            github: 'https://github.com/tuannguyen-dev',
-            twitter: 'https://x.com/tuannguyen_dev',
-            phone: '0912 345 678'
-          }
-        };
+        if (isDemoProfile) {
+          currentProfile = {
+            name: 'Nguyễn Minh Tuấn',
+            role: 'Senior Product Designer & Frontend Engineer',
+            bio: 'Chuyên xây dựng các ứng dụng web thế hệ mới, tối ưu hóa giao diện người dùng và ứng dụng AI tương tác. 5+ năm kiến tạo giải pháp số tác động tới hàng trăm nghìn người dùng.',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=320&h=320&fit=crop',
+            skills: ['Figma', 'UI/UX Design', 'React', 'TypeScript', 'Next.js', 'Tailwind CSS', 'Node.js', 'AI Prompting', 'Design System'],
+            githubUsername: 'tuannguyen-dev',
+            location: 'Hồ Chí Minh, Việt Nam (Hybrid / Remote)',
+            email: 'tuan.nguyen@connectcv.vn',
+            phone: '0912 345 678',
+            socials: {
+              linkedin: 'https://linkedin.com/in/tuannguyen-creator',
+              facebook: 'https://facebook.com/tuannguyen.design',
+              blog: 'https://tuannguyen.dev',
+              github: 'https://github.com/tuannguyen-dev',
+              twitter: 'https://x.com/tuannguyen_dev',
+              phone: '0912 345 678'
+            }
+          };
+        } else {
+          currentProfile = {
+            name: (savedUser && (savedUser.fullName || savedUser.username)) || 'Người dùng ConnectCV',
+            role: (savedUser && savedUser.title) || 'Chưa cập nhật chức danh (Bấm Chỉnh Sửa để hoàn thiện)',
+            bio: (savedUser && savedUser.bio) || 'Chưa cập nhật giới thiệu bản thân. Nhấn nút Chỉnh Sửa ở góc trên để thêm thông tin của bạn.',
+            avatar: (savedUser && savedUser.avatar) || '/assets/default-avatar.svg',
+            skills: (savedUser && Array.isArray(savedUser.skills)) ? savedUser.skills : [],
+            githubUsername: (savedUser && savedUser.github) || '',
+            location: (savedUser && savedUser.location) || '',
+            email: (savedUser && savedUser.email) || '',
+            phone: (savedUser && savedUser.phone) || '',
+            socials: {
+              linkedin: (savedUser && savedUser.linkedin) || '',
+              facebook: (savedUser && savedUser.facebook) || '',
+              blog: (savedUser && savedUser.blog) || '',
+              github: (savedUser && savedUser.github) ? `https://github.com/${savedUser.github}` : '',
+              twitter: '',
+              phone: (savedUser && savedUser.phone) || ''
+            }
+          };
+        }
       } else if (!currentProfile.socials) {
         currentProfile.socials = {
-          linkedin: currentProfile.linkedin || 'https://linkedin.com/in/tuannguyen-creator',
-          facebook: currentProfile.facebook || 'https://facebook.com',
+          linkedin: currentProfile.linkedin || '',
+          facebook: currentProfile.facebook || '',
           blog: currentProfile.blog || '',
-          github: currentProfile.githubUsername ? `https://github.com/${currentProfile.githubUsername}` : 'https://github.com/tuannguyen-dev',
+          github: currentProfile.githubUsername ? `https://github.com/${currentProfile.githubUsername}` : '',
           twitter: currentProfile.twitter || '',
-          phone: currentProfile.phone || '0912 345 678'
+          phone: currentProfile.phone || ''
         };
       }
 
-      if (!currentExperiences || currentExperiences.length === 0) {
+      if (isDemoProfile && (!currentExperiences || currentExperiences.length === 0)) {
         currentExperiences = [
           {
             title: 'Lead Product Designer',
@@ -616,7 +642,7 @@
         ];
       }
 
-      if (!currentEducations || currentEducations.length === 0) {
+      if (isDemoProfile && (!currentEducations || currentEducations.length === 0)) {
         currentEducations = [
           {
             school: 'Đại Học FPT Cần Thơ',
@@ -626,7 +652,7 @@
         ];
       }
 
-      if (!currentProjects || currentProjects.length === 0) {
+      if (isDemoProfile && (!currentProjects || currentProjects.length === 0)) {
         currentProjects = [
           {
             id: 'p1',
