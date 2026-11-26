@@ -943,4 +943,26 @@ button:active:not(:disabled), a.btn-primary:active, a.btn-navy:active, a.btn-sec
   animation: heroJobMatchPop 4.8s ease-in-out infinite;
 }
 
+/* Scene 5: Post Job Publishing Animation */
+@keyframes heroJobPublishSlide {
+  0%   { opacity: 0; transform: translateY(10px) scale(0.95); }
+  25%  { opacity: 1; transform: translateY(0px) scale(1); }
+  80%  { opacity: 1; transform: translateY(0px) scale(1); }
+  95%, 100% { opacity: 0; transform: translateY(-6px) scale(0.97); }
+}
+@keyframes heroSignalPing {
+  0%, 100% { opacity: 0.25; transform: scale(0.9); }
+  50%      { opacity: 1; transform: scale(1.08); }
+}
+.anim-job-publish {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heroJobPublishSlide 4.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.anim-signal-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heroSignalPing 2.2s ease-in-out infinite;
+}
+
 
