@@ -467,99 +467,138 @@
         <!-- CỘT TRÁI: LỌC NÂNG CAO (STICKY SIDEBAR - 4/3 COLS) -->
         <aside class="lg:col-span-4 xl:col-span-3 sticky top-24 space-y-4">
           
-          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg>
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden anim-hero-fade-up">
+            <!-- Header -->
+            <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg>
+                </span>
                 <span class="font-heading font-bold text-sm text-slate-900">Lọc nâng cao</span>
               </div>
-              <button onclick="resetFilters()" class="text-xs text-blue-600 font-semibold hover:underline cursor-pointer">
-                Đặt lại
+              <button type="button" onclick="resetFilters()" class="group inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-semibold px-2 py-1 rounded-lg hover:bg-blue-50 transition-all cursor-pointer">
+                <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover:-rotate-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+                <span>Đặt lại</span>
               </button>
             </div>
 
-            <!-- Hình thức công việc -->
-            <div class="space-y-2">
-              <span class="block text-xs font-bold text-slate-800">Hình thức làm việc</span>
-              <div class="space-y-1.5 text-xs">
-                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
-                  <input type="radio" name="jobTypeFilter" value="all" checked onchange="filterJobs()" class="w-4 h-4 accent-blue-600" />
-                  <span>Không lọc</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
-                  <input type="radio" name="jobTypeFilter" value="Full-time" onchange="filterJobs()" class="w-4 h-4 accent-blue-600" />
-                  <span>Toàn thời gian</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
-                  <input type="radio" name="jobTypeFilter" value="Freelance" onchange="filterJobs()" class="w-4 h-4 accent-blue-600" />
-                  <span>Dự án Freelance</span>
-                </label>
+            <div class="p-5 space-y-5">
+              <!-- Hình thức công việc -->
+              <div class="space-y-2.5 anim-hero-fade-up" style="animation-delay: 0.08s;">
+                <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 border-l-[3px] border-blue-600 pl-2">Hình thức làm việc</span>
+                <div class="space-y-1.5 text-xs">
+                  <label class="block cursor-pointer select-none">
+                    <input type="radio" name="jobTypeFilter" value="all" checked onchange="filterJobs()" class="peer sr-only" />
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 bg-white text-slate-700 hover:border-slate-200 hover:bg-slate-50 peer-checked:bg-blue-50/90 peer-checked:border-blue-500 peer-checked:text-blue-700 peer-checked:font-semibold transition-all duration-200 active:scale-[0.99]">
+                      <span>Không lọc</span>
+                      <span class="w-2 h-2 rounded-full bg-blue-600 opacity-0 scale-50 transition-all duration-200 [.peer:checked~div_&]:opacity-100 [.peer:checked~div_&]:scale-100"></span>
+                    </div>
+                  </label>
+                  <label class="block cursor-pointer select-none">
+                    <input type="radio" name="jobTypeFilter" value="Full-time" onchange="filterJobs()" class="peer sr-only" />
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 bg-white text-slate-700 hover:border-slate-200 hover:bg-slate-50 peer-checked:bg-blue-50/90 peer-checked:border-blue-500 peer-checked:text-blue-700 peer-checked:font-semibold transition-all duration-200 active:scale-[0.99]">
+                      <span>Toàn thời gian</span>
+                      <span class="w-2 h-2 rounded-full bg-blue-600 opacity-0 scale-50 transition-all duration-200 [.peer:checked~div_&]:opacity-100 [.peer:checked~div_&]:scale-100"></span>
+                    </div>
+                  </label>
+                  <label class="block cursor-pointer select-none">
+                    <input type="radio" name="jobTypeFilter" value="Freelance" onchange="filterJobs()" class="peer sr-only" />
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 bg-white text-slate-700 hover:border-slate-200 hover:bg-slate-50 peer-checked:bg-blue-50/90 peer-checked:border-blue-500 peer-checked:text-blue-700 peer-checked:font-semibold transition-all duration-200 active:scale-[0.99]">
+                      <span>Dự án Freelance</span>
+                      <span class="w-2 h-2 rounded-full bg-blue-600 opacity-0 scale-50 transition-all duration-200 [.peer:checked~div_&]:opacity-100 [.peer:checked~div_&]:scale-100"></span>
+                    </div>
+                  </label>
+                </div>
               </div>
-            </div>
 
-            <!-- Mức thu nhập tối thiểu -->
-            <div class="space-y-2 border-t border-slate-100 pt-3.5">
-              <span class="block text-xs font-bold text-slate-800">Mức lương tối thiểu</span>
-              <input type="hidden" id="minBudgetFilter" value="0" />
-              <div class="space-y-1.5 text-xs">
-                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
-                  <input type="radio" name="minBudgetRadio" value="0" checked onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="w-4 h-4 accent-blue-600" />
-                  <span>Không lọc</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
-                  <input type="radio" name="minBudgetRadio" value="10000000" onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="w-4 h-4 accent-blue-600" />
-                  <span>Từ 10 triệu / tháng</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
-                  <input type="radio" name="minBudgetRadio" value="20000000" onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="w-4 h-4 accent-blue-600" />
-                  <span>Từ 20 triệu / tháng</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
-                  <input type="radio" name="minBudgetRadio" value="35000000" onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="w-4 h-4 accent-blue-600" />
-                  <span>Từ 35 triệu / tháng</span>
-                </label>
+              <!-- Mức thu nhập tối thiểu -->
+              <div class="space-y-2.5 border-t border-slate-100 pt-4 anim-hero-fade-up" style="animation-delay: 0.14s;">
+                <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 border-l-[3px] border-emerald-500 pl-2">Mức lương tối thiểu</span>
+                <input type="hidden" id="minBudgetFilter" value="0" />
+                <div class="space-y-1.5 text-xs">
+                  <label class="block cursor-pointer select-none">
+                    <input type="radio" name="minBudgetRadio" value="0" checked onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="peer sr-only" />
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 bg-white text-slate-700 hover:border-slate-200 hover:bg-slate-50 peer-checked:bg-blue-50/90 peer-checked:border-blue-500 peer-checked:text-blue-700 peer-checked:font-semibold transition-all duration-200 active:scale-[0.99]">
+                      <span>Không lọc</span>
+                      <span class="w-2 h-2 rounded-full bg-blue-600 opacity-0 scale-50 transition-all duration-200 [.peer:checked~div_&]:opacity-100 [.peer:checked~div_&]:scale-100"></span>
+                    </div>
+                  </label>
+                  <label class="block cursor-pointer select-none">
+                    <input type="radio" name="minBudgetRadio" value="10000000" onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="peer sr-only" />
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 bg-white text-slate-700 hover:border-slate-200 hover:bg-slate-50 peer-checked:bg-blue-50/90 peer-checked:border-blue-500 peer-checked:text-blue-700 peer-checked:font-semibold transition-all duration-200 active:scale-[0.99]">
+                      <span>Từ 10 triệu / tháng</span>
+                      <span class="w-2 h-2 rounded-full bg-blue-600 opacity-0 scale-50 transition-all duration-200 [.peer:checked~div_&]:opacity-100 [.peer:checked~div_&]:scale-100"></span>
+                    </div>
+                  </label>
+                  <label class="block cursor-pointer select-none">
+                    <input type="radio" name="minBudgetRadio" value="20000000" onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="peer sr-only" />
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 bg-white text-slate-700 hover:border-slate-200 hover:bg-slate-50 peer-checked:bg-blue-50/90 peer-checked:border-blue-500 peer-checked:text-blue-700 peer-checked:font-semibold transition-all duration-200 active:scale-[0.99]">
+                      <span>Từ 20 triệu / tháng</span>
+                      <span class="w-2 h-2 rounded-full bg-blue-600 opacity-0 scale-50 transition-all duration-200 [.peer:checked~div_&]:opacity-100 [.peer:checked~div_&]:scale-100"></span>
+                    </div>
+                  </label>
+                  <label class="block cursor-pointer select-none">
+                    <input type="radio" name="minBudgetRadio" value="35000000" onchange="document.getElementById('minBudgetFilter').value=this.value; filterJobs()" class="peer sr-only" />
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 bg-white text-slate-700 hover:border-slate-200 hover:bg-slate-50 peer-checked:bg-blue-50/90 peer-checked:border-blue-500 peer-checked:text-blue-700 peer-checked:font-semibold transition-all duration-200 active:scale-[0.99]">
+                      <span>Từ 35 triệu / tháng</span>
+                      <span class="w-2 h-2 rounded-full bg-blue-600 opacity-0 scale-50 transition-all duration-200 [.peer:checked~div_&]:opacity-100 [.peer:checked~div_&]:scale-100"></span>
+                    </div>
+                  </label>
+                </div>
               </div>
-            </div>
 
-            <!-- Kỹ năng chuyên môn -->
-            <div class="space-y-2 border-t border-slate-100 pt-3.5">
-              <span class="block text-xs font-bold text-slate-800">Kỹ năng chuyên môn</span>
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
-                  <input type="checkbox" value="Figma" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
-                  <span>Figma</span>
-                </label>
-                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
-                  <input type="checkbox" value="UI/UX" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
-                  <span>UI/UX</span>
-                </label>
-                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
-                  <input type="checkbox" value="React" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
-                  <span>React</span>
-                </label>
-                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
-                  <input type="checkbox" value="AI" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
-                  <span>AI Prompt</span>
-                </label>
-                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
-                  <input type="checkbox" value="Tailwind" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
-                  <span>Tailwind CSS</span>
-                </label>
-                <label class="flex items-center gap-2 text-slate-700 hover:text-slate-900 cursor-pointer">
-                  <input type="checkbox" value="Design System" onchange="filterJobs()" class="jobSkillCheckbox w-4 h-4 accent-blue-600 rounded" />
-                  <span>Design System</span>
-                </label>
+              <!-- Kỹ năng chuyên môn (Interactive Skill Chips) -->
+              <div class="space-y-2.5 border-t border-slate-100 pt-4 anim-hero-fade-up" style="animation-delay: 0.2s;">
+                <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 border-l-[3px] border-slate-800 pl-2">Kỹ năng chuyên môn</span>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <label class="cursor-pointer select-none">
+                    <input type="checkbox" value="Figma" onchange="filterJobs()" class="jobSkillCheckbox peer sr-only" />
+                    <span class="flex items-center justify-center px-2.5 py-2 rounded-xl font-semibold border border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-white peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 peer-checked:shadow-xs active:scale-95 transition-all duration-200">
+                      Figma
+                    </span>
+                  </label>
+                  <label class="cursor-pointer select-none">
+                    <input type="checkbox" value="UI/UX" onchange="filterJobs()" class="jobSkillCheckbox peer sr-only" />
+                    <span class="flex items-center justify-center px-2.5 py-2 rounded-xl font-semibold border border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-white peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 peer-checked:shadow-xs active:scale-95 transition-all duration-200">
+                      UI/UX
+                    </span>
+                  </label>
+                  <label class="cursor-pointer select-none">
+                    <input type="checkbox" value="React" onchange="filterJobs()" class="jobSkillCheckbox peer sr-only" />
+                    <span class="flex items-center justify-center px-2.5 py-2 rounded-xl font-semibold border border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-white peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 peer-checked:shadow-xs active:scale-95 transition-all duration-200">
+                      React
+                    </span>
+                  </label>
+                  <label class="cursor-pointer select-none">
+                    <input type="checkbox" value="AI" onchange="filterJobs()" class="jobSkillCheckbox peer sr-only" />
+                    <span class="flex items-center justify-center px-2.5 py-2 rounded-xl font-semibold border border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-white peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 peer-checked:shadow-xs active:scale-95 transition-all duration-200">
+                      AI Prompt
+                    </span>
+                  </label>
+                  <label class="cursor-pointer select-none">
+                    <input type="checkbox" value="Tailwind" onchange="filterJobs()" class="jobSkillCheckbox peer sr-only" />
+                    <span class="flex items-center justify-center px-2.5 py-2 rounded-xl font-semibold border border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-white peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 peer-checked:shadow-xs active:scale-95 transition-all duration-200">
+                      Tailwind CSS
+                    </span>
+                  </label>
+                  <label class="cursor-pointer select-none">
+                    <input type="checkbox" value="Design System" onchange="filterJobs()" class="jobSkillCheckbox peer sr-only" />
+                    <span class="flex items-center justify-center px-2.5 py-2 rounded-xl font-semibold border border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-white peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 peer-checked:shadow-xs active:scale-95 transition-all duration-200">
+                      Design System
+                    </span>
+                  </label>
+                </div>
               </div>
-            </div>
 
-            <!-- Action buttons: Xóa lọc / Áp dụng -->
-            <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
-              <button type="button" onclick="resetFilters()" class="flex-1 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-all cursor-pointer">
-                Xóa lọc
-              </button>
-              <button type="button" onclick="filterJobs()" class="flex-1 py-2 text-xs font-semibold text-blue-600 bg-white border border-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer">
-                Áp dụng
-              </button>
+              <!-- Action buttons: Xóa lọc / Áp dụng -->
+              <div class="flex items-center gap-2.5 pt-3 border-t border-slate-100 anim-hero-fade-up" style="animation-delay: 0.25s;">
+                <button type="button" onclick="resetFilters()" class="flex-1 py-2.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl active:scale-[0.98] transition-all cursor-pointer">
+                  Xóa lọc
+                </button>
+                <button type="button" onclick="filterJobs()" class="flex-1 py-2.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm hover:-translate-y-0.5 active:scale-[0.98] transition-all cursor-pointer">
+                  Áp dụng
+                </button>
+              </div>
             </div>
           </div>
 
