@@ -425,8 +425,8 @@
                   </button>
                 </div>
 
-                <!-- Nút Cập Nhật Bản Tin -->
-                <button type="button" onclick="openCreateAdModal()" class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition-all cursor-pointer" title="Cập nhật bản tin">
+                <!-- Nút Cập Nhật Bản Tin (Chỉ hiển thị cho Admin) -->
+                <button id="btnHeroNewsUpdate" type="button" onclick="openCreateAdModal()" class="hidden inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 transition-all cursor-pointer" style="display: none;" title="Cập nhật bản tin">
                   <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
                   <span class="hidden sm:inline">Cập nhật</span>
                 </button>
@@ -5963,9 +5963,21 @@
     function renderUserAuth() {
       const section = document.getElementById('userAuthSection');
       const btnNavPostJob = document.getElementById('btnNavPostJob');
+      const btnHeroNewsUpdate = document.getElementById('btnHeroNewsUpdate');
       const btnOpenCreatePortfolio = document.getElementById('btnOpenCreatePortfolio');
       const modalApplyFooter = document.getElementById('modalApplyFooter');
       const modalHrApplyNotice = document.getElementById('modalHrApplyNotice');
+
+      const isAdminUser = !!(currentUser && String(currentUser.role || '').toLowerCase() === 'admin');
+      if (btnHeroNewsUpdate) {
+        if (isAdminUser) {
+          btnHeroNewsUpdate.classList.remove('hidden');
+          btnHeroNewsUpdate.style.display = '';
+        } else {
+          btnHeroNewsUpdate.classList.add('hidden');
+          btnHeroNewsUpdate.style.display = 'none';
+        }
+      }
 
       if (!currentUser) {
         section.innerHTML = `
@@ -6979,6 +6991,10 @@
 
     // --- Modal Đăng Bài Quảng Cáo & Giới Thiệu Nhóm ---
     function openCreateAdModal() {
+      if (!currentUser || String(currentUser.role || '').toLowerCase() !== 'admin') {
+        showToast('Chỉ tài khoản Admin mới có quyền cập nhật bản tin.');
+        return;
+      }
       const modal = document.getElementById('createAdModal');
       if (modal) {
         modal.classList.remove('hidden');
