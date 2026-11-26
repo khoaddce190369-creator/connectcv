@@ -74,13 +74,13 @@ test('/cv-editor sanitizeEditorUpdates enforces strict CV whitelist, preserves a
 });
 
 test('/cv-editor handles color/font/style requests safely without overwriting fullName', () => {
-  // Exact real-world user bug: "đổi tên sang màu đỏ" MUST change primaryColor, NOT fullName!
+  // Exact real-world user bug: "đổi tên sang màu đỏ" MUST change nameColor, NOT fullName!
   const fbRed = editorAgent.runDeterministicFallback('đổi tên sang màu đỏ', {
     theme: { primaryColor: '#0284c7' },
     profile: { fullName: 'HUỲNH KIẾN MINH' }
   });
   assert.equal(fbRed.updates.profile, undefined);
-  assert.deepEqual(fbRed.updates.theme, { primaryColor: '#dc2626' });
+  assert.deepEqual(fbRed.updates.theme, { nameColor: '#dc2626' });
   assert.equal(fbRed.reply.includes('**'), false);
 
   // Font + size + color combo
@@ -108,7 +108,7 @@ test('/cv-editor comprehensive 38-case real-world matrix (theme, profile, skills
   };
 
   const matrix = [
-    ['đổi tên sang màu đỏ', r => r.updates.theme?.primaryColor === '#dc2626' && !r.updates.profile],
+    ['đổi tên sang màu đỏ', r => r.updates.theme?.nameColor === '#dc2626' && !r.updates.profile],
     ['đổi màu chữ sang đen', r => r.updates.theme?.textColor === '#111827' && !r.updates.profile],
     ['đổi màu nền sang #fefce8', r => r.updates.theme?.bgColor === '#fefce8'],
     ['chuyển tông màu tím cho CV', r => r.updates.theme?.primaryColor === '#7c3aed'],
@@ -286,4 +286,42 @@ test('/ai/ index.html & cv-agent.js have valid JS syntax, zero missing CSS class
 
   // Verify studioAgent preserves tech metrics
   assert.equal(studioAgent.sanitizeText('latency < 100ms & uptime > 99.9%'), 'latency < 100ms & uptime > 99.9%');
+});
+
+test('/api/cv/ai-agent handles compound theme + skills + objective prompts accurately', () => {
+  const sampleCv = {
+    profile: { fullName: 'Huỳnh Kiến Minh', jobTitle: 'Backend Developer' },
+    skills: [{ id: 's1', name: 'JavaScript', level: 85 }],
+    theme: { primaryColor: '#2563eb', fontFamily: 'Inter' }
+  };
+
+  // Compound order 1: theme first, skills second
+  const c1 = editorAgent.runDeterministicFallback(
+    'đổi màu chủ đạo sang xanh lá, đổi font Roboto, thêm kỹ năng Node.js, C++, Docker',
+    sampleCv
+  );
+  assert.equal(c1.updates.theme?.primaryColor, '#059669');
+  assert.equal(c1.updates.theme?.fontFamily, 'Roboto');
+  assert.ok(c1.updates.skills.some(s => s.name === 'Node.js'));
+  assert.ok(c1.updates.skills.some(s => s.name === 'C++'));
+  assert.ok(c1.updates.skills.some(s => s.name === 'Docker'));
+
+  // Compound order 2: skills first, theme second (must NOT include theme words as a skill!)
+  const c2 = editorAgent.runDeterministicFallback(
+    'thêm kỹ năng TypeScript, Go và đổi màu chủ đạo sang tím',
+    sampleCv
+  );
+  assert.equal(c2.updates.theme?.primaryColor, '#7c3aed');
+  assert.ok(c2.updates.skills.some(s => s.name === 'TypeScript'));
+  assert.ok(c2.updates.skills.some(s => s.name === 'Go'));
+  assert.ok(!c2.updates.skills.some(s => /màu|tím/i.test(s.name)));
+
+  // Compound order 3: theme + explicit objective rewrite
+  const c3 = editorAgent.runDeterministicFallback(
+    'đổi tên thành màu đỏ và viết lại mục tiêu nghề nghiệp',
+    sampleCv
+  );
+  assert.equal(c3.updates.theme?.nameColor, '#dc2626');
+  assert.equal(c3.updates.profile, undefined);
+  assert.ok(typeof c3.updates.objective === 'string' && c3.updates.objective.length > 30);
 });
