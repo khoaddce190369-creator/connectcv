@@ -909,4 +909,38 @@ button:active:not(:disabled), a.btn-primary:active, a.btn-navy:active, a.btn-sec
   animation: heroAiCorePulse 2.2s ease-in-out infinite;
 }
 
+/* Scene 3 & 4: Portfolio Showcase & Smart Job Search */
+@keyframes heroCursorGlide {
+  0%, 100% { transform: translate(0px, 0px); }
+  35%      { transform: translate(42px, 14px); }
+  65%      { transform: translate(86px, -6px); }
+}
+@keyframes heroPortfolioCardGlow {
+  0%, 30%, 100% { stroke: #CBD5E1; fill: #FFFFFF; }
+  45%, 75%      { stroke: #2563EB; fill: #EFF6FF; }
+}
+@keyframes heroSearchMagnifier {
+  0%, 100% { transform: translate(0px, 0px) rotate(0deg); }
+  33%      { transform: translate(12px, 24px) rotate(-6deg); }
+  66%      { transform: translate(6px, 48px) rotate(4deg); }
+}
+@keyframes heroJobMatchPop {
+  0%, 55%, 100% { opacity: 0.35; transform: scale(0.92); }
+  68%, 90%      { opacity: 1; transform: scale(1.04); }
+}
+.anim-cursor-glide {
+  animation: heroCursorGlide 4.5s ease-in-out infinite;
+}
+.anim-portfolio-glow {
+  animation: heroPortfolioCardGlow 4.5s ease-in-out infinite;
+}
+.anim-search-scan {
+  animation: heroSearchMagnifier 4.8s ease-in-out infinite;
+}
+.anim-job-match {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heroJobMatchPop 4.8s ease-in-out infinite;
+}
+
 

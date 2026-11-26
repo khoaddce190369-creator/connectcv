@@ -142,173 +142,222 @@
         </svg>
       </div>
 
-      <!-- Animated Vector Scenes: Left (Walking to Submit CV Desk) & Right (AI Interview Practice) -->
-      <!-- Left Scene: Người đang đi lại bàn nộp hồ sơ -->
-      <div class="hidden xl:flex flex-col absolute top-1/2 -translate-y-1/2 left-5 2xl:left-10 w-[228px] 2xl:w-[252px] bg-white/95 border border-slate-200 rounded-2xl shadow-sm p-3.5 pointer-events-none z-10 anim-hero-fade-up" style="animation-delay: 0.15s;">
-        <div class="flex items-center gap-2.5 pb-2.5 border-b border-slate-100">
-          <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </span>
-          <div>
-            <div class="text-slate-900 font-bold text-xs leading-none">CV Chuẩn ATS</div>
-            <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">Nộp hồ sơ trực tiếp</div>
+      <!-- Animated Interactive Feature Cards: Left (CV Chuẩn ATS + Portfolio) & Right (Phỏng Vấn AI + Tìm Việc) -->
+      <!-- LEFT STACK -->
+      <div class="hidden xl:flex flex-col gap-3.5 absolute top-1/2 -translate-y-1/2 left-5 2xl:left-10 w-[212px] 2xl:w-[234px] z-10">
+        <!-- Card 1: CV Chuẩn ATS (Đi lại bàn nộp hồ sơ) -->
+        <div onclick="switchTab('cv')" class="bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.12s;" title="Mở kho mẫu CV & tạo CV">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </span>
+              <span class="text-slate-900 font-bold text-xs leading-none">CV Chuẩn ATS</span>
+            </div>
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </div>
+          <div class="pt-1.5">
+            <svg viewBox="0 0 220 105" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="8" y1="95" x2="212" y2="95" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
+              <g>
+                <rect x="136" y="59" width="5" height="36" rx="1.5" fill="#1E293B" />
+                <rect x="196" y="59" width="5" height="36" rx="1.5" fill="#1E293B" />
+                <rect x="141" y="63" width="55" height="22" rx="2" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+                <rect x="128" y="53" width="80" height="7" rx="3" fill="#0F172A" />
+                <rect x="174" y="37" width="26" height="16" rx="3" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.2" />
+                <text x="187" y="48" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="800" fill="#2563EB">HR</text>
+                <path d="M135 49 H164 L167 53 H132 L135 49 Z" fill="#94A3B8" />
+                <g class="anim-cv-tray">
+                  <rect x="138" y="39" width="22" height="11" rx="1.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2" />
+                  <line x1="142" y1="43" x2="154" y2="43" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" />
+                  <line x1="142" y1="46.5" x2="151" y2="46.5" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" />
+                </g>
+                <g class="anim-submit-check">
+                  <circle cx="159" cy="31" r="7.5" fill="#10B981" />
+                  <path d="M155.5 31.2 L158 33.7 L162.5 28.8" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </g>
+              </g>
+              <g class="anim-walk-person">
+                <g class="anim-walk-bob">
+                  <g class="anim-leg-b">
+                    <rect x="78" y="62" width="6" height="30" rx="3" fill="#334155" />
+                    <rect x="77" y="90" width="10.5" height="4.5" rx="2" fill="#0F172A" />
+                  </g>
+                  <g class="anim-leg-a">
+                    <rect x="85" y="62" width="6" height="30" rx="3" fill="#1E293B" />
+                    <rect x="84" y="90" width="10.5" height="4.5" rx="2" fill="#0F172A" />
+                  </g>
+                  <rect x="75" y="32" width="19" height="32" rx="6" fill="#2563EB" />
+                  <path d="M83 32 L87 32 L85 40 Z" fill="#FFFFFF" />
+                  <circle cx="84.5" cy="20" r="9" fill="#FDE68A" stroke="#0F172A" stroke-width="1.2" />
+                  <path d="M75.5 18.5 C75.5 12.5 81 9.5 86 10 C90.5 10.5 93.5 13.5 93.5 17.5 C90 15.5 83.5 15 75.5 18.5 Z" fill="#0F172A" />
+                  <circle cx="89" cy="20" r="1.1" fill="#0F172A" />
+                  <g class="anim-arm-submit">
+                    <rect x="86" y="36" width="17" height="5" rx="2.5" fill="#1D4ED8" />
+                    <rect x="100" y="29" width="12.5" height="16" rx="1.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2" />
+                    <line x1="103" y1="33" x2="109.5" y2="33" stroke="#2563EB" stroke-width="1.2" stroke-linecap="round" />
+                    <line x1="103" y1="36.5" x2="109.5" y2="36.5" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" />
+                  </g>
+                </g>
+              </g>
+            </svg>
           </div>
         </div>
 
-        <div class="pt-2">
-          <svg viewBox="0 0 220 130" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Floor Line -->
-            <line x1="8" y1="114" x2="212" y2="114" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
+        <!-- Card 2: Portfolio Cá Nhân (Trưng bày dự án & con trỏ tương tác) -->
+        <div onclick="switchTab('portfolio')" class="bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.22s;" title="Tạo Portfolio cá nhân">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6z"/></svg>
+              </span>
+              <span class="text-slate-900 font-bold text-xs leading-none">Portfolio Cá Nhân</span>
+            </div>
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </div>
+          <div class="pt-1.5">
+            <svg viewBox="0 0 220 96" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Browser Frame -->
+              <rect x="14" y="6" width="192" height="84" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.3" />
+              <path d="M14 13 C14 9 17 6 21 6 H199 C203 6 206 9 206 13 V22 H14 V13 Z" fill="#0F172A" />
+              <circle cx="24" cy="14" r="2" fill="#F43F5E" />
+              <circle cx="31" cy="14" r="2" fill="#F59E0B" />
+              <circle cx="38" cy="14" r="2" fill="#10B981" />
+              <rect x="52" y="10.5" width="110" height="7" rx="3.5" fill="#1E293B" />
+              <!-- Live Badge -->
+              <rect x="172" y="10" width="26" height="8" rx="4" fill="#10B981" />
+              <text x="185" y="16" text-anchor="middle" font-family="Inter, sans-serif" font-size="5" font-weight="800" fill="#FFFFFF">LIVE</text>
+              <!-- Profile Header Row inside Browser -->
+              <circle cx="34" cy="36" r="8" fill="#2563EB" />
+              <rect x="47" y="31" width="44" height="4" rx="2" fill="#0F172A" />
+              <rect x="47" y="38" width="28" height="3" rx="1.5" fill="#94A3B8" />
+              <!-- 3 Project Cards -->
+              <rect x="26" y="50" width="52" height="32" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+              <rect x="31" y="55" width="42" height="14" rx="2" fill="#E2E8F0" />
+              <rect x="31" y="73" width="26" height="3.5" rx="1.5" fill="#475569" />
 
-            <!-- Reception / HR Submission Desk (Right Side) -->
-            <g>
-              <!-- Desk legs -->
-              <rect x="136" y="74" width="5" height="40" rx="1.5" fill="#1E293B" />
-              <rect x="196" y="74" width="5" height="40" rx="1.5" fill="#1E293B" />
-              <!-- Desk modesty panel -->
-              <rect x="141" y="78" width="55" height="24" rx="2" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
-              <!-- Desk top -->
-              <rect x="128" y="68" width="80" height="7" rx="3" fill="#0F172A" />
-              <!-- HR Sign on Desk -->
-              <rect x="174" y="51" width="26" height="17" rx="3" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.2" />
-              <text x="187" y="62.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="800" fill="#2563EB">HR</text>
-              <!-- Document Tray -->
-              <path d="M135 64 H164 L167 68 H132 L135 64 Z" fill="#94A3B8" />
-              <!-- CV Paper landing on Tray -->
-              <g class="anim-cv-tray">
-                <rect x="138" y="54" width="22" height="11" rx="1.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2" />
-                <line x1="142" y1="58" x2="154" y2="58" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" />
-                <line x1="142" y1="61.5" x2="151" y2="61.5" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" />
-              </g>
-              <!-- Success Check Badge -->
-              <g class="anim-submit-check">
-                <circle cx="159" cy="46" r="8" fill="#10B981" />
-                <path d="M155.5 46.2 L158 48.7 L162.8 43.8" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-              </g>
-            </g>
+              <rect x="84" y="50" width="52" height="32" rx="4" class="anim-portfolio-glow" stroke-width="1.4" />
+              <rect x="89" y="55" width="42" height="14" rx="2" fill="#DBEAFE" />
+              <rect x="89" y="73" width="30" height="3.5" rx="1.5" fill="#2563EB" />
 
-            <!-- Walking Candidate with CV -->
-            <g class="anim-walk-person">
-              <g class="anim-walk-bob">
-                <!-- Back Leg -->
-                <g class="anim-leg-b">
-                  <rect x="78" y="78" width="6.5" height="33" rx="3" fill="#334155" />
-                  <rect x="77" y="109" width="11" height="4.5" rx="2" fill="#0F172A" />
-                </g>
-                <!-- Front Leg -->
-                <g class="anim-leg-a">
-                  <rect x="85" y="78" width="6.5" height="33" rx="3" fill="#1E293B" />
-                  <rect x="84" y="109" width="11" height="4.5" rx="2" fill="#0F172A" />
-                </g>
-                <!-- Torso (Blue Shirt/Jacket) -->
-                <rect x="75" y="47" width="20" height="33" rx="6" fill="#2563EB" />
-                <!-- Collar / Tie accent -->
-                <path d="M84 47 L88 47 L86 56 Z" fill="#FFFFFF" />
-                <!-- Head -->
-                <circle cx="85" cy="34" r="9.5" fill="#FDE68A" stroke="#0F172A" stroke-width="1.2" />
-                <!-- Hair -->
-                <path d="M75.5 32.5 C75.5 26 81 23 86.5 23.5 C91.5 24 94.5 27.5 94.5 31.5 C91 29.5 84 29 75.5 32.5 Z" fill="#0F172A" />
-                <!-- Eye -->
-                <circle cx="89.5" cy="34" r="1.1" fill="#0F172A" />
-                <!-- Arm holding CV folder -->
-                <g class="anim-arm-submit">
-                  <rect x="86" y="51" width="18" height="5.5" rx="2.75" fill="#1D4ED8" />
-                  <!-- CV Sheet in Hand -->
-                  <rect x="101" y="43" width="13" height="17" rx="1.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2" />
-                  <line x1="104" y1="47.5" x2="111" y2="47.5" stroke="#2563EB" stroke-width="1.2" stroke-linecap="round" />
-                  <line x1="104" y1="51" x2="111" y2="51" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" />
-                  <line x1="104" y1="54.5" x2="109" y2="54.5" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" />
-                </g>
+              <rect x="142" y="50" width="52" height="32" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+              <rect x="147" y="55" width="42" height="14" rx="2" fill="#DCFCE7" />
+              <rect x="147" y="73" width="28" height="3.5" rx="1.5" fill="#10B981" />
+              <!-- Animated Cursor -->
+              <g class="anim-cursor-glide">
+                <path d="M56 54 L56 68 L60 64.5 L63.5 71 L66 69.8 L62.5 63.5 L67.5 63.5 Z" fill="#0F172A" stroke="#FFFFFF" stroke-width="1.2" stroke-linejoin="round" />
               </g>
-            </g>
-          </svg>
+            </svg>
+          </div>
         </div>
       </div>
 
-      <!-- Right Scene: Người đang luyện phỏng vấn với AI -->
-      <div class="hidden xl:flex flex-col absolute top-1/2 -translate-y-1/2 right-5 2xl:right-10 w-[228px] 2xl:w-[252px] bg-white/95 border border-slate-200 rounded-2xl shadow-sm p-3.5 pointer-events-none z-10 anim-hero-fade-up" style="animation-delay: 0.25s;">
-        <div class="flex items-center gap-2.5 pb-2.5 border-b border-slate-100">
-          <div class="flex items-end gap-0.5 h-4 shrink-0">
-            <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0s;"></span>
-            <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0.2s;"></span>
-            <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0.4s;"></span>
-            <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0.1s;"></span>
+      <!-- RIGHT STACK -->
+      <div class="hidden xl:flex flex-col gap-3.5 absolute top-1/2 -translate-y-1/2 right-5 2xl:right-10 w-[212px] 2xl:w-[234px] z-10">
+        <!-- Card 3: Phỏng Vấn AI -->
+        <div onclick="switchTab('interview')" class="bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.18s;" title="Luyện phỏng vấn AI">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <div class="flex items-end gap-0.5 h-3.5 shrink-0">
+                <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0s;"></span>
+                <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0.2s;"></span>
+                <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0.4s;"></span>
+              </div>
+              <span class="text-slate-900 font-bold text-xs leading-none">Phỏng Vấn AI</span>
+            </div>
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </div>
-          <div>
-            <div class="text-slate-900 font-bold text-xs leading-none">Phỏng Vấn AI</div>
-            <div class="text-[10px] text-slate-500 font-medium mt-0.5">Giọng nói STAR</div>
+          <div class="pt-1.5">
+            <svg viewBox="0 0 220 105" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="8" y1="95" x2="212" y2="95" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
+              <rect x="30" y="64" width="160" height="5.5" rx="2.5" fill="#0F172A" />
+              <rect x="40" y="69.5" width="5" height="25.5" rx="1.5" fill="#1E293B" />
+              <rect x="175" y="69.5" width="5" height="25.5" rx="1.5" fill="#1E293B" />
+              <g>
+                <path d="M44 48 V76 H68" stroke="#64748B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                <line x1="56" y1="76" x2="56" y2="95" stroke="#475569" stroke-width="3" stroke-linecap="round" />
+                <line x1="48" y1="95" x2="64" y2="95" stroke="#475569" stroke-width="3" stroke-linecap="round" />
+                <path d="M56 60 H77 V91" stroke="#1E293B" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                <rect x="74" y="90" width="10.5" height="4.5" rx="2" fill="#0F172A" />
+                <rect x="49" y="36" width="19" height="27" rx="6" fill="#0F172A" />
+                <g class="anim-interview-hand">
+                  <path d="M62 42 L81 51 L89 47" stroke="#2563EB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+                </g>
+                <g class="anim-interview-nod">
+                  <circle cx="58.5" cy="23" r="9" fill="#FDE68A" stroke="#0F172A" stroke-width="1.2" />
+                  <path d="M49.5 21.5 C49.5 15.5 55 12.5 60 13 C64.5 13.5 67.5 16.5 67.5 20.5 C64 18.5 57.5 18 49.5 21.5 Z" fill="#0F172A" />
+                  <circle cx="63" cy="23" r="1.1" fill="#0F172A" />
+                  <path d="M51 21 C51 13 66 13 66 21" stroke="#2563EB" stroke-width="2" stroke-linecap="round" />
+                  <rect x="48.5" y="20" width="3.5" height="6.5" rx="1.5" fill="#2563EB" />
+                  <path d="M51 26 L62 28.5" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" />
+                </g>
+              </g>
+              <g class="anim-speech-ripple">
+                <path d="M84 19 C88 22 88 28 84 31" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M90 16 C96 21 96 29 90 34" stroke="#60A5FA" stroke-width="1.6" stroke-linecap="round" />
+              </g>
+              <g>
+                <rect x="148" y="53" width="8" height="11" fill="#334155" />
+                <rect x="136" y="61" width="32" height="3" rx="1.5" fill="#334155" />
+                <rect x="116" y="10" width="72" height="45" rx="5" fill="#0F172A" />
+                <rect x="120" y="14" width="64" height="37" rx="3" fill="#F8FAFC" />
+                <g class="anim-ai-core">
+                  <circle cx="152" cy="29" r="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5" />
+                  <circle cx="152" cy="29" r="4" fill="#2563EB" />
+                </g>
+                <rect x="133" y="43" width="4" height="4.5" rx="1.5" fill="#2563EB" />
+                <rect x="140" y="41" width="4" height="6.5" rx="1.5" fill="#2563EB" />
+                <rect x="147" y="40" width="4" height="7.5" rx="1.5" fill="#10B981" />
+                <rect x="154" y="41" width="4" height="6.5" rx="1.5" fill="#2563EB" />
+                <rect x="161" y="42" width="4" height="5.5" rx="1.5" fill="#2563EB" />
+                <rect x="168" y="43" width="4" height="4.5" rx="1.5" fill="#94A3B8" />
+                <rect x="165" y="17" width="16" height="7.5" rx="2" fill="#10B981" />
+                <text x="173" y="22.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="5" font-weight="800" fill="#FFFFFF">AI</text>
+              </g>
+            </svg>
           </div>
         </div>
 
-        <div class="pt-2">
-          <svg viewBox="0 0 220 130" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Floor Line -->
-            <line x1="8" y1="114" x2="212" y2="114" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
-
-            <!-- Desk -->
-            <rect x="30" y="80" width="160" height="6" rx="2.5" fill="#0F172A" />
-            <rect x="40" y="86" width="5" height="28" rx="1.5" fill="#1E293B" />
-            <rect x="175" y="86" width="5" height="28" rx="1.5" fill="#1E293B" />
-
-            <!-- Chair & Seated Candidate (Left Side) -->
-            <g>
-              <!-- Chair -->
-              <path d="M44 64 V94 H68" stroke="#64748B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-              <line x1="56" y1="94" x2="56" y2="114" stroke="#475569" stroke-width="3" stroke-linecap="round" />
-              <line x1="48" y1="114" x2="64" y2="114" stroke="#475569" stroke-width="3" stroke-linecap="round" />
-              <!-- Legs seated -->
-              <path d="M56 76 H78 V110" stroke="#1E293B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
-              <rect x="75" y="109" width="11" height="4.5" rx="2" fill="#0F172A" />
-              <!-- Torso -->
-              <rect x="49" y="50" width="20" height="30" rx="6" fill="#0F172A" />
-              <!-- Animated Gesturing Arm -->
-              <g class="anim-interview-hand">
-                <path d="M62 56 L82 67 L90 62" stroke="#2563EB" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
+        <!-- Card 4: Tìm Việc Nhanh (Kính lúp quét & khớp việc làm phù hợp) -->
+        <div onclick="document.getElementById('jobKeywordInput')?.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(() => document.getElementById('jobKeywordInput')?.focus(), 350);" class="bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.28s;" title="Tìm kiếm việc làm phù hợp">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+              </span>
+              <span class="text-slate-900 font-bold text-xs leading-none">Tìm Việc Làm</span>
+            </div>
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </div>
+          <div class="pt-1.5">
+            <svg viewBox="0 0 220 96" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Job Row 1 -->
+              <rect x="16" y="8" width="188" height="22" rx="5" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.2" />
+              <rect x="24" y="14" width="10" height="10" rx="2.5" fill="#CBD5E1" />
+              <rect x="40" y="14.5" width="66" height="4" rx="2" fill="#475569" />
+              <rect x="40" y="21" width="42" height="3" rx="1.5" fill="#94A3B8" />
+              <!-- Job Row 2 (Highlighted Match) -->
+              <rect x="16" y="36" width="188" height="24" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.4" />
+              <rect x="24" y="43" width="10" height="10" rx="2.5" fill="#2563EB" />
+              <rect x="40" y="43" width="76" height="4" rx="2" fill="#0F172A" />
+              <rect x="40" y="50" width="48" height="3" rx="1.5" fill="#2563EB" />
+              <g class="anim-job-match">
+                <rect x="156" y="42" width="40" height="12" rx="6" fill="#10B981" />
+                <text x="176" y="50" text-anchor="middle" font-family="Inter, sans-serif" font-size="6" font-weight="800" fill="#FFFFFF">96% FIT</text>
               </g>
-              <!-- Animated Head with Headset -->
-              <g class="anim-interview-nod">
-                <circle cx="59" cy="36" r="9.5" fill="#FDE68A" stroke="#0F172A" stroke-width="1.2" />
-                <path d="M49.5 34.5 C49.5 28 55 25 60.5 25.5 C65.5 26 68.5 29.5 68.5 33.5 C65 31.5 58 31 49.5 34.5 Z" fill="#0F172A" />
-                <circle cx="63.5" cy="36" r="1.1" fill="#0F172A" />
-                <!-- Headset -->
-                <path d="M51 34 C51 25.5 67 25.5 67 34" stroke="#2563EB" stroke-width="2" stroke-linecap="round" />
-                <rect x="48.5" y="33" width="4" height="7" rx="2" fill="#2563EB" />
-                <path d="M51 39 L63 42" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" />
+              <!-- Job Row 3 -->
+              <rect x="16" y="66" width="188" height="22" rx="5" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.2" />
+              <rect x="24" y="72" width="10" height="10" rx="2.5" fill="#CBD5E1" />
+              <rect x="40" y="72.5" width="58" height="4" rx="2" fill="#475569" />
+              <rect x="40" y="79" width="38" height="3" rx="1.5" fill="#94A3B8" />
+              <!-- Animated Magnifying Glass -->
+              <g class="anim-search-scan">
+                <circle cx="122" cy="24" r="11" fill="#FFFFFF" fill-opacity="0.85" stroke="#0F172A" stroke-width="2.2" />
+                <circle cx="122" cy="24" r="6" fill="#EFF6FF" />
+                <line x1="130" y1="32" x2="138" y2="40" stroke="#0F172A" stroke-width="2.8" stroke-linecap="round" />
               </g>
-            </g>
-
-            <!-- Voice Waves between Candidate and AI Screen -->
-            <g class="anim-speech-ripple">
-              <path d="M84 32 C88 35 88 41 84 44" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" />
-              <path d="M90 29 C96 34 96 42 90 47" stroke="#60A5FA" stroke-width="1.6" stroke-linecap="round" />
-              <path d="M96 26 C103 33 103 43 96 50" stroke="#93C5FD" stroke-width="1.4" stroke-linecap="round" />
-            </g>
-
-            <!-- AI Interviewer Monitor / Laptop (Right Side) -->
-            <g>
-              <!-- Monitor Stand -->
-              <rect x="148" y="68" width="8" height="12" fill="#334155" />
-              <rect x="136" y="77" width="32" height="3" rx="1.5" fill="#334155" />
-              <!-- Monitor Frame -->
-              <rect x="116" y="22" width="72" height="48" rx="5" fill="#0F172A" />
-              <rect x="120" y="26" width="64" height="40" rx="3" fill="#F8FAFC" />
-              <!-- AI Avatar / Core inside Screen -->
-              <g class="anim-ai-core">
-                <circle cx="152" cy="43" r="11" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5" />
-                <circle cx="152" cy="43" r="4.5" fill="#2563EB" />
-              </g>
-              <!-- AI Soundbars inside Screen -->
-              <rect x="133" y="58" width="4" height="5" rx="1.5" fill="#2563EB" />
-              <rect x="140" y="56" width="4" height="7" rx="1.5" fill="#2563EB" />
-              <rect x="147" y="54" width="4" height="9" rx="1.5" fill="#10B981" />
-              <rect x="154" y="56" width="4" height="7" rx="1.5" fill="#2563EB" />
-              <rect x="161" y="57" width="4" height="6" rx="1.5" fill="#2563EB" />
-              <rect x="168" y="58" width="4" height="5" rx="1.5" fill="#94A3B8" />
-              <!-- AI Badge Pill -->
-              <rect x="165" y="29" width="16" height="8" rx="2" fill="#10B981" />
-              <text x="173" y="35" text-anchor="middle" font-family="Inter, sans-serif" font-size="5.5" font-weight="800" fill="#FFFFFF">AI</text>
-            </g>
-          </svg>
+            </svg>
+          </div>
         </div>
       </div>
 
