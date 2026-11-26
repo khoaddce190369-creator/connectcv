@@ -781,3 +781,132 @@ button:active:not(:disabled), a.btn-primary:active, a.btn-navy:active, a.btn-sec
   animation: avatarStatusPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
+/* ==========================================================================
+   12. HERO ILLUSTRATION SCENES (SUBMIT CV WALK & AI INTERVIEW - ZERO GRADIENT)
+   ========================================================================== */
+@keyframes heroWalkCycle {
+  0%   { transform: translateX(-52px); opacity: 0; }
+  8%   { transform: translateX(-44px); opacity: 1; }
+  45%  { transform: translateX(0px);   opacity: 1; }
+  86%  { transform: translateX(0px);   opacity: 1; }
+  95%  { transform: translateX(4px);   opacity: 0; }
+  100% { transform: translateX(-52px); opacity: 0; }
+}
+
+@keyframes heroWalkBob {
+  0%, 100% { transform: translateY(0px); }
+  25%      { transform: translateY(-2.5px); }
+  50%      { transform: translateY(0px); }
+  75%      { transform: translateY(-2.5px); }
+}
+
+@keyframes heroLegSwingA {
+  0%, 45%, 100% { transform: rotate(0deg); }
+  8%   { transform: rotate(18deg); }
+  17%  { transform: rotate(-16deg); }
+  26%  { transform: rotate(18deg); }
+  35%  { transform: rotate(-14deg); }
+}
+
+@keyframes heroLegSwingB {
+  0%, 45%, 100% { transform: rotate(0deg); }
+  8%   { transform: rotate(-18deg); }
+  17%  { transform: rotate(16deg); }
+  26%  { transform: rotate(-18deg); }
+  35%  { transform: rotate(14deg); }
+}
+
+@keyframes heroArmSubmit {
+  0%, 40% { transform: rotate(0deg); }
+  52%, 72% { transform: rotate(-28deg) translate(4px, -2px); }
+  85%, 100% { transform: rotate(0deg); }
+}
+
+@keyframes heroCvOnTray {
+  0%, 52% { opacity: 0; transform: translate(-8px, -10px) scale(0.9); }
+  60%, 86% { opacity: 1; transform: translate(0px, 0px) scale(1); }
+  95%, 100% { opacity: 0; transform: translate(0px, 0px) scale(0.95); }
+}
+
+@keyframes heroSubmitCheck {
+  0%, 58% { opacity: 0; transform: scale(0.4); }
+  66%     { opacity: 1; transform: scale(1.15); }
+  72%, 86% { opacity: 1; transform: scale(1); }
+  95%, 100% { opacity: 0; transform: scale(0.8); }
+}
+
+@keyframes heroInterviewNod {
+  0%, 100% { transform: rotate(0deg) translateY(0px); }
+  35%      { transform: rotate(3deg) translateY(1px); }
+  70%      { transform: rotate(-2deg) translateY(0px); }
+}
+
+@keyframes heroInterviewHand {
+  0%, 100% { transform: rotate(0deg); }
+  40%      { transform: rotate(-12deg) translateY(-1.5px); }
+  75%      { transform: rotate(5deg); }
+}
+
+@keyframes heroSpeechRipple {
+  0%, 100% { opacity: 0.25; transform: scale(0.88); }
+  50%      { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes heroAiCorePulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50%      { transform: scale(1.12); opacity: 1; }
+}
+
+.anim-walk-person {
+  animation: heroWalkCycle 6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+.anim-walk-bob {
+  animation: heroWalkBob 0.75s ease-in-out infinite;
+}
+.anim-leg-a {
+  transform-box: fill-box;
+  transform-origin: 50% 8%;
+  animation: heroLegSwingA 6s ease-in-out infinite;
+}
+.anim-leg-b {
+  transform-box: fill-box;
+  transform-origin: 50% 8%;
+  animation: heroLegSwingB 6s ease-in-out infinite;
+}
+.anim-arm-submit {
+  transform-box: fill-box;
+  transform-origin: 20% 15%;
+  animation: heroArmSubmit 6s ease-in-out infinite;
+}
+.anim-cv-tray {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heroCvOnTray 6s ease-out infinite;
+}
+.anim-submit-check {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heroSubmitCheck 6s ease-out infinite;
+}
+.anim-interview-nod {
+  transform-box: fill-box;
+  transform-origin: 50% 85%;
+  animation: heroInterviewNod 3.4s ease-in-out infinite;
+}
+.anim-interview-hand {
+  transform-box: fill-box;
+  transform-origin: 15% 80%;
+  animation: heroInterviewHand 3.4s ease-in-out infinite;
+}
+.anim-speech-ripple {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heroSpeechRipple 2s ease-in-out infinite;
+}
+.anim-ai-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heroAiCorePulse 2.2s ease-in-out infinite;
+}
+
+
