@@ -3,6 +3,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { optionalAuth } = require('../middlewares/authMiddleware');
+const { sanitizeText, processCvEditorAgent } = require('../services/cvEditorAgentService');
+const {
+  resolveCallerIdentity,
+  checkBurstRateLimit,
+  canConsumeDailyLlmQuota,
+  recordLlmConsumption
+} = require('../services/cvAiQuotaService');
 
 let callGeminiJSON = null;
 try {
@@ -16,232 +23,371 @@ try {
 }
 
 // ─────────────────────────────────────────────────────────────
-// BỘ TỪ ĐIỂN TỪ KHÓA CHUYÊN NGÀNH ATS MỞ RỘNG
+// BỘ TỪ ĐIỂN TỪ KHÓA CHUYÊN NGÀNH ATS MỞ RỘNG ĐA NGÀNH
 // ─────────────────────────────────────────────────────────────
 const ATS_TAXONOMY = [
-  // An ninh mạng / Bảo mật / Kiểm thử
-  { domain: 'Kiểm thử xâm nhập (Penetration Testing) & An toàn thông tin', role: 'Chuyên viên Kiểm thử xâm nhập (Penetration Tester)', keywords: ['kiểm thử xâm nhập', 'pentest', 'penetration testing', 'an toàn thông tin', 'bảo mật', 'security', 'lỗ hổng', 'vulnerability', 'owasp', 'burp suite', 'metasploit', 'nmap', 'sql injection', 'xss', 'soc', 'siem'] },
-  // Công nghệ thông tin / Lập trình
-  { domain: 'Lập trình Frontend & Trải nghiệm giao diện', role: 'Lập trình viên Frontend', keywords: ['frontend', 'react', 'react.js', 'vue', 'angular', 'next.js', 'typescript', 'javascript', 'tailwind', 'html/css', 'redux', 'zustand'] },
-  { domain: 'Phát triển hệ thống Backend & API', role: 'Lập trình viên Backend', keywords: ['backend', 'node.js', 'express', 'nest.js', 'java', 'spring', 'python', 'django', 'golang', 'microservices', 'api', 'restful', 'graphql', 'docker', 'kubernetes', 'postgresql', 'mongodb'] },
-  { domain: 'Thiết kế giao diện & Trải nghiệm người dùng', role: 'UI/UX Designer', keywords: ['ui/ux', 'ux', 'ui designer', 'figma', 'design system', 'wireframing', 'prototyping', 'user research', 'usability testing', 'adobe xd'] },
-  { domain: 'Kiểm thử phần mềm & Đảm bảo chất lượng (QA/QC)', role: 'Kỹ sư Kiểm thử phần mềm (QA/QC)', keywords: ['tester', 'kiểm thử phần mềm', 'qa', 'qc', 'selenium', 'automation test', 'manual test', 'postman', 'test case'] },
-  // Kinh doanh / Thương mại
-  { domain: 'Kinh doanh B2B & Phát triển đối tác doanh nghiệp', role: 'Chuyên viên Kinh doanh B2B', keywords: ['kinh doanh b2b', 'b2b', 'sales b2b', 'bán hàng doanh nghiệp', 'đàm phán hợp đồng', 'chốt deal', 'phát triển thị trường', 'crm', 'khách hàng doanh nghiệp'] },
-  { domain: 'Kinh doanh & Bán lẻ (B2C)', role: 'Chuyên viên Kinh doanh / Bán lẻ', keywords: ['bán hàng', 'sales', 'tư vấn khách', 'chốt đơn', 'bán lẻ', 'retail', 'cửa hàng', 'chăm sóc khách hàng'] },
-  // Marketing & Truyền thông
-  { domain: 'Digital Marketing & Tăng trưởng người dùng', role: 'Chuyên viên Digital Marketing', keywords: ['digital marketing', 'marketing', 'seo', 'sem', 'google ads', 'facebook ads', 'meta ads', 'tiktok ads', 'content marketing', 'roas', 'roi', 'conversion rate'] },
-  // Tài chính & Nhân sự
-  { domain: 'Kế toán & Quản trị tài chính', role: 'Chuyên viên Kế toán', keywords: ['kế toán', 'thuế', 'báo cáo tài chính', 'kiểm toán', 'audit', 'thu chi', 'hóa đơn', 'misa', 'excel kế toán'] },
-  { domain: 'Quản trị nhân sự & Thu hút nhân tài', role: 'Chuyên viên Tuyển dụng & Nhân sự', keywords: ['nhân sự', 'tuyển dụng', 'hr', 'headhunter', 'talent acquisition', 'c&b', 'đào tạo nội bộ', 'onboarding'] }
+  { domain: 'Kiểm thử xâm nhập (Penetration Testing) & An toàn thông tin', role: 'Chuyên viên An toàn thông tin', keywords: ['kiểm thử xâm nhập', 'pentest', 'penetration testing', 'an toàn thông tin', 'bảo mật', 'security', 'lỗ hổng', 'vulnerability', 'owasp', 'burp suite', 'metasploit', 'nmap', 'sql injection', 'xss', 'soc', 'siem'] },
+  { domain: 'Lập trình Frontend & Phát triển giao diện Web', role: 'Lập trình viên Frontend', keywords: ['frontend', 'react', 'react.js', 'vue', 'angular', 'next.js', 'typescript', 'javascript', 'tailwind', 'html/css', 'redux', 'zustand'] },
+  { domain: 'Phát triển hệ thống Backend & Kiến trúc API', role: 'Lập trình viên Backend', keywords: ['backend', 'node.js', 'express', 'nest.js', 'java', 'spring', 'python', 'django', 'golang', 'microservices', 'restful api', 'graphql', 'docker', 'kubernetes', 'postgresql', 'mongodb'] },
+  { domain: 'Phân tích dữ liệu & Business Intelligence', role: 'Chuyên viên Phân tích dữ liệu (Data Analyst)', keywords: ['data analyst', 'phân tích dữ liệu', 'power bi', 'powerbi', 'tableau', 'sql', 'python', 'etl', 'data warehouse', 'bigquery', 'looker'] },
+  { domain: 'Thiết kế giao diện & Trải nghiệm người dùng', role: 'UI/UX Designer', keywords: ['ui/ux', 'ui designer', 'ux designer', 'figma', 'design system', 'wireframing', 'prototyping', 'user research', 'usability testing', 'adobe xd'] },
+  { domain: 'Kiểm thử phần mềm & Đảm bảo chất lượng (QA/QC)', role: 'Kỹ sư QA/QC', keywords: ['tester', 'kiểm thử phần mềm', 'qa/qc', 'selenium', 'playwright', 'cypress', 'automation test', 'manual test', 'postman', 'test case'] },
+  { domain: 'Kinh doanh B2B & Phát triển đối tác doanh nghiệp', role: 'Chuyên viên Kinh doanh B2B', keywords: ['kinh doanh b2b', 'b2b sales', 'b2b', 'sales b2b', 'bán hàng doanh nghiệp', 'đàm phán hợp đồng', 'chốt hợp đồng', 'chốt deal', 'phát triển thị trường', 'crm', 'hubspot', 'salesforce', 'khách hàng doanh nghiệp', 'smes', 'kpi doanh số', 'lead generation', 'cold outreach'] },
+  { domain: 'Kinh doanh & Tư vấn Bán hàng', role: 'Chuyên viên Kinh doanh', keywords: ['kinh doanh', 'bán hàng', 'sales executive', 'sales', 'tư vấn khách hàng', 'chốt đơn', 'bán lẻ', 'retail', 'chăm sóc khách hàng', 'doanh thu', 'doanh số', 'kpi'] },
+  { domain: 'Digital Marketing & Tăng trưởng', role: 'Chuyên viên Digital Marketing', keywords: ['digital marketing', 'marketing', 'seo', 'sem', 'google ads', 'facebook ads', 'meta ads', 'tiktok ads', 'content marketing', 'google analytics', 'roas', 'roi', 'conversion rate'] },
+  { domain: 'Kế toán, Kiểm toán & Quản trị tài chính', role: 'Chuyên viên Kế toán - Tài chính', keywords: ['kế toán', 'thuế', 'báo cáo tài chính', 'kiểm toán', 'audit', 'vas', 'ifrs', 'thu chi', 'hóa đơn', 'misa', 'sap', 'erp', 'tín dụng', 'ngân hàng'] },
+  { domain: 'Quản trị nhân sự & Thu hút nhân tài', role: 'Chuyên viên Nhân sự (HR)', keywords: ['nhân sự', 'tuyển dụng', 'hr generalist', 'headhunter', 'talent acquisition', 'c&b', 'đào tạo nội bộ', 'onboarding', 'luật lao động'] },
+  { domain: 'Quản lý dự án & Điều phối vận hành', role: 'Quản lý dự án (Project Manager)', keywords: ['quản lý dự án', 'project manager', 'pmp', 'agile', 'scrum', 'jira', 'vận hành', 'chuỗi cung ứng', 'logistics', 'xuất nhập khẩu'] }
 ];
 
+function extractNumericTokens(text = '') {
+  const matches = String(text || '').match(/\d+(?:[.,]\d+)?%?/g) || [];
+  return Array.from(new Set(matches.map(m => m.replace(/,/g, '.'))));
+}
+
+function hasExactSameNumbers(originalText, candidateText) {
+  const origNums = extractNumericTokens(originalText);
+  const candNums = extractNumericTokens(candidateText);
+  // Every original number must still exist
+  for (const n of origNums) {
+    if (!candNums.includes(n)) return false;
+  }
+  // Candidate must NOT invent any new numbers not in original
+  for (const n of candNums) {
+    if (!origNums.includes(n)) return false;
+  }
+  return true;
+}
+
 /**
- * Trích xuất từ khóa ATS từ văn bản dựa trên từ điển đa ngành
+ * Trích xuất từ khóa ATS từ JD (kết hợp từ điển chuyên ngành + thuật ngữ thực tế trong JD)
  */
 function extractKeywordsFromJD(text = '') {
-  if (!text) return [];
-  const lower = text.toLowerCase();
+  const clean = sanitizeText(text, 10000);
+  if (!clean) return [];
+  const lower = clean.toLowerCase();
   const matched = [];
-  for (const group of ATS_TAXONOMY) {
-    for (const kw of group.keywords) {
-      if (lower.includes(kw)) {
-        matched.push(kw.toUpperCase());
+  const seenLower = new Set();
+
+  // 1. Score taxonomy groups so we prioritize keywords belonging to the JD's actual industry
+  const scoredGroups = ATS_TAXONOMY.map(group => {
+    const hits = group.keywords.filter(kw => {
+      if (kw.length <= 3) {
+        return new RegExp(`(?:^|[^a-z0-9])${kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:$|[^a-z0-9])`, 'i').test(lower);
+      }
+      return lower.includes(kw);
+    });
+    return { group, hits };
+  }).filter(x => x.hits.length > 0).sort((a, b) => b.hits.length - a.hits.length);
+
+  for (const { hits } of scoredGroups) {
+    for (const kw of hits) {
+      const k = kw.toLowerCase();
+      if (!seenLower.has(k)) {
+        seenLower.add(k);
+        const formattedKw = kw.length <= 4
+          ? kw.toUpperCase()
+          : kw.split(/\s+/).map(w => {
+              if (/^(?:b2b|b2c|kpi|crm|seo|sem|roi|roas|sql|api|ui\/ux|qa\/qc|c&b|vas|ifrs|erp|sap|hr|it|pmp|etl)$/i.test(w)) return w.toUpperCase();
+              if (/^smes$/i.test(w)) return 'SMEs';
+              return w.charAt(0).toUpperCase() + w.slice(1);
+            }).join(' ');
+        matched.push(formattedKw);
       }
     }
   }
-  return Array.from(new Set(matched));
+
+  // 2. Also extract explicit uppercase/CamelCase technical/business acronyms from the JD (e.g. CRM, B2B, KPI, HubSpot, SQL)
+  const STOP_ACRONYMS = new Set(['CV', 'JD', 'TP', 'HCM', 'HN', 'VN', 'VND', 'USD', 'TOP', 'THE', 'AND', 'FOR', 'WITH', 'PRO', 'VIP']);
+  for (const m of clean.matchAll(/\b([A-Z][A-Za-z0-9+#./-]{1,18})\b/g)) {
+    const token = m[1].replace(/[.,;:/-]+$/, '');
+    if (token.length < 2 || STOP_ACRONYMS.has(token.toUpperCase())) continue;
+    if (/^[A-Z]{2,10}$/.test(token) || /[A-Z].*[A-Z]|[+#.]/.test(token)) {
+      const k = token.toLowerCase();
+      if (!seenLower.has(k)) {
+        seenLower.add(k);
+        matched.push(token);
+      }
+    }
+  }
+
+  return matched.slice(0, 18);
 }
 
 function detectDomainFromText(text = '', fallbackRole = '') {
-  const lower = (text || '').toLowerCase();
+  const combined = `${fallbackRole || ''} ${text || ''}`.toLowerCase();
+  let bestGroup = null;
+  let bestCount = 0;
+
   for (const group of ATS_TAXONOMY) {
+    let count = 0;
     for (const kw of group.keywords) {
-      if (lower.includes(kw)) {
-        return { domain: group.domain, role: group.role };
+      if (kw.length <= 3) {
+        if (new RegExp(`(?:^|[^a-z0-9])${kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:$|[^a-z0-9])`, 'i').test(combined)) count++;
+      } else if (combined.includes(kw)) {
+        count += 2;
       }
     }
+    if (count > bestCount) {
+      bestCount = count;
+      bestGroup = group;
+    }
   }
-  if (fallbackRole && fallbackRole.trim() && !fallbackRole.toLowerCase().includes('chuyên viên')) {
-    return { domain: fallbackRole, role: fallbackRole };
+
+  const cleanFallback = sanitizeText(fallbackRole, 120);
+  if (bestGroup) {
+    return {
+      domain: bestGroup.domain,
+      role: cleanFallback || bestGroup.role
+    };
   }
-  return { domain: 'quy trình và nghiệp vụ chuyên môn', role: 'Chuyên viên' };
+  if (cleanFallback) {
+    return { domain: cleanFallback, role: cleanFallback };
+  }
+  return { domain: 'nghiệp vụ chuyên môn', role: 'Chuyên viên' };
 }
 
+// Formalize colloquialisms while preserving 100% of numbers, KPIs, company names, and domain terms!
+function formalizeColloquialVietnamese(str) {
+  let s = sanitizeText(str, 2000).replace(/\s+/g, ' ').trim();
+  if (!s) return '';
+  const replacements = [
+    [/\b(?:bọn mình|tụi mình|chúng em|bọn em)\b/gi, 'đội ngũ'],
+    [/^(?:mình|em|tôi)\s+(?:đã\s+|ừng\s+|có\s+)?/i, ''],
+    [/\blàm sale\b/gi, 'triển khai kinh doanh'],
+    [/\bđi sale\b/gi, 'phát triển thị trường và tiếp cận khách hàng'],
+    [/\bchốt khách\b/gi, 'đàm phán và chốt hợp đồng với khách hàng'],
+    [/\bkiếm khách\b/gi, 'tìm kiếm và mở rộng tệp khách hàng'],
+    [/\bfix bug\b/gi, 'phân tích và xử lý triệt để lỗi kỹ thuật'],
+    [/\blàm web\b/gi, 'phát triển ứng dụng web'],
+    [/\bbáo cáo sếp\b/gi, 'tổng hợp báo cáo cho cấp quản lý']
+  ];
+  for (const [re, rep] of replacements) {
+    s = s.replace(re, rep);
+  }
+  return s.replace(/\s+/g, ' ').trim();
+}
+
+const STRONG_OPENING_VERBS_RE = /^(?:Chủ động|Trực tiếp|Liên tục|Phối hợp|Phát triển|Chăm sóc|Thu thập|Xây dựng|Thiết kế|Triển khai|Tối ưu|Quản lý|Đàm phán|Phân tích|Dẫn dắt|Rà soát|Lên kế hoạch|Tham gia|Đảm nhiệm|Vận hành|Thực hiện|Kiểm soát|Nghiên cứu|Tư vấn|Hỗ trợ|Đạt|Mang về|Tổng hợp|Tổ chức|Phụ trách|Điều phối|Kết quả)/i;
+
+const ACTION_PREFIX_ROTATION = [
+  'Trực tiếp thực hiện ',
+  'Chủ động triển khai ',
+  'Phụ trách và tối ưu ',
+  'Phối hợp thực hiện '
+];
+
+/**
+ * Chuẩn hóa 1 gạch đầu dòng chuẩn ATS:
+ * - TUYỆT ĐỐI KHÔNG bịa thêm con số mới (không sinh 115%-130%, 28%, 35%...)
+ * - BẢO TOÀN 100% mọi con số, KPI, doanh thu, tên công cụ thực tế của ứng viên
+ */
+function polishBullet(rawBullet, index = 0) {
+  const cleaned = formalizeColloquialVietnamese(String(rawBullet || '').replace(/^[-*•+]\s*/, ''));
+  if (!cleaned) return '';
+
+  let result;
+  if (STRONG_OPENING_VERBS_RE.test(cleaned)) {
+    result = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  } else {
+    const prefix = ACTION_PREFIX_ROTATION[index % ACTION_PREFIX_ROTATION.length];
+    const firstWord = cleaned.split(/\s+/)[0] || '';
+    const isAcronym = /^[A-Z0-9]{2,}/.test(firstWord);
+    const lowered = isAcronym ? cleaned : (cleaned.charAt(0).toLowerCase() + cleaned.slice(1));
+    result = `${prefix}${lowered}`;
+  }
+
+  if (!/[.!?]$/.test(result)) result += '.';
+  return result;
+}
+
+function polishBulletList(rawBullets = []) {
+  const arr = Array.isArray(rawBullets)
+    ? rawBullets
+    : String(rawBullets || '').split(/\n+|(?<=[.!?])\s+(?=[A-ZÀ-Ỹ•*-])/);
+  const rawSeen = new Set();
+  const seen = new Set();
+  const out = [];
+  for (const b of arr) {
+    const rawKey = formalizeColloquialVietnamese(String(b || '').replace(/^[-*•+]\s*/, ''))
+      .toLowerCase()
+      .replace(/[^a-z0-9\u00C0-\u1EF9]/g, '');
+    if (!rawKey || rawSeen.has(rawKey)) continue;
+    rawSeen.add(rawKey);
+
+    const p = polishBullet(b, out.length);
+    if (!p) continue;
+    const normKey = p.toLowerCase().replace(/[^a-z0-9\u00C0-\u1EF9]/g, '');
+    if (!normKey || seen.has(normKey)) continue;
+    seen.add(normKey);
+    out.push(p);
+  }
+  return out;
+}
+
+/**
+ * Chuẩn hóa Mục tiêu nghề nghiệp:
+ * - Bảo toàn 100% số năm kinh nghiệm, chỉ số KPI/doanh thu (VD: 150%, 4 năm, 2 năm) và ngành thực tế của ứng viên!
+ */
 function polishObjective(rawText, fallbackRole = '') {
-  if (!rawText || !rawText.trim()) return '';
-  const trimmed = rawText.trim();
-  const lower = trimmed.toLowerCase();
-
-  const { domain, role } = detectDomainFromText(trimmed, fallbackRole);
-
-  const isLearning = lower.includes('học hỏi') || lower.includes('kinh nghiệm') || lower.includes('mới ra trường') || lower.includes('sinh viên') || lower.includes('cọ xát') || lower.includes('thực tập') || lower.includes('fresher') || lower.includes('tiếp thu');
-  const isLeader = lower.includes('quản lý') || lower.includes('trưởng nhóm') || lower.includes('lead') || lower.includes('leader') || lower.includes('quản trị');
-  const isGlobal = lower.includes('nước ngoài') || lower.includes('toàn cầu') || lower.includes('quốc tế') || lower.includes('global') || lower.includes('fdi');
-
-  let expPhrase = 'nền tảng kiến thức vững vàng';
-  const yearMatch = trimmed.match(/(\d+)\s*(năm|year)/i);
-  if (yearMatch) {
-    expPhrase = `hơn ${yearMatch[1]} năm kinh nghiệm thực chiến`;
+  const cleaned = formalizeColloquialVietnamese(rawText);
+  const { domain, role } = detectDomainFromText(cleaned, fallbackRole);
+  if (!cleaned) {
+    return `Ứng viên vị trí ${role} với định hướng phát triển chuyên sâu trong lĩnh vực ${domain}, mong muốn vận dụng năng lực chuyên môn để tối ưu hiệu quả công việc và đóng góp giá trị bền vững cho doanh nghiệp.`;
   }
 
-  if (isLearning) {
-    return `Với định hướng phát triển chuyên sâu trong lĩnh vực ${domain}, mục tiêu ngắn hạn là tiếp thu và tích lũy kiến thức thực tế, rèn luyện kỹ năng phân tích và xử lý nghiệp vụ chuyên môn trong môi trường làm việc thực chiến. Không ngừng trau dồi tinh thần trách nhiệm, tư duy chủ động và khả năng thích ứng nhanh với các tiêu chuẩn khắt khe. Mục tiêu dài hạn là trở thành ${role} đáng tin cậy, đóng góp tích cực vào sự an toàn, ổn định và tăng trưởng bền vững của quý công ty.`;
-  }
-
-  if (isLeader) {
-    return `Phát huy năng lực chuyên môn và tư duy quản trị vững vàng trong lĩnh vực ${domain}. Mục tiêu ngắn hạn là tối ưu hóa quy trình làm việc, nâng cao hiệu suất làm việc của đội ngũ và đảm bảo bàn giao các hạng mục trọng điểm đạt chuẩn chất lượng cao đúng tiến độ. Mục tiêu dài hạn là giữ vị trí Trưởng nhóm / Quản lý chuyên môn (${role}), đồng hành cùng ban lãnh đạo hiện thực hóa các mục tiêu chiến lược của doanh nghiệp.`;
-  }
-
-  if (isGlobal) {
-    return `Chuyên viên với định hướng phát huy tối đa năng lực chuyên môn trong lĩnh vực ${domain} tại môi trường làm việc quốc tế chuyên nghiệp. Sở hữu tư duy giải quyết vấn đề linh hoạt, khả năng giao tiếp đa văn hóa và tác phong làm việc chuẩn mực. Mục tiêu là đóng góp giá trị thực chất vào các dự án quy mô toàn cầu, đồng thời gắn bó lâu dài cùng sự phát triển của tổ chức.`;
-  }
-
-  return `Với ${expPhrase} và định hướng phát triển rõ ràng trong lĩnh vực ${domain}, mục tiêu nghề nghiệp là phát huy tối đa năng lực chuyên môn để tối ưu hóa quy trình, nâng cao chất lượng công việc và xử lý hiệu quả các bài toán thực tế. Luôn chủ động học hỏi, nâng cao tư duy đổi mới và phối hợp nhịp nhàng cùng các phòng ban. Mục tiêu dài hạn là trở thành ${role} chủ chốt, tạo ra các giá trị đo lường được cho sự tăng trưởng của quý công ty.`;
-}
-
-function polishBullet(rawBullet) {
-  if (!rawBullet || !rawBullet.trim()) return '';
-  const trimmed = rawBullet.trim().replace(/^[-*•]\s*/, '');
-  const lower = trimmed.toLowerCase();
-
-  // Đã là câu chuẩn STAR dài trên 70 ký tự và có động từ chuẩn
-  if (trimmed.length > 70 && /^(Chủ động|Trực tiếp|Chịu trách nhiệm|Tối ưu hóa|Xây dựng|Dẫn dắt|Triển khai|Phát hiện|Thiết kế)/i.test(trimmed)) {
-    return trimmed;
-  }
-
-  // 1. Kiểm thử / Pentest / Security / Lỗ hổng
-  if (lower.includes('lỗ hổng') || lower.includes('pentest') || lower.includes('kiểm thử') || lower.includes('bảo mật') || lower.includes('test') || lower.includes('xâm nhập')) {
-    if (lower.includes('sql') || lower.includes('xss') || lower.includes('vá lỗi') || lower.includes('fix')) {
-      return 'Phát hiện, phân tích và phối hợp cùng đội ngũ kỹ thuật vá triệt để các lỗ hổng bảo mật nghiêm trọng (SQL Injection, XSS, CSRF), bảo đảm an toàn dữ liệu hệ thống theo chuẩn OWASP Top 10.';
+  // If the candidate already wrote a detailed objective (>= 65 chars or contains concrete numbers),
+  // preserve ALL their facts & numbers and polish grammar/framing cleanly!
+  const hasConcreteNumbers = /\d/.test(cleaned);
+  if (cleaned.length >= 65 || hasConcreteNumbers) {
+    let polished = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    if (!/[.!?]$/.test(polished)) polished += '.';
+    if (polished.length < 130) {
+      polished += ` Định hướng gắn bó lâu dài ở vị trí ${role} và đóng góp hiệu quả thực chất cho mục tiêu phát triển của doanh nghiệp.`;
     }
-    if (lower.includes('báo cáo') || lower.includes('sếp') || lower.includes('quản lý') || lower.includes('đánh giá')) {
-      return 'Tổng hợp kết quả kiểm thử, lập báo cáo đánh giá rủi ro an ninh mạng định kỳ và đề xuất phương án khắc phục kịp thời cho cấp quản lý, nâng cao tính sẵn sàng của hạ tầng.';
-    }
-    return 'Chủ động triển khai rà soát, thực hiện kiểm thử bảo mật (Security Testing) trên hệ thống ứng dụng, phát hiện sớm các nguy cơ tiềm ẩn và bảo vệ toàn vẹn dữ liệu.';
+    return polished;
   }
 
-  // 2. Kinh doanh / Sales / Khách hàng
-  if (lower.includes('bán') || lower.includes('khách') || lower.includes('tư vấn') || lower.includes('chốt') || lower.includes('kpi') || lower.includes('doanh số') || lower.includes('doanh thu')) {
-    if (lower.includes('kpi') || lower.includes('doanh số') || lower.includes('vượt') || lower.includes('doanh thu')) {
-      return 'Chủ động khai thác thị trường, bám sát kế hoạch kinh doanh và liên tục hoàn thành từ 115% - 130% chỉ tiêu KPI doanh số định kỳ được giao.';
-    }
-    if (lower.includes('tư vấn') || lower.includes('chăm sóc') || lower.includes('hỗ trợ')) {
-      return 'Trực tiếp tiếp cận, lắng nghe nhu cầu và tư vấn giải pháp sản phẩm phù hợp cho khách hàng, gia tăng tỷ lệ chốt hợp đồng và duy trì tỷ lệ tái ký trên 85%.';
-    }
-    return 'Chủ động tìm kiếm, đàm phán hợp đồng thương mại và mở rộng mạng lưới khách hàng tiềm năng, đóng góp vào tăng trưởng doanh thu chung của phòng ban.';
-  }
-
-  // 3. Lập trình / IT / Dev
-  if (lower.includes('code') || lower.includes('lập trình') || lower.includes('react') || lower.includes('api') || lower.includes('web') || lower.includes('backend') || lower.includes('frontend')) {
-    if (lower.includes('bug') || lower.includes('fix') || lower.includes('sửa lỗi')) {
-      return 'Rà soát mã nguồn, phân tích nguyên nhân gốc rễ và xử lý dứt điểm các lỗi kỹ thuật phát sinh, cải thiện độ ổn định và tối ưu trải nghiệm người dùng.';
-    }
-    if (lower.includes('api') || lower.includes('backend') || lower.includes('database')) {
-      return 'Thiết kế, xây dựng và tối ưu hóa hệ thống RESTful API an toàn, xử lý truy vấn hiệu quả và đảm bảo khả năng chịu tải cao trong môi trường thực tế.';
-    }
-    return 'Tham gia phát triển các tính năng cốt lõi cho hệ thống ứng dụng, tối ưu hóa hiệu năng tải và đảm bảo tuân thủ nghiêm ngặt các tiêu chuẩn kiểm thử kỹ thuật.';
-  }
-
-  // 4. Marketing / Quảng cáo
-  if (lower.includes('ads') || lower.includes('marketing') || lower.includes('seo') || lower.includes('content') || lower.includes('quảng cáo')) {
-    return 'Lên kế hoạch và thực hiện tối ưu hóa chiến dịch truyền thông đa kênh, nâng cao chỉ số tiếp cận và cải thiện 20% - 30% tỷ lệ chuyển đổi đơn hàng.';
-  }
-
-  // 5. Quản lý / Vận hành / Kho / Nhân sự
-  if (lower.includes('quy trình') || lower.includes('quản lý') || lower.includes('kho') || lower.includes('vận hành') || lower.includes('nhân sự')) {
-    return 'Tổ chức quản lý, chuẩn hóa quy trình vận hành và kiểm soát chặt chẽ các hạng mục công việc, giúp nâng cao 25% - 35% hiệu suất làm việc toàn đội ngũ.';
-  }
-
-  // Mặc định: Nâng cấp câu thô của người dùng thành câu hành động chuẩn ATS
-  const cleaned = trimmed.charAt(0).toLowerCase() + trimmed.slice(1);
-  return `Trực tiếp đảm nhiệm và hoàn thành xuất sắc nhiệm vụ ${cleaned}, đảm bảo tiêu chuẩn chất lượng cao và đúng tiến độ cam kết.`;
+  return `${cleaned.charAt(0).toUpperCase() + cleaned.slice(1).replace(/[.!?]+$/, '')}. Định hướng phát triển chuyên sâu trong lĩnh vực ${domain} ở vị trí ${role}, chủ động tối ưu quy trình làm việc và đóng góp giá trị thực tiễn cho doanh nghiệp.`;
 }
 
 /**
  * @route   POST /api/cv/tailor
- * @desc    Smart Resume Builder & ATS CV Optimizer
- * Input: Text mô tả công việc (jd) và Object Profile của ứng viên.
+ * @desc    Smart Resume Builder & ATS CV Optimizer (100% Fact-Grounded, Zero Industry/Metric Hallucination)
  */
 router.post('/tailor', optionalAuth, async (req, res) => {
   try {
-    const { jd, jdText, profile } = req.body;
-    const jobDescription = jd || jdText;
+    res.setHeader('Cache-Control', 'no-store');
+    if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+      return res.status(400).json({ success: false, code: 'INVALID_BODY', message: 'Dữ liệu yêu cầu không hợp lệ.' });
+    }
 
-    if (!jobDescription) {
+    const { jd, jdText, profile } = req.body;
+    const rawJd = jd !== undefined ? jd : jdText;
+    if (typeof rawJd !== 'string' || !rawJd.trim()) {
       return res.status(400).json({
         success: false,
         code: 'MISSING_JD',
         message: 'Vui lòng cung cấp nội dung bản mô tả công việc (JD).'
       });
     }
+    if (rawJd.length > 12000) {
+      return res.status(400).json({
+        success: false,
+        code: 'JD_TOO_LONG',
+        message: 'Bản mô tả công việc (JD) quá dài (tối đa 12.000 ký tự).'
+      });
+    }
+    if (profile !== undefined && (profile === null || typeof profile !== 'object' || Array.isArray(profile))) {
+      return res.status(400).json({
+        success: false,
+        code: 'INVALID_PROFILE',
+        message: 'Dữ liệu hồ sơ (profile) không hợp lệ.'
+      });
+    }
 
-    const candidateProfile = profile || {
-      fullName: 'Nguyễn Minh Tuấn',
-      title: 'UI/UX Designer',
-      summary: 'Designer có 3 năm kinh nghiệm trong thiết kế giao diện web và mobile.',
-      skills: ['Figma', 'UI Design', 'Wireframing'],
-      experience: [
-        {
-          company: 'Tech Startup',
-          position: 'UI Designer',
-          description: 'Thiết kế giao diện ứng dụng di động cho khách hàng.'
-        }
-      ]
-    };
+    const burst = checkBurstRateLimit(req, res, 'cv-tailor');
+    if (!burst.allowed) return res.status(burst.status).json(burst.body);
 
-    // 1. Phân tích từ khóa ATS từ JD
+    const jobDescription = sanitizeText(rawJd, 12000);
+    const candidateProfile = profile || {};
+    const candidateName = sanitizeText(candidateProfile.fullName || '', 80);
+    const rawTitle = sanitizeText(candidateProfile.title || candidateProfile.jobTitle || '', 120);
+    const rawSummary = sanitizeText(candidateProfile.summary || candidateProfile.objective || '', 2000);
+    const rawSkills = Array.isArray(candidateProfile.skills)
+      ? candidateProfile.skills.map(s => sanitizeText(typeof s === 'string' ? s : s?.name || '', 80)).filter(Boolean)
+      : [];
+    const rawExperience = Array.isArray(candidateProfile.experience) ? candidateProfile.experience : [];
+
+    // Detect real industry/domain from BOTH candidate CV and JD (never hardcode UI/UX!)
+    const { domain, role: detectedRole } = detectDomainFromText(
+      `${rawTitle} ${rawSummary} ${rawSkills.join(' ')} ${jobDescription}`,
+      rawTitle
+    );
+
+    // 1. Extract ATS keywords from JD and compare against ENTIRE candidate CV text
     const jdKeywords = extractKeywordsFromJD(jobDescription);
-    const candidateSkills = (candidateProfile.skills || []).map(s => String(s).toLowerCase());
+    const fullCandidateCorpus = [
+      rawTitle,
+      rawSummary,
+      ...rawSkills,
+      ...rawExperience.map(e => `${e?.position || ''} ${e?.company || ''} ${Array.isArray(e?.description) ? e.description.join(' ') : (e?.description || '')}`)
+    ].join(' ').toLowerCase();
 
-    // 2. Tính toán missingKeywords & matchScore
     const matchedKeywords = [];
     const missingKeywords = [];
-
-    jdKeywords.forEach(kw => {
-      if (candidateSkills.some(cs => cs.includes(kw.toLowerCase()) || kw.toLowerCase().includes(cs))) {
+    for (const kw of jdKeywords) {
+      if (fullCandidateCorpus.includes(kw.toLowerCase())) {
         matchedKeywords.push(kw);
       } else {
         missingKeywords.push(kw);
       }
-    });
+    }
 
-    // Điểm matchScore (thang 100)
-    const baseScore = jdKeywords.length > 0 
-      ? Math.round((matchedKeywords.length / jdKeywords.length) * 100)
+    const matchScore = jdKeywords.length > 0
+      ? Math.min(98, Math.max(35, Math.round((matchedKeywords.length / jdKeywords.length) * 100)))
       : 75;
-    const matchScore = Math.min(98, Math.max(62, baseScore));
 
-    // 3. Tự động viết lại Tóm tắt chuyên môn bám sát JD (Tailored Summary)
-    const primarySkill = matchedKeywords[0] || 'UI/UX Design';
-    const topKeywords = matchedKeywords.slice(0, 3).join(', ');
-    const tailoredSummary = `${candidateProfile.fullName || 'Ứng viên'} là chuyên gia ${candidateProfile.title || 'Product Designer'} với năng lực vững chắc về ${topKeywords || primarySkill}. Có kinh nghiệm thực chiến trong việc chuẩn hóa quy trình thiết kế, tối ưu chỉ số chuyển đổi sản phẩm và phối hợp chặt chẽ với đội ngũ kỹ thuật theo chuẩn Agile. Định hướng đóng góp giá trị đột phá cho mục tiêu tăng trưởng của vị trí mục tiêu tại quý công ty.`;
+    // 2. Fact-grounded Tailored Summary (preserves candidate's real numbers & real industry!)
+    let tailoredSummary = polishObjective(rawSummary, detectedRole);
+    const relevantFocus = (matchedKeywords.length > 0 ? matchedKeywords : jdKeywords).slice(0, 3);
+    if (relevantFocus.length > 0) {
+      const notYetInSummary = relevantFocus.filter(kw => !tailoredSummary.toLowerCase().includes(kw.toLowerCase()));
+      if (notYetInSummary.length > 0) {
+        tailoredSummary = `${tailoredSummary.replace(/[.!?]+$/, '')}, tập trung phát huy năng lực về ${notYetInSummary.join(', ')} phù hợp với yêu cầu vị trí ${detectedRole}.`;
+      }
+    }
+    if (candidateName && !tailoredSummary.toLowerCase().includes(candidateName.toLowerCase()) && !rawSummary) {
+      tailoredSummary = `${candidateName} — ${tailoredSummary}`;
+    }
 
-    // 4. Tự động sinh các gạch đầu dòng mô tả kinh nghiệm chuẩn STAR bám sát JD
-    const tailoredExperience = [
-      `Dẫn dắt thiết kế giao diện và trải nghiệm người dùng với ${matchedKeywords.slice(0, 2).join(' & ') || 'Figma & Design System'}, giúp giảm 35% thời gian bàn giao dự án cho đội ngũ lập trình.`,
-      `Áp dụng phương pháp nghiên cứu người dùng và tối ưu luồng thao tác (User Journey), gia tăng tỷ lệ kích hoạt tài khoản lên 28% trong vòng 3 tháng đầu triển khai.`,
-      `Xây dựng và duy trì thư viện thành phần chuẩn hóa (Reusable Components), đảm bảo tính nhất quán trên cả nền tảng Web & Mobile theo các tiêu chí kiểm định chất lượng nghiêm ngặt.`
-    ];
+    // 3. Fact-grounded Tailored Experience (ONLY polishes candidate's real bullets; ZERO fabricated metrics or wrong-industry tasks!)
+    let sourceBullets = [];
+    if (rawExperience.length > 0) {
+      const firstExp = rawExperience[0];
+      if (Array.isArray(firstExp?.description)) {
+        sourceBullets = firstExp.description;
+      } else if (typeof firstExp?.description === 'string' && firstExp.description.trim()) {
+        sourceBullets = firstExp.description
+          .split(/\n+|(?<=[.!?])\s+(?=[A-ZÀ-Ỹ•*-])/)
+          .map(s => s.trim())
+          .filter(Boolean);
+      }
+    }
+
+    let tailoredExperience = polishBulletList(sourceBullets);
+    if (tailoredExperience.length === 0) {
+      // Honest placeholder bullets for empty CVs — NEVER invent fake numbers like 35% or 28%!
+      const focusKw = relevantFocus.join(', ') || domain;
+      tailoredExperience = [
+        `Trực tiếp triển khai các nghiệp vụ trọng tâm về ${focusKw} cho vị trí ${detectedRole}, đạt [nhập % KPI hoặc kết quả thực tế của bạn].`,
+        `Phối hợp chặt chẽ cùng các bộ phận liên quan để tối ưu quy trình làm việc trong mảng ${domain}, đảm bảo chất lượng và tiến độ cam kết.`
+      ];
+    }
+
+    const recommendations = [];
+    if (missingKeywords.length > 0) {
+      recommendations.push(`Nếu bạn thực sự có kinh nghiệm với "${missingKeywords.slice(0, 4).join(', ')}", hãy bổ sung vào mục Kỹ năng hoặc minh chứng cụ thể trong Kinh nghiệm làm việc.`);
+    } else {
+      recommendations.push('Hồ sơ của bạn đã bao phủ tốt các từ khóa trọng tâm trong bản mô tả công việc (JD).');
+    }
+    recommendations.push('Giữ nguyên các số liệu thành tích thực tế của bạn (KPI, doanh thu, quy mô dự án) và tuyệt đối không điền số liệu giả định khi phỏng vấn.');
+    recommendations.push('Sử dụng bố cục rõ ràng và font chữ chuẩn tiếng Việt để hệ thống ATS trích xuất chính xác 100% thông tin.');
 
     return res.json({
       success: true,
       data: {
         matchScore,
-        atsStatus: matchScore >= 80 ? 'Chuẩn ATS Tối Ưu' : 'Cần Bổ Sung Từ Khóa',
+        atsStatus: matchScore >= 75 ? 'Chuẩn ATS Tối Ưu' : 'Cần Bổ Sung Từ Khóa Thực Tế',
         matchedKeywords,
         missingKeywords,
         tailoredSummary,
         tailoredExperience,
-        recommendations: [
-          `Nên chèn thêm các từ khóa: ${missingKeywords.slice(0, 3).join(', ')} vào phần kỹ năng chuyên môn.`,
-          'Bổ sung thêm các số liệu định lượng (%, doanh thu, lượt tải) vào phần kinh nghiệm làm việc.',
-          'Đảm bảo định dạng xuất file PDF sử dụng font chữ chuẩn không chân để bộ quét ATS dễ bóc tách dữ liệu.'
-        ]
+        recommendations
       }
     });
   } catch (error) {
-    console.error('Lỗi POST /api/cv/tailor:', error);
+    console.error('Lỗi POST /api/cv/tailor:', error.message);
     return res.status(500).json({
       success: false,
       code: 'TAILOR_ERROR',
@@ -252,81 +398,120 @@ router.post('/tailor', optionalAuth, async (req, res) => {
 
 /**
  * @route   POST /api/cv/standardize-text
- * @desc    AI Chuẩn hóa văn phong chuyên nghiệp & ATS cho Mục tiêu & Kinh nghiệm
+ * @desc    AI Chuẩn hóa văn phong chuyên nghiệp & ATS (Bảo toàn 100% số liệu thật, không nhân đôi bullet)
  */
 router.post('/standardize-text', optionalAuth, async (req, res) => {
   try {
-    const { type, text = '', jobTitle = '', candidateName = 'Ứng viên', cvData: incomingCV } = req.body;
-    const lower = text.toLowerCase();
-    const titleLower = jobTitle.toLowerCase();
+    res.setHeader('Cache-Control', 'no-store');
+    if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+      return res.status(400).json({ success: false, message: 'Dữ liệu yêu cầu không hợp lệ.' });
+    }
 
-    // Chuẩn hóa văn phong TOÀN BỘ CV (Mục tiêu, Tất cả kinh nghiệm, Dự án) - Giữ nguyên thông tin cá nhân
+    const { type, text = '', jobTitle = '', cvData: incomingCV } = req.body;
+    const safeTitle = sanitizeText(jobTitle, 120);
+    const lower = typeof text === 'string' ? text.toLowerCase() : '';
+    const titleLower = safeTitle.toLowerCase();
+
+    const burst = checkBurstRateLimit(req, res, 'cv-standardize');
+    if (!burst.allowed) return res.status(burst.status).json(burst.body);
+
+    // Chuẩn hóa văn phong TOÀN BỘ CV (Mục tiêu, Kinh nghiệm, Dự án) - Bảo toàn 100% số liệu & trường ẩn
     if (type === 'full-cv' || type === 'all') {
+      if (incomingCV !== undefined && (incomingCV === null || typeof incomingCV !== 'object' || Array.isArray(incomingCV))) {
+        return res.status(400).json({ success: false, message: 'Dữ liệu cvData không hợp lệ.' });
+      }
       const cv = incomingCV || {};
-      const targetRole = cv?.profile?.jobTitle || jobTitle || 'Chuyên viên';
+      const targetRole = sanitizeText(cv?.profile?.jobTitle || safeTitle || 'Chuyên viên', 120);
+      const identity = resolveCallerIdentity(req);
 
-      // 1. Thử gọi Gemini AI nếu có key
-      if (callGeminiJSON && cv?.objective) {
+      // 1. Thử gọi Gemini AI nếu còn quota và có nội dung, nhưng KIỂM ĐỊNH NGHIÊM NGẶT chống bịa số liệu!
+      if (callGeminiJSON && cv?.objective && canConsumeDailyLlmQuota(identity).allowed) {
         try {
-          const aiPrompt = `Bạn là chuyên gia nhân sự và cố vấn nghề nghiệp cấp cao. Nhiệm vụ: Nâng cấp văn phong toàn bộ CV sang tiếng Việt hành chính chuyên nghiệp, chuẩn ATS, DỰA TRÊN CHÍNH XÁC nội dung thô của ứng viên.
-QUY TẮC:
-- Bám sát ngành nghề và công việc thực tế trong nội dung thô (ví dụ nếu ứng viên viết về kiểm thử xâm nhập/pentest thì viết về kiểm thử xâm nhập, không tự đổi ngành).
-- Mục tiêu: 1 đoạn súc tích 3-4 câu.
-- Kinh nghiệm: Chuẩn hóa từng gạch đầu dòng mô tả của từng công ty thành câu hành động chuẩn STAR có số liệu định lượng (%, KPI, tiến độ).
-- Trả về JSON:
+          const aiPrompt = `Bạn là chuyên gia nhân sự chuẩn hóa văn phong CV tiếng Việt.
+QUY TẮC BẮT BUỘC (TUYỆT ĐỐI TUÂN THỦ):
+1. BẢO TOÀN 100% SỰ THẬT & SỐ LIỆU: Giữ nguyên chính xác mọi con số, phần trăm, KPI, doanh thu, thời gian, tên công ty/công cụ trong bản gốc (VD: có "125% - 140%", "3.2 tỷ VNĐ", "18 - 25 hợp đồng" thì BẮT BUỘC giữ đúng y hệt các con số đó). TUYỆT ĐỐI KHÔNG tự bịa bất kỳ con số mới nào!
+2. KHÔNG ĐỔI NGÀNH: Bám sát đúng ngành nghề thực tế của ứng viên.
+3. KHÔNG TRÙNG LẶP: Mỗi gạch đầu dòng kinh nghiệm phải khác biệt, tương ứng 1-1 với ý gốc của ứng viên.
+4. Trả về JSON hợp lệ:
 {
   "objective": "...",
-  "experience": [ { "id": "...", "position": "...", "company": "...", "startDate": "...", "endDate": "...", "description": ["..."] } ]
+  "experience": [ { "id": "...", "description": ["..."] } ]
 }
-DỮ LIỆU CV:
-- Vị trí: "${targetRole}"
-- Mục tiêu thô: "${cv?.objective || ''}"
-- Kinh nghiệm thô: ${JSON.stringify((cv?.experience || []).map(e => ({ id: e.id, position: e.position, company: e.company, startDate: e.startDate, endDate: e.endDate, description: e.description })))}`;
+DỮ LIỆU GỐC:
+- Vị trí: ${JSON.stringify(targetRole)}
+- Mục tiêu gốc: ${JSON.stringify(sanitizeText(cv.objective, 2000))}
+- Kinh nghiệm gốc: ${JSON.stringify((cv.experience || []).map(e => ({ id: e.id, company: e.company, position: e.position, description: e.description })))}`;
 
-          const aiData = await callGeminiJSON(aiPrompt);
-          if (aiData && aiData.objective) {
+          const aiData = await callGeminiJSON(aiPrompt, 'gemini-2.5-flash-lite', { timeoutMs: 14000, maxOutputTokens: 2000 });
+          recordLlmConsumption(identity);
+
+          if (aiData && typeof aiData.objective === 'string') {
+            const safeObj = hasExactSameNumbers(cv.objective, aiData.objective)
+              ? sanitizeText(aiData.objective, 2500)
+              : polishObjective(cv.objective, targetRole);
+
+            const verifiedExperience = (cv.experience || []).map(exp => {
+              const rawBullets = Array.isArray(exp.description) ? exp.description : [];
+              const matchAiExp = (aiData.experience || []).find(ae => ae && (ae.id === exp.id || ae.company === exp.company));
+              let nextBullets;
+              if (matchAiExp && Array.isArray(matchAiExp.description) && matchAiExp.description.length === rawBullets.length) {
+                // Verify bullet-by-bullet that ZERO numbers were lost or fabricated!
+                const checkedBullets = matchAiExp.description.map((candB, idx) => {
+                  const origB = rawBullets[idx] || '';
+                  return hasExactSameNumbers(origB, candB) ? sanitizeText(candB, 1000) : polishBullet(origB, idx);
+                });
+                nextBullets = polishBulletList(checkedBullets);
+              } else {
+                nextBullets = polishBulletList(rawBullets);
+              }
+              return {
+                ...exp,
+                description: nextBullets.length > 0 ? nextBullets : rawBullets
+              };
+            });
+
+            const verifiedProjects = (cv.projects || []).map(proj => {
+              if (!Array.isArray(proj.description) || proj.description.length === 0) return proj;
+              return {
+                ...proj,
+                description: polishBulletList(proj.description)
+              };
+            });
+
             return res.json({
               success: true,
               data: {
-                objective: aiData.objective,
-                experience: (cv?.experience || []).map(exp => {
-                  const matchAiExp = (aiData.experience || []).find(ae => ae.id === exp.id || ae.company === exp.company);
-                  return {
-                    ...exp,
-                    description: matchAiExp && matchAiExp.description && matchAiExp.description.length > 0
-                      ? matchAiExp.description
-                      : exp.description.map(d => polishBullet(d))
-                  };
-                }),
-                projects: cv?.projects || [],
-                summary: 'AI Gemini đã chuẩn hóa văn phong toàn bộ CV theo đúng nội dung bạn đã nhập!'
+                objective: safeObj,
+                experience: verifiedExperience,
+                projects: verifiedProjects,
+                summary: 'Đã chuẩn hóa văn phong CV chuyên nghiệp (bảo toàn 100% số liệu thực tế và thông tin cá nhân)!'
               }
             });
           }
         } catch (geminiErr) {
-          console.warn('Gemini full-cv fallback sang NLP:', geminiErr.message);
+          console.warn('Gemini full-cv fallback sang bộ chuẩn hóa bảo toàn số liệu:', geminiErr.message);
         }
       }
 
-      // 2. Bộ xử lý ngôn ngữ NLP chuyên nghiệp (Zero-fail, tức thì, bảo tồn 100% ngữ nghĩa người dùng)
+      // 2. Bộ chuẩn hóa văn phong bảo toàn 100% sự thật & số liệu thực tế (Zero-hallucination, Zero-duplication)
       const standardizedObjective = polishObjective(cv?.objective, targetRole);
 
-      const standardizedExperience = (cv?.experience || []).map((exp) => {
-        const rawBullets = exp.description || [];
-        const polishedBullets = rawBullets.map((b) => polishBullet(b));
+      const standardizedExperience = (cv?.experience || []).map(exp => {
+        const rawBullets = Array.isArray(exp.description) ? exp.description : [];
+        const polishedBullets = polishBulletList(rawBullets);
         return {
           ...exp,
           description: polishedBullets.length > 0 ? polishedBullets : [
-            `Trực tiếp đảm nhiệm và hoàn thành các hạng mục công việc trọng điểm tại ${exp.company || 'doanh nghiệp'}, đảm bảo tiến độ và tiêu chuẩn chất lượng cam kết.`
+            `Trực tiếp đảm nhiệm công việc vị trí ${sanitizeText(exp.position || targetRole, 100)} tại ${sanitizeText(exp.company || 'doanh nghiệp', 120)}, đảm bảo chất lượng và tiến độ đề ra.`
           ]
         };
       });
 
-      const standardizedProjects = (cv?.projects || []).map((proj) => {
-        if (!proj.description || proj.description.length === 0) return proj;
+      const standardizedProjects = (cv?.projects || []).map(proj => {
+        if (!Array.isArray(proj.description) || proj.description.length === 0) return proj;
         return {
           ...proj,
-          description: proj.description.map((b) => polishBullet(b))
+          description: polishBulletList(proj.description)
         };
       });
 
@@ -336,24 +521,27 @@ DỮ LIỆU CV:
           objective: standardizedObjective || cv?.objective,
           experience: standardizedExperience,
           projects: standardizedProjects,
-          summary: 'Đã chuẩn hóa văn phong toàn bộ CV dựa trên chính xác nội dung bạn vừa nhập (Giữ nguyên 100% thông tin cá nhân)!'
+          summary: 'Đã chuẩn hóa văn phong CV chuyên nghiệp (bảo toàn 100% số liệu thực tế và thông tin cá nhân)!'
         }
       });
     }
 
     if (type === 'objective') {
-      const standardized = polishObjective(text, jobTitle);
+      if (typeof text !== 'string') {
+        return res.status(400).json({ success: false, message: 'Nội dung mục tiêu phải là chuỗi văn bản.' });
+      }
+      const standardized = polishObjective(text, safeTitle);
       return res.json({
         success: true,
         data: {
           standardizedText: standardized,
-          role: jobTitle
+          role: safeTitle
         }
       });
     }
 
     if (type === 'experience') {
-      const bullets = (Array.isArray(text) ? text : [text]).map(b => polishBullet(b));
+      const bullets = polishBulletList(Array.isArray(text) ? text : String(text || '').split('\n'));
       return res.json({
         success: true,
         data: {
@@ -738,27 +926,30 @@ router.get('/template/:id', (req, res) => {
 
 /**
  * @route   POST /api/cv/ai-agent
- * @desc    Sandboxed AI Agent v2.0 chỉnh sửa trực tiếp CV trên /cv-editor
+ * @desc    Sandboxed AI Agent v3.0 chỉnh sửa trực tiếp CV trên /cv-editor (Durable Quota + Multi-clause + Contrast Guard)
  */
-const rateLimit = require('express-rate-limit');
-const { processCvEditorAgent } = require('../services/cvEditorAgentService');
-const aiAgentLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000,
-  limit: 30,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
-  message: { success: false, code: 'AGENT_RATE_LIMIT', message: 'Bạn gửi yêu cầu AI Agent quá nhanh. Vui lòng chờ vài phút rồi thử lại.' }
-});
-
-router.post('/ai-agent', optionalAuth, aiAgentLimiter, async (req, res) => {
+router.post('/ai-agent', optionalAuth, async (req, res) => {
   try {
     res.setHeader('Cache-Control', 'no-store');
-    const result = await processCvEditorAgent(req.body);
+    const identity = resolveCallerIdentity(req);
+    const result = await processCvEditorAgent(req.body, {
+      checkBurst: () => checkBurstRateLimit(req, res, 'cv-ai-agent'),
+      canUseLlm: () => canConsumeDailyLlmQuota(identity),
+      onLlmUsed: () => recordLlmConsumption(identity)
+    });
     return res.status(result.status).json(result.body);
   } catch {
     console.error('[POST /api/cv/ai-agent] AGENT_INTERNAL_ERROR');
     return res.status(503).json({ success: false, code: 'AGENT_UNAVAILABLE', message: 'Trợ lý AI Agent hiện đang bận. Vui lòng thử lại sau ít giây.' });
   }
 });
+
+router._internals = {
+  polishBullet,
+  polishBulletList,
+  polishObjective,
+  hasExactSameNumbers,
+  extractKeywordsFromJD
+};
 
 module.exports = router;

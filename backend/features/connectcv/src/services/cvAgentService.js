@@ -16,8 +16,8 @@ const MAX_PROFILE_JSON_CHARS = 60000;
 function sanitizeText(val, maxLen = 2000) {
   if (val === null || val === undefined) return '';
   let str = String(val);
-  // Remove null bytes and unsafe control characters (keep \n and \t)
-  str = str.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
+  // Remove null bytes, unsafe control characters, and Unicode Bidi/RTL overrides (\u202e etc.)
+  str = str.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '');
   // Strip HTML comments
   str = str.replace(/<!--[\s\S]*?-->/g, '');
   // Strip real HTML/XML tags (starting with < followed by / or ASCII tag name),
@@ -32,10 +32,10 @@ function sanitizeText(val, maxLen = 2000) {
 }
 
 function sanitizeUrl(val, maxLen = 250) {
-  const clean = sanitizeText(val, maxLen);
-  if (!clean) return '';
-  if (/^(?:https?:\/\/|linkedin\.com|github\.com|www\.)/i.test(clean)) return clean;
-  if (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?$/.test(clean)) return clean;
+  const clean = sanitizeText(val, maxLen).replace(/[.,;!?]+$/, '').trim();
+  if (!clean || /[\s;()'"<>\\]/.test(clean) || /^(?:javascript|vbscript|data|file):/i.test(clean)) return '';
+  if (/^(?:https?:\/\/|linkedin\.com\/|github\.com\/|www\.)/i.test(clean)) return clean;
+  if (/^[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+(?:\/[^\s;()'"<>]*)?$/.test(clean)) return clean;
   return '';
 }
 
@@ -66,13 +66,18 @@ function normalizeForCheck(text) {
 // ─────────────────────────────────────────────────────────
 
 function detectSecurityProbe(message) {
-  const raw = String(message || '');
+  const raw = String(message || '').replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '');
   const norm = normalizeForCheck(raw);
+  const isLegitCvWebsiteEdit =
+    /\b(?:doi|sua|cap\s*nhat|thay|them|dat)\s+(?:link\s+|dia\s+chi\s+)?(?:website|trang\s*web\s*ca\s*nhan|portfolio)(?:\s+ca\s*nhan|\s+cua\s+toi|\s+cv)?\s*(?:thanh|sang|la|:)?\s*(?:https?:\/\/|www\.|[a-z0-9-]+\.[a-z]{2,})/i.test(norm);
+
   if (
-    /<\s*(?:script|iframe|object|embed|img|svg)\b|onerror\s*=|onload\s*=|javascript\s*:/i.test(raw) ||
+    /<\s*(?:script|iframe|object|embed|img|svg|style|link|meta)\b|on(?:error|load|click|mouseover)\s*=|javascript\s*:|data\s*:\s*text\/html/i.test(raw) ||
+    /(?:background(?:-image|-color)?|border-image|-moz-binding|behavior)\s*:\s*[^;\n]*url\s*\(|;\s*[a-z-]{3,25}\s*:\s*[^;\n]*url\s*\(|expression\s*\(|@import\b/i.test(raw) ||
     /(?:^|[\s"'`])(?:file\s+\.env|\.env\b|[a-z0-9_]*api[_ -]?key|[a-z0-9_]*secret(?:[_ -]?key)?|[a-z0-9_]*auth[_ -]?token|system\s*prompt|prompt\s*he\s*thong|database\s*(?:url|uri|credential|password)|dump\s*(?:db|database)|document\.cookie|document\.domain|localstorage|sessionstorage|window\.location|eval\s*\(|alert\s*\()/i.test(norm) ||
-    /ignore\s+(?:all\s+)?(?:previous|prior|above)\s+instructions|bo\s+qua\s+(?:moi\s+)?(?:chi\s+dan|quy\s+tac)\s+(?:truoc|he\s+thong)/i.test(norm) ||
-    /(?:sua|doi|thay\s*doi|chinh|xoa|an|hack|tan\s*cong|chiem)\s+(?:mau\s+|giao\s*dien\s+|code\s+)?(?:toan\s+bo\s+|nguyen\s+|ca\s+)?(?:trang\s*web|website|he\s*thong|code\s*web|giao\s*dien\s*web|thanh\s+menu|navbar|header\s+web|footer\s+web|nut\s+(?:tai\s+pdf|dang\s+nhap|luu|menu)|tai\s*khoan\s*khac|admin|credits?|so\s*du)/i.test(norm) ||
+    /\b(?:system\s*override|admin\s*override|security\s*override|override\s+(?:all\s+)?(?:system|safety|previous|instructions|rules)|developer\s*mode|god\s*mode|dan\s*mode|jailbreak)\b/i.test(norm) ||
+    /(?:ignore|disregard|forget|bypass)\s+(?:all\s+)?(?:previous|prior|above|system|safety)\s*(?:instructions|prompts|rules|constraints)?|bo\s+qua\s+(?:moi\s+|tat\s+ca\s+)?(?:chi\s+dan|quy\s+tac|huong\s+dan)\s*(?:truoc|he\s+thong)?/i.test(norm) ||
+    (!isLegitCvWebsiteEdit && /(?:sua|doi|thay\s*doi|chinh|xoa|an|hack|tan\s*cong|chiem)\s+(?:mau\s+|giao\s*dien\s+|code\s+)?(?:(?:toan\s+bo|nguyen|ca)\s+(?:trang\s*web|website|he\s*thong)|giao\s*dien\s*(?:trang\s*)?web|code\s*web|he\s*thong|thanh\s+menu|navbar|header\s+web|footer\s+web|nut\s+(?:tai\s+pdf|dang\s+nhap|luu|menu)|tai\s*khoan\s*khac|admin|credits?|so\s*du)/i.test(norm)) ||
     /(?:cong|tang|nang\s*cap|mo\s*khoa|kich\s*hoat|hack)\s+(?:them\s+)?(?:\d*\s*credits?|goi\s*pro|tai\s*khoan\s*pro|pro\s+mien\s+phi|vip\s+mien\s+phi)\b/i.test(norm)
   ) {
     return {

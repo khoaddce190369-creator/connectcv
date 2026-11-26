@@ -39,3 +39,7 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Runtime quota & temporary state
+backend/data/*.json
+backend/data/*.tmp

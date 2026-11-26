@@ -12,20 +12,31 @@ if(process.env.FEATURE_STORE_BACKEND!=='firestore'&&!communityStore.entries.leng
  const old=JSON.parse(require('fs').readFileSync(legacyFile,'utf8'));
  if(Array.isArray(old))communityStore.state.entries=old.map(e=>({...publicEntry(e),contentHash:e.contentHash}));
 }
+function stripHtmlAndBidi(input, maxLength = 3000) {
+  if (input === null || input === undefined) return '';
+  return String(typeof input === 'object' ? JSON.stringify(input) : input)
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<\s*\/?\s*[a-zA-Z][a-zA-Z0-9:-]*(?:\s+[^<>]*)?\/?\s*>/g, '')
+    .replace(/[<>]/g, '')
+    .replace(/(?:javascript|vbscript)\s*:/gi, '')
+    .replace(/\bon[a-z]+\s*=/gi, '')
+    .trim()
+    .substring(0, maxLength);
+}
+
 function sanitizeForPrompt(input, maxLength = 3000) {
   if (!input) return '';
-  const str = typeof input === 'object' ? JSON.stringify(input) : String(input);
-  return str
-    .substring(0, maxLength)
+  return stripHtmlAndBidi(input, maxLength)
     .replace(/ignore\s+(all\s+)?(previous\s+)?instructions?/gi, '[filtered]')
     .replace(/forget\s+(all\s+)?(previous\s+)?instructions?/gi, '[filtered]')
+    .replace(/system\s*override/gi, '[filtered]')
     .replace(/you\s+are\s+now/gi, '[filtered]')
     .replace(/act\s+as\s+/gi, '[filtered]')
     .replace(/system\s*prompt/gi, '[filtered]')
     .replace(/jailbreak/gi, '[filtered]')
     .replace(/api[_\s-]?key/gi, '[filtered]')
     .replace(/process\.env/gi, '[filtered]')
-    .replace(/<script[\s\S]*?>/gi, '[filtered]')
     .replace(/union\s+select/gi, '[filtered]');
 }
 
@@ -180,18 +191,19 @@ router.post('/live-chat', async (req,res)=>{
  if(prepared.error)return res.status(400).json(prepared.error);
  const {value,plan}=prepared;
  try{
+  const safeJobTitle=stripHtmlAndBidi(value.jobTitle||'',120);
   let data;
   if(value.action==='start'){
-   const roleLabel=String(value.jobTitle||'').trim();
+   const roleLabel=safeJobTitle;
    const levelNames={fresher:'Fresher',junior:'Junior',middle:'Middle',senior:'Senior',lead:'Lead'};
    const lvl=levelNames[value.level]||'';
    const intro=roleLabel
     ? `Chào bạn, rất vui được trò chuyện cùng bạn hôm nay cho vị trí ${roleLabel}${lvl?' cấp độ '+lvl:''}. Mình đi thẳng vào câu hỏi đầu tiên sát chuyên môn nhé: `
     : 'Chào bạn, rất vui được đồng hành cùng bạn trong buổi phỏng vấn thử hôm nay. Mình bắt đầu với câu hỏi đầu tiên nhé: ';
-   const reply=plan.next?intro+plan.next.question:'Ngành và cấp độ này chưa có câu hỏi trong bộ biên soạn hiện tại. Hãy chọn mục khác hoặc quay lại sau.';
+   const reply=stripHtmlAndBidi(plan.next?intro+plan.next.question:'Ngành và cấp độ này chưa có câu hỏi trong bộ biên soạn hiện tại. Hãy chọn mục khác hoặc quay lại sau.',2500);
    data={interviewerReply:reply,reply,quickFeedback:'',quickEvaluation:'',interviewPhase:plan.next?'opening':'completed',decision:plan.next?'next_question':'complete'};
   }else{
-   const input={question:plan.question,candidateAnswer:value.action==='skip'?'Bỏ qua câu này.':value.message,industry:value.industry,jobTitle:value.jobTitle,level:value.level,jdText:value.jdText,answerType:plan.current?.answerType,expectedAnswer:plan.current?.answerSample||'',rubric:plan.current?.keyPoints||[],nextQuestion:plan.next,allowFollowUp:plan.allowFollowUp,history:value.history};
+   const input={question:plan.question,candidateAnswer:value.action==='skip'?'Bỏ qua câu này.':stripHtmlAndBidi(value.message,3000),industry:value.industry,jobTitle:safeJobTitle,level:value.level,jdText:sanitizeForPrompt(value.jdText,4000),answerType:plan.current?.answerType,expectedAnswer:plan.current?.answerSample||'',rubric:plan.current?.keyPoints||[],nextQuestion:plan.next,allowFollowUp:plan.allowFollowUp,history:value.history};
    let model=null;
    if(!plan.local){
      try{
@@ -201,6 +213,12 @@ router.post('/live-chat', async (req,res)=>{
      }
    }
    data=policy.groundLiveAssessment(model,input);
+   if(data){
+     if(typeof data.interviewerReply==='string')data.interviewerReply=stripHtmlAndBidi(data.interviewerReply,2500);
+     if(typeof data.reply==='string')data.reply=stripHtmlAndBidi(data.reply,2500);
+     if(typeof data.quickFeedback==='string')data.quickFeedback=stripHtmlAndBidi(data.quickFeedback,1000);
+     if(typeof data.quickEvaluation==='string')data.quickEvaluation=stripHtmlAndBidi(data.quickEvaluation,1000);
+   }
   }
   return res.set('Cache-Control','no-store').json({success:true,data:session.decorateTurn(data,value,plan)});
  }catch(error){console.error('[Interview /live-chat] provider_unavailable');return res.status(503).json({success:false,code:'INTERVIEW_PROVIDER_UNAVAILABLE',message:'Chưa nhận được nhận xét. Bạn có thể thử lại hoặc bỏ qua câu này.'});}

@@ -5409,7 +5409,13 @@
         if (data.success && data.data) {
           document.getElementById('atsScoreText').innerText = data.data.matchScore + '%';
           const mkList = document.getElementById('atsMissingKeywords');
-          mkList.innerHTML = data.data.missingKeywords.map(k => `<span class="chip-pill">${k}</span>`).join('');
+          mkList.textContent = '';
+          (data.data.missingKeywords || []).forEach(k => {
+            const sp = document.createElement('span');
+            sp.className = 'chip-pill';
+            sp.textContent = String(k || '');
+            mkList.appendChild(sp);
+          });
           document.getElementById('atsTailoredSummary').innerText = data.data.tailoredSummary;
           document.getElementById('atsResultBox').classList.remove('hidden');
         }
@@ -5809,9 +5815,13 @@
           document.getElementById('spaReportSummary').innerText = rep.summary || '';
 
           const strengths = rep.strengths && rep.strengths.length ? rep.strengths : ['Đã hoàn thành các câu hỏi trong phiên phỏng vấn.'];
-          document.getElementById('spaReportStrengths').innerHTML = strengths.map(s => `<li>${s}</li>`).join('');
+          const strEl = document.getElementById('spaReportStrengths');
+          strEl.textContent = '';
+          strengths.forEach(s => { const li = document.createElement('li'); li.textContent = String(s || ''); strEl.appendChild(li); });
           const improvements = (rep.improvements && rep.improvements.length ? rep.improvements : (rep.areasForImprovement || ['Tiếp tục rèn luyện thêm các kỹ năng trả lời có số liệu thực tế.']));
-          document.getElementById('spaReportImprovements').innerHTML = improvements.map(i => `<li>${i}</li>`).join('');
+          const impEl = document.getElementById('spaReportImprovements');
+          impEl.textContent = '';
+          improvements.forEach(i => { const li = document.createElement('li'); li.textContent = String(i || ''); impEl.appendChild(li); });
           document.getElementById('spaReportAdvice').innerText = rep.finalAdvice || '';
         } else {
           alert('Lỗi tạo báo cáo: ' + (data.message || 'Không thể tạo báo cáo.'));
@@ -5861,23 +5871,41 @@
 
     function renderSpaTranscriptMessage(role, text) {
       const list = document.getElementById('spaTranscriptList');
+      if (!list) return;
+      const safeText = String(text || '');
       const isAI = role === 'interviewer';
       const div = document.createElement('div');
-      div.className = isAI ? 'p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1' : 'p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-right space-y-1';
+      div.className = isAI
+        ? 'p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1'
+        : 'p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-right space-y-1';
 
       if (isAI) {
-        div.innerHTML = `
-          <div class="flex items-center justify-between font-bold text-[11px] text-slate-800 uppercase">
-            <span>Người phỏng vấn AI</span>
-            <button onclick="speakSpaAIVoice(\`${text.replace(/`/g, '\\`')}\`)" class="text-sky-600 hover:underline">Nghe lại</button>
-          </div>
-          <p class="leading-relaxed text-slate-700">${text}</p>
-        `;
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between font-bold text-[11px] text-slate-800 uppercase';
+        const label = document.createElement('span');
+        label.textContent = 'Người phỏng vấn AI';
+        const replayBtn = document.createElement('button');
+        replayBtn.type = 'button';
+        replayBtn.className = 'text-sky-600 hover:underline';
+        replayBtn.textContent = 'Nghe lại';
+        replayBtn.addEventListener('click', () => speakSpaAIVoice(safeText));
+        header.appendChild(label);
+        header.appendChild(replayBtn);
+
+        const p = document.createElement('p');
+        p.className = 'leading-relaxed text-slate-700';
+        p.textContent = safeText;
+        div.appendChild(header);
+        div.appendChild(p);
       } else {
-        div.innerHTML = `
-          <div class="font-bold text-[11px] text-sky-800 uppercase">Bạn (Ứng viên)</div>
-          <p class="leading-relaxed text-slate-900">${text}</p>
-        `;
+        const header = document.createElement('div');
+        header.className = 'font-bold text-[11px] text-sky-800 uppercase';
+        header.textContent = 'Bạn (Ứng viên)';
+        const p = document.createElement('p');
+        p.className = 'leading-relaxed text-slate-900';
+        p.textContent = safeText;
+        div.appendChild(header);
+        div.appendChild(p);
       }
       list.appendChild(div);
       list.scrollTop = list.scrollHeight;
