@@ -34,16 +34,24 @@ test('/cv-editor agent blocks security probes (web tampering, XSS, prompt leak, 
 
 test('/cv-editor sanitizeEditorUpdates enforces strict CV whitelist, preserves avatar & tech metrics', () => {
   const currentCv = {
+    theme: { primaryColor: '#0284c7', fontFamily: 'Be Vietnam Pro', fontSize: 'medium' },
     profile: { fullName: 'Old Name', avatarUrl: 'data:image/png;base64,KEEP_ME' },
     skills: [{ id: 'sk_1', name: 'Node.js', level: 85 }]
   };
   const clean = editorAgent.sanitizeEditorUpdates({
-    theme: { primaryColor: '#000' },
+    theme: {
+      primaryColor: '#dc2626',
+      textColor: 'red; background:url(javascript:alert(1))',
+      fontFamily: 'Roboto',
+      fontSize: '999px',
+      lineSpacing: 'relaxed'
+    },
     __proto__: { polluted: true },
     profile: {
       fullName: 'Nguyễn Văn A <script>evil()</script>',
       avatarUrl: 'javascript:alert(1)',
       website: 'https://github.com/minh',
+      dob: '24/08/1998',
       isAdmin: true
     },
     objective: 'Tối ưu API giảm latency < 100ms và uptime > 99.9% bằng C++',
@@ -53,15 +61,36 @@ test('/cv-editor sanitizeEditorUpdates enforces strict CV whitelist, preserves a
     ]
   }, currentCv);
 
-  assert.equal(clean.theme, undefined);
+  assert.deepEqual(clean.theme, { primaryColor: '#dc2626', fontFamily: 'Roboto', lineSpacing: 'relaxed' });
   assert.equal(clean.profile.avatarUrl, undefined);
   assert.equal(clean.profile.isAdmin, undefined);
   assert.equal(clean.profile.fullName, 'Nguyễn Văn A evil()');
+  assert.equal(clean.profile.dateOfBirth, '24/08/1998');
   assert.equal(clean.profile.website, 'https://github.com/minh');
   assert.equal(clean.objective, 'Tối ưu API giảm latency < 100ms và uptime > 99.9% bằng C++');
   assert.equal(clean.skills.length, 2);
   assert.equal(clean.skills[1].name, 'Docker');
   assert.equal(clean.skills[1].level, 100);
+});
+
+test('/cv-editor handles color/font/style requests safely without overwriting fullName', () => {
+  // Exact real-world user bug: "đổi tên sang màu đỏ" MUST change primaryColor, NOT fullName!
+  const fbRed = editorAgent.runDeterministicFallback('đổi tên sang màu đỏ', {
+    theme: { primaryColor: '#0284c7' },
+    profile: { fullName: 'HUỲNH KIẾN MINH' }
+  });
+  assert.equal(fbRed.updates.profile, undefined);
+  assert.deepEqual(fbRed.updates.theme, { primaryColor: '#dc2626' });
+  assert.equal(fbRed.reply.includes('**'), false);
+
+  // Font + size + color combo
+  const fbStyle = editorAgent.runDeterministicFallback('đổi màu chủ đạo sang xanh lá, đổi font Roboto, tăng cỡ chữ', {
+    theme: { primaryColor: '#0284c7', fontFamily: 'Be Vietnam Pro', fontSize: 'medium' }
+  });
+  assert.deepEqual(fbStyle.updates.theme, { primaryColor: '#059669', fontFamily: 'Roboto', fontSize: 'large' });
+
+  // Studio deterministic agent also refuses to rename person to "màu đỏ"
+  assert.equal(studioAgent.tryDeterministicAgent('đổi tên sang màu đỏ', {}), null);
 });
 
 test('/cv-editor deterministic fallback edits CV accurately and rejects oversized DoS payload', () => {

@@ -504,11 +504,11 @@ function tryDeterministicAgent(message, currentProfile = {}) {
   }
 
   // 3. Standalone Update Full Name: "Đổi họ tên thành Lê Hoàng Long"
-  // Explicitly reject references to company/project/school/role/other fields
+  // Explicitly reject references to company/project/school/role/color/style/other fields
   const changeNameMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:đổi|sửa|cập nhật|thay(?:\s+đổi)?)\s+(?:họ và tên|họ tên|tên của tôi|tên tôi|full\s*name|tên)\s*(?:thành|sang|là|:)\s*([^,;\n.!?]+)[.!?]*$/i);
-  if (changeNameMatch && !MULTI_INTENT_RE.test(norm) && !/\b(?:cong ty|du an|truong|vi tri|chuc danh|email|sdt|so dien thoai|dia chi|va )\b/i.test(norm)) {
+  if (changeNameMatch && !MULTI_INTENT_RE.test(norm) && !/\b(?:cong ty|du an|truong|vi tri|chuc danh|email|sdt|so dien thoai|dia chi|mau|color|font|phong chu|co chu|theme|nen|va )\b/i.test(norm)) {
     const name = sanitizeText(changeNameMatch[1], 100);
-    if (name && name.length >= 2 && name.split(/\s+/).length <= 8) {
+    if (name && name.length >= 2 && name.split(/\s+/).length <= 8 && !/\b(?:mau|do|xanh|vang|tim|cam|den|trang|hong|nau|xam)\b/i.test(normalizeForCheck(name))) {
       return {
         thought: 'Nhận diện lệnh đơn cập nhật họ và tên ứng viên.',
         reply: `Tôi đã cập nhật họ tên trên CV thành **${name}**.`,
