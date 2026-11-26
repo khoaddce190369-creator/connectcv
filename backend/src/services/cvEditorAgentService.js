@@ -15,9 +15,9 @@ try {
 }
 
 // ─────────────────────────────────────────────────────────
-// 1. SECURITY SANITIZER & SANDBOX PROBE DETECTOR
-// Strictly limits AI Agent to whitelisted CV Editor fields & CV theme only.
-// Preserves technical CV symbols ("< 100ms", "> 99.9%", "C++").
+// 1. SECURITY SANITIZER & HARDENED SANDBOX GUARD
+// Strictly limits AI Agent to whitelisted CV content + CV theme only.
+// Preserves technical CV symbols ("< 100ms", "> 99.9%", "C++", "Node.js", ".NET").
 // ─────────────────────────────────────────────────────────
 
 const MAX_CV_DATA_CHARS = 60000;
@@ -35,7 +35,6 @@ function sanitizeText(val, maxLen = 2000) {
 }
 
 function cleanPlainReply(val, maxLen = 4000) {
-  // /cv-editor renders chat bubbles as plain text, so strip raw ** Markdown bold markers
   return sanitizeText(val, maxLen).replace(/\*\*(.*?)\*\*/g, '$1');
 }
 
@@ -68,16 +67,16 @@ function detectSecurityProbe(message) {
   const raw = String(message || '');
   const norm = normalizeCheck(raw);
   if (
-    /<\s*(?:script|iframe|object|embed)\b|onerror\s*=|onload\s*=|javascript\s*:/i.test(raw) ||
-    /(?:^|[\s"'`])(?:[a-z0-9_]*api[_ -]?key|[a-z0-9_]*secret(?:[_ -]?key)?|[a-z0-9_]*auth[_ -]?token|system\s*prompt|prompt\s*he\s*thong|database\s*(?:url|uri|credential|password)|dump\s*(?:db|database)|document\.cookie|localstorage|sessionstorage|window\.location|eval\s*\()/i.test(norm) ||
+    /<\s*(?:script|iframe|object|embed|img|svg)\b|onerror\s*=|onload\s*=|javascript\s*:/i.test(raw) ||
+    /(?:^|[\s"'`])(?:file\s+\.env|\.env\b|[a-z0-9_]*api[_ -]?key|[a-z0-9_]*secret(?:[_ -]?key)?|[a-z0-9_]*auth[_ -]?token|system\s*prompt|prompt\s*he\s*thong|database\s*(?:url|uri|credential|password)|dump\s*(?:db|database)|document\.cookie|document\.domain|localstorage|sessionstorage|window\.location|eval\s*\(|alert\s*\()/i.test(norm) ||
     /ignore\s+(?:all\s+)?(?:previous|prior|above)\s+instructions|bo\s+qua\s+(?:moi\s+)?(?:chi\s+dan|quy\s+tac)\s+(?:truoc|he\s+thong)/i.test(norm) ||
-    /(?:sua|doi|thay\s*doi|chinh|hack|tan\s*cong|chiem)\s+(?:giao\s*dien\s+|code\s+)?(?:toan\s+bo\s+|nguyen\s+|ca\s+)?(?:trang\s*web|website|he\s*thong|code\s*web|giao\s*dien\s*web|tai\s*khoan\s*khac|admin|credits?|so\s*du)/i.test(norm) ||
-    /(?:cong|tang|hack)\s+(?:them\s+)?\d*\s*credits?\b/i.test(norm)
+    /(?:sua|doi|thay\s*doi|chinh|xoa|an|hack|tan\s*cong|chiem)\s+(?:mau\s+|giao\s*dien\s+|code\s+)?(?:toan\s+bo\s+|nguyen\s+|ca\s+)?(?:trang\s*web|website|he\s*thong|code\s*web|giao\s*dien\s*web|thanh\s+menu|navbar|header\s+web|footer\s+web|nut\s+(?:tai\s+pdf|dang\s+nhap|luu|menu)|tai\s*khoan\s*khac|admin|credits?|so\s*du)/i.test(norm) ||
+    /(?:cong|tang|nang\s*cap|mo\s*khoa|kich\s*hoat|hack)\s+(?:them\s+)?(?:\d*\s*credits?|goi\s*pro|tai\s*khoan\s*pro|pro\s+mien\s+phi|vip\s+mien\s+phi)\b/i.test(norm)
   ) {
     return {
       success: true,
       mode: 'security-guard',
-      reply: 'Tôi là ConnectCV AI Agent hoạt động trong Sandbox bảo mật: tôi chỉ được phép đọc và chỉnh sửa nội dung & màu sắc/font của riêng trang CV của bạn. Tôi không có quyền can thiệp vào toàn bộ trang web, chạy mã lệnh, tiết lộ prompt/API key hay thay đổi tài khoản/Credits.',
+      reply: 'Tôi là ConnectCV AI Agent hoạt động trong Sandbox bảo mật: tôi chỉ được phép đọc và chỉnh sửa nội dung, màu sắc và font chữ bên trong trang CV của bạn. Tôi không có quyền thay đổi giao diện trang web, thanh menu/nút bấm hệ thống, chạy mã lệnh, xem file cấu hình/API key hay thay đổi gói Pro/Credits.',
       updates: {}
     };
   }
@@ -117,8 +116,6 @@ function validateEditorAgentInput(body) {
 
 // ─────────────────────────────────────────────────────────
 // 3. STRICT OUTPUT SANITIZER (WHITELISTED CV CONTENT + CV THEME)
-// Guarantees AI output can NEVER corrupt React state, wipe avatar,
-// or affect anything outside the A4 CV canvas.
 // ─────────────────────────────────────────────────────────
 
 const ALLOWED_PROFILE_KEYS = ['fullName', 'jobTitle', 'email', 'phone', 'address', 'website', 'dateOfBirth', 'gender'];
@@ -178,7 +175,6 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}) {
     const cleanProfile = {};
     const curProf = currentCvData.profile || {};
     const rawProf = { ...rawUpdates.profile };
-    // Map legacy "dob" to /cv-editor's real field "dateOfBirth"
     if (rawProf.dob !== undefined && rawProf.dateOfBirth === undefined) {
       rawProf.dateOfBirth = rawProf.dob;
     }
@@ -368,8 +364,9 @@ CHỈ TRẢ VỀ JSON HỢP LỆ {"reply": "...", "updates": {...}}.`;
 }
 
 // ─────────────────────────────────────────────────────────
-// 5. SMART DETERMINISTIC FALLBACK (Color/Theme + Content)
-// Accurately distinguishes style/color/font edits from personal info edits.
+// 5. COMPREHENSIVE SMART DETERMINISTIC FALLBACK
+// Handles Theme/Colors/Fonts, Profile, Skills, Experience, Education,
+// Projects, Objective, and Greetings cleanly even without Gemini.
 // ─────────────────────────────────────────────────────────
 
 const COLOR_MAP = [
@@ -383,14 +380,16 @@ const COLOR_MAP = [
   { re: /\b(?:cam|orange)\b/i, hex: '#ea580c', label: 'Cam (#ea580c)' },
   { re: /\b(?:hong|pink|rose)\b/i, hex: '#db2777', label: 'Hồng (#db2777)' },
   { re: /\b(?:vang|gold|amber)\b/i, hex: '#d97706', label: 'Vàng đồng (#d97706)' },
+  { re: /\b(?:kem|cream)\b/i, hex: '#fefce8', label: 'Kem (#fefce8)' },
   { re: /\b(?:nau|brown)\b/i, hex: '#92400e', label: 'Nâu (#92400e)' },
   { re: /\b(?:den|black)\b/i, hex: '#111827', label: 'Đen (#111827)' },
   { re: /\b(?:xam|gray|grey|slate)\b/i, hex: '#475569', label: 'Xám (#475569)' },
-  { re: /\b(?:trang|white)\b/i, hex: '#ffffff', label: 'Trắng (#ffffff)' }
+  { re: /\b(?:trang|white)\b/i, hex: '#ffffff', label: 'Trắng (#ffffff)' },
+  // Generic "xanh" placed last so specific greens/navys match first
+  { re: /\b(?:mau\s+xanh|xanh)\b/i, hex: '#0284c7', label: 'Xanh dương (#0284c7)' }
 ];
 
-const STYLE_INTENT_RE = /\b(?:mau|color|font|phong\s*chu|co\s*chu|kich\s*thuoc|gian\s*dong|cach\s*dong|theme|nen\s+cv|chu\s+to|chu\s+nho|#[0-9a-f]{6})\b/i;
-const MULTI_CLAUSE_RE = /\b(?:viet\s+lai|toi\s+uu|may\s+do|rut\s+gon|chuan\s+hoa|cong\s+ty|du\s+an|truong|kinh\s+nghiem|hoc\s+van)\b/i;
+const STYLE_INTENT_RE = /\b(?:mau|color|font|phong\s*chu|co\s*chu|kich\s*thuoc|gian\s*dong|dan\s*dong|cach\s*dong|theme|nen\s+cv|chu\s+to|chu\s+nho|chu\s+be|be\s+lai|lon\s+hon|#[0-9a-f]{6})\b/i;
 
 function extractColorChoice(raw, norm) {
   const hexMatch = raw.match(/#([0-9a-fA-F]{6})\b/);
@@ -404,45 +403,89 @@ function extractColorChoice(raw, norm) {
   return null;
 }
 
+function parseOrdinalIndex(text, totalLength) {
+  const n = normalizeCheck(text);
+  if (/\b(?:cuoi\s+cung|cuoi)\b/.test(n)) return Math.max(0, totalLength - 1);
+  if (/\b(?:thu\s*(?:2|hai)|so\s*2)\b/.test(n)) return 1;
+  if (/\b(?:thu\s*(?:3|ba)|so\s*3)\b/.test(n)) return 2;
+  if (/\b(?:thu\s*(?:4|tu|bon)|so\s*4)\b/.test(n)) return 3;
+  const num = n.match(/\b(?:thu|so|#)\s*(\d+)\b/);
+  if (num) return Math.max(0, parseInt(num[1], 10) - 1);
+  return 0;
+}
+
+function parseSkillTokens(str) {
+  let tail = String(str || '').trim();
+  tail = tail.replace(/\s+(?:vào\s+(?:cv|hồ sơ)|giúp\s+(?:tôi|mình)|cho\s+(?:tôi|mình)|nhé|nha|đi)+[.!?]*$/gi, '').trim();
+  tail = tail.replace(/[?!]+$/, '').trim();
+  return tail
+    .split(/[,;\n]+|\s+và\s+/i)
+    .map(part => {
+      const trimmed = part.trim().replace(/[.,;]+$/, '').trim();
+      const lvlMatch = trimmed.match(/^(.+?)\s*(?:mức\s*)?(\d{2,3})\s*%$/i);
+      if (lvlMatch) {
+        return { name: sanitizeText(lvlMatch[1], 60), level: Math.max(10, Math.min(100, parseInt(lvlMatch[2], 10))) };
+      }
+      return { name: sanitizeText(trimmed, 60), level: 85 };
+    })
+    .filter(s => s.name && s.name.length <= 50 && s.name.split(/\s+/).length <= 5);
+}
+
 function runDeterministicFallback(userMsg, cvData = {}) {
   const raw = sanitizeText(userMsg, 2000);
   const norm = normalizeCheck(raw);
+
+  // 0. Greetings / Help
+  if (/^(?:xin\s+chao|chao|hello|hi|hey)\b/i.test(norm) && norm.length < 60 && !/\b(?:sua|doi|them|xoa|viet|cap nhat)\b/.test(norm)) {
+    return {
+      success: true,
+      mode: 'fallback-local',
+      reply: 'Xin chào! Tôi là ConnectCV AI Agent. Bạn có thể nhắn trực tiếp để tôi chỉnh sửa CV ngay lập tức: đổi họ tên, chức danh, email, sđt, địa chỉ, giới tính, ngày sinh, link LinkedIn/GitHub; thêm/xóa/thay kỹ năng; thêm/sửa/xóa kinh nghiệm, học vấn, dự án; viết lại mục tiêu nghề nghiệp; hoặc đổi màu sắc, font chữ, cỡ chữ và giãn dòng của CV.',
+      updates: {}
+    };
+  }
+
   const updates = {};
   const changedParts = [];
+  const notices = [];
   const themeUpdates = {};
   const profileUpdates = {};
 
   // A. Theme / Color / Font / Size / Line Spacing (strictly scoped to CV canvas)
   if (STYLE_INTENT_RE.test(norm)) {
     const color = extractColorChoice(raw, norm);
-    if (color && /\b(?:mau|color|#[0-9a-f]{6})\b/i.test(norm)) {
-      if (/\b(?:mau\s+nen|nen\s+cv|background)\b/i.test(norm)) {
+    if (color && /\b(?:mau|color|tong\s+mau|#[0-9a-f]{6})\b/i.test(norm)) {
+      if (/\b(?:mau\s+nen|nen\s+cv|nen\s+mau|background)\b/i.test(norm)) {
         themeUpdates.bgColor = color.hex;
         changedParts.push(`Màu nền CV (${color.label})`);
-      } else if (/\b(?:mau\s+chu\s+noi\s+dung|mau\s+van\s+ban|text\s*color)\b/i.test(norm)) {
+      } else if (/\b(?:mau\s+chu|mau\s+van\s+ban|text\s*color)\b/i.test(norm) && !/\b(?:ten|tieu\s+de|chu\s+dao)\b/i.test(norm)) {
         themeUpdates.textColor = color.hex;
         changedParts.push(`Màu chữ nội dung (${color.label})`);
       } else {
-        // Default: primaryColor controls the candidate name heading, section headings & CV accent color
         themeUpdates.primaryColor = color.hex;
         changedParts.push(`Màu chủ đạo & tiêu đề tên CV (${color.label})`);
       }
     }
 
     // Font family
+    let matchedFont = false;
     for (const [key, canonical] of ALLOWED_FONTS.entries()) {
       if (norm.includes(key)) {
         themeUpdates.fontFamily = canonical;
         changedParts.push(`Font chữ (${canonical})`);
+        matchedFont = true;
         break;
       }
     }
+    if (!matchedFont && /\b(?:font|phong\s*chu)\b/i.test(norm)) {
+      notices.push('Trình tạo CV hiện hỗ trợ 5 font chuẩn tiếng Việt: Be Vietnam Pro, Roboto, Open Sans, Montserrat, Merriweather.');
+    }
 
     // Font size
-    if (/\b(?:tang\s+co\s+chu|co\s+chu\s+lon|chu\s+to|font\s*size\s*large)\b/i.test(norm)) {
+    if (/\b(?:tang\s+co\s+chu|co\s+chu\s+lon|chu\s+to|phong\s+to|to\s+hon|lon\s+hon|font\s*size\s*large)\b/i.test(norm)) {
       themeUpdates.fontSize = 'large';
       changedParts.push('Cỡ chữ (Lớn)');
-    } else if (/\b(?:giam\s+co\s+chu|co\s+chu\s+nho|chu\s+nho|font\s*size\s*small)\b/i.test(norm)) {
+    } else if (/\b(?:giam\s+co\s+chu|co\s+chu\s+nho|chu\s+nho|chu\s+be|be\s+lai|nho\s+lai|thu\s+nho|font\s*size\s*small)\b/i.test(norm)) {
       themeUpdates.fontSize = 'small';
       changedParts.push('Cỡ chữ (Nhỏ)');
     } else if (/\b(?:co\s+chu\s+vua|co\s+chu\s+mac\s+dinh|font\s*size\s*medium)\b/i.test(norm)) {
@@ -450,14 +493,14 @@ function runDeterministicFallback(userMsg, cvData = {}) {
       changedParts.push('Cỡ chữ (Vừa)');
     }
 
-    // Line spacing
-    if (/\b(?:gian\s+dong\s+rong|cach\s+dong\s+rong|thoang\s+hon|relaxed)\b/i.test(norm)) {
+    // Line spacing (accepts giãn dòng, dãn dòng, cách dòng)
+    if (/\b(?:(?:gian|dan|cach)\s+dong\s+(?:rong|thoang)|thoang\s+hon|relaxed)\b/i.test(norm)) {
       themeUpdates.lineSpacing = 'relaxed';
       changedParts.push('Giãn dòng (Rộng)');
-    } else if (/\b(?:gian\s+dong\s+hep|cach\s+dong\s+hep|gon\s+hon|compact)\b/i.test(norm)) {
+    } else if (/\b(?:(?:gian|dan|cach)\s+dong\s+(?:hep|gon|khit)|gon\s+hon|compact)\b/i.test(norm)) {
       themeUpdates.lineSpacing = 'compact';
       changedParts.push('Giãn dòng (Hẹp)');
-    } else if (/\b(?:gian\s+dong\s+vua|cach\s+dong\s+vua|cach\s+dong\s+mac\s+dinh)\b/i.test(norm)) {
+    } else if (/\b(?:(?:gian|dan|cach)\s+dong\s+(?:vua|mac\s+dinh|binh\s+thuong))\b/i.test(norm)) {
       themeUpdates.lineSpacing = 'normal';
       changedParts.push('Giãn dòng (Vừa)');
     }
@@ -467,7 +510,136 @@ function runDeterministicFallback(userMsg, cvData = {}) {
     }
   }
 
-  // B. Profile fields (only when NOT a style/color edit on the name!)
+  // B. Experience / Education / Project targeted edits (BEFORE profile name check!)
+  // B1. Update company name: "đổi tên công ty đầu tiên thành FPT Software"
+  const companyEditMatch = raw.match(/(?:đổi|sửa|cập nhật)\s+(?:tên\s+)?công ty(?:\s+(?:đầu tiên|thứ\s*\S+|số\s*\d+|cuối(?:\s+cùng)?))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+  if (companyEditMatch && Array.isArray(cvData.experience) && cvData.experience.length > 0) {
+    const idx = parseOrdinalIndex(raw, cvData.experience.length);
+    const newCompany = sanitizeText(companyEditMatch[1].replace(/[.!?]+$/, ''), 150);
+    if (newCompany && idx < cvData.experience.length) {
+      const nextExp = JSON.parse(JSON.stringify(cvData.experience));
+      nextExp[idx].company = newCompany;
+      updates.experience = nextExp;
+      changedParts.push(`Tên công ty mục #${idx + 1} (${newCompany})`);
+    }
+  }
+
+  // B2. Remove experience: "xóa kinh nghiệm thứ 2"
+  const removeExpMatch = raw.match(/(?:xóa|bỏ|gỡ)\s+kinh nghiệm(?:\s+(?:đầu tiên|thứ\s*\S+|số\s*\d+|cuối(?:\s+cùng)?))/i);
+  if (removeExpMatch && Array.isArray(cvData.experience) && cvData.experience.length > 1) {
+    const idx = parseOrdinalIndex(raw, cvData.experience.length);
+    if (idx >= 0 && idx < cvData.experience.length) {
+      const removed = cvData.experience[idx];
+      updates.experience = cvData.experience.filter((_, i) => i !== idx);
+      changedParts.push(`Xóa kinh nghiệm #${idx + 1} (${removed.company || removed.position || ''})`);
+    }
+  }
+
+  // B3. Add experience: "thêm kinh nghiệm làm Frontend Developer tại FPT Software từ 01/2023 đến Hiện tại"
+  const addExpMatch = raw.match(/(?:thêm|bổ sung)\s+kinh nghiệm(?:\s+làm(?:\s+việc)?)?\s+(.+?)\s+(?:tại|ở)\s+([^\n;!?]+)/i);
+  if (addExpMatch) {
+    const position = sanitizeText(addExpMatch[1], 120);
+    let compPart = addExpMatch[2].trim();
+    let startDate = '';
+    let endDate = 'Hiện tại';
+    const timeMatch = compPart.match(/\s+(?:từ|giai đoạn)\s+([0-9\/-]+)\s*(?:đến|-)\s*([^\n;,.!?]+)/i);
+    if (timeMatch) {
+      startDate = sanitizeText(timeMatch[1], 30);
+      endDate = sanitizeText(timeMatch[2], 30);
+      compPart = compPart.slice(0, timeMatch.index).trim();
+    }
+    const company = sanitizeText(compPart.replace(/[.!?]+$/, ''), 120);
+    if (position || company) {
+      const nextExp = Array.isArray(cvData.experience) ? JSON.parse(JSON.stringify(cvData.experience)) : [];
+      nextExp.unshift({
+        id: `exp_ai_${Date.now()}`,
+        company: company || 'Công ty',
+        position: position || 'Nhân viên',
+        startDate: startDate || '01/2024',
+        endDate,
+        description: [`Đảm nhiệm vai trò ${position || 'chuyên môn'} tại ${company || 'doanh nghiệp'}, tối ưu quy trình và bàn giao đúng tiến độ.`]
+      });
+      updates.experience = nextExp;
+      changedParts.push(`Thêm kinh nghiệm (${position} - ${company})`);
+    }
+  }
+
+  // B4. Update school name: "đổi tên trường đại học thành Đại học FPT"
+  const schoolEditMatch = raw.match(/(?:đổi|sửa|cập nhật)\s+(?:tên\s+)?trường(?:\s+(?:đại học|cao đẳng))?(?:\s+(?:đầu tiên|thứ\s*\S+|số\s*\d+|cuối(?:\s+cùng)?))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+  if (schoolEditMatch && Array.isArray(cvData.education) && cvData.education.length > 0) {
+    const idx = parseOrdinalIndex(raw, cvData.education.length);
+    const newSchool = sanitizeText(schoolEditMatch[1].replace(/[.!?]+$/, ''), 150);
+    if (newSchool && idx < cvData.education.length) {
+      const nextEdu = JSON.parse(JSON.stringify(cvData.education));
+      nextEdu[idx].school = newSchool;
+      updates.education = nextEdu;
+      changedParts.push(`Tên trường học vấn #${idx + 1} (${newSchool})`);
+    }
+  }
+
+  // B5. Add education: "thêm học vấn Đại học FPT Cần Thơ ngành Kỹ thuật phần mềm 2020 - 2024 GPA 3.6"
+  const addEduMatch = raw.match(/(?:thêm|bổ sung)\s+học vấn[:\s]+([^\n;!?]+)/i);
+  if (addEduMatch) {
+    let eduText = addEduMatch[1].trim();
+    let gpa = '';
+    const gpaM = eduText.match(/\bGPA[:\s]*([0-9.,\/]+)/i);
+    if (gpaM) { gpa = gpaM[1]; eduText = eduText.replace(gpaM[0], '').trim(); }
+    let startDate = '', endDate = '';
+    const yrM = eduText.match(/\b((?:19|20)\d{2})\s*[-–đến]+\s*((?:19|20)\d{2}|hiện tại)\b/i);
+    if (yrM) { startDate = yrM[1]; endDate = yrM[2]; eduText = eduText.replace(yrM[0], '').trim(); }
+    let school = eduText, degree = '';
+    const degM = eduText.match(/^(.+?)\s+(?:ngành|chuyên ngành|bằng)\s+(.+)$/i);
+    if (degM) { school = degM[1].trim(); degree = degM[2].trim(); }
+    if (school) {
+      const nextEdu = Array.isArray(cvData.education) ? JSON.parse(JSON.stringify(cvData.education)) : [];
+      nextEdu.unshift({
+        id: `edu_ai_${Date.now()}`,
+        school: sanitizeText(school, 150),
+        degree: sanitizeText(degree, 150),
+        startDate,
+        endDate,
+        gpa: sanitizeText(gpa, 40)
+      });
+      updates.education = nextEdu;
+      changedParts.push(`Thêm học vấn (${school})`);
+    }
+  }
+
+  // B6. Update project name: "đổi tên dự án thành ConnectCV Pro"
+  const projEditMatch = raw.match(/(?:đổi|sửa|cập nhật)\s+(?:tên\s+)?dự án(?:\s+(?:đầu tiên|thứ\s*\S+|số\s*\d+|cuối(?:\s+cùng)?))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+  if (projEditMatch && Array.isArray(cvData.projects) && cvData.projects.length > 0) {
+    const idx = parseOrdinalIndex(raw, cvData.projects.length);
+    const newProj = sanitizeText(projEditMatch[1].replace(/[.!?]+$/, ''), 150);
+    if (newProj && idx < cvData.projects.length) {
+      const nextProj = JSON.parse(JSON.stringify(cvData.projects));
+      nextProj[idx].name = newProj;
+      updates.projects = nextProj;
+      changedParts.push(`Tên dự án #${idx + 1} (${newProj})`);
+    }
+  }
+
+  // B7. Add project: "thêm dự án ConnectCV AI vai trò Fullstack Developer"
+  const addProjMatch = raw.match(/(?:thêm|bổ sung)\s+dự án[:\s]+([^\n;!?]+)/i);
+  if (addProjMatch) {
+    let pText = addProjMatch[1].trim();
+    let name = pText, role = '';
+    const roleM = pText.match(/^(.+?)\s+(?:vai trò|vị trí|role)\s+(.+)$/i);
+    if (roleM) { name = roleM[1].trim(); role = roleM[2].trim(); }
+    if (name) {
+      const nextProj = Array.isArray(cvData.projects) ? JSON.parse(JSON.stringify(cvData.projects)) : [];
+      nextProj.unshift({
+        id: `proj_ai_${Date.now()}`,
+        name: sanitizeText(name, 150),
+        role: sanitizeText(role || 'Thành viên phát triển', 120),
+        duration: '',
+        description: [`Tham gia xây dựng và phát triển dự án ${sanitizeText(name, 100)}.`]
+      });
+      updates.projects = nextProj;
+      changedParts.push(`Thêm dự án (${name})`);
+    }
+  }
+
+  // C. Profile fields
   const emailMatch = raw.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
   if (emailMatch) {
     profileUpdates.email = emailMatch[0];
@@ -480,9 +652,54 @@ function runDeterministicFallback(userMsg, cvData = {}) {
     changedParts.push(`Số điện thoại (${profileUpdates.phone})`);
   }
 
-  // Full name: strictly reject color/style/company/project/school phrases!
-  if (!/\b(?:cong ty|du an|truong|mau|color|font|phong chu|co chu|theme|nen)\b/i.test(norm)) {
-    const nameMatch = raw.match(/(?:(?:đổi|sửa|cập nhật|thay)\s+(?:họ và tên|họ tên|tên tôi|tên của tôi|tên)\s*(?:thành|sang|là|:)|(?:tên(?: tôi)? là|tôi tên|họ tên[:\s]+))\s*([^,;\n.!?]{2,50})/i);
+  // Website / LinkedIn / GitHub
+  const urlMatch = raw.match(/(?:https?:\/\/[^\s,;]+|(?:www\.)?(?:linkedin\.com|github\.com)\/[^\s,;]+)/i);
+  if (urlMatch) {
+    const cleanUrl = sanitizeUrl(urlMatch[0].replace(/[.!?]+$/, ''), 250);
+    if (cleanUrl) {
+      profileUpdates.website = cleanUrl;
+      changedParts.push(`Website/Liên kết (${cleanUrl})`);
+    }
+  }
+
+  // Gender (avoid ASCII \b after Vietnamese diacritics like Nữ/Khác)
+  const genderMatch = raw.match(/(?:đổi|sửa|cập nhật|thay)?\s*giới tính\s*(?:thành|sang|là|:)?\s*(Nam|Nữ|Khác)(?=$|[\s,.;!?])/i);
+  if (genderMatch) {
+    const g = genderMatch[1].charAt(0).toUpperCase() + genderMatch[1].slice(1).toLowerCase();
+    profileUpdates.gender = g;
+    changedParts.push(`Giới tính (${g})`);
+  }
+
+  // Date of birth
+  const dobMatch = raw.match(/(?:đổi|sửa|cập nhật|thay)?\s*(?:ngày sinh|sinh ngày|năm sinh)\s*(?:thành|sang|là|:)?\s*([0-9]{1,2}[\/-][0-9]{1,2}[\/-][0-9]{2,4}|[0-9]{4})/i);
+  if (dobMatch && dobMatch[1]) {
+    profileUpdates.dateOfBirth = sanitizeText(dobMatch[1], 20);
+    changedParts.push(`Ngày sinh (${profileUpdates.dateOfBirth})`);
+  }
+
+  // Address (preserves "TP. Hồ Chí Minh", "Q. 1", etc.!)
+  const addrMatch = raw.match(/(?:đổi|sửa|cập nhật|thay)?\s*(?:địa chỉ|nơi ở)\s*(?:thành|sang|là|:)\s*([^\n;!?]{2,150})/i);
+  if (addrMatch && addrMatch[1]) {
+    const addr = sanitizeText(addrMatch[1].replace(/[.!?]+$/, ''), 150);
+    if (addr) {
+      profileUpdates.address = addr;
+      changedParts.push(`Địa chỉ (${addr})`);
+    }
+  }
+
+  // Job title / target role (supports "đổi tên chức danh sang Tech Lead")
+  const roleMatch = raw.match(/(?:đổi|sửa|cập nhật|thay)?\s*(?:tên\s+)?(?:vị trí(?:\s+ứng tuyển|\s+mục tiêu)?|chức danh|tiêu đề nghề nghiệp)\s*(?:thành|sang|là|:)\s*([^,;\n!?]{2,70})/i);
+  if (roleMatch && roleMatch[1] && !STYLE_INTENT_RE.test(normalizeCheck(roleMatch[1]))) {
+    const role = sanitizeText(roleMatch[1].replace(/[.!?]+$/, ''), 80);
+    if (role && !/\b(?:cong ty|tai |email|sdt)\b/i.test(normalizeCheck(role))) {
+      profileUpdates.jobTitle = role;
+      changedParts.push(`Chức danh (${role})`);
+    }
+  }
+
+  // Full name: strictly reject company/project/school/role/skill/color/style phrases!
+  if (!/\b(?:cong ty|du an|truong|chuc danh|vi tri|ky nang|mau|color|font|phong chu|co chu|theme|nen)\b/i.test(norm)) {
+    const nameMatch = raw.match(/(?:(?:đổi|sửa|cập nhật|thay)\s+(?:họ và tên|họ tên|tên tôi|tên của tôi|tên)\s*(?:thành|sang|là|:)|(?:tôi tên(?:\s+là)?|tên(?:\s+tôi)?\s+là|họ tên[:\s]+))\s*([^,;\n.!?]{2,50})/i);
     if (nameMatch && nameMatch[1]) {
       const candidate = sanitizeText(nameMatch[1], 80);
       const candNorm = normalizeCheck(candidate);
@@ -497,58 +714,50 @@ function runDeterministicFallback(userMsg, cvData = {}) {
     }
   }
 
-  const roleMatch = raw.match(/(?:đổi|sửa|cập nhật|thay)?\s*(?:vị trí(?:\s+ứng tuyển|\s+mục tiêu)?|chức danh|tiêu đề nghề nghiệp)\s*(?:thành|sang|là|:)?\s*([^,;\n.!?]{2,60})/i);
-  if (roleMatch && roleMatch[1] && !STYLE_INTENT_RE.test(normalizeCheck(roleMatch[1]))) {
-    const role = sanitizeText(roleMatch[1], 80);
-    if (role && !/\b(?:cong ty|tai |email|sdt)\b/i.test(normalizeCheck(role))) {
-      profileUpdates.jobTitle = role;
-      changedParts.push(`Chức danh (${role})`);
-    }
-  }
-
-  const addrMatch = raw.match(/(?:đổi|sửa|cập nhật|thay)?\s*(?:địa chỉ|nơi ở)\s*(?:thành|sang|là|:)\s*([^;\n.!?]{2,120})/i);
-  if (addrMatch && addrMatch[1]) {
-    profileUpdates.address = sanitizeText(addrMatch[1], 120);
-    changedParts.push(`Địa chỉ (${profileUpdates.address})`);
-  }
-
-  const dobMatch = raw.match(/(?:đổi|sửa|cập nhật|thay)?\s*(?:ngày sinh|sinh ngày|năm sinh)\s*(?:thành|sang|là|:)?\s*([0-9]{1,2}[\/-][0-9]{1,2}[\/-][0-9]{2,4}|[0-9]{4})/i);
-  if (dobMatch && dobMatch[1]) {
-    profileUpdates.dateOfBirth = sanitizeText(dobMatch[1], 20);
-    changedParts.push(`Ngày sinh (${profileUpdates.dateOfBirth})`);
-  }
-
   if (Object.keys(profileUpdates).length > 0) {
     updates.profile = profileUpdates;
   }
 
-  // C. Remove skill
-  const removeSkillMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|bỏ|gỡ|remove)\s+(?:kỹ năng|skill)\s*(?::|\s)\s*([^\n,;.!?]{1,45})$/i);
-  if (removeSkillMatch && !MULTI_CLAUSE_RE.test(norm)) {
-    const target = sanitizeText(removeSkillMatch[1].replace(/\s+(?:khỏi\s+(?:cv|hồ sơ)|giúp\s+tôi|nhé)+$/i, ''), 80);
-    const currentSkills = Array.isArray(cvData.skills) ? cvData.skills : [];
-    const filtered = currentSkills.filter(s => String(s?.name || '').trim().toLowerCase() !== target.toLowerCase());
-    if (target && filtered.length < currentSkills.length && filtered.length > 0) {
-      updates.skills = filtered;
-      changedParts.push(`Xóa kỹ năng "${target}"`);
+  // D. Skills: Replace all / Remove / Add (preserves Node.js, Next.js, C++, C#, .NET!)
+  const replaceSkillsMatch = raw.match(/(?:xóa hết|thay(?:\s+toàn bộ)?|đặt lại)\s+(?:các\s+)?(?:kỹ năng|skill|skills)[^:\n]*?(?:chỉ để|thành|sang|là|:)\s*([^\r\n!?]+)/i);
+  if (replaceSkillsMatch) {
+    const parsed = parseSkillTokens(replaceSkillsMatch[1]);
+    if (parsed.length > 0) {
+      updates.skills = parsed.map((s, idx) => ({ id: `sk_ai_${Date.now()}_${idx}`, name: s.name, level: s.level }));
+      changedParts.push(`Thay danh sách kỹ năng (${parsed.map(s => s.name).join(', ')})`);
     }
-  }
-
-  // D. Add skills
-  const addSkillMatch = raw.match(/(?:thêm|bổ sung|kỹ năng|skill|skills|thành thạo)\s*(?::|\s)\s*([^\n.!?]+)/i);
-  if (addSkillMatch && !removeSkillMatch && !MULTI_CLAUSE_RE.test(norm) && !STYLE_INTENT_RE.test(norm)) {
-    let tail = addSkillMatch[1].trim();
-    tail = tail.replace(/\s+(?:vào\s+(?:cv|hồ sơ)|giúp\s+(?:tôi|mình)|cho\s+(?:tôi|mình)|nhé)+$/gi, '').trim();
-    const parts = tail.split(/[,;]+|\s+và\s+/i).map(s => sanitizeText(s, 50)).filter(s => s.length > 0 && s.length <= 45 && s.split(/\s+/).length <= 5);
-    if (parts.length > 0) {
+  } else {
+    const removeSkillMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|bỏ|gỡ|remove)\s+(?:kỹ năng|skill)\s*(?::|\s)\s*([^\r\n;!?]{1,80})$/i);
+    if (removeSkillMatch) {
+      const target = sanitizeText(removeSkillMatch[1].replace(/\s+(?:khỏi\s+(?:cv|hồ sơ)|giúp\s+tôi|nhé)+$/i, '').replace(/[.!?]+$/, ''), 80);
       const currentSkills = Array.isArray(cvData.skills) ? cvData.skills : [];
-      const existingNames = new Set(currentSkills.map(s => String(s?.name || '').trim().toLowerCase()));
-      const additions = parts
-        .filter(name => !existingNames.has(name.toLowerCase()))
-        .map((name, idx) => ({ id: `sk_ai_${Date.now()}_${idx}`, name, level: 85 }));
-      if (additions.length > 0) {
-        updates.skills = [...currentSkills, ...additions];
-        changedParts.push(`Thêm ${additions.length} kỹ năng (${additions.map(a => a.name).join(', ')})`);
+      const targetLower = target.toLowerCase();
+      // Exact match first, then substring match if unambiguous
+      let filtered = currentSkills.filter(s => String(s?.name || '').trim().toLowerCase() !== targetLower);
+      if (filtered.length === currentSkills.length && targetLower.length >= 3) {
+        filtered = currentSkills.filter(s => !String(s?.name || '').trim().toLowerCase().includes(targetLower));
+      }
+      if (target && filtered.length < currentSkills.length && filtered.length > 0) {
+        updates.skills = filtered;
+        changedParts.push(`Xóa kỹ năng "${target}"`);
+      } else if (target) {
+        notices.push(`Không tìm thấy kỹ năng "${target}" (hoặc CV cần giữ lại ít nhất 1 kỹ năng).`);
+      }
+    } else {
+      const addSkillMatch = raw.match(/(?:(?:thêm|bổ sung|add)\s+(?:các\s+)?(?:kỹ năng|skill|skills)|^(?:kỹ năng|skill|skills|thành thạo))\s*(?::|\s)\s*([^\r\n!?]+)/i);
+      if (addSkillMatch && !STYLE_INTENT_RE.test(norm)) {
+        const parsed = parseSkillTokens(addSkillMatch[1]);
+        if (parsed.length > 0) {
+          const currentSkills = Array.isArray(cvData.skills) ? cvData.skills : [];
+          const existingNames = new Set(currentSkills.map(s => String(s?.name || '').trim().toLowerCase()));
+          const additions = parsed
+            .filter(s => !existingNames.has(s.name.toLowerCase()))
+            .map((s, idx) => ({ id: `sk_ai_${Date.now()}_${idx}`, name: s.name, level: s.level }));
+          if (additions.length > 0) {
+            updates.skills = [...currentSkills, ...additions];
+            changedParts.push(`Thêm ${additions.length} kỹ năng (${additions.map(a => a.name).join(', ')})`);
+          }
+        }
       }
     }
   }
@@ -561,9 +770,16 @@ function runDeterministicFallback(userMsg, cvData = {}) {
   }
 
   const sanitizedUpdates = sanitizeEditorUpdates(updates, cvData);
-  const reply = changedParts.length > 0 && Object.keys(sanitizedUpdates).length > 0
-    ? `Tôi đã cập nhật trực tiếp vào CV cho bạn: ${changedParts.join(', ')}. Bạn có thể xem thay đổi ở mẫu CV bên trái hoặc bấm Hoàn tác nếu muốn quay lại!`
-    : `Tôi đã tiếp nhận yêu cầu của bạn. Bạn có thể yêu cầu cụ thể hơn (VD: "Đổi màu chủ đạo sang màu đỏ", "Đổi font Roboto", "Đổi họ tên thành...", "Thêm kỹ năng: React, Docker", "Viết lại mục tiêu nghề nghiệp") để AI cập nhật chính xác nhất!`;
+  const hasUpdates = Object.keys(sanitizedUpdates).length > 0;
+  let reply = '';
+  if (changedParts.length > 0 && hasUpdates) {
+    reply = `Tôi đã cập nhật trực tiếp vào CV cho bạn: ${changedParts.join(', ')}. Bạn có thể xem thay đổi ở mẫu CV bên trái hoặc bấm Hoàn tác nếu muốn quay lại!`;
+    if (notices.length > 0) reply += ' Lưu ý: ' + notices.join(' ');
+  } else if (notices.length > 0) {
+    reply = notices.join(' ');
+  } else {
+    reply = 'Tôi đã tiếp nhận yêu cầu của bạn. Bạn có thể yêu cầu cụ thể hơn như: "Đổi màu chủ đạo sang màu đỏ", "Đổi font Roboto", "Đổi họ tên thành...", "Thêm kỹ năng: React, Node.js, Docker", "Đổi tên công ty đầu tiên thành..." để AI cập nhật chính xác nhất!';
+  }
 
   return { success: true, mode: 'fallback-local', reply, updates: sanitizedUpdates };
 }

@@ -69,11 +69,11 @@ function detectSecurityProbe(message) {
   const raw = String(message || '');
   const norm = normalizeForCheck(raw);
   if (
-    /<\s*(?:script|iframe|object|embed)\b|onerror\s*=|onload\s*=|javascript\s*:/i.test(raw) ||
-    /(?:^|[\s"'`])(?:[a-z0-9_]*api[_ -]?key|[a-z0-9_]*secret(?:[_ -]?key)?|[a-z0-9_]*auth[_ -]?token|system\s*prompt|prompt\s*he\s*thong|database\s*(?:url|uri|credential|password)|dump\s*(?:db|database)|document\.cookie|localstorage|sessionstorage|window\.location|eval\s*\()/i.test(norm) ||
+    /<\s*(?:script|iframe|object|embed|img|svg)\b|onerror\s*=|onload\s*=|javascript\s*:/i.test(raw) ||
+    /(?:^|[\s"'`])(?:file\s+\.env|\.env\b|[a-z0-9_]*api[_ -]?key|[a-z0-9_]*secret(?:[_ -]?key)?|[a-z0-9_]*auth[_ -]?token|system\s*prompt|prompt\s*he\s*thong|database\s*(?:url|uri|credential|password)|dump\s*(?:db|database)|document\.cookie|document\.domain|localstorage|sessionstorage|window\.location|eval\s*\(|alert\s*\()/i.test(norm) ||
     /ignore\s+(?:all\s+)?(?:previous|prior|above)\s+instructions|bo\s+qua\s+(?:moi\s+)?(?:chi\s+dan|quy\s+tac)\s+(?:truoc|he\s+thong)/i.test(norm) ||
-    /(?:sua|doi|thay\s*doi|chinh|hack|tan\s*cong|chiem)\s+(?:giao\s*dien\s+|code\s+)?(?:toan\s+bo\s+|nguyen\s+|ca\s+)?(?:trang\s*web|website|he\s*thong|code\s*web|giao\s*dien\s*web|tai\s*khoan\s*khac|admin|credits?|so\s*du)/i.test(norm) ||
-    /(?:cong|tang|hack)\s+(?:them\s+)?\d*\s*credits?\b/i.test(norm)
+    /(?:sua|doi|thay\s*doi|chinh|xoa|an|hack|tan\s*cong|chiem)\s+(?:mau\s+|giao\s*dien\s+|code\s+)?(?:toan\s+bo\s+|nguyen\s+|ca\s+)?(?:trang\s*web|website|he\s*thong|code\s*web|giao\s*dien\s*web|thanh\s+menu|navbar|header\s+web|footer\s+web|nut\s+(?:tai\s+pdf|dang\s+nhap|luu|menu)|tai\s*khoan\s*khac|admin|credits?|so\s*du)/i.test(norm) ||
+    /(?:cong|tang|nang\s*cap|mo\s*khoa|kich\s*hoat|hack)\s+(?:them\s+)?(?:\d*\s*credits?|goi\s*pro|tai\s*khoan\s*pro|pro\s+mien\s+phi|vip\s+mien\s+phi)\b/i.test(norm)
   ) {
     return {
       thought: 'Phát hiện yêu cầu vượt ngoài phạm vi sandbox chỉnh sửa CV.',
