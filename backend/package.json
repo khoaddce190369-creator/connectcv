@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@libsql/client": "^0.18.0",
     "adm-zip": "^0.6.1",
     "compression": "^1.8.2",
     "cors": "^2.8.6",

@@ -1,13 +1,8 @@
-const {providerErrorCode}=require('./securityError');
-// geminiService.js v3 — Hardened Multi-Key Pool & Auto-Failover
+const { providerErrorCode } = require('./securityError');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const keyManager = require('./keyManager');
 require('dotenv').config();
 
-// ─────────────────────────────────────────────────────────
-// DYNAMIC GENAI PROXY (Tương thích 100% mã nguồn cũ)
-// Tự động cấp client với active key mới nhất từ RAM Key Pool
-// ─────────────────────────────────────────────────────────
 const genAI = {
   getGenerativeModel(options) {
     const activeKey = keyManager.getActiveKey().apiKey;
@@ -16,9 +11,6 @@ const genAI = {
   }
 };
 
-// ─────────────────────────────────────────────────────────
-// HELPER: Trích xuất JSON an toàn từ text LLM
-// ─────────────────────────────────────────────────────────
 function extractJSON(rawText) {
   if (!rawText) throw new Error('Nội dung từ Gemini AI rỗng.');
   const text = rawText.trim();
@@ -42,31 +34,28 @@ function extractJSON(rawText) {
   throw new Error('Không thể trích xuất JSON từ phản hồi AI.');
 }
 
-// ─────────────────────────────────────────────────────────
-// HELPER: Race giữa Gemini call và timeout (45 giây)
-// ─────────────────────────────────────────────────────────
 async function withTimeout(promise, ms = 45000) {
   let timer;
-  try { return await Promise.race([
-    promise,
-    new Promise((_, reject) =>
-      timer = setTimeout(() => reject(Object.assign(new Error('Gemini response deadline exceeded'), {code:'AI_TIMEOUT'})), ms)
-    )
-  ]); } finally { clearTimeout(timer); }
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        timer = setTimeout(() => reject(Object.assign(new Error('Gemini response deadline exceeded'), { code: 'AI_TIMEOUT' })), ms)
+      )
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
-// ─────────────────────────────────────────────────────────
-// MODEL CHAIN — Tối ưu tốc độ và độ ổn định
-// ─────────────────────────────────────────────────────────
 const MODEL_CHAIN = [
   'gemini-2.5-flash-lite',
   'gemini-2.5-flash'
 ];
 
-/**
- * Gọi Gemini AI sinh JSON — Kết hợp Auto-Failover Key Pool + Model Fallback
- */
-async function callGeminiJSON(prompt, preferredModel = 'gemini-2.5-flash-lite') {
+async function callGeminiJSON(prompt, preferredModel = 'gemini-2.5-flash-lite', options = {}) {
+  const timeoutMs = Number.isFinite(options.timeoutMs) && options.timeoutMs > 0 ? options.timeoutMs : 45000;
+  const maxOutputTokens = Number.isFinite(options.maxOutputTokens) && options.maxOutputTokens > 0 ? options.maxOutputTokens : 8192;
   return keyManager.executeWithRetry(async (activeApiKey) => {
     const client = new GoogleGenerativeAI(activeApiKey);
     const modelsToTry = [preferredModel, ...MODEL_CHAIN.filter(m => m !== preferredModel)];
@@ -76,22 +65,20 @@ async function callGeminiJSON(prompt, preferredModel = 'gemini-2.5-flash-lite') 
       try {
         const model = client.getGenerativeModel({
           model: modelName,
-          generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 8192, thinkingConfig: { thinkingBudget: 0 } }
-        }, { timeout: 45000 });
+          generationConfig: { responseMimeType: 'application/json', maxOutputTokens, thinkingConfig: { thinkingBudget: 0 } }
+        }, { timeout: timeoutMs });
 
         const result = await withTimeout(
           model.generateContent(prompt),
-          45000
+          timeoutMs
         );
 
         const text = result.response.text();
         return extractJSON(text);
       } catch (error) {
-        // Nếu lỗi do Auth (403, key hỏng), ném ra ngay để thu hồi key
         if (keyManager.isAuthError(error)) {
           throw error;
         }
-        // Nếu lỗi 429 (hạn mức model), ghi log và thử model tiếp theo trong chuỗi
         if (keyManager.isRateLimitError(error)) {
           console.warn('[Gemini] AI_RATE_LIMIT: trying fallback model');
         } else {
@@ -106,9 +93,6 @@ async function callGeminiJSON(prompt, preferredModel = 'gemini-2.5-flash-lite') 
   }, 'callGeminiJSON');
 }
 
-/**
- * Gọi Gemini AI sinh text tự do — Kết hợp Auto-Failover Key Pool + Model Fallback
- */
 async function callGeminiText(prompt, preferredModel = 'gemini-2.5-flash-lite') {
   return keyManager.executeWithRetry(async (activeApiKey) => {
     const client = new GoogleGenerativeAI(activeApiKey);

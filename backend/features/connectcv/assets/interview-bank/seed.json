@@ -13362,6 +13362,1446 @@
         "Bạn ưu tiên thông tin nào để lãnh đạo biết mức ảnh hưởng thay vì chỉ thấy doanh số kênh giảm?"
       ],
       "referenceUrls": []
+    },
+    {
+      "id": "cyber-fresher-001",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "cia-triad-basics",
+      "question": "Bộ ba CIA (Confidentiality, Integrity, Availability) trong an toàn thông tin có ý nghĩa gì và cho ví dụ khi từng yếu tố bị vi phạm?",
+      "answerSample": "Confidentiality là bảo vệ dữ liệu khỏi truy cập trái phép, ví dụ lộ danh sách mật khẩu hoặc hồ sơ khách hàng. Integrity là bảo đảm dữ liệu không bị sửa đổi trái phép, ví dụ kẻ tấn công chỉnh sửa số tiền giao dịch. Availability là bảo đảm hệ thống và dữ liệu sẵn sàng khi người dùng hợp lệ cần, ví dụ tấn công DDoS làm ngưng dịch vụ. Khi thiết kế biện pháp bảo vệ, cần cân bằng cả ba yếu tố theo mức độ rủi ro thực tế.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Phân biệt rõ Confidentiality, Integrity và Availability",
+        "Nêu ví dụ cụ thể khi từng yếu tố bị phá vỡ",
+        "Hiểu cần cân bằng ba yếu tố thay vì chỉ tập trung một mặt"
+      ],
+      "redFlags": [
+        "Nhầm lẫn giữa mã hóa (Confidentiality) và toàn vẹn dữ liệu (Integrity)",
+        "Bịa thành tích, số liệu hoặc kinh nghiệm chưa từng làm"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/glossary/term/cia_triad"
+      ],
+      "evidencePrompts": [
+        "Nếu dữ liệu bị mã hóa bởi ransomware, những yếu tố nào trong bộ ba CIA bị ảnh hưởng trực tiếp?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-002",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "owasp-sqli-xss-difference",
+      "question": "SQL Injection và Cross-Site Scripting (XSS) khác nhau thế nào về cơ chế tấn công, nơi thực thi và cách phòng tránh cơ bản?",
+      "answerSample": "SQL Injection xảy ra ở phía server khi đầu vào không tin cậy bị ghép trực tiếp vào câu truy vấn cơ sở dữ liệu, có thể dẫn tới đọc, sửa hoặc xóa dữ liệu trái phép; cách phòng tránh chính là dùng parameterized queries hoặc prepared statements kết hợp phân quyền DB tối thiểu. XSS xảy ra trên trình duyệt của người dùng khi ứng dụng chèn dữ liệu chưa được encode đúng ngữ cảnh vào HTML/JavaScript, cho phép chạy script đánh cắp phiên hoặc thao tác thay nạn nhân; cần output encoding theo ngữ cảnh, kiểm soát đầu vào và dùng Content-Security-Policy cùng cookie HttpOnly.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Phân biệt nơi thực thi: server/DB cho SQLi vs trình duyệt cho XSS",
+        "Nêu biện pháp phòng ngừa đúng trọng tâm: prepared statements và context-aware output encoding",
+        "Nhận biết tác động cụ thể của từng lỗ hổng"
+      ],
+      "redFlags": [
+        "Cho rằng chỉ lọc từ khóa bằng regex hoặc WAF là đủ thay thế prepared statements",
+        "Nhầm lẫn tác động phía server với phía trình duyệt"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/www-project-top-ten/"
+      ],
+      "evidencePrompts": [
+        "Vì sao HTML escaping đơn thuần không đủ nếu dữ liệu được đưa vào thuộc tính href hoặc khối script?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-003",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "hashing-vs-encryption",
+      "question": "Hashing, Encryption và Encoding khác nhau ra sao? Vì sao mật khẩu người dùng phải được hash kèm salt thay vì mã hóa hai chiều?",
+      "answerSample": "Encoding chỉ đổi định dạng dữ liệu để truyền tải như Base64 và không có khóa bí mật nên ai cũng giải mã được. Encryption là mã hóa hai chiều dùng khóa để bảo mật dữ liệu và giải mã lại khi cần. Hashing là hàm băm một chiều tạo chuỗi cố định, không thể đảo ngược về dữ liệu gốc. Mật khẩu cần dùng hàm băm chuyên dụng chậm có salt riêng cho từng tài khoản như Argon2id hoặc bcrypt để chống bảng cầu vồng và hạn chế dò mật khẩu hàng loạt ngay cả khi lộ cơ sở dữ liệu.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Phân biệt rõ Encoding (không bí mật), Encryption (hai chiều có khóa), Hashing (một chiều)",
+        "Giải thích vai trò của salt và thuật toán băm chậm như Argon2id/bcrypt",
+        "Không dùng MD5/SHA-1 đơn thuần cho mật khẩu"
+      ],
+      "redFlags": [
+        "Coi Base64 là biện pháp bảo mật",
+        "Đề xuất mã hóa đối xứng hoặc MD5 không salt để lưu mật khẩu"
+      ],
+      "referenceUrls": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
+      ],
+      "evidencePrompts": [
+        "Nếu hai người dùng đặt cùng một mật khẩu, giá trị lưu trong cơ sở dữ liệu có giống nhau không khi dùng salt đúng cách?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-004",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "https-tls-handshake",
+      "question": "HTTPS bảo vệ dữ liệu trên đường truyền bằng cơ chế nào và vai trò của chứng chỉ số (TLS certificate) trong kết nối là gì?",
+      "answerSample": "HTTPS chạy HTTP trên lớp TLS để bảo vệ tính bí mật và toàn vẹn của lưu lượng mạng giữa client và server, chống nghe lén và sửa đổi gói tin trên đường truyền. Trong TLS handshake, server gửi chứng chỉ số do CA đáng tin cậy ký để client xác thực đúng danh tính tên miền, tránh tấn công giả mạo Man-in-the-Middle. Sau đó hai bên thỏa thuận khóa phiên đối xứng để mã hóa dữ liệu nhanh và an toàn cho suốt phiên kết nối.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "TLS bảo vệ cả bí mật lẫn toàn vẹn trên đường truyền",
+        "Chứng chỉ số xác thực danh tính server qua chuỗi tin cậy CA",
+        "Kết hợp mật mã bất đối xứng khi bắt tay và đối xứng cho dữ liệu phiên"
+      ],
+      "redFlags": [
+        "Cho rằng HTTPS tự bảo vệ ứng dụng khỏi SQLi hoặc lỗ hổng logic phía server",
+        "Bỏ qua bước xác thực chứng chỉ khi giải thích MitM"
+      ],
+      "referenceUrls": [
+        "https://datatracker.ietf.org/doc/html/rfc8446"
+      ],
+      "evidencePrompts": [
+        "Nếu người dùng bấm bỏ qua cảnh báo chứng chỉ không hợp lệ trên trình duyệt, rủi ro nào xảy ra ngay lập tức?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-005",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "firewall-ids-ips-roles",
+      "question": "Firewall, IDS và IPS khác nhau như thế nào trong kiến trúc phòng thủ mạng?",
+      "answerSample": "Firewall kiểm soát lưu lượng vào ra dựa trên quy tắc về IP, cổng, giao thức hoặc tầng ứng dụng để cho phép hay chặn kết nối. IDS (Intrusion Detection System) giám sát bản sao lưu lượng hoặc nhật ký để phát hiện dấu hiệu xâm nhập và gửi cảnh báo cho đội vận hành mà không trực tiếp chặn gói tin. IPS (Intrusion Prevention System) nằm trực tiếp trên đường truyền mạng để vừa phát hiện vừa chủ động chặn lưu lượng độc hại theo chữ ký hoặc bất thường, nhưng cần tinh chỉnh kỹ để tránh false positive gây gián đoạn dịch vụ.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Firewall lọc lưu lượng theo chính sách truy cập",
+        "IDS chỉ giám sát và cảnh báo (passive), IPS nằm inline và có thể chặn chủ động",
+        "Nêu đánh đổi giữa chặn tự động và rủi ro false positive"
+      ],
+      "redFlags": [
+        "Nhầm IDS có khả năng tự động chặn lưu lượng inline như IPS",
+        "Tin rằng có Firewall thì không cần giám sát log và cập nhật bản vá"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/94/final"
+      ],
+      "evidencePrompts": [
+        "Khi nào đội vận hành nên đặt IPS ở chế độ chỉ phát hiện trước khi bật chế độ chặn?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-006",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "phishing-initial-triage",
+      "question": "Một nhân viên báo vừa nhận được email nghi giả mạo yêu cầu đổi mật khẩu gấp kèm đường link lạ. Bạn sẽ kiểm tra và hướng dẫn xử lý bước đầu như thế nào?",
+      "answerSample": "Trước hết, tôi nhắc nhân viên không nhấp vào link, không tải tệp đính kèm và không nhập thông tin đăng nhập; nếu lỡ nhập mật khẩu thì cần đổi mật khẩu ngay và thu hồi phiên đăng nhập. Tiếp theo, tôi thu thập nguyên bản email kèm header để kiểm tra địa chỉ gửi thực, bản ghi SPF/DKIM/DMARC, tên miền đích của link trong môi trường tách biệt và đối chiếu IOC với công cụ uy tín. Nếu xác nhận là phishing, tôi báo nhóm phụ trách để chặn tên miền/người gửi và cảnh báo các tài khoản khác có thể cùng nhận email.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Ngăn tương tác và kiểm tra xem nhân viên đã bấm link hay nhập mật khẩu chưa",
+        "Phân tích email header (SPF/DKIM/DMARC, Return-Path) và kiểm tra link an toàn",
+        "Báo cáo, chặn IOC và cảnh báo phạm vi ảnh hưởng"
+      ],
+      "redFlags": [
+        "Mở trực tiếp đường link nghi ngờ trên máy làm việc chính để kiểm tra",
+        "Bỏ qua việc kiểm tra xem người dùng đã lỡ nhập thông tin hay chưa"
+      ],
+      "referenceUrls": [
+        "https://www.cisa.gov/secure-our-world/recognize-and-report-phishing"
+      ],
+      "evidencePrompts": [
+        "Nếu nhân viên báo đã lỡ đăng nhập vào trang giả mạo 10 phút trước, hành động ưu tiên số một là gì?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-007",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "least-privilege-rbac",
+      "question": "Nguyên tắc đặc quyền tối thiểu (Least Privilege) là gì và nó giúp giảm thiệt hại ra sao khi một tài khoản bị chiếm quyền?",
+      "answerSample": "Nguyên tắc đặc quyền tối thiểu yêu cầu mỗi người dùng, dịch vụ hoặc ứng dụng chỉ được cấp đúng quyền cần thiết để hoàn thành nhiệm vụ được giao và trong khoảng thời gian phù hợp. Nếu một tài khoản thường hoặc tài khoản dịch vụ bị chiếm quyền, kẻ tấn công không thể tự ý đọc dữ liệu nhạy cảm của phòng ban khác, thay đổi cấu hình hệ thống hay leo thang sang máy chủ quan trọng. Kết hợp với phân tách nhiệm vụ và rà soát quyền định kỳ giúp thu hẹp đáng kể phạm vi ảnh hưởng sự cố.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Chỉ cấp quyền tối thiểu cần thiết cho đúng công việc",
+        "Thu hẹp bán kính ảnh hưởng (blast radius) khi tài khoản bị lộ",
+        "Cần rà soát và thu hồi quyền khi đổi vai trò hoặc nghỉ việc"
+      ],
+      "redFlags": [
+        "Cấp quyền admin/root mặc định cho thuận tiện vận hành",
+        "Không đề cập việc thu hồi quyền định kỳ"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/glossary/term/least_privilege"
+      ],
+      "evidencePrompts": [
+        "Nếu một ứng dụng web chỉ cần đọc bảng sản phẩm, tài khoản DB của nó có nên có quyền DROP TABLE không?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-008",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "vulnerability-threat-risk",
+      "question": "Bạn phân biệt thế nào giữa Vulnerability (lỗ hổng), Threat (mối đe dọa) và Risk (rủi ro) trong bảo mật?",
+      "answerSample": "Vulnerability là điểm yếu trong hệ thống, cấu hình hoặc quy trình có thể bị khai thác, ví dụ dịch vụ chưa vá lỗi thực thi mã từ xa. Threat là tác nhân hoặc sự kiện có khả năng khai thác điểm yếu đó để gây hại, ví dụ nhóm tấn công tự động quét lỗ hổng trên Internet. Risk là khả năng xảy ra sự cố kết hợp với mức độ tác động khi mối đe dọa khai thác lỗ hổng lên tài sản cụ thể. Phân biệt rõ giúp ưu tiên vá lỗ hổng trên hệ thống mở ra Internet chứa dữ liệu nhạy cảm trước máy cô lập nội bộ.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Định nghĩa chính xác Vulnerability, Threat và Risk",
+        "Risk phụ thuộc cả xác suất khai thác lẫn mức độ tác động tới tài sản",
+        "Áp dụng vào việc ưu tiên xử lý thực tế"
+      ],
+      "redFlags": [
+        "Đánh đồng điểm CVSS cao là rủi ro cao mà không xét bối cảnh tài sản và khả năng tiếp cận",
+        "Dùng lẫn lộn ba khái niệm"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/glossary/term/risk"
+      ],
+      "evidencePrompts": [
+        "Cùng một lỗ hổng CVSS 9.0, vì sao rủi ro trên máy chủ công khai Internet khác với máy thử nghiệm nội bộ không nối mạng?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-009",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "siem-log-fundamentals",
+      "question": "SIEM dùng để làm gì trong vận hành an ninh mạng và những nguồn log cơ bản nào cần thu thập để phát hiện xâm nhập?",
+      "answerSample": "SIEM (Security Information and Event Management) thu thập, chuẩn hóa, lưu trữ và tương quan nhật ký từ nhiều hệ thống về một nơi tập trung để phát hiện hành vi bất thường, tạo cảnh báo và hỗ trợ điều tra sự cố. Các nguồn log cơ bản gồm log xác thực (Active Directory, SSO, VPN), log tường lửa/proxy/DNS, log máy chủ và endpoint (Windows Event Log, Linux auth/auditd, EDR) và log ứng dụng web. Cần đồng bộ thời gian NTP giữa các nguồn log để ghép đúng trình tự sự kiện khi điều tra.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Vai trò thu thập tập trung, tương quan sự kiện và cảnh báo của SIEM",
+        "Nêu các nhóm nguồn log cốt lõi: xác thực, mạng, endpoint, ứng dụng",
+        "Lưu ý đồng bộ thời gian và bảo vệ tính toàn vẹn log"
+      ],
+      "redFlags": [
+        "Nhầm SIEM là công cụ tự động vá lỗ hổng hoặc diệt virus",
+        "Chỉ thu thập log tường lửa mà bỏ qua log xác thực và endpoint"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/92/final"
+      ],
+      "evidencePrompts": [
+        "Nếu thời gian trên máy chủ xác thực lệch 10 phút so với tường lửa, việc điều tra sự cố sẽ gặp khó khăn gì?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-010",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "idor-broken-access-control",
+      "question": "Lỗ hổng IDOR (Insecure Direct Object Reference) là gì và bạn kiểm tra hoặc phòng tránh lỗi này như thế nào?",
+      "answerSample": "IDOR xảy ra khi ứng dụng dùng định danh trực tiếp như user_id hoặc order_id từ yêu cầu người dùng để truy xuất tài nguyên nhưng không kiểm tra xem người dùng đang đăng nhập có quyền truy cập đối tượng đó hay không. Để kiểm thử hợp pháp, tôi dùng hai tài khoản khác quyền/khác chủ sở hữu, gửi yêu cầu với ID của tài khoản còn lại qua proxy như Burp Suite để xem server có trả dữ liệu hay cho sửa đổi không. Cách phòng tránh cốt lõi là luôn kiểm tra phân quyền sở hữu ở phía server trên mọi hành động đọc, sửa, xóa, không chỉ dựa vào việc ẩn ID hay dùng UUID.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Bản chất là thiếu kiểm tra phân quyền ở phía server trên từng đối tượng",
+        "Cách kiểm tra có trách nhiệm với hai tài khoản thử nghiệm",
+        "Dùng UUID chỉ làm khó đoán, không thay thế kiểm tra quyền phía server"
+      ],
+      "redFlags": [
+        "Cho rằng đổi số thứ tự sang UUID hoặc ẩn nút trên giao diện là đã vá xong IDOR",
+        "Kiểm thử trên tài khoản thật của người dùng khác khi chưa được phép"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+      ],
+      "evidencePrompts": [
+        "Nếu API đổi từ /orders/101 sang /orders/uuid-ngau-nhien nhưng bỏ qua kiểm tra chủ sở hữu, điều gì xảy ra khi UUID bị rò qua log hoặc link chia sẻ?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-011",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "mfa-session-security",
+      "question": "Vì sao mật khẩu mạnh vẫn cần kết hợp Xác thực đa yếu tố (MFA) và cookie phiên đăng nhập cần những cờ bảo mật nào?",
+      "answerSample": "Mật khẩu mạnh vẫn có thể bị lộ qua phishing, tái sử dụng mật khẩu ở dịch vụ khác bị rò rỉ hoặc keylogger. MFA bổ sung lớp xác thực thứ hai như ứng dụng TOTP hoặc khóa phần cứng FIDO2/WebAuthn giúp kẻ tấn công không thể đăng nhập chỉ bằng mật khẩu. Với cookie phiên, cần đặt HttpOnly để ngăn JavaScript đọc khi có XSS, Secure để chỉ truyền qua HTTPS, SameSite=Lax hoặc Strict để giảm rủi ro CSRF, đồng thời cấp mới session ID sau khi đăng nhập và hủy phiên khi đăng xuất.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Giải thích lý do mật khẩu đơn lẻ vẫn dễ bị vượt qua",
+        "Hiểu giá trị của MFA (đặc biệt FIDO2 chống phishing)",
+        "Nêu đúng tác dụng của cờ HttpOnly, Secure, SameSite và session rotation"
+      ],
+      "redFlags": [
+        "Cho rằng SMS OTP miễn nhiễm hoàn toàn với phishing hoặc SIM swapping",
+        "Nhầm tác dụng giữa HttpOnly và Secure"
+      ],
+      "referenceUrls": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html"
+      ],
+      "evidencePrompts": [
+        "Cờ HttpOnly bảo vệ cookie trước loại tấn công nào và có ngăn được CSRF không?"
+      ]
+    },
+    {
+      "id": "cyber-fresher-012",
+      "industry": "cybersecurity",
+      "level": "fresher",
+      "topic": "security-lab-learning-project",
+      "question": "Hãy kể về một bài lab, CTF hoặc dự án an toàn thông tin thực tế mà bạn đã tự tay thực hiện và bài học quan trọng nhất bạn rút ra.",
+      "answerSample": "Tôi chọn một bài lab hoặc dự án học tập tôi thực sự làm, nêu rõ mục tiêu bài toán, phạm vi được phép kiểm thử, công cụ đã dùng như Wireshark, Nmap hoặc Burp Suite, những gì tôi tự phân tích được và chỗ nào tôi gặp khó phải tra cứu tài liệu. Nếu có phát hiện lỗ hổng hoặc phân tích gói tin, tôi giải thích nguyên nhân gốc và cách khắc phục thay vì chỉ nêu tên công cụ. Nếu tôi chưa có dự án doanh nghiệp, tôi nói rõ đó là môi trường lab tự dựng.",
+      "answerType": "behavioral",
+      "keyPoints": [
+        "Nêu rõ bối cảnh, phạm vi hợp pháp và phần việc tự tay thực hiện",
+        "Giải thích tư duy phân tích nguyên nhân gốc thay vì chỉ chạy tool tự động",
+        "Trung thực về giới hạn môi trường lab hoặc kinh nghiệm thực tế"
+      ],
+      "redFlags": [
+        "Kể chuyện quét hoặc tấn công hệ thống thật không có sự cho phép",
+        "Bịa đặt CVE, bug bounty hoặc kinh nghiệm doanh nghiệp chưa từng có"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/www-project-web-security-testing-guide/"
+      ],
+      "evidencePrompts": [
+        "Trong bài lab đó, nếu không dùng công cụ tự động, bạn tự kiểm chứng dấu hiệu bất thường bằng cách nào?"
+      ]
+    },
+    {
+      "id": "cyber-junior-001",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "soc-alert-triage",
+      "question": "Khi nhận cảnh báo SIEM về nhiều lần đăng nhập thất bại rồi thành công từ một IP lạ vào tài khoản nhân viên, bạn triage theo các bước nào?",
+      "answerSample": "Đầu tiên tôi kiểm tra tính hợp lệ của cảnh báo: xác minh tên tài khoản, mốc thời gian, ứng dụng mục tiêu, trạng thái MFA và vị trí địa lý IP so với lịch sử đăng nhập bình thường của nhân viên. Tiếp theo tôi đối chiếu IP với nguồn threat intelligence, kiểm tra xem cùng IP có tấn công tài khoản khác (password spraying) không và xem các hành động sau đăng nhập như tải dữ liệu, tạo rule chuyển tiếp email hoặc đổi cấu hình MFA. Nếu xác định là bất thường hoặc có dấu hiệu chiếm quyền, tôi báo leo thang theo quy trình IR, cô lập/thu hồi phiên, đặt lại mật khẩu và lưu bằng chứng log trước khi đóng cảnh báo.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Xác minh ngữ cảnh tài khoản, lịch sử IP, MFA và kiểm tra password spraying diện rộng",
+        "Điều tra hành động sau đăng nhập (post-compromise activity)",
+        "Phân biệt false positive và true positive trước khi leo thang, thu hồi phiên và lưu log"
+      ],
+      "redFlags": [
+        "Đóng cảnh báo ngay là false positive mà không kiểm tra hành động sau đăng nhập",
+        "Tự ý khóa hàng loạt hệ thống hoặc xóa log trước khi thu thập bằng chứng"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/61/r2/final"
+      ],
+      "evidencePrompts": [
+        "Nếu nhân viên báo họ đang đi công tác nước ngoài, bạn cần xác nhận thêm điều gì trước khi đóng cảnh báo?"
+      ]
+    },
+    {
+      "id": "cyber-junior-002",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "web-pentest-methodology",
+      "question": "Khi bắt đầu kiểm thử xâm nhập một ứng dụng web đã được cấp phép, bạn tổ chức các bước khảo sát và kiểm thử bằng Burp Suite như thế nào?",
+      "answerSample": "Tôi luôn kiểm tra lại phạm vi được phép (scope, domain, khung giờ, hành động bị cấm) và chuẩn bị tài khoản thử nghiệm theo từng vai trò. Sau đó tôi lập bản đồ ứng dụng (recon/crawling), quan sát luồng xác thực, quản lý phiên, API endpoints và tham số đầu vào qua Burp Proxy. Tôi ưu tiên kiểm tra các nhóm lỗi tác động cao theo OWASP WSTG như Broken Access Control (IDOR/leo thang đặc quyền), lỗi logic nghiệp vụ, Injection, XSS, SSRF và cấu hình sai. Mọi phát hiện đều được xác minh thủ công để loại false positive, ghi rõ bằng chứng tái hiện và đề xuất hướng vá cụ thể.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Xác nhận scope và quy tắc kiểm thử trước khi gửi bất kỳ request nào",
+        "Lập bản đồ ứng dụng, luồng phân quyền và kiểm thử thủ công có hệ thống theo OWASP WSTG",
+        "Xác minh tránh false positive và viết báo cáo kèm cách tái hiện, hướng khắc phục"
+      ],
+      "redFlags": [
+        "Bật scanner tự động bắn tải nặng vào production ngay lập tức",
+        "Chỉ chạy công cụ tự động mà không kiểm tra lỗi phân quyền và logic nghiệp vụ"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/www-project-web-security-testing-guide/"
+      ],
+      "evidencePrompts": [
+        "Vì sao công cụ quét tự động thường bỏ sót lỗ hổng phân quyền IDOR hoặc lỗi logic thanh toán?"
+      ]
+    },
+    {
+      "id": "cyber-junior-003",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "endpoint-malware-containment",
+      "question": "EDR cảnh báo một máy trạm nhân viên vừa chạy tệp PowerShell mã hóa Base64 và kết nối ra IP lạ bên ngoài. Bạn xử lý thế nào?",
+      "answerSample": "Trước hết tôi kiểm tra tiến trình cha (ví dụ Word, Excel, trình duyệt) và giải mã câu lệnh PowerShell trong môi trường an toàn để hiểu hành vi thực tế, đồng thời kiểm tra xem IP/domain đích có khớp IOC độc hại không. Nếu xác nhận nghi ngờ mã độc đang hoạt động, tôi dùng EDR cô lập mạng máy trạm khỏi mạng nội bộ để ngăn lây lan và liên lạc C2, nhưng không tắt nguồn đột ngột để tránh mất bằng chứng trên RAM. Sau đó tôi thu thập thông tin tiến trình, kết nối mạng, persistence (Scheduled Task, Registry Run key), rà soát các máy khác xem có cùng IOC và bàn giao theo quy trình ứng cứu sự cố.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Phân tích cây tiến trình và nội dung lệnh trước khi kết luận",
+        "Cô lập mạng máy nhiễm thay vì tắt máy ngay để giữ bằng chứng RAM và ngăn lây lan",
+        "Kiểm tra cơ chế duy trì (persistence) và quét IOC trên các máy khác trong mạng"
+      ],
+      "redFlags": [
+        "Format lại máy ngay lập tức khiến mất toàn bộ dấu vết điều tra",
+        "Chỉ xóa tệp chạy mà không kiểm tra persistence và lây lan ngang"
+      ],
+      "referenceUrls": [
+        "https://attack.mitre.org/techniques/T1059/001/"
+      ],
+      "evidencePrompts": [
+        "Tại sao cần xem tiến trình cha (parent process) của powershell.exe khi điều tra cảnh báo này?"
+      ]
+    },
+    {
+      "id": "cyber-junior-004",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "jwt-api-security",
+      "question": "Khi kiểm tra bảo mật API dùng JWT để xác thực, những lỗi cấu hình hoặc triển khai phổ biến nào bạn cần rà soát?",
+      "answerSample": "Tôi kiểm tra xem server có bắt buộc xác minh chữ ký và khóa thuật toán hợp lệ (chống alg: none hoặc nhầm lẫn RS256 sang HS256) không, có kiểm tra các claim quan trọng như exp, iss, aud không và secret key có đủ độ dài ngẫu nhiên hay dùng chuỗi yếu. Tôi cũng rà soát việc lộ thông tin nhạy cảm trong payload vì JWT chỉ được Base64Url encode chứ không mã hóa, kiểm tra cơ chế thu hồi token khi đăng xuất hoặc đổi mật khẩu và xác minh phân quyền theo vai trò ở phía server thay vì tin mù quáng vào claim do client sửa.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Xác minh chữ ký và cố định thuật toán trên server (chống alg none / key confusion)",
+        "Kiểm tra exp/iss/aud, độ mạnh khóa và cơ chế thu hồi phiên",
+        "Payload JWT không được mã hóa nên không chứa dữ liệu bí mật"
+      ],
+      "redFlags": [
+        "Tin rằng JWT đã mã hóa nội dung nên cất mật khẩu hoặc bí mật trong payload",
+        "Cho phép client quyết định thuật toán ký từ header JWT"
+      ],
+      "referenceUrls": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html"
+      ],
+      "evidencePrompts": [
+        "Nếu một người dùng bị thu hồi quyền ngay lập tức nhưng access token còn hạn 60 phút, hệ thống cần thiết kế thế nào?"
+      ]
+    },
+    {
+      "id": "cyber-junior-005",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "vulnerability-prioritization",
+      "question": "Máy quét lỗ hổng báo 150 lỗ hổng trên hệ thống, trong đó có nhiều mục CVSS cao. Bạn ưu tiên xử lý thế nào thay vì vá theo thứ tự từ trên xuống?",
+      "answerSample": "Điểm CVSS gốc chỉ phản ánh mức độ nghiêm trọng lý thuyết nên tôi kết hợp thêm ngữ cảnh thực tế: tài sản có mở trực tiếp ra Internet không, chứa dữ liệu quan trọng mức nào, lỗ hổng đã có mã khai thác công khai hoặc nằm trong danh mục bị khai thác thực tế (như CISA KEV / điểm EPSS cao) không và có biện pháp kiểm soát bù đắp nào chưa. Tôi cũng xác minh nhanh để loại false positive rồi nhóm theo gói/hệ thống ảnh hưởng lớn nhất để đội vận hành vá hiệu quả và kiểm tra lại sau khi vá.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Không chỉ dựa vào CVSS base score mà kết hợp mức độ lộ diện (exposure) và giá trị tài sản",
+        "Ưu tiên lỗ hổng đang bị khai thác thực tế (KEV/EPSS/exploit công khai)",
+        "Loại false positive và xác minh lại sau khi vá"
+      ],
+      "redFlags": [
+        "Gửi nguyên file PDF máy quét 150 dòng cho đội dev mà không phân loại ưu tiên",
+        "Vá máy thử nghiệm nội bộ trước lỗ hổng RCE ngoài Internet chỉ vì CVSS cao hơn 0.1"
+      ],
+      "referenceUrls": [
+        "https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+      ],
+      "evidencePrompts": [
+        "Nếu một lỗ hổng CVSS 9.8 chưa có bản vá từ nhà cung cấp, bạn đề xuất biện pháp giảm thiểu tạm thời (compensating control) nào?"
+      ]
+    },
+    {
+      "id": "cyber-junior-006",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "email-auth-spf-dkim-dmarc",
+      "question": "SPF, DKIM và DMARC phối hợp với nhau như thế nào để chống giả mạo email (email spoofing) và khi đọc email header bạn kiểm tra gì?",
+      "answerSample": "SPF khai báo danh sách máy chủ IP được phép gửi email thay cho tên miền trong bản ghi DNS. DKIM gắn chữ ký số vào email bằng khóa bí mật để máy chủ nhận xác minh nội dung không bị sửa và đúng nguồn ký qua khóa công khai trên DNS. DMARC kết hợp kết quả SPF/DKIM, yêu cầu sự khớp tên miền (alignment) với header From hiển thị cho người dùng và quy định chính sách xử lý khi thất bại (none, quarantine, reject) kèm báo cáo. Khi phân tích header, tôi xem thứ tự các dòng Received từ dưới lên, kết quả Authentication-Results, sự sai khác giữa From và Return-Path/Reply-To.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Nêu đúng vai trò riêng của SPF, DKIM và DMARC",
+        "Hiểu khái niệm alignment với địa chỉ From và chính sách p=none/quarantine/reject",
+        "Biết đọc Authentication-Results và chuỗi Received trong header"
+      ],
+      "redFlags": [
+        "Cho rằng chỉ cấu hình DMARC p=none là đã chặn được email giả mạo",
+        "Nhầm SPF bảo vệ nội dung email không bị sửa đổi"
+      ],
+      "referenceUrls": [
+        "https://datatracker.ietf.org/doc/html/rfc7489"
+      ],
+      "evidencePrompts": [
+        "Vì sao một email có thể pass SPF nhưng vẫn bị đánh trượt kiểm tra DMARC?"
+      ]
+    },
+    {
+      "id": "cyber-junior-007",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "siem-correlation-false-positives",
+      "question": "Một rule cảnh báo trên SIEM liên tục phát sinh hàng trăm cảnh báo giả (false positive) mỗi ngày. Bạn phân tích và tinh chỉnh rule thế nào để không bỏ sót tấn công thật?",
+      "answerSample": "Tôi thống kê các cảnh báo phát sinh gần đây để tìm mẫu lặp lại gây nhiễu, ví dụ tài khoản dịch vụ sao lưu hoặc máy quét nội bộ hợp lệ. Thay vì tắt hẳn rule hay whitelist rộng theo cả dải mạng, tôi thu hẹp ngoại lệ theo tổ hợp cụ thể (tài khoản dịch vụ + nguồn IP cố định + hành động được xác minh với chủ hệ thống), đồng thời kiểm tra lại logic ngưỡng và điều kiện tương quan. Sau khi chỉnh, tôi chạy thử trên dữ liệu log lịch sử và mô phỏng lại kịch bản tấn công mẫu (như Atomic Red Team) để chắc chắn rule vẫn phát hiện true positive.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Phân tích mẫu gây nhiễu và xác minh hành vi hợp lệ với chủ hệ thống",
+        "Tạo ngoại lệ hẹp, cụ thể thay vì tắt rule hoặc whitelist diện rộng",
+        "Kiểm chứng lại rule bằng kịch bản tấn công mẫu sau khi tinh chỉnh"
+      ],
+      "redFlags": [
+        "Tắt rule hoặc đặt ngoại lệ bỏ qua toàn bộ quản trị viên để giảm số cảnh báo",
+        "Không kiểm thử lại khả năng phát hiện sau khi chỉnh sửa"
+      ],
+      "referenceUrls": [
+        "https://attack.mitre.org/"
+      ],
+      "evidencePrompts": [
+        "Nếu bạn đặt ngoại lệ cho một tài khoản dịch vụ backup, làm sao phát hiện nếu chính tài khoản đó bị kẻ tấn công chiếm dụng chạy từ máy khác?"
+      ]
+    },
+    {
+      "id": "cyber-junior-008",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "ssrf-attack-defense",
+      "question": "Lỗ hổng SSRF (Server-Side Request Forgery) hoạt động như thế nào, rủi ro lớn nhất trên môi trường cloud là gì và cách phòng tránh?",
+      "answerSample": "SSRF xảy ra khi ứng dụng cho phép kẻ tấn công điều khiển URL mà máy chủ tự gửi yêu cầu đi, khiến server trở thành cầu nối truy cập dịch vụ nội bộ không mở ra Internet. Trên môi trường cloud, rủi ro đặc biệt nghiêm trọng là truy cập dịch vụ metadata nội bộ (như 169.254.169.254) để lấy thông tin xác thực tạm thời của IAM role. Phòng tránh hiệu quả nhất là dùng allowlist tên miền/giao thức được phép, chặn dải IP nội bộ/link-local sau khi phân giải DNS (chống DNS rebinding), tắt hoặc kiểm tra lại redirect và bật IMDSv2 trên cloud.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Cơ chế ép server gửi request tới tài nguyên nội bộ hoặc metadata cloud",
+        "Phòng thủ bằng allowlist, kiểm tra IP sau DNS resolution và xử lý redirect",
+        "Biện pháp tầng hạ tầng như IMDSv2 và phân đoạn mạng egress"
+      ],
+      "redFlags": [
+        "Chỉ chặn chuỗi \"localhost\" hoặc \"127.0.0.1\" bằng string match đơn giản",
+        "Bỏ qua nguy cơ HTTP redirect và DNS rebinding"
+      ],
+      "referenceUrls": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"
+      ],
+      "evidencePrompts": [
+        "Nếu ứng dụng chỉ kiểm tra URL ban đầu không chứa 169.254.169.254, kẻ tấn công có thể vượt qua bằng HTTP 302 redirect không?"
+      ]
+    },
+    {
+      "id": "cyber-junior-009",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "linux-ssh-hardening",
+      "question": "Khi cần gia cố (hardening) một máy chủ Linux mới mở dịch vụ ra mạng, những thiết lập cơ bản nào bạn thực hiện cho SSH và hệ thống?",
+      "answerSample": "Với SSH, tôi tắt đăng nhập trực tiếp bằng root (PermitRootLogin no), chuyển sang xác thực bằng SSH key và tắt PasswordAuthentication sau khi đã kiểm tra đăng nhập key thành công, giới hạn người dùng được phép và chặn truy cập cổng SSH từ Internet công khai bằng firewall hoặc chỉ cho qua VPN/bastion. Ở mức hệ thống, tôi cập nhật bản vá, tắt dịch vụ/cổng không dùng, bật tường lửa mặc định chặn chiều vào, cấu hình giới hạn đăng nhập sai và gửi log xác thực (auth/auditd) về máy chủ log tập trung.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Tắt root login, dùng SSH key thay mật khẩu, hạn chế nguồn IP qua VPN/bastion",
+        "Đóng dịch vụ/cổng thừa và cấu hình firewall mặc định deny",
+        "Cập nhật bản vá và đẩy log tập trung để theo dõi xâm nhập"
+      ],
+      "redFlags": [
+        "Cho rằng chỉ đổi cổng SSH từ 22 sang cổng khác là đủ bảo mật",
+        "Tắt mật khẩu SSH trước khi xác minh đăng nhập bằng key gây khóa khỏi máy chủ"
+      ],
+      "referenceUrls": [
+        "https://www.cisecurity.org/cis-benchmarks"
+      ],
+      "evidencePrompts": [
+        "Thứ tự kiểm tra nào giúp bạn không tự khóa mình khỏi máy chủ khi chỉnh sshd_config và firewall từ xa?"
+      ]
+    },
+    {
+      "id": "cyber-junior-010",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "active-directory-basics",
+      "question": "Trong mạng doanh nghiệp dùng Active Directory, vì sao kẻ tấn công thường nhắm vào Kerberoasting hoặc đánh cắp thông tin xác thực bộ nhớ (LSASS) và dấu hiệu phát hiện cơ bản là gì?",
+      "answerSample": "Kẻ tấn công nhắm vào Kerberoasting vì bất kỳ tài khoản domain nào cũng có thể yêu cầu vé TGS cho tài khoản dịch vụ có SPN rồi mang đi bẻ khóa mật khẩu ngoại tuyến; còn trích xuất LSASS giúp lấy hash hoặc mật khẩu của tài khoản đang đăng nhập để di chuyển ngang. Dấu hiệu phát hiện gồm Event ID 4769 có kiểu mã hóa yếu RC4 (0x17) bất thường với số lượng lớn trên Domain Controller, hoặc cảnh báo EDR/Sysmon Event ID 10 khi tiến trình lạ mở handle truy cập lsass.exe. Phòng ngừa gồm dùng gMSA/mật khẩu dịch vụ dài ngẫu nhiên, bật Credential Guard, PPL cho LSASS và hạn chế quyền local admin.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Hiểu mục tiêu leo thang đặc quyền và di chuyển ngang trong AD",
+        "Nêu dấu hiệu log/EDR cụ thể (Event 4769 RC4, truy cập bất thường vào LSASS)",
+        "Nêu biện pháp phòng ngừa thực tế (gMSA, Credential Guard, hạn chế local admin)"
+      ],
+      "redFlags": [
+        "Nhầm lẫn giữa xác thực cục bộ và Kerberos trong domain",
+        "Chỉ tập trung vào diệt phần mềm mà bỏ qua gia cố tài khoản dịch vụ và đặc quyền AD"
+      ],
+      "referenceUrls": [
+        "https://attack.mitre.org/techniques/T1558/003/"
+      ],
+      "evidencePrompts": [
+        "Vì sao tài khoản dịch vụ có SPN được gán quyền Domain Admin tạo ra rủi ro rất lớn?"
+      ]
+    },
+    {
+      "id": "cyber-junior-011",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "waf-tuning-limitations",
+      "question": "Web Application Firewall (WAF) giúp ích gì cho ứng dụng web và vì sao WAF không thể thay thế việc sửa lỗi trong mã nguồn?",
+      "answerSample": "WAF giúp lọc nhanh các mẫu tấn công phổ biến ở lớp HTTP như bot quét tự động, một số payload SQLi/XSS điển hình và tạo lớp bảo vệ tạm thời (virtual patching) trong lúc đội phát triển chuẩn bị bản vá. Tuy nhiên WAF không hiểu sâu ngữ cảnh nghiệp vụ nên dễ bị vượt qua bằng kỹ thuật obfuscation, không ngăn được lỗ hổng phân quyền logic như IDOR và dễ gây chặn nhầm lưu lượng hợp lệ nếu cấu hình quá chặt. Vì vậy WAF chỉ là lớp phòng thủ bổ sung trong mô hình phòng thủ theo chiều sâu, không thay thế sửa lỗi gốc trong code.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Giá trị thực tế của WAF: chặn nhiễu tự động và virtual patching tạm thời",
+        "Giới hạn cốt lõi: không thấy logic nghiệp vụ/phân quyền và có thể bị bypass",
+        "Đặt WAF đúng vai trò trong phòng thủ theo chiều sâu (defense-in-depth)"
+      ],
+      "redFlags": [
+        "Cho rằng bật WAF là không cần sửa SQLi hay kiểm tra phân quyền trong mã nguồn",
+        "Không đề cập rủi ro false positive ảnh hưởng người dùng thật"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/www-community/Web_Application_Firewall"
+      ],
+      "evidencePrompts": [
+        "Một lỗi IDOR cho phép đổi order_id từ 1001 sang 1002 có bị WAF mặc định nhận diện và chặn không?"
+      ]
+    },
+    {
+      "id": "cyber-junior-012",
+      "industry": "cybersecurity",
+      "level": "junior",
+      "topic": "dev-security-communication",
+      "question": "Kể về một lần bạn phát hiện lỗi bảo mật hoặc cảnh báo rủi ro nhưng người liên quan cho rằng không đáng ngại. Bạn đã trao đổi và thuyết phục họ như thế nào?",
+      "answerSample": "Tôi trình bày tình huống cụ thể từng trải qua, nêu rõ rủi ro phát hiện được, bằng chứng tái hiện an toàn và tác động thực tế tới dữ liệu hoặc người dùng bằng ngôn ngữ dễ hiểu thay vì chỉ đưa thuật ngữ bảo mật. Tôi lắng nghe ràng buộc về tiến độ của họ, đề xuất hướng khắc phục khả thi kèm giải pháp giảm thiểu tạm thời nếu chưa vá ngay được, và ghi nhận kết quả rõ ràng. Nếu chưa gặp tình huống này ở doanh nghiệp, tôi nêu rõ ví dụ từ dự án nhóm hoặc bài tập thực tế của mình.",
+      "answerType": "behavioral",
+      "keyPoints": [
+        "Chứng minh tác động thực tế bằng bằng chứng rõ ràng, không hù dọa chung chung",
+        "Phối hợp tìm giải pháp khả thi phù hợp tiến độ đội phát triển",
+        "Nêu rõ hành động và kết quả có thật của bản thân"
+      ],
+      "redFlags": [
+        "Đổ lỗi cho đội phát triển hoặc yêu cầu dừng toàn bộ sản phẩm mà không chứng minh tác động",
+        "Bịa đặt tình huống chưa từng xảy ra"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/www-project-developer-guide/"
+      ],
+      "evidencePrompts": [
+        "Trong tình huống đó, bằng chứng cụ thể nào đã giúp đối phương hiểu mức độ nghiêm trọng?"
+      ]
+    },
+    {
+      "id": "cyber-middle-001",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "nist-incident-response-lifecycle",
+      "question": "Hãy trình bày vòng đời ứng cứu sự cố theo NIST SP 800-61 và giải thích vì sao bước Containment cần cân nhắc giữa ngăn lây lan và giữ bằng chứng điều tra.",
+      "answerSample": "Vòng đời NIST gồm bốn giai đoạn chính: Preparation (chuẩn bị quy trình, log, công cụ, diễn tập), Detection & Analysis (phát hiện, xác minh phạm vi và mức độ), Containment, Eradication & Recovery (cô lập, loại bỏ gốc rễ, khôi phục an toàn) và Post-Incident Activity (rút kinh nghiệm, cập nhật phát hiện). Ở bước Containment, nếu cô lập quá vội như tắt nguồn hay xóa ngay máy chủ có thể làm mất bằng chứng trên bộ nhớ hoặc khiến kẻ tấn công nhận ra và kích hoạt phá hủy ở nút khác; ngược lại chậm cô lập sẽ để dữ liệu tiếp tục bị đánh cắp hoặc lây lan. Vì vậy cần cô lập theo mức độ (cô lập mạng EDR, chặn tài khoản/IOC, chụp ảnh bộ nhớ/disk trước khi làm sạch) dựa trên mức độ nghiêm trọng của tài sản.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Nêu đủ các giai đoạn chuẩn NIST và tính lặp lại giữa Analysis và Containment",
+        "Phân tích đánh đổi giữa tốc độ cô lập và bảo toàn bằng chứng/xác định đủ phạm vi",
+        "Nhấn mạnh bước Eradication loại bỏ nguyên nhân gốc và Post-Incident cải thiện phát hiện"
+      ],
+      "redFlags": [
+        "Bỏ qua giai đoạn Eradication khiến hệ thống bị xâm nhập lại ngay sau khi khôi phục",
+        "Tắt nóng hoặc cài lại máy trước khi xác định phạm vi và thu thập bằng chứng cần thiết"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/61/r2/final"
+      ],
+      "evidencePrompts": [
+        "Làm sao bạn xác minh kẻ tấn công không còn cửa hậu (persistence) trước khi đưa hệ thống trở lại phục vụ người dùng?"
+      ]
+    },
+    {
+      "id": "cyber-middle-002",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "stride-threat-modeling",
+      "question": "Khi thiết kế một tính năng thanh toán hoặc tải tệp nhạy cảm mới, bạn thực hiện Threat Modeling (ví dụ STRIDE) như thế nào để tìm rủi ro trước khi viết code?",
+      "answerSample": "Tôi bắt đầu bằng việc vẽ sơ đồ luồng dữ liệu (DFD) chỉ rõ thành phần, luồng truyền, kho lưu trữ và ranh giới tin cậy (trust boundaries). Với từng luồng vượt qua ranh giới tin cậy, tôi rà soát có hệ thống theo STRIDE: Spoofing (giả mạo danh tính), Tampering (sửa đổi dữ liệu/webhook), Repudiation (chối bỏ thao tác do thiếu audit log), Information Disclosure (rò rỉ dữ liệu nhạy cảm), Denial of Service (cạn tài nguyên khi upload file lớn) và Elevation of Privilege (vượt phân quyền). Cuối cùng tôi chuyển các mối đe dọa ưu tiên cao thành yêu cầu bảo mật kiểm thử được cho đội phát triển trước khi triển khai.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Vẽ DFD và xác định rõ trust boundaries trước khi liệt kê mối đe dọa",
+        "Áp dụng STRIDE gắn cụ thể vào từng thành phần thay vì lý thuyết suông",
+        "Chuyển phát hiện thành tiêu chí nghiệm thu bảo mật cụ thể cho đội dev"
+      ],
+      "redFlags": [
+        "Chỉ đọc thuộc lòng 6 chữ cái STRIDE mà không gắn vào trust boundary và luồng dữ liệu",
+        "Làm threat modeling xong để tài liệu nằm yên không chuyển thành hành động thiết kế/test"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/www-community/Threat_Modeling_Process"
+      ],
+      "evidencePrompts": [
+        "Với luồng nhận webhook thanh toán từ bên thứ ba, mối đe dọa Tampering và Spoofing được kiểm soát bằng cơ chế nào?"
+      ]
+    },
+    {
+      "id": "cyber-middle-003",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "appsec-cicd-sast-dast-sca",
+      "question": "Bạn tích hợp SAST, DAST, SCA và quét bí mật (Secret Scanning) vào quy trình CI/CD như thế nào để tăng an toàn mà không làm nghẽn tiến độ đội phát triển?",
+      "answerSample": "Tôi phân tầng công cụ theo tốc độ và độ chính xác: secret scanning (pre-commit/PR) và SCA kiểm tra thư viện có lỗ hổng nghiêm trọng chạy nhanh trên mỗi PR; SAST chạy theo chế độ quét phần thay đổi (diff-aware) với bộ rule ít nhiễu để phản hồi nhanh cho dev; DAST chạy trên môi trường staging theo lịch hoặc trước bản phát hành lớn. Giai đoạn đầu tôi bật chế độ cảnh báo (audit mode) để dọn false positive và thiết lập baseline, sau đó chỉ chặn build (fail build) với phát hiện độ tin cậy cao như lộ secret thật hoặc lỗ hổng Critical có bản vá, đồng thời cung cấp hướng dẫn sửa rõ ràng ngay trên PR.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Phân biệt vai trò SAST (mã nguồn), SCA (thư viện bên thứ ba), DAST (ứng dụng đang chạy) và Secret Scanning",
+        "Triển khai theo lộ trình audit/baseline trước khi fail-build để tránh gây ức chế vì false positive",
+        "Tối ưu tốc độ phản hồi trên PR và chất lượng rule"
+      ],
+      "redFlags": [
+        "Bật chế độ chặn mọi cảnh báo Medium/Low ngay ngày đầu khiến dev tìm cách tắt CI",
+        "Chỉ dùng SAST mà bỏ qua SCA cho phụ thuộc bên thứ ba"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/www-project-devsecops-guideline/"
+      ],
+      "evidencePrompts": [
+        "Loại lỗ hổng nào SCA phát hiện tốt hơn SAST và loại nào DAST/pentest thủ công phát hiện tốt hơn cả hai?"
+      ]
+    },
+    {
+      "id": "cyber-middle-004",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "cloud-iam-least-privilege",
+      "question": "Khi rà soát an ninh tài khoản cloud (AWS/GCP/Azure), những cấu hình sai phổ biến nhất về IAM và lưu trữ là gì và bạn kiểm soát chúng ra sao?",
+      "answerSample": "Các lỗi phổ biến gồm dùng tài khoản root/owner cho thao tác hằng ngày, cấp quyền wildcard quá rộng như Action:* hoặc Resource:*, lưu khóa truy cập dài hạn trong code/CI thay vì dùng OIDC hoặc role tạm thời, bucket lưu trữ (S3/GCS) mở truy cập công khai và security group mở cổng quản trị 22/3389 ra 0.0.0.0/0. Tôi kiểm soát bằng cách dùng phân quyền theo vai trò ngắn hạn, tách môi trường prod/non-prod, bật CloudTrail/Audit Logs tập trung chống sửa đổi, áp dụng guardrails (như SCP/Org Policy, Block Public Access) và rà soát quyền thừa định kỳ bằng dữ liệu sử dụng thực tế.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Nhận diện đúng các lỗi rủi ro cao: wildcard IAM, static keys, public storage, open management ports",
+        "Ưu tiên credentials ngắn hạn (OIDC/IAM Role) và preventive guardrails (SCP/Org Policy)",
+        "Giám sát cấu hình liên tục và bật audit log bất biến"
+      ],
+      "redFlags": [
+        "Tạo access key tĩnh quyền Admin rồi chia sẻ qua biến môi trường khắp nơi",
+        "Chỉ kiểm tra thủ công một lần mà không có chính sách ngăn cấu hình sai tái diễn"
+      ],
+      "referenceUrls": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+      ],
+      "evidencePrompts": [
+        "Vì sao dùng OIDC cho GitHub Actions triển khai lên cloud an toàn hơn lưu AWS Access Key dài hạn trong secrets?"
+      ]
+    },
+    {
+      "id": "cyber-middle-005",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "detection-engineering-mitre",
+      "question": "Bạn thiết kế và kiểm thử một rule phát hiện hành vi tấn công dựa trên khung MITRE ATT&CK như thế nào để bền vững hơn việc chỉ chặn hash hay IP?",
+      "answerSample": "Hash tệp và địa chỉ IP thay đổi rất nhanh theo Kim tự tháp Nỗi đau (Pyramid of Pain), nên tôi tập trung viết rule phát hiện ở tầng TTPs (hành vi kỹ thuật) như tiến trình Office sinh shell, tạo tác vụ định kỳ bất thường hay truy cập trái phép vào kho thông tin xác thực. Tôi xác định trước nguồn telemetry cần thiết, lập bản đồ kỹ thuật ATT&CK, viết logic phát hiện chuẩn hóa (như Sigma/KQL), đối chiếu trên log lịch sử để đo tỷ lệ nhiễu và kiểm thử định kỳ bằng kịch bản mô phỏng tấn công. Mỗi rule đều đi kèm tài liệu triage playbook để SOC biết bước xác minh tiếp theo.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Ưu tiên phát hiện theo hành vi/TTPs thay vì chỉ IOC tĩnh dễ đổi",
+        "Đảm bảo có đủ telemetry nguồn log và kiểm chứng bằng giả lập tấn công",
+        "Gắn rule với playbook xử lý để đội SOC hành động nhất quán"
+      ],
+      "redFlags": [
+        "Chỉ nhập danh sách IP/hash độc hại cũ và coi hệ thống đã an toàn",
+        "Viết rule nhưng không bao giờ kiểm thử xem log nguồn có thực sự ghi nhận trường dữ liệu đó không"
+      ],
+      "referenceUrls": [
+        "https://attack.mitre.org/resources/"
+      ],
+      "evidencePrompts": [
+        "Nếu nguồn log Windows chưa bật ghi command-line arguments (Event 4688/Sysmon 1), điều gì xảy ra với rule phát hiện lệnh PowerShell độc hại?"
+      ]
+    },
+    {
+      "id": "cyber-middle-006",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "zero-trust-network-segmentation",
+      "question": "Phân đoạn mạng (Network Segmentation) và mô hình Zero Trust giúp ngăn chặn di chuyển ngang (Lateral Movement) trong mạng nội bộ như thế nào?",
+      "answerSample": "Mô hình bảo vệ chu vi truyền thống giả định mọi thứ bên trong mạng nội bộ đều đáng tin, nên khi một máy trạm bị nhiễm mã độc, kẻ tấn công dễ dàng quét sang máy chủ cơ sở dữ liệu hay Domain Controller. Phân đoạn mạng tách vùng người dùng, vùng ứng dụng, vùng dữ liệu và vùng quản trị bằng chính sách kiểm soát lưu lượng đông-tây (east-west). Zero Trust đi xa hơn bằng nguyên tắc không mặc định tin cậy theo vị trí mạng: mọi yêu cầu đều phải xác thực danh tính người dùng và thiết bị (mTLS, MFA, kiểm tra trạng thái thiết bị), phân quyền tối thiểu theo từng dịch vụ và giám sát liên tục.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Giải quyết điểm yếu của mô hình tin cậy mạng nội bộ truyền thống",
+        "Kiểm soát lưu lượng east-west để chặn di chuyển ngang",
+        "Zero Trust dựa trên xác thực liên tục danh tính/thiết bị và truy cập theo từng ứng dụng"
+      ],
+      "redFlags": [
+        "Coi Zero Trust là tên một sản phẩm mua về cài xong là hoàn thành",
+        "Chỉ đặt firewall ở biên Internet mà để mạng nội bộ thông hoàn toàn"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/207/final"
+      ],
+      "evidencePrompts": [
+        "Trong mạng đã phân đoạn, vì sao vẫn cần kiểm soát lưu lượng chiều ra (egress filtering) từ vùng máy chủ cơ sở dữ liệu?"
+      ]
+    },
+    {
+      "id": "cyber-middle-007",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "forensic-triage-pcap-memory",
+      "question": "Khi nghi ngờ một máy chủ Linux sản xuất bị xâm nhập web shell và đánh cắp dữ liệu, bạn ưu tiên thu thập những bằng chứng nào theo thứ tự dễ bay hơi (Order of Volatility)?",
+      "answerSample": "Theo nguyên tắc thứ tự dễ bay hơi, tôi thu thập dữ liệu dễ mất nhất trước: bộ nhớ RAM (nếu cần phân tích mã độc không tệp), danh sách kết nối mạng đang mở, tiến trình đang chạy và tệp đang mở, sau đó mới tới tệp hệ thống, web root, lịch sử cron/systemd, khóa SSH authorized_keys và các bản log (web access/error log, auth log, auditd). Trong quá trình thu thập, tôi lưu bằng chứng ra thiết bị hoặc vùng lưu trữ tách biệt, tính mã băm SHA-256 cho từng gói bằng chứng và ghi nhật ký thao tác (chain of custody) để bảo đảm tính toàn vẹn khi điều tra.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Tuân thủ thứ tự dễ bay hơi: RAM/kết nối/tiến trình trước rồi mới tới disk và log",
+        "Kiểm tra các vị trí persistence phổ biến trên Linux (cron, systemd, SSH keys, web root)",
+        "Bảo toàn tính toàn vẹn bằng chứng bằng hash và ghi chép thao tác"
+      ],
+      "redFlags": [
+        "Khởi động lại máy chủ trước khi thu thập trạng thái tiến trình và kết nối mạng",
+        "Ghi đè dữ liệu điều tra trực tiếp lên phân vùng đang bị xâm nhập"
+      ],
+      "referenceUrls": [
+        "https://datatracker.ietf.org/doc/html/rfc3227"
+      ],
+      "evidencePrompts": [
+        "Vì sao nên đọc access log ở lớp reverse proxy/load balancer bên ngoài song song với log cục bộ trên máy chủ bị nghi xâm nhập?"
+      ]
+    },
+    {
+      "id": "cyber-middle-008",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "container-kubernetes-security",
+      "question": "Những rủi ro bảo mật chính khi triển khai ứng dụng bằng Docker/Kubernetes là gì và bạn gia cố container ở những lớp nào?",
+      "answerSample": "Các rủi ro lớn gồm chạy container bằng quyền root hoặc cờ privileged dễ dẫn tới thoát khỏi container (container escape), dùng base image lớn chứa nhiều lỗ hổng chưa vá, gắn nhầm Docker socket vào container, lưu secret trực tiếp trong image và thiếu NetworkPolicy khiến pod nào cũng gọi được dịch vụ nhạy cảm. Tôi gia cố theo nhiều lớp: dùng minimal/distroless image quét lỗ hổng trong CI, chạy non-root với read-only root filesystem và bỏ Linux capabilities thừa, thiết lập RBAC tối thiểu, áp dụng Pod Security Standards, cấu hình NetworkPolicy và giám sát hành vi runtime.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Tránh privileged/root, giảm bề mặt tấn công bằng minimal image và drop capabilities",
+        "Tách biệt secret khỏi image và kiểm soát RBAC/NetworkPolicy trong cluster",
+        "Phòng thủ đa lớp từ build time (image scan) đến runtime monitoring"
+      ],
+      "redFlags": [
+        "Coi container là ranh giới cách ly bảo mật hoàn toàn tương đương máy ảo",
+        "Mount /var/run/docker.sock hoặc cấp cluster-admin cho pod ứng dụng"
+      ],
+      "referenceUrls": [
+        "https://kubernetes.io/docs/concepts/security/overview/"
+      ],
+      "evidencePrompts": [
+        "Nếu một pod ứng dụng chạy với quyền root và mount thư mục host /etc, kẻ tấn công có thể làm gì khi khai thác được RCE trong ứng dụng?"
+      ]
+    },
+    {
+      "id": "cyber-middle-009",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "ransomware-containment-recovery",
+      "question": "Phát hiện dấu hiệu mã hóa tệp hàng loạt (ransomware) lan rộng trên nhiều máy trong mạng nội bộ. Bạn phối hợp ngăn chặn và khôi phục an toàn như thế nào?",
+      "answerSample": "Ưu tiên tức thì là kích hoạt kế hoạch ứng cứu sự cố, cô lập các phân đoạn mạng/máy bị ảnh hưởng và vô hiệu hóa các tài khoản đặc quyền nghi bị chiếm dụng (chẳng hạn đặt lại mật khẩu tài khoản admin, kiểm tra khóa krbtgt nếu AD bị ảnh hưởng) để cắt đường lây lan qua SMB/RDP/GPO. Đồng thời tôi kiểm tra ngay tình trạng bản sao lưu ngoại tuyến/bất biến (immutable backups) để tránh kẻ tấn công phá hủy backup. Trước khi khôi phục, phải xác định điểm xâm nhập ban đầu và loại bỏ toàn bộ backdoor, sau đó dựng lại hệ thống trên môi trường sạch, vá lỗ hổng gốc và tăng cường giám sát khi mở lại dịch vụ từng bước.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Cắt đường lây lan (cô lập mạng, khóa tài khoản bị chiếm, chặn SMB/RDP bất thường)",
+        "Bảo vệ và kiểm tra tính toàn vẹn của bản sao lưu bất biến/ngoại tuyến",
+        "Không khôi phục trước khi xác định điểm xâm nhập gốc và làm sạch môi trường"
+      ],
+      "redFlags": [
+        "Khôi phục ngay từ backup lên cùng mạng chưa được làm sạch khiến bị mã hóa lần hai",
+        "Tự ý thương lượng hoặc trả tiền chuộc mà không qua lãnh đạo và pháp lý"
+      ],
+      "referenceUrls": [
+        "https://www.cisa.gov/stopransomware/ransomware-guide"
+      ],
+      "evidencePrompts": [
+        "Vì sao việc kiểm tra bản sao lưu có bị dính mã độc nằm sẵn từ trước ngày bùng phát là bước bắt buộc trước khi phục hồi?"
+      ]
+    },
+    {
+      "id": "cyber-middle-010",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "secrets-management-rotation",
+      "question": "Một API key hoặc khóa bí mật kết nối cơ sở dữ liệu bị lộ lên kho mã nguồn Git. Bạn xử lý sự cố này theo quy trình nào và thiết kế quản lý bí mật ra sao để không lặp lại?",
+      "answerSample": "Ngay khi phát hiện, tôi coi khóa đó đã bị xâm phạm hoàn toàn: tiến hành thu hồi (revoke) và xoay vòng (rotate) khóa mới ngay lập tức, đồng thời rà soát audit log của dịch vụ liên quan trong khoảng thời gian khóa bị lộ để xem có truy cập trái phép nào không. Việc xóa commit hay force-push lịch sử Git chỉ là bước dọn dẹp phụ vì bot thường quét được bí mật trong vài giây sau khi push. Về lâu dài, tôi đưa bí mật vào hệ thống Secrets Manager (như Vault/AWS Secrets Manager) có cơ chế xoay vòng tự động, kiểm soát truy cập theo IAM và bật secret scanning + push protection trên repo.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Thu hồi và xoay vòng bí mật ngay lập tức — không chỉ xóa commit Git",
+        "Kiểm tra log sử dụng để xác định khóa đã bị lợi dụng hay chưa",
+        "Phòng tái diễn bằng Secrets Manager và push protection/secret scanning"
+      ],
+      "redFlags": [
+        "Nghĩ rằng xóa dòng mật khẩu ở commit mới hoặc xóa nhánh Git là đã an toàn",
+        "Bỏ qua bước kiểm tra log truy cập trái phép trong lúc khóa bị lộ"
+      ],
+      "referenceUrls": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+      ],
+      "evidencePrompts": [
+        "Nếu repo là private nhưng có hàng chục tài khoản hoặc token CI truy cập, vì sao vẫn bắt buộc phải rotate khóa bị commit nhầm?"
+      ]
+    },
+    {
+      "id": "cyber-middle-011",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "pentest-scoping-reporting",
+      "question": "Khi viết báo cáo kiểm thử xâm nhập (pentest report) cho cả đội kỹ thuật và quản lý, bạn cấu trúc nội dung thế nào để các lỗ hổng thực sự được sửa triệt để?",
+      "answerSample": "Báo cáo nên có hai lớp rõ ràng: phần tóm tắt điều hành (Executive Summary) cho quản lý nêu phạm vi, rủi ro kinh doanh cốt lõi, điểm mạnh và bức tranh ưu tiên khắc phục mà không sa vào chi tiết gói tin; phần kỹ thuật chi tiết cho đội phát triển gồm mô tả nguyên nhân gốc, điều kiện khai thác, từng bước tái hiện an toàn (PoC), bằng chứng đã che thông tin nhạy cảm thừa, đánh giá tác động thực tế theo bối cảnh hệ thống và khuyến nghị sửa lỗi cụ thể kèm ví dụ mã/cấu hình. Sau khi đội dev vá, tôi lên lịch retest để xác nhận lỗi đã đóng hoàn toàn và không phát sinh biến thể tương tự.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Tách bạch phần quản lý (rủi ro kinh doanh) và phần kỹ thuật (PoC tái hiện, nguyên nhân gốc, cách vá cụ thể)",
+        "Đánh giá mức độ nghiêm trọng theo bối cảnh thực tế thay vì copy mặc định từ tool",
+        "Có bước retest xác minh sau khi khắc phục"
+      ],
+      "redFlags": [
+        "Xuất nguyên báo cáo thô từ máy quét tự động thiếu bước tái hiện và hướng sửa",
+        "Đưa dữ liệu nhạy cảm thật của khách hàng không cần thiết vào báo cáo"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/www-project-web-security-testing-guide/"
+      ],
+      "evidencePrompts": [
+        "Nếu một lỗ hổng mức Medium kết hợp với một lỗi mức Low tạo thành chuỗi chiếm tài khoản admin, bạn trình bày rủi ro chuỗi khai thác đó thế nào?"
+      ]
+    },
+    {
+      "id": "cyber-middle-012",
+      "industry": "cybersecurity",
+      "level": "middle",
+      "topic": "cross-team-remediation-story",
+      "question": "Kể về một sự cố bảo mật hoặc đợt rà soát lỗ hổng phức tạp mà bạn phải phối hợp nhiều nhóm (dev, hạ tầng, vận hành) để xử lý dứt điểm.",
+      "answerSample": "Tôi mô tả bối cảnh cụ thể từ trải nghiệm thật: phạm vi hệ thống, vai trò trực tiếp của tôi trong việc điều tra hoặc xác minh rủi ro, cách tôi phân chia đầu việc và thống nhất tiêu chí ưu tiên với đội dev và hạ tầng, các trở ngại phát sinh (như tránh downtime hoặc thay đổi cấu hình ảnh hưởng người dùng) và kết quả kiểm chứng được sau khi hoàn tất. Tôi chỉ nêu dữ kiện, công cụ và kết quả mà bản thân thực sự tham gia.",
+      "answerType": "behavioral",
+      "keyPoints": [
+        "Nêu rõ bối cảnh, trách nhiệm cá nhân và cách điều phối đa nhóm",
+        "Cho thấy khả năng cân bằng giữa yêu cầu an toàn và vận hành ổn định",
+        "Có bằng chứng xác minh kết quả thực tế và bài học cải tiến quy trình"
+      ],
+      "redFlags": [
+        "Nhận công của cả nhóm thành việc cá nhân hoặc bịa số liệu thiệt hại ngăn chặn được",
+        "Trả lời chung chung không có hành động cụ thể của bản thân"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/61/r2/final"
+      ],
+      "evidencePrompts": [
+        "Sau đợt xử lý đó, thay đổi quy trình hoặc cơ chế kiểm soát nào được giữ lại để lỗi tương tự không tái diễn?"
+      ]
+    },
+    {
+      "id": "cyber-senior-001",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "zero-trust-architecture-design",
+      "question": "Khi thiết kế kiến trúc bảo mật cho hệ thống microservices đa vùng xử lý dữ liệu nhạy cảm, bạn áp dụng phòng thủ theo chiều sâu và Zero Trust ở từng lớp như thế nào?",
+      "answerSample": "Tôi thiết kế theo từng lớp độc lập để một điểm vỡ không kéo sập toàn hệ thống: ở biên dùng WAF, rate limiting và bảo vệ DDoS; ở lớp định danh áp dụng OAuth2/OIDC với token ngắn hạn và kiểm tra phân quyền tập trung kết hợp kiểm quyền cấp tài nguyên trong từng service; ở lớp giao tiếp nội bộ dùng service mesh với mTLS, định danh workload (như SPIFFE) và chính sách allowlist service-to-service; ở lớp dữ liệu áp dụng mã hóa khi truyền và khi lưu với quản lý khóa KMS tách biệt quyền quản trị hạ tầng khỏi quyền đọc dữ liệu; đi kèm telemetry và audit log chống sửa đổi để phát hiện bất thường.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Thiết kế phòng thủ đa lớp độc lập: biên, định danh, giao tiếp service-to-service (mTLS), dữ liệu (KMS), giám sát",
+        "Tách biệt quyền quản trị hạ tầng và quyền truy cập dữ liệu nhạy cảm",
+        "Xét đánh đổi về độ trễ, độ phức tạp vận hành và khả năng phục hồi khi triển khai"
+      ],
+      "redFlags": [
+        "Chỉ tập trung bảo vệ API Gateway mà bỏ ngỏ giao tiếp nội bộ giữa các microservices",
+        "Thiết kế kiến trúc phức tạp không thể vận hành hoặc không có phương án xoay vòng chứng chỉ/khóa"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/207/final"
+      ],
+      "evidencePrompts": [
+        "Nếu một microservice ít quan trọng bị chiếm quyền qua lỗ hổng thư viện, ranh giới nào trong thiết kế của bạn ngăn nó đọc dữ liệu từ service thanh toán?"
+      ]
+    },
+    {
+      "id": "cyber-senior-002",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "hypothesis-threat-hunting",
+      "question": "Bạn xây dựng và thực hiện một chiến dịch Threat Hunting theo giả thuyết (hypothesis-driven) như thế nào để tìm mối đe dọa ẩn mà cảnh báo SIEM chưa bắt được?",
+      "answerSample": "Tôi bắt đầu bằng một giả thuyết cụ thể xuất phát từ tình báo mối đe dọa ngành, kỹ thuật MITRE ATT&CK có xác suất cao với hạ tầng tổ chức hoặc điểm mù phát hiện hiện có — ví dụ kẻ tấn công lạm dụng công cụ quản trị hợp pháp (LOLBins) hoặc tạo kênh C2 qua DNS/HTTPS dài hạn. Tiếp đó tôi kiểm tra độ phủ telemetry cần thiết, truy vấn và tìm bất thường theo tần suất hiếm (stacking/outlier analysis) trên dữ liệu endpoint, mạng và xác thực. Kết quả của mỗi đợt hunt không chỉ là phát hiện xâm nhập mà còn là đầu ra cụ thể: viết thêm rule phát hiện tự động, vá khoảng trống telemetry hoặc gia cố cấu hình giảm bề mặt tấn công.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Xuất phát từ giả thuyết dựa trên bối cảnh tổ chức, threat intel và ATT&CK thay vì dò ngẫu nhiên",
+        "Kết hợp kiểm tra khoảng trống telemetry và phân tích bất thường (outlier/stacking)",
+        "Chuyển hóa kết quả hunt thành detection rule mới và cải thiện phòng thủ lâu dài"
+      ],
+      "redFlags": [
+        "Coi threat hunting chỉ là xem lại các cảnh báo SIEM có sẵn",
+        "Chạy hunt xong không ghi nhận telemetry gaps hay tự động hóa phát hiện"
+      ],
+      "referenceUrls": [
+        "https://attack.mitre.org/"
+      ],
+      "evidencePrompts": [
+        "Khi một đợt threat hunt không phát hiện kẻ tấn công nào, những đầu ra giá trị nào chứng minh đợt hunt vẫn thành công?"
+      ]
+    },
+    {
+      "id": "cyber-senior-003",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "supply-chain-sbom-security",
+      "question": "Làm thế nào để kiểm soát rủi ro chuỗi cung ứng phần mềm (Software Supply Chain) trong quy trình build, quản lý phụ thuộc bên thứ ba và phát hành sản phẩm?",
+      "answerSample": "Tôi kiểm soát xuyên suốt từ mã nguồn đến artifact triển khai: cố định phiên bản phụ thuộc bằng lockfile/hash và dùng kho nội bộ (artifact registry) có kiểm duyệt để giảm rủi ro dependency confusion hoặc gói độc hại; sinh SBOM (CycloneDX/SPDX) trong CI để biết chính xác dịch vụ nào dùng thư viện nào khi có sự cố kiểu zero-day; bảo vệ hạ tầng CI/CD bằng runner tách biệt, quyền token tối thiểu và yêu cầu ký duyệt mã nguồn (branch protection, code review); ký artifact và kiểm chứng nguồn gốc (provenance như SLSA/Sigstore) trước khi cho phép triển khai lên production.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Kiểm soát phụ thuộc (lockfile, internal mirror, chống dependency confusion) và sinh SBOM",
+        "Gia cố môi trường build CI/CD (ephemeral runner, least privilege, branch protection)",
+        "Ký và xác minh nguồn gốc artifact trước khi triển khai (SLSA/provenance)"
+      ],
+      "redFlags": [
+        "Chỉ quét CVE định kỳ mà bỏ qua bảo vệ pipeline CI/CD và tài khoản phát hành",
+        "Tin rằng dự án mã nguồn mở phổ biến thì mặc định an toàn"
+      ],
+      "referenceUrls": [
+        "https://slsa.dev/spec/v1.0/"
+      ],
+      "evidencePrompts": [
+        "Khi một lỗ hổng nghiêm trọng mới công bố trong thư viện mã nguồn mở, SBOM giúp rút ngắn thời gian phản ứng ở bước nào?"
+      ]
+    },
+    {
+      "id": "cyber-senior-004",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "cryptography-misuse-review",
+      "question": "Khi review thiết kế sử dụng mật mã trong ứng dụng doanh nghiệp, những sai lầm triển khai mật mã phổ biến nào dễ gây mất an toàn dù dùng thuật toán chuẩn?",
+      "answerSample": "Phần lớn lỗi không nằm ở việc chọn AES hay RSA mà ở cách dùng: dùng chế độ ECB làm lộ cấu trúc dữ liệu, tái sử dụng nonce/IV với AES-GCM hoặc CTR làm mất hoàn toàn tính bí mật và toàn vẹn, tự ghép mã hóa không có xác thực (thiếu AEAD/MAC dễ bị padding oracle hoặc sửa đổi bản mã), dùng bộ sinh số ngẫu nhiên không an toàn mật mã cho khóa/token, so sánh chữ ký/HMAC không hằng thời gian (timing attack), hoặc cất khóa cứng trong mã nguồn và không có kế hoạch xoay vòng khóa. Tôi ưu tiên thư viện cấp cao an toàn mặc định như libsodium/Tink/KMS thay vì tự lắp ghép mật mã nguyên thủy.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Chỉ rõ lỗi triển khai thực tế: ECB, tái dùng nonce/IV, thiếu xác thực bản mã (AEAD), PRNG yếu, timing attack",
+        "Nhấn mạnh quản lý vòng đời và xoay vòng khóa qua KMS/HSM",
+        "Ưu tiên thư viện mật mã chuẩn cấp cao, không tự sáng chế thuật toán"
+      ],
+      "redFlags": [
+        "Đề xuất tự viết thuật toán mã hóa riêng để bảo mật hơn",
+        "Chỉ kiểm tra tên thuật toán \"AES-256\" mà bỏ qua mode, IV và quản lý khóa"
+      ],
+      "referenceUrls": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html"
+      ],
+      "evidencePrompts": [
+        "Điều gì xảy ra nếu cùng một khóa và cùng một nonce được dùng để mã hóa hai thông điệp khác nhau bằng AES-GCM?"
+      ]
+    },
+    {
+      "id": "cyber-senior-005",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "active-directory-tiering-identity",
+      "question": "Để ngăn kẻ tấn công chiếm toàn bộ doanh nghiệp từ một máy trạm bị nhiễm trong Active Directory hoặc môi trường định danh lai (Hybrid AD/Entra ID), bạn thiết kế mô hình phân tầng đặc quyền như thế nào?",
+      "answerSample": "Tôi áp dụng mô hình phân tầng quản trị (Tiering / Enterprise Access Model): tách hoàn toàn tài khoản và máy trạm quản trị Tier 0 (Domain Controller, Identity Sync, PKI, quản trị cloud tenant) khỏi Tier 1 (máy chủ ứng dụng) và Tier 2 (máy trạm người dùng). Tài khoản cấp cao tuyệt đối không đăng nhập vào máy cấp thấp hơn để tránh rò thông tin xác thực trong bộ nhớ; áp dụng Privileged Access Workstations (PAW), cấp quyền đúng lúc (Just-In-Time) kèm MFA chống phishing (FIDO2), chặn quyền local admin dùng chung bằng LAPS và giám sát chặt các đường leo thang đặc quyền (như ACL abuse, ADCS misconfiguration, đồng bộ Azure AD Connect).",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Áp dụng phân tầng Tier 0/1/2 ngăn rò thông tin xác thực xuống máy cấp thấp hơn",
+        "Kết hợp JIT/PIM, MFA chống phishing, PAW và LAPS loại bỏ mật khẩu local admin dùng chung",
+        "Kiểm soát các đường tấn công đặc thù như ACL/ADCS và cầu nối Hybrid Identity"
+      ],
+      "redFlags": [
+        "Dùng tài khoản Domain Admin đăng nhập trực tiếp lên máy nhân viên để hỗ trợ kỹ thuật",
+        "Tập trung gia cố mật khẩu nhưng bỏ qua đường leo thang qua quyền ACL hoặc ADCS"
+      ],
+      "referenceUrls": [
+        "https://learn.microsoft.com/en-us/security/privileged-access-management/privileged-access-access-model"
+      ],
+      "evidencePrompts": [
+        "Vì sao máy chủ chạy dịch vụ đồng bộ định danh lên cloud phải được xếp vào Tier 0 tương đương Domain Controller?"
+      ]
+    },
+    {
+      "id": "cyber-senior-006",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "cloud-multi-account-guardrails",
+      "question": "Khi tổ chức mở rộng nhiều đội phát triển tự triển khai hạ tầng trên cloud, bạn thiết kế cơ chế bảo vệ đa tài khoản (Multi-Account Guardrails) thế nào để vừa linh hoạt vừa an toàn?",
+      "answerSample": "Tôi tách môi trường và khối lượng công việc theo tài khoản/project riêng (security/log archive, shared network, prod, staging, dev) thay vì gom chung một tài khoản. Trên tầng tổ chức, tôi áp dụng preventive guardrails (như SCP/Organization Policies) chặn các hành động rủi ro cao như tắt audit log, mở public storage hay tạo vùng không được phép; cung cấp Infrastructure-as-Code mẫu đã gia cố sẵn (paved roads) để đội dev dùng nhanh và đúng chuẩn; song song chạy detective guardrails (CSPM/config rules) phát hiện sai lệch cấu hình và tự động cảnh báo hoặc khắc phục các lỗi rõ ràng.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Cô lập blast radius bằng kiến trúc multi-account/project tách biệt log và security",
+        "Kết hợp preventive guardrails (SCP/Org Policy), paved-road IaC và detective controls",
+        "Cân bằng quyền tự chủ của đội dev với hàng rào an toàn không thể vô tình tắt"
+      ],
+      "redFlags": [
+        "Cho mọi đội phát triển dùng chung một tài khoản cloud production",
+        "Bắt mọi thay đổi hạ tầng nhỏ phải gửi ticket chờ đội bảo mật duyệt thủ công"
+      ],
+      "referenceUrls": [
+        "https://docs.aws.amazon.com/whitepapers/latest/organizing-your-aws-environment/organizing-your-aws-environment.html"
+      ],
+      "evidencePrompts": [
+        "Làm sao bảo đảm kể cả khi tài khoản quản trị của một account sản phẩm bị chiếm, kẻ tấn công vẫn không thể xóa audit log?"
+      ]
+    },
+    {
+      "id": "cyber-senior-007",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "purple-team-detection-validation",
+      "question": "Bạn tổ chức hoạt động Purple Team giữa nhóm tấn công (Red/Pentest) và nhóm phòng thủ (Blue/SOC) như thế nào để đo lường và cải thiện thực chất khả năng phát hiện?",
+      "answerSample": "Tôi chọn một tập kỹ thuật tấn công thực tế ưu tiên theo mô hình mối đe dọa của tổ chức (theo MITRE ATT&CK), thống nhất phạm vi an toàn và chạy từng bước minh bạch giữa Red và Blue. Với mỗi kỹ thuật, hai bên ghi nhận rõ: hành vi có bị ngăn chặn không, telemetry có được ghi vào SIEM/EDR không, cảnh báo có kích hoạt không và thời gian phát hiện là bao lâu. Từ kết quả đó, hai nhóm lập tức tinh chỉnh log, viết hoặc sửa rule phát hiện rồi chạy kiểm chứng lại ngay trong phiên. Thước đo thành công là mức tăng độ phủ phát hiện đã kiểm chứng và giảm thời gian phát hiện, không phải thắng thua giữa hai phe.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Tập trung hợp tác minh bạch để đo telemetry, ngăn chặn và phát hiện trên từng kỹ thuật ATT&CK",
+        "Sửa khoảng trống và kiểm chứng lại ngay vòng lặp",
+        "Đo bằng chỉ số độ phủ phát hiện và giảm điểm mù thay vì báo cáo hình thức"
+      ],
+      "redFlags": [
+        "Tổ chức Red Team hoàn toàn tách biệt rồi ném báo cáo dài không giúp Blue Team cải thiện telemetry",
+        "Chạy mô phỏng trên môi trường thử khác biệt hoàn toàn với cấu hình log thật"
+      ],
+      "referenceUrls": [
+        "https://attack.mitre.org/"
+      ],
+      "evidencePrompts": [
+        "Nếu một kỹ thuật đã có log trong EDR nhưng không tạo cảnh báo trên SIEM, khoảng trống nằm ở khâu nào?"
+      ]
+    },
+    {
+      "id": "cyber-senior-008",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "security-risk-vs-product-velocity",
+      "question": "Trước ngày ra mắt một tính năng quan trọng mang lại doanh thu lớn, bạn phát hiện lỗ hổng mức High nhưng sửa triệt để cần 2 tuần. Bạn phân tích đánh đổi và đề xuất quyết định ra sao?",
+      "answerSample": "Tôi không chỉ nói \"chặn ra mắt\" hay \"cho qua\" theo cảm tính mà định lượng rõ rủi ro: điều kiện khai thác là gì (có cần xác thực hay mở công khai không), dữ liệu/tài sản nào bị ảnh hưởng, khả năng phát hiện nếu bị khai thác và rủi ro pháp lý/tuân thủ. Sau đó tôi đưa ra các phương án cụ thể cho chủ sở hữu rủi ro (business/engineering owner): (1) trì hoãn ra mắt nếu tác động không thể chấp nhận và không có biện pháp bù đắp; hoặc (2) ra mắt giới hạn (feature flag/nhóm khách hàng hẹp) kết hợp compensating controls rõ ràng (WAF rule, giới hạn quyền, giám sát cảnh báo chặt) cùng văn bản chấp nhận rủi ro có thời hạn (time-bound risk exception) và cam kết lịch sửa triệt để.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Phân tích điều kiện khai thác, phạm vi tác động và khả năng kiểm soát bù đắp",
+        "Đề xuất các phương án rõ ràng thay vì chỉ chặn cứng hoặc nhượng bộ vô điều kiện",
+        "Ghi nhận risk acceptance có người chịu trách nhiệm và thời hạn đóng cụ thể"
+      ],
+      "redFlags": [
+        "Đồng ý bỏ qua lỗi nghiêm trọng bằng lời nói mà không có kiểm soát bù đắp hay thời hạn vá",
+        "Cứng nhắc chặn mọi release mà không đánh giá ngữ cảnh rủi ro thực tế"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/37/r2/final"
+      ],
+      "evidencePrompts": [
+        "Khi nào một lỗ hổng High có thể dùng compensating control tạm thời, và khi nào bắt buộc phải dừng phát hành?"
+      ]
+    },
+    {
+      "id": "cyber-senior-009",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "compliance-vs-real-security",
+      "question": "Sự khác biệt giữa đạt chứng chỉ tuân thủ (như ISO 27001, SOC 2, PCI-DSS) và năng lực bảo mật thực chất là gì? Làm sao tận dụng compliance mà không rơi vào \"bảo mật trên giấy\"?",
+      "answerSample": "Tuân thủ (compliance) xác nhận tổ chức đáp ứng một tập yêu cầu tối thiểu tại thời điểm đánh giá, là nền tảng quản trị và tạo niềm tin với khách hàng, nhưng không tự bảo đảm hệ thống an toàn trước kỹ thuật tấn công thực tế nếu kiểm soát chỉ làm cho đủ hồ sơ. Để tránh bảo mật trên giấy, tôi gắn các kiểm soát tuân thủ trực tiếp vào tự động hóa kỹ thuật hằng ngày (kiểm tra cấu hình cloud tự động, thu thập bằng chứng từ CI/CD, diễn tập IR và kiểm thử xâm nhập thật) thay vì gom ảnh chụp màn hình thủ công trước ngày audit. Nhờ vậy bằng chứng tuân thủ là sản phẩm phụ tự nhiên của vận hành bảo mật thực chất.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Phân biệt mục tiêu tối thiểu của compliance với năng lực chống chịu thực tế trước mối đe dọa",
+        "Tự động hóa kiểm soát liên tục (continuous control monitoring) thay vì đối phó theo kỳ audit",
+        "Kết hợp đánh giá thực chiến (pentest/IR drill) song song với khung tuân thủ"
+      ],
+      "redFlags": [
+        "Tin rằng đã đạt chứng chỉ ISO 27001/SOC 2 nghĩa là hệ thống không thể bị tấn công",
+        "Coi thường compliance và bỏ qua yêu cầu pháp lý/hợp đồng của khách hàng"
+      ],
+      "referenceUrls": [
+        "https://www.nist.gov/cyberframework"
+      ],
+      "evidencePrompts": [
+        "Cho một ví dụ về yêu cầu tuân thủ có thể đạt trên giấy nhưng vẫn thất bại khi gặp sự cố thật?"
+      ]
+    },
+    {
+      "id": "cyber-senior-010",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "incident-postmortem-systemic-fix",
+      "question": "Sau một sự cố bảo mật đã được khôi phục, bạn dẫn dắt buổi phân tích hậu sự cố (blameless post-mortem) thế nào để loại bỏ nguyên nhân hệ thống thay vì quy lỗi cá nhân?",
+      "answerSample": "Tôi tập trung xây dựng lại dòng thời gian dựa trên bằng chứng log (từ lúc xâm nhập, phát hiện, cô lập đến khôi phục) và đặt câu hỏi về hệ thống thay vì \"ai làm sai\": vì sao lỗ hổng hoặc cấu hình sai lọt qua quy trình review, vì sao cảnh báo mất bao lâu mới kích hoạt, và rào chắn nào thiếu khiến sai sót đơn lẻ gây ra tác động lớn. Từ đó tôi chốt các hạng mục hành động mang tính hệ thống có chủ sở hữu và hạn hoàn thành rõ ràng — như bổ sung guardrail tự động, cải thiện telemetry, cập nhật playbook và diễn tập lại để kiểm chứng cải tiến.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Tập trung vào nguyên nhân hệ thống và dòng thời gian bằng chứng, không đổ lỗi cá nhân",
+        "Đo đạc khoảng trống ở cả 3 khâu: phòng ngừa, phát hiện (MTTD) và ứng cứu (MTTR)",
+        "Tạo hành động khắc phục có chủ sở hữu, thời hạn và kiểm chứng lại"
+      ],
+      "redFlags": [
+        "Kết luận nguyên nhân gốc là \"do nhân viên bất cẩn\" và chỉ gửi email nhắc nhở",
+        "Viết báo cáo xong không theo dõi hoàn thành các hạng mục cải thiện"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/61/r2/final"
+      ],
+      "evidencePrompts": [
+        "Nếu một nhân viên bấm vào email phishing dẫn đến chiếm tài khoản, những rào chắn hệ thống nào cần cải thiện thay vì chỉ kỷ luật nhân viên?"
+      ]
+    },
+    {
+      "id": "cyber-senior-011",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "red-team-assumed-breach",
+      "question": "So với kiểm thử xâm nhập truyền thống, diễn tập Red Team theo giả định đã bị xâm nhập (Assumed Breach) mang lại giá trị gì khác biệt và cần kiểm soát an toàn thế nào?",
+      "answerSample": "Pentest truyền thống thường tìm càng nhiều lỗ hổng càng tốt trong một phạm vi ứng dụng/hạ tầng hẹp. Assumed Breach Red Team giả định kẻ tấn công đã vượt qua lớp biên (ví dụ có phiên trên một máy trạm nhân viên) để kiểm chứng thực tế chuỗi tấn công bên trong: khả năng di chuyển ngang, leo thang đặc quyền, tiếp cận tài sản mục tiêu và năng lực phát hiện/phản ứng của đội Blue Team. Để đảm bảo an toàn, cần thống nhất chặt Rules of Engagement, mục tiêu giả lập (flags), kênh liên lạc khẩn cấp (white cell/deconfliction), không phá hoại dữ liệu thật và chuẩn bị kế hoạch dọn sạch mọi dấu vết diễn tập sau khi kết thúc.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Phân biệt mục tiêu tìm lỗ hổng rộng của pentest với kiểm chứng chuỗi tấn công + năng lực phát hiện của Red Team",
+        "Hiểu giá trị của kịch bản Assumed Breach tiết kiệm thời gian vượt biên để đo phòng thủ nội bộ",
+        "Nêu rõ Rules of Engagement, white cell và quy trình dọn dẹp an toàn"
+      ],
+      "redFlags": [
+        "Chạy tấn công bí mật không có Rules of Engagement hay người giám sát khẩn cấp (white cell)",
+        "Đánh đồng Red Team với chạy máy quét lỗ hổng tự động"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/115/final"
+      ],
+      "evidencePrompts": [
+        "Vì sao tổ chức chưa có giám sát log cơ bản hoặc SOC không nên vội thuê Red Team phức tạp trước khi làm nền tảng?"
+      ]
+    },
+    {
+      "id": "cyber-senior-012",
+      "industry": "cybersecurity",
+      "level": "senior",
+      "topic": "mentoring-security-engineers",
+      "question": "Kể về một lần bạn hướng dẫn một kỹ sư bảo mật hoặc chuyên viên SOC ít kinh nghiệm hơn xử lý một bài toán khó mà không làm thay họ.",
+      "answerSample": "Tôi kể lại tình huống có thật: vấn đề kỹ thuật hoặc điều tra cần giải quyết, cách tôi đặt câu hỏi gợi mở để họ tự lập giả thuyết, kiểm tra log hoặc tự tái hiện lỗ hổng thay vì đưa sẵn đáp án, cách tôi rà soát lại kết luận và cho phản hồi cụ thể để họ tự tin xử lý các ca tương tự về sau. Nếu chỉ làm trong quy mô dự án nhỏ hoặc cộng đồng, tôi nói rõ đúng phạm vi thực tế đó.",
+      "answerType": "behavioral",
+      "keyPoints": [
+        "Nêu cách hướng dẫn tư duy điều tra/phân tích thay vì làm thay",
+        "Có cơ chế kiểm tra an toàn để không gây rủi ro vận hành khi người mới thực hành",
+        "Thể hiện sự tiến bộ đo được hoặc kết quả thực tế của người được hướng dẫn"
+      ],
+      "redFlags": [
+        "Làm thay toàn bộ rồi nhận kết quả hướng dẫn",
+        "Bịa đặt quy mô đội nhóm hoặc sự kiện không có thật"
+      ],
+      "referenceUrls": [
+        "https://www.nist.gov/itl/applied-cybersecurity/nice"
+      ],
+      "evidencePrompts": [
+        "Làm sao bạn cân bằng giữa việc để thành viên mới tự điều tra và yêu cầu phản ứng nhanh khi có sự cố thật?"
+      ]
+    },
+    {
+      "id": "cyber-lead-001",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "security-roadmap-risk-based",
+      "question": "Khi tiếp nhận vai trò phụ trách an toàn thông tin cho một doanh nghiệp đang tăng trưởng nhanh nhưng ngân sách và nhân sự bảo mật còn hạn chế, bạn xây dựng lộ trình ưu tiên 6–12 tháng như thế nào?",
+      "answerSample": "Tôi bắt đầu bằng đánh giá nhanh hiện trạng tài sản trọng yếu (crown jewels), bề mặt tấn công ngoài Internet, cấu trúc định danh và khả năng phát hiện sự cố dựa trên khung chuẩn như NIST CSF. Trong 90 ngày đầu, tôi tập trung các kiểm soát nền tảng mang lại giảm rủi ro cao nhất với chi phí hợp lý: MFA chống phishing cho tài khoản quan trọng, quản lý bản vá cho hệ thống mở ra ngoài, kiểm soát truy cập cloud/AD, sao lưu bất biến và log cốt lõi cho phản ứng sự cố. Giai đoạn 6–12 tháng tiếp theo, tôi tự động hóa bảo mật trong SDLC/CI-CD, mở rộng độ phủ phát hiện và gắn các mốc lộ trình với chỉ số giảm rủi ro để lãnh đạo theo dõi minh bạch.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Đánh giá tài sản trọng yếu và khoảng trống rủi ro thực tế trước khi mua công cụ",
+        "Ưu tiên kiểm soát nền tảng tác động cao (Identity/MFA, Exposure, Backup, Logging) trong 90 ngày đầu",
+        "Lộ trình gắn với mục tiêu kinh doanh và nguồn lực thực tế"
+      ],
+      "redFlags": [
+        "Đề xuất mua hàng loạt công cụ đắt tiền trước khi nắm rõ tài sản và nhân lực vận hành",
+        "Cố triển khai mọi chuẩn bảo mật cùng lúc không có thứ tự ưu tiên"
+      ],
+      "referenceUrls": [
+        "https://www.nist.gov/cyberframework"
+      ],
+      "evidencePrompts": [
+        "Nếu lãnh đạo chỉ duyệt ngân sách cho 2 hạng mục trong quý đầu, bạn dùng tiêu chí nào để bảo vệ hai lựa chọn đó?"
+      ]
+    },
+    {
+      "id": "cyber-lead-002",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "soc-maturity-alert-fatigue",
+      "question": "Đội SOC đang bị quá tải cảnh báo (alert fatigue), tỷ lệ false positive cao và thời gian phản ứng kéo dài. Bạn cải tổ vận hành SOC theo hướng nào?",
+      "answerSample": "Tôi đo lường dữ liệu thực tế từ hệ thống ticket/SIEM: nhóm top 10 rule tạo nhiều cảnh báo nhiễu nhất, tỷ lệ true positive trên từng nguồn và thời gian xử lý trung bình (MTTD/MTTR). Tôi tạm dừng hoặc chuyển sang chế độ theo dõi các rule không tạo ra giá trị điều tra, thiết lập quy trình vòng phản hồi chặt giữa SOC analyst và detection engineer để tinh chỉnh rule liên tục. Song song, tôi chuẩn hóa playbook cho các kịch bản phổ biến, tự động hóa bước làm giàu thông tin (enrichment) trước khi đẩy cho con người và dành quỹ thời gian cố định cho đội cải tiến thay vì chỉ dập lửa thủ công.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Chẩn đoán bằng dữ liệu top noisy rules và tỷ lệ true/false positive",
+        "Thiết lập vòng lặp cải tiến detection engineering và loại bỏ rule vô ích",
+        "Tự động hóa enrichment/playbook và bảo vệ sức bền đội ngũ"
+      ],
+      "redFlags": [
+        "Ép KPI đóng càng nhiều cảnh báo càng tốt khiến analyst đóng ẩu bỏ sót tấn công thật",
+        "Chỉ xin tuyển thêm người trực ca mà không xử lý gốc rễ cảnh báo nhiễu"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/61/r2/final"
+      ],
+      "evidencePrompts": [
+        "Chỉ số nào cho thấy việc giảm số lượng cảnh báo thực sự cải thiện chất lượng SOC chứ không phải đang tắt nhầm phát hiện quan trọng?"
+      ]
+    },
+    {
+      "id": "cyber-lead-003",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "major-incident-command",
+      "question": "Trong một sự cố rò rỉ dữ liệu khách hàng quy mô lớn đang diễn ra, bạn tổ chức vai trò chỉ huy ứng cứu (Incident Commander) và phối hợp với kỹ thuật, pháp lý, truyền thông như thế nào?",
+      "answerSample": "Với vai trò Incident Commander, tôi tách bạch người chỉ huy điều phối khỏi người trực tiếp thao tác kỹ thuật để giữ cái nhìn toàn cục. Tôi lập kênh liên lạc và nhịp cập nhật định kỳ (cadence), phân công rõ đầu mối kỹ thuật (điều tra, cô lập, khôi phục), pháp lý/tuân thủ (đánh giá nghĩa vụ thông báo theo luật định), truyền thông/CSKH (thông điệp nhất quán, chỉ dựa trên sự thật đã xác minh) và ban lãnh đạo (quyết định đánh đổi ngừng dịch vụ). Mọi giả thuyết và hành động đều được ghi chép theo mốc thời gian rõ ràng, tránh phát ngôn sớm khi chưa xác minh phạm vi dữ liệu bị ảnh hưởng.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Tách vai trò chỉ huy điều phối khỏi xử lý kỹ thuật chi tiết",
+        "Phối hợp chặt đa chức năng: kỹ thuật, pháp lý, truyền thông và lãnh đạo theo nhịp cập nhật rõ ràng",
+        "Quản lý kỷ luật thông tin, chỉ phát ngôn dựa trên bằng chứng đã xác minh"
+      ],
+      "redFlags": [
+        "Trưởng nhóm lao vào gõ lệnh điều tra bỏ mặc điều phối đa phòng ban",
+        "Gửi thông báo ra ngoài với số liệu đoán mò hoặc che giấu sự cố với bộ phận pháp lý"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/61/r2/final"
+      ],
+      "evidencePrompts": [
+        "Khi đội kinh doanh yêu cầu mở lại hệ thống ngay nhưng đội điều tra chưa chắc đã đóng hết cửa hậu, bạn trình bày quyết định thế nào với lãnh đạo?"
+      ]
+    },
+    {
+      "id": "cyber-lead-004",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "executive-board-risk-reporting",
+      "question": "Bạn trình bày tình trạng an toàn thông tin và đề xuất ngân sách cho Ban Giám đốc (không chuyên kỹ thuật) như thế nào để họ hiểu đúng rủi ro và ra quyết định?",
+      "answerSample": "Tôi tránh đưa danh sách hàng nghìn CVE hay số gói tin tường lửa chặn được vì không giúp lãnh đạo ra quyết định. Thay vào đó tôi chuyển sang ngôn ngữ rủi ro kinh doanh: các kịch bản gián đoạn hoặc rò rỉ dữ liệu có khả năng cao nhất ảnh hưởng tới doanh thu, uy tín và nghĩa vụ pháp lý; mức độ sẵn sàng hiện tại của các kiểm soát cốt lõi (định danh, sao lưu khôi phục, độ phủ EDR, thời gian vá lỗ hổng nghiêm trọng); và mỗi khoản đầu tư đề xuất sẽ giảm rủi ro ở mức nào kèm phương án so sánh chi phí — lợi ích rõ ràng.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Dịch rủi ro kỹ thuật sang tác động kinh doanh, pháp lý và khả năng duy trì hoạt động",
+        "Dùng chỉ số hướng kết quả (thời gian vá Critical, tỷ lệ MFA, kết quả diễn tập khôi phục) thay vì vanity metrics",
+        "Đưa phương án đầu tư gắn với mức giảm rủi ro rõ ràng"
+      ],
+      "redFlags": [
+        "Trình bày toàn thuật ngữ kỹ thuật sâu hoặc dùng nỗi sợ hãi chung chung để xin ngân sách",
+        "Khoe \"tường lửa chặn 1 triệu request\" như bằng chứng hệ thống an toàn"
+      ],
+      "referenceUrls": [
+        "https://www.nist.gov/cyberframework"
+      ],
+      "evidencePrompts": [
+        "Vì sao \"tỷ lệ hệ thống quan trọng đã diễn tập khôi phục backup thành công trong 90 ngày\" hữu ích cho CEO hơn \"số cảnh báo SIEM trong tháng\"?"
+      ]
+    },
+    {
+      "id": "cyber-lead-005",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "security-champions-devsecops-culture",
+      "question": "Với tỷ lệ 1 kỹ sư bảo mật trên 30–50 lập trình viên, bạn mở rộng năng lực bảo mật bằng chương trình Security Champions và tự phục vụ (paved roads) như thế nào?",
+      "answerSample": "Đội bảo mật nhỏ không thể duyệt thủ công mọi tính năng, nên tôi xây dựng mô hình đòn bẩy: tạo sẵn thư viện/template chuẩn an toàn (xác thực, phân quyền, cấu hình cloud, CI checks) để con đường nhanh nhất của dev cũng là con đường an toàn nhất. Song song, tôi triển khai chương trình Security Champions — chọn thành viên tình nguyện có uy tín trong từng đội sản phẩm, đào tạo họ về threat modeling cơ bản và review bảo mật, cho họ kênh hỗ trợ ưu tiên từ đội bảo mật và thống nhất với quản lý kỹ thuật ghi nhận thời gian đóng góp đó trong đánh giá công việc thay vì bắt làm thêm không công.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Tạo paved roads/guardrails tự động để mở rộng quy mô thay vì làm nút cổ chai thủ công",
+        "Xây Security Champions có đào tạo, kênh hỗ trợ và được công nhận quỹ thời gian chính thức",
+        "Đo hiệu quả qua việc giảm lỗi lặp lại và thời gian tự xử lý ở đội sản phẩm"
+      ],
+      "redFlags": [
+        "Chỉ định ép buộc Security Champion mà không có đào tạo hay phân bổ thời gian từ quản lý",
+        "Đẩy toàn bộ trách nhiệm bảo mật sang dev mà không cung cấp công cụ và chuẩn rõ ràng"
+      ],
+      "referenceUrls": [
+        "https://owasp.org/www-project-security-culture/"
+      ],
+      "evidencePrompts": [
+        "Dấu hiệu nào cho thấy chương trình Security Champions đang hoạt động thực chất thay vì chỉ tồn tại trên danh sách?"
+      ]
+    },
+    {
+      "id": "cyber-lead-006",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "third-party-vendor-risk",
+      "question": "Doanh nghiệp tích hợp nhiều đối tác SaaS và nhà cung cấp bên thứ ba có quyền truy cập dữ liệu khách hàng. Bạn thiết kế quy trình quản trị rủi ro bên thứ ba (TPRM) thế nào cho thực tế?",
+      "answerSample": "Tôi phân tầng nhà cung cấp theo mức độ nhạy cảm dữ liệu và mức độ gắn kết hệ thống thay vì gửi cùng một bảng hỏi 300 câu cho mọi đối tác. Với nhà cung cấp mức rủi ro cao, tôi kiểm tra bằng chứng độc lập (SOC 2 Type II, ISO 27001, báo cáo pentest gần nhất), rà soát kiến trúc tích hợp (phân quyền API tối thiểu, hỗ trợ SSO/MFA, mã hóa, vị trí lưu dữ liệu) và đưa điều khoản bảo mật kèm cam kết thời gian thông báo sự cố vào hợp đồng. Định kỳ hoặc khi thay đổi phạm vi tích hợp, tôi rà soát lại quyền truy cập và có kế hoạch thu hồi quyền nhanh nếu nhà cung cấp gặp sự cố.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Phân tầng đánh giá nhà cung cấp theo mức độ dữ liệu và quyền truy cập",
+        "Kết hợp đánh giá kỹ thuật tích hợp (SSO, least-privilege API) với bằng chứng độc lập và điều khoản hợp đồng",
+        "Có cơ chế rà soát định kỳ và thu hồi quyền khi ngừng hợp tác hoặc bên thứ ba bị sự cố"
+      ],
+      "redFlags": [
+        "Chỉ gửi bảng hỏi Excel để đối tác tự tick \"Có\" rồi lưu kho không kiểm tra tích hợp thực tế",
+        "Không có quy trình thu hồi API token khi ngừng sử dụng nhà cung cấp"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/161/r1/final"
+      ],
+      "evidencePrompts": [
+        "Nếu một đối tác SaaS quan trọng thông báo họ vừa bị rò rỉ dữ liệu, bước đầu tiên bạn làm ở phía hệ thống mình là gì?"
+      ]
+    },
+    {
+      "id": "cyber-lead-007",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "bug-bounty-vdp-governance",
+      "question": "Khi nào doanh nghiệp nên triển khai Chính sách tiếp nhận báo cáo lỗ hổng (VDP) hoặc chương trình Bug Bounty, và bạn vận hành quy trình triage thế nào để giữ uy tín với nhà nghiên cứu?",
+      "answerSample": "Tôi luôn ưu tiên triển khai VDP (Vulnerability Disclosure Policy) trước để có kênh tiếp nhận hợp pháp, rõ phạm vi (security.txt, safe harbor) trước khi nghĩ tới Bug Bounty trả thưởng — chỉ nên mở Bug Bounty khi nội bộ đã giải quyết tốt các lỗi nền tảng và có đủ năng lực triage, vá lỗi đúng hạn. Trong vận hành, tôi đặt SLA phản hồi rõ ràng, xác minh nhanh tránh đóng oan báo cáo hợp lệ, phân loại mức độ minh bạch theo tác động thực tế, phối hợp đội dev vá gốc rễ (kèm kiểm tra các vị trí tương tự) và trao đổi tôn trọng với nhà nghiên cứu để xây dựng cộng đồng hỗ trợ tích cực.",
+      "answerType": "knowledge",
+      "keyPoints": [
+        "Làm VDP và nền tảng vá lỗi nội bộ vững trước khi mở Bug Bounty trả thưởng",
+        "Có phạm vi rõ ràng, safe harbor và SLA triage minh bạch",
+        "Sửa triệt để theo lớp lỗi (variant analysis) thay vì chỉ vá một endpoint được báo"
+      ],
+      "redFlags": [
+        "Mở Bug Bounty công khai khi chưa có đội triage và chưa vá lỗi cơ bản gây ngập báo cáo trùng lặp",
+        "Đe dọa pháp lý hoặc im lặng kéo dài với nhà nghiên cứu báo lỗi thiện chí"
+      ],
+      "referenceUrls": [
+        "https://www.cisa.gov/binding-operational-directive-20-01"
+      ],
+      "evidencePrompts": [
+        "Nếu nhận một báo cáo lỗ hổng nghiêm trọng nằm ngoài phạm vi thưởng nhưng ảnh hưởng thật tới hệ thống, bạn xử lý thế nào?"
+      ]
+    },
+    {
+      "id": "cyber-lead-008",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "security-budget-tradeoffs",
+      "question": "Bạn cần cắt giảm 20% chi phí vận hành công cụ bảo mật trong năm tới mà không làm suy giảm năng lực bảo vệ tài sản cốt lõi. Bạn rà soát và tái phân bổ ngân sách ra sao?",
+      "answerSample": "Tôi kiểm kê toàn bộ công cụ đang trả phí, đối chiếu mức độ sử dụng thực tế, tính năng chồng chéo và đóng góp cụ thể vào việc giảm rủi ro trên tài sản trọng yếu. Các khoản thường tối ưu được trước là loại bỏ công cụ trùng chức năng, điều chỉnh khối lượng log rác đẩy vào SIEM (lọc/định tuyến log ít giá trị bảo mật sang kho lưu trữ lạnh rẻ hơn mà vẫn giữ tuân thủ), tận dụng tính năng bảo mật sẵn có trong nền tảng cloud/identity đang trả tiền và đàm phán lại gói giấy phép theo nhu cầu thật. Tôi kiên quyết không cắt các kiểm soát cốt lõi như bảo vệ định danh, EDR trên tài sản quan trọng hay sao lưu khôi phục mà không có đánh giá chấp nhận rủi ro từ lãnh đạo.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Đánh giá hiệu quả từng công cụ dựa trên độ phủ thực tế và chồng chéo tính năng",
+        "Tối ưu chi phí dữ liệu log SIEM thông minh thay vì tắt nguồn log quan trọng",
+        "Bảo vệ các kiểm soát nền tảng cốt lõi và minh bạch mọi đánh đổi rủi ro với lãnh đạo"
+      ],
+      "redFlags": [
+        "Cắt đều 20% mọi hạng mục một cách cơ học hoặc tắt log sự cố quan trọng",
+        "Giữ các công cụ đắt tiền không ai vận hành vì sợ thay đổi"
+      ],
+      "referenceUrls": [
+        "https://www.nist.gov/cyberframework"
+      ],
+      "evidencePrompts": [
+        "Làm sao phân biệt dữ liệu log nào cần đưa vào tầng phân tích nóng trên SIEM và log nào chỉ cần lưu trữ lạnh phục vụ điều tra khi cần?"
+      ]
+    },
+    {
+      "id": "cyber-lead-009",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "security-team-hiring-structure",
+      "question": "Khi xây dựng đội ngũ an toàn thông tin từ 3 người lên 10 người cho một công ty công nghệ, bạn phân bổ các vai trò chuyên môn và tiêu chí tuyển dụng như thế nào?",
+      "answerSample": "Ở quy mô nhỏ, tôi ưu tiên các kỹ sư đa năng có nền tảng vững về hệ thống/phát triển phần mềm để xây tự động hóa ngay từ đầu; khi tăng lên 10 người, tôi tách dần theo các mảng tạo giá trị rõ ràng phù hợp mô hình kinh doanh như AppSec/Product Security, Cloud & Infrastructure Security, Detection & Response (SecOps) và GRC tinh gọn. Khi tuyển dụng, tôi đánh giá năng lực tư duy phân tích rủi ro, khả năng giao tiếp cộng tác với kỹ sư phần mềm và kỹ năng giải quyết bài toán thực tế hơn là chỉ đếm số lượng chứng chỉ. Tôi cũng xây lộ trình phát triển rõ để giữ chân nhân sự và tránh phụ thuộc tri thức vào một cá nhân duy nhất.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Cơ cấu đội ngũ phù hợp giai đoạn phát triển và kiến trúc sản phẩm của công ty",
+        "Ưu tiên kỹ năng kỹ thuật thực chất, tự động hóa và khả năng cộng tác liên nhóm",
+        "Giảm rủi ro phụ thuộc một cá nhân (bus factor) và xây lộ trình nghề nghiệp"
+      ],
+      "redFlags": [
+        "Tuyển chuyên gia quá hẹp không phù hợp giai đoạn công ty hoặc chỉ nhìn bằng cấp/chứng chỉ",
+        "Tập trung toàn bộ vào kiểm duyệt thủ công thay vì kỹ năng kỹ thuật và tự động hóa"
+      ],
+      "referenceUrls": [
+        "https://www.nist.gov/itl/applied-cybersecurity/nice"
+      ],
+      "evidencePrompts": [
+        "Giữa một ứng viên nhiều chứng chỉ nhưng khó cộng tác với đội dev và một kỹ sư phần mềm giỏi đang chuyển sang AppSec, bạn đánh giá đánh đổi thế nào?"
+      ]
+    },
+    {
+      "id": "cyber-lead-010",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "availability-vs-containment-leadership",
+      "question": "Phát hiện dấu hiệu xâm nhập trên một máy chủ xử lý giao dịch đang phục vụ khách hàng, nhưng việc cô lập ngay sẽ làm gián đoạn dịch vụ doanh thu cao. Bạn dẫn dắt quyết định này như thế nào?",
+      "answerSample": "Tôi nhanh chóng thu thập ba dữ kiện cốt lõi trong vài phút: mức độ chắc chắn của dấu hiệu xâm nhập, liệu dữ liệu nhạy cảm hay tiền đang tiếp tục bị thất thoát không, và có phương án cô lập cục bộ/chuyển hướng sang nút sạch không (thay vì tắt toàn bộ hệ thống). Nếu có bằng chứng thất thoát đang diễn ra hoặc nguy cơ lây lan sang hệ thống lõi, tôi đề xuất rõ ràng với lãnh đạo vận hành và kinh doanh phương án cô lập có kiểm soát kèm ước lượng thời gian gián đoạn và kịch bản chuyển dự phòng, bảo đảm người ra quyết định hiểu rõ chi phí của việc chờ thêm so với chi phí downtime ngắn hạn.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Đánh giá nhanh bằng chứng thất thoát đang diễn ra và khả năng chuyển tải sang hạ tầng sạch",
+        "Trình bày rõ đánh đổi giữa thiệt hại gián đoạn tức thời và thiệt hại sự cố kéo dài",
+        "Ra quyết định có kiểm soát, ghi nhận rõ ràng và triển khai ngay phương án truyền thông/khôi phục"
+      ],
+      "redFlags": [
+        "Tự ý tắt toàn bộ dịch vụ cốt lõi mà không thông báo vận hành khi có thể chuyển tải an toàn",
+        "Để kẻ tấn công tiếp tục rút dữ liệu nhiều giờ chỉ vì sợ ảnh hưởng chỉ số uptime"
+      ],
+      "referenceUrls": [
+        "https://csrc.nist.gov/pubs/sp/800/61/r2/final"
+      ],
+      "evidencePrompts": [
+        "Chuẩn bị gì từ trước (trước khi sự cố xảy ra) để quyết định cô lập không bị tê liệt vì tranh cãi thẩm quyền?"
+      ]
+    },
+    {
+      "id": "cyber-lead-011",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "tabletop-exercise-crisis-readiness",
+      "question": "Bạn thiết kế và điều phối một buổi diễn tập tình huống sự cố (Tabletop Exercise) cho cả đội kỹ thuật và ban lãnh đạo như thế nào để phát hiện lỗ hổng quy trình thật sự?",
+      "answerSample": "Tôi chọn kịch bản sát thực tế nhất với tổ chức (ví dụ ransomware qua tài khoản đối tác hoặc lộ khóa cloud) và thiết kế các mốc diễn biến tăng dần áp lực để kiểm tra quyết định phối hợp giữa kỹ thuật, pháp lý, truyền thông và lãnh đạo. Mục tiêu không phải đánh đố hay làm ai bối rối mà để lộ các điểm mơ hồ thật sự: ai có quyền quyết định ngừng dịch vụ, danh bạ liên lạc ngoài băng (out-of-band) khi Slack/Email bị xâm nhập nằm ở đâu, thời hạn báo cáo cơ quan chức năng là bao lâu. Sau buổi diễn tập, tôi chốt ngắn gọn 3–5 điểm cần sửa trong playbook kèm người chịu trách nhiệm và kiểm tra lại ở kỳ diễn tập sau.",
+      "answerType": "scenario",
+      "keyPoints": [
+        "Kịch bản sát bối cảnh tổ chức, có sự tham gia của cả kỹ thuật lẫn lãnh đạo/pháp lý/truyền thông",
+        "Kiểm tra các điểm gãy thực tế như thẩm quyền quyết định và kênh liên lạc out-of-band",
+        "Chuyển phát hiện thành cập nhật playbook có theo dõi hoàn thành"
+      ],
+      "redFlags": [
+        "Đọc lại tài liệu quy trình một chiều mà không đặt câu hỏi xử lý tình huống bất ngờ",
+        "Diễn tập xong không cập nhật kế hoạch ứng cứu sự cố"
+      ],
+      "referenceUrls": [
+        "https://www.cisa.gov/resources-tools/services/cisa-tabletop-exercise-packages"
+      ],
+      "evidencePrompts": [
+        "Nếu hệ thống email và chat nội bộ của công ty bị kẻ tấn công theo dõi trong sự cố thật, đội ứng cứu sẽ liên lạc qua kênh nào?"
+      ]
+    },
+    {
+      "id": "cyber-lead-012",
+      "industry": "cybersecurity",
+      "level": "lead",
+      "topic": "security-leadership-priority-story",
+      "question": "Hãy kể về một quyết định khó khăn ở vai trò dẫn dắt an toàn thông tin khi bạn phải cân bằng giữa yêu cầu bảo mật nghiêm ngặt, tiến độ kinh doanh và giới hạn nguồn lực.",
+      "answerSample": "Tôi nêu rõ bối cảnh thực tế, xung đột ưu tiên cụ thể giữa các bên, các lựa chọn tôi đã phân tích cùng dữ liệu rủi ro đi kèm, cách tôi trao đổi để đạt đồng thuận về biện pháp giảm thiểu và phạm vi chấp nhận rủi ro, cũng như kết quả thực tế sau khi triển khai và điều tôi sẽ làm tốt hơn nếu lặp lại. Tôi chỉ trình bày trải nghiệm có thật, đúng quy mô vai trò của bản thân.",
+      "answerType": "behavioral",
+      "keyPoints": [
+        "Thể hiện tư duy quản trị rủi ro và ra quyết định minh bạch giữa các bên liên quan",
+        "Nêu rõ hành động dẫn dắt trực tiếp của bản thân và kết quả kiểm chứng được",
+        "Trung thực về bài học rút ra và giới hạn thực tế"
+      ],
+      "redFlags": [
+        "Nói chung chung không có tình huống cụ thể hoặc bịa thành tích cấp doanh nghiệp lớn chưa từng làm",
+        "Áp đặt mệnh lệnh một chiều không lắng nghe mục tiêu kinh doanh"
+      ],
+      "referenceUrls": [
+        "https://www.nist.gov/cyberframework"
+      ],
+      "evidencePrompts": [
+        "Nhìn lại quyết định đó, chỉ dấu nào giúp bạn đánh giá mức rủi ro chấp nhận là hợp lý?"
+      ]
     }
   ]
 }

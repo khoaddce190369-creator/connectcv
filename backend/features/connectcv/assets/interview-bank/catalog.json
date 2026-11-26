@@ -13,7 +13,8 @@
     {"id":"lead","label":"Lead / quản lý nhóm","scope":"Ưu tiên, phân bổ nguồn lực, phản biện và trách nhiệm của nhóm."}
   ],
   "industries": [
-    {"id":"software-engineering","label":"Công nghệ Thông tin","aliases":["it","software engineering","software engineer","developer","backend","frontend","fullstack","lập trình","công nghệ thông tin","devops","tester","qa engineer"]},
+    {"id":"software-engineering","label":"Công nghệ Thông tin","aliases":["it","software engineering","software engineer","developer","backend","frontend","fullstack","lập trình","công nghệ thông tin","devops","tester","qa engineer","data engineer","mobile developer","sre"]},
+    {"id":"cybersecurity","label":"An toàn thông tin & Cybersecurity","aliases":["cybersecurity","cyber security","an toàn thông tin","an ninh mạng","infosec","information security","security engineer","security analyst","soc analyst","soc","pentest","pentester","penetration tester","red team","blue team","purple team","appsec","application security","cloud security","network security","threat hunter","incident response","devsecops","malware analyst","vulnerability assessment","grc","ciso","chuyên viên bảo mật","kỹ sư bảo mật","bảo mật mạng","bảo mật ứng dụng"]},
     {"id":"marketing","label":"Marketing & Truyền thông","aliases":["marketing","truyền thông","content marketing","seo","digital marketing"]},
     {"id":"sales","label":"Kinh doanh & Bán hàng","aliases":["sales","kinh doanh","bán hàng","account executive","business development"]},
     {"id":"finance-accounting","label":"Tài chính & Kế toán","aliases":["finance","accounting","kế toán","tài chính","accountant"]},

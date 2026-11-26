@@ -1,10 +1,4 @@
 const {safeError}=require('../services/securityError');
-// interview.js v2 — Security hardened
-// ✅ Prompt injection sanitization trên tất cả AI prompts
-// ✅ Audio base64 size limit (5MB max)
-// ✅ Safe error messages (không leak error.message ra client)
-// ✅ Input validation cơ bản trên tất cả routes
-// ✅ In-memory store giới hạn 200 entries (tránh memory leak)
 const express = require('express');
 const router = express.Router();
 const { callGeminiJSON, callGeminiText, genAI } = require('../services/geminiService');
@@ -14,12 +8,10 @@ const {CommunityStore,publicEntry}=require('../services/communityStore');
 const moderation=require('../services/communityModeration');
 const communityStore=process.env.FEATURE_STORE_BACKEND==='firestore' ? new (require('../../../../src/services/firestoreCommunity').FirestoreCommunity)(require('../../../../src/config/firebase').db()) : new CommunityStore(process.env.COMMUNITY_STORE_FILE||path.resolve(process.env.FEATURE_STATE_DIR||path.resolve(__dirname,'../../data'),'community-secure.json'));
 const legacyFile=path.resolve(__dirname,'../../data/debrief_questions.json');
-// Legacy posts can be read without exposing private metadata; they earn no new reward.
 if(process.env.FEATURE_STORE_BACKEND!=='firestore'&&!communityStore.entries.length&&require('fs').existsSync(legacyFile)){
  const old=JSON.parse(require('fs').readFileSync(legacyFile,'utf8'));
  if(Array.isArray(old))communityStore.state.entries=old.map(e=>({...publicEntry(e),contentHash:e.contentHash}));
 }
-// ─── Helper: Sanitize user input trước khi nhúng vào AI prompt ──
 function sanitizeForPrompt(input, maxLength = 3000) {
   if (!input) return '';
   const str = typeof input === 'object' ? JSON.stringify(input) : String(input);
@@ -37,17 +29,12 @@ function sanitizeForPrompt(input, maxLength = 3000) {
     .replace(/union\s+select/gi, '[filtered]');
 }
 
-// ─── Helper: Escape text an toàn để render trong JSON prompt ──
 function escStr(s, max = 200) {
   return sanitizeForPrompt(String(s || ''), max).replace(/"/g, '\\"');
 }
 
-// ─── TTS Helper (sử dụng service chuẩn có caching và clean text) ──
 const { generateSpeechMP3 } = require('../services/ttsService');
 
-// ─────────────────────────────────────────────────────────────────────
-// POST /api/interview/start — Tạo bộ câu hỏi phỏng vấn STAR
-// ─────────────────────────────────────────────────────────────────────
 router.post('/start', async (req, res) => {
   try {
     const { jobTitle, jdText, profile } = req.body;
@@ -55,7 +42,6 @@ router.post('/start', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp chức danh (jobTitle) và bản mô tả công việc (jdText)!' });
     }
 
-    // Validate kích thước input
     if (String(jdText).length > 5000) {
       return res.status(400).json({ success: false, message: 'Bản mô tả công việc quá dài (tối đa 5000 ký tự).' });
     }
@@ -101,16 +87,12 @@ BẮT BUỘC trả về duy nhất JSON:
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────
-// POST /api/interview/tts — Chuyển đổi văn bản sang giọng nói
-// ─────────────────────────────────────────────────────────────────────
 router.post('/tts', async (req, res) => {
   try {
     const { text, voice = 'vi-VN-HoaiMyNeural' } = req.body;
     if (!text || !text.trim()) {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp nội dung văn bản (text)!' });
     }
-    // Giới hạn TTS text 1000 chars tránh abuse
     const safeText = String(text).trim().substring(0, 1000);
 
     const VALID_VOICES = ['vi-VN-HoaiMyNeural', 'vi-VN-NamMinhNeural'];
@@ -129,9 +111,6 @@ router.post('/tts', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────
-// POST /api/interview/transcribe — Nhận diện giọng nói → văn bản
-// ─────────────────────────────────────────────────────────────────────
 router.post('/transcribe', async (req, res) => {
   try {
     const { audioBase64, mimeType = 'audio/webm' } = req.body;
@@ -139,20 +118,18 @@ router.post('/transcribe', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp dữ liệu âm thanh (audioBase64)!' });
     }
 
-    // Giới hạn kích thước base64 audio (5MB = ~6.7MB base64)
-    const MAX_AUDIO_B64 = 7 * 1024 * 1024; // 7MB base64 ≈ 5MB audio
+    const MAX_AUDIO_B64 = 7 * 1024 * 1024;
     if (audioBase64.length > MAX_AUDIO_B64) {
       return res.status(400).json({ success: false, message: 'File âm thanh quá lớn. Giới hạn 5MB mỗi đoạn ghi âm.' });
     }
 
-    // Validate mimeType (whitelist)
     const ALLOWED_MIME = ['audio/webm', 'audio/wav', 'audio/ogg', 'audio/mp4', 'audio/mpeg'];
     const cleanMimeType = (mimeType || 'audio/webm').split(';')[0].trim();
     if (!ALLOWED_MIME.includes(cleanMimeType)) {
       return res.status(400).json({ success: false, message: 'Định dạng âm thanh không được hỗ trợ.' });
     }
 
-    const candidateModels = ['gemini-flash-lite-latest', 'gemini-2.5-flash-lite', 'gemini-2.5-flash'];
+    const candidateModels = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
     let transcript = '';
     let lastError  = null;
 
@@ -162,12 +139,15 @@ KHÔNG xuất SRT, timestamp, số thứ tự. Nếu im lặng hoàn toàn, tr�
 
     for (const modelName of candidateModels) {
       try {
-        const model  = genAI.getGenerativeModel({ model: modelName });
+        const model  = genAI.getGenerativeModel({
+          model: modelName,
+          generationConfig: { maxOutputTokens: 512, thinkingConfig: { thinkingBudget: 0 } }
+        });
         let deadline, result;
         try {
           result = await Promise.race([
             model.generateContent([{ inlineData: { mimeType: cleanMimeType, data: audioBase64 } }, { text: transcribePrompt }]),
-            new Promise((_, reject) => { deadline = setTimeout(() => reject(Object.assign(new Error('Transcription deadline'), {code:'AI_TIMEOUT'})), 30000); })
+            new Promise((_, reject) => { deadline = setTimeout(() => reject(Object.assign(new Error('Transcription deadline'), {code:'AI_TIMEOUT'})), 15000); })
           ]);
         } finally { clearTimeout(deadline); }
         transcript = result.response.text().trim()
@@ -192,9 +172,6 @@ KHÔNG xuất SRT, timestamp, số thứ tự. Nếu im lặng hoàn toàn, tr�
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────
-// POST /api/interview/live-chat — Phỏng vấn live theo lượt (Start & Reply)
-// ─────────────────────────────────────────────────────────────────────
 router.get('/question-bank/catalog', (req,res)=>res.set('Cache-Control','no-store').json({success:true,data:require('../services/interviewQuestionBank').catalog()}));
 router.get('/question-bank', (req,res)=>res.set('Cache-Control','no-store').json({success:true,data:require('../services/interviewQuestionBank').listQuestions(req.query)}));
 router.post('/live-chat', async (req,res)=>{
@@ -205,20 +182,30 @@ router.post('/live-chat', async (req,res)=>{
  try{
   let data;
   if(value.action==='start'){
-   const reply=plan.next?'Chúng ta bắt đầu luyện phỏng vấn. '+plan.next.question:'Ngành và cấp độ này chưa có câu hỏi trong bộ biên soạn hiện tại. Hãy chọn mục khác hoặc quay lại sau.';
+   const roleLabel=String(value.jobTitle||'').trim();
+   const levelNames={fresher:'Fresher',junior:'Junior',middle:'Middle',senior:'Senior',lead:'Lead'};
+   const lvl=levelNames[value.level]||'';
+   const intro=roleLabel
+    ? `Chào bạn, rất vui được trò chuyện cùng bạn hôm nay cho vị trí ${roleLabel}${lvl?' cấp độ '+lvl:''}. Mình đi thẳng vào câu hỏi đầu tiên sát chuyên môn nhé: `
+    : 'Chào bạn, rất vui được đồng hành cùng bạn trong buổi phỏng vấn thử hôm nay. Mình bắt đầu với câu hỏi đầu tiên nhé: ';
+   const reply=plan.next?intro+plan.next.question:'Ngành và cấp độ này chưa có câu hỏi trong bộ biên soạn hiện tại. Hãy chọn mục khác hoặc quay lại sau.';
    data={interviewerReply:reply,reply,quickFeedback:'',quickEvaluation:'',interviewPhase:plan.next?'opening':'completed',decision:plan.next?'next_question':'complete'};
   }else{
-   const input={question:plan.question,candidateAnswer:value.action==='skip'?'Bỏ qua câu này.':value.message,jobTitle:value.jobTitle,level:value.level,jdText:value.jdText,answerType:plan.current?.answerType,expectedAnswer:plan.current?.answerSample||'',rubric:plan.current?.keyPoints||[],nextQuestion:plan.next};
-   let model=null; if(!plan.local){ try{ model=await callGeminiJSON(policy.buildLiveAssessmentPrompt(input)); } catch(err){ console.warn("[Interview /live-chat] AI fallback:", err.message); } }
+   const input={question:plan.question,candidateAnswer:value.action==='skip'?'Bỏ qua câu này.':value.message,industry:value.industry,jobTitle:value.jobTitle,level:value.level,jdText:value.jdText,answerType:plan.current?.answerType,expectedAnswer:plan.current?.answerSample||'',rubric:plan.current?.keyPoints||[],nextQuestion:plan.next,allowFollowUp:plan.allowFollowUp,history:value.history};
+   let model=null;
+   if(!plan.local){
+     try{
+       model=await callGeminiJSON(policy.buildLiveAssessmentPrompt(input),'gemini-2.5-flash-lite',{timeoutMs:12000,maxOutputTokens:650});
+     }catch(err){
+       console.warn('[Interview /live-chat] AI fallback:', err.message);
+     }
+   }
    data=policy.groundLiveAssessment(model,input);
   }
   return res.set('Cache-Control','no-store').json({success:true,data:session.decorateTurn(data,value,plan)});
  }catch(error){console.error('[Interview /live-chat] provider_unavailable');return res.status(503).json({success:false,code:'INTERVIEW_PROVIDER_UNAVAILABLE',message:'Chưa nhận được nhận xét. Bạn có thể thử lại hoặc bỏ qua câu này.'});}
 });
 
-// ─────────────────────────────────────────────────────────────────────
-// POST /api/interview/live-summary — Tóm tắt & Báo cáo STAR hoàn chỉnh
-// ─────────────────────────────────────────────────────────────────────
 router.post('/live-summary', async (req, res) => {
   try {
     const versionError=require('../services/interviewSummaryGrounding').summaryVersionError(req.body);
@@ -262,9 +249,6 @@ Trả DUY NHẤT JSON:
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────
-// POST /api/interview/evaluate — Đánh giá câu trả lời theo STAR
-// ─────────────────────────────────────────────────────────────────────
 router.post('/evaluate', async (req, res) => {
   try {
     const {validateEvaluation,evaluationError,buildEvaluationPrompt,groundEvaluation}=require('../services/interviewEvaluationService');
@@ -278,9 +262,6 @@ router.post('/evaluate', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────
-// POST /api/interview/proposal — Sinh Proposal/Cover Letter
-// ─────────────────────────────────────────────────────────────────────
 router.post('/proposal', async (req, res) => {
   try {
     const { projectTitle, clientRequirement, freelancerSkills, tone = 'professional' } = req.body;
@@ -320,21 +301,12 @@ Trả về DUY NHẤT JSON:
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────
-// DEBRIEF ANTI-SPAM SYSTEM
-// ─────────────────────────────────────────────────────────────────────
-
-// Per-IP cooldown: 1 lần/6 giờ — chặn spam liên tục từ cùng IP
-// Map<ip, lastSubmitTimestamp>
 const ipDebriefCooldown = new Map();
-const DEBRIEF_COOLDOWN_MS = 6 * 60 * 60 * 1000; // 6 giờ
+const DEBRIEF_COOLDOWN_MS = 6 * 60 * 60 * 1000;
 
-// Bộ hash nội dung đã submit — chặn duplicate content
-// Set<contentHash>
 const submittedContentHashes = new Set();
 const MAX_HASH_STORE = 10000;
 
-// Helper: tạo hash fingerprint từ nội dung bài chia sẻ
 const crypto = require('crypto');
 function contentHash(companyName, position, questions) {
   const normalized = [
@@ -413,9 +385,6 @@ function validateQuestionList(questions) {
   return null; // valid
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// POST /api/interview/debrief — Chia sẻ câu hỏi thực tế nhận Credits
-// ─────────────────────────────────────────────────────────────────────
 router.post('/debrief', async (req, res) => {
   res.set('Cache-Control','no-store');
   try {
@@ -425,7 +394,6 @@ router.post('/debrief', async (req, res) => {
     if(Object.keys(checked.fieldErrors).length)return res.status(400).json(publication.errorResponse(checked));
     const { companyName, position, interviewQuestions, difficultyRating, reviewText, anonymous } = checked.value;
 
-    // ─── 1. Required fields ───────────────────────────────────────
     if (!companyName || !position || !interviewQuestions) {
       return res.status(400).json({
         success: false,
@@ -433,14 +401,12 @@ router.post('/debrief', async (req, res) => {
       });
     }
 
-    // ─── 3. Content Quality Validation ──────────────────────────
     const companyErr = validateContentQuality(companyName, 'Tên công ty', 3);
     if (companyErr) return res.status(400).json({ success: false, message: companyErr });
 
     const positionErr = validateContentQuality(position, 'Vị trí phỏng vấn', 5);
     if (positionErr) return res.status(400).json({ success: false, message: positionErr });
 
-    // Parse questions: có thể là array hoặc string phân tách bởi \n
     let questions = Array.isArray(interviewQuestions)
       ? interviewQuestions
       : String(interviewQuestions).split('\n').map(s => s.trim()).filter(Boolean);
@@ -448,17 +414,15 @@ router.post('/debrief', async (req, res) => {
     const questionErr = validateQuestionList(questions);
     if (questionErr) return res.status(400).json({ success: false, message: questionErr });
 
-    // reviewText: không bắt buộc nhưng nếu có phải có ý nghĩa
     if (reviewText && String(reviewText).trim().length > 0) {
       const reviewErr = validateContentQuality(String(reviewText), 'Đánh giá', 10);
       if (reviewErr) return res.status(400).json({ success: false, message: reviewErr });
     }
 
-    // ─── 4. Duplicate Detection — Hash-based ────────────────────
     const hash = contentHash(
       String(companyName),
       String(position),
-      questions.slice(0, 5) // hash 5 câu đầu đủ để detect trùng
+      questions.slice(0, 5)
     );
 
     // Tự động nhận diện tags từ câu hỏi và vị trí
@@ -517,9 +481,6 @@ router.post('/debrief', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────
-// GET /api/interview/community-questions — MXH: Tìm kiếm & Lọc câu hỏi
-// ─────────────────────────────────────────────────────────────────────
 router.get('/community-questions', async (req, res) => {
   res.set('Cache-Control','no-store');
   try {
@@ -587,9 +548,6 @@ router.get('/community-questions', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────
-// POST /api/interview/community-questions/:id/like — Thả tim / Bỏ thích bài viết
-// ─────────────────────────────────────────────────────────────────────
 router.post('/community-questions/:id/like',async(req,res)=>{
  if(!req.user?.id)return res.status(401).json({success:false,code:'AUTH_REQUIRED'});
  try{return res.json({success:true,data:await communityStore.like(req.user,req.params.id)});}

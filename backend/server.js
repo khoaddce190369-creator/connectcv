@@ -249,8 +249,11 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('💥 Unhandled Rejection:', reason);
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 ConnectCV Server is listening on port ${PORT} (0.0.0.0)`);
-  console.log(`🌐 Website URL: http://localhost:${PORT}`);
-  console.log(`🤖 AI Studio: http://localhost:${PORT}/ai`);
+const db = require('./src/config/db');
+db.ready.catch(() => false).finally(() => {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 ConnectCV Server is listening on port ${PORT} (0.0.0.0)`);
+    console.log(`🌐 Website URL: http://localhost:${PORT}`);
+    console.log(`🤖 AI Studio: http://localhost:${PORT}/ai`);
+  });
 });

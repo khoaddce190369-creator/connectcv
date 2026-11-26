@@ -61,7 +61,7 @@ async function featureSecurity(req,res,next){
  }
  // Account bucket cannot be reset by spoofing X-Forwarded-For. Socket bucket is
  // deliberately conservative behind a proxy; use a shared store for replicas.
- const utility=['/api/cv/templates/recommend','/api/cv/auto-match-jobs','/api/cv/render'].includes(fullPath);
+ const utility=['/api/cv/templates/recommend','/api/cv/auto-match-jobs','/api/cv/render','/api/interview/tts'].includes(fullPath);
  const ai=['/api/cv/generate','/api/cv/translate','/api/cv/ats-score','/api/chatbot/message','/api/interview/start','/api/interview/transcribe','/api/interview/live-chat','/api/interview/live-summary','/api/interview/evaluate','/api/interview/proposal'].includes(fullPath);
  const group=utility?'utility':'action';
  const now=clock(),window=300000,limit=utility?120:15;

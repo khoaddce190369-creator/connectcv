@@ -11,6 +11,76 @@ const validText = (value, min, max) => typeof value === 'string' && value.trim()
 const validList = (value, min = 1) => Array.isArray(value) && value.length >= min && value.length <= 12 && value.every(x => validText(x, 3, 600));
 const copy = value => JSON.parse(JSON.stringify(value));
 
+const STOP_WORDS = new Set([
+  'va', 'cua', 'trong', 'cho', 'voi', 'mot', 'cac', 'nhu', 'the', 'nao', 'khi', 'ban', 'co', 'khong',
+  'de', 'la', 'duoc', 'tu', 've', 'nay', 'do', 'se', 'da', 'nhung', 'hay', 'hoac', 'neu', 'thi', 'tai',
+  'sau', 'truoc', 'hon', 'nhat', 'nhieu', 'it', 'moi', 'tung', 'nhau', 'ra', 'vao', 'len', 'xuong',
+  'vi', 'sao', 'lam', 'cach', 'dung', 'su', 'viec', 'cong', 'ty', 'vi', 'tri', 'kinh', 'nghiem', 'nam',
+  'and', 'for', 'with', 'how', 'what', 'when', 'where', 'why', 'you', 'your', 'are', 'from', 'that',
+  'this', 'have', 'has', 'will', 'can', 'not', 'but', 'into', 'about', 'using', 'used', 'work', 'role',
+  'job', 'years', 'experience', 'team', 'senior', 'junior', 'middle', 'fresher', 'lead', 'intern'
+]);
+
+const SUBTRACKS = {
+  js_frontend: ['javascript', 'js', 'react', 'vue', 'angular', 'frontend', 'front end', 'typescript', 'css', 'html', 'dom', 'closure', 'spread', 'nullish', 'const', 'undefined', 'map', 'nextjs', 'tailwind'],
+  backend_api_db: ['backend', 'back end', 'api', 'rest', 'http', 'sql', 'postgresql', 'postgres', 'mysql', 'database', 'transaction', 'webhook', 'cache', 'queue', 'microservices', 'outbox', 'join', 'index', 'btree', 'pagination', 'nodejs', 'node', 'java', 'python', 'golang', 'spring', 'dotnet', 'express', 'graphql'],
+  qa_testing: ['qa', 'tester', 'test', 'testing', 'unit test', 'integration test', 'flaky', 'mock', 'automation', 'bug', 'reproduction', 'regression', 'playwright', 'selenium', 'cypress'],
+  devops_infra: ['devops', 'sre', 'docker', 'kubernetes', 'k8s', 'ci cd', 'cicd', 'deploy', 'backup', 'restore', 'load test', 'sli', 'slo', 'timeout', 'monitoring', 'terraform', 'ansible', 'linux', 'cloud'],
+  cyber_soc_ir: ['soc', 'siem', 'wazuh', 'splunk', 'elk', 'qradar', 'alert', 'triage', 'incident', 'ir', 'nist', 'edr', 'malware', 'ransomware', 'forensic', 'pcap', 'wireshark', 'threat hunting', 'log', 'blue team', 'containment', 'phishing', 'spf', 'dkim', 'dmarc', 'ioc', 'mttd', 'mttr'],
+  cyber_appsec_pentest: ['pentest', 'pentester', 'penetration', 'burp', 'burp suite', 'owasp', 'sqli', 'sql injection', 'xss', 'idor', 'ssrf', 'jwt', 'waf', 'appsec', 'sast', 'dast', 'sca', 'devsecops', 'bug bounty', 'vdp', 'stride', 'threat modeling', 'web security', 'csrf', 'cve', 'exploit', 'kali', 'nmap'],
+  cyber_cloud_network_ad: ['cloud security', 'aws', 'gcp', 'azure', 'iam', 'kubernetes', 'docker', 'container', 'zero trust', 'firewall', 'ids', 'ips', 'tls', 'https', 'ssh', 'linux', 'active directory', 'kerberoasting', 'lsass', 'red team', 'purple team', 'mitre', 'att ck', 'tiering', 'kms', 'cryptography', 'hashing', 'encryption', 'secrets', 'supply chain', 'sbom', 'mfa'],
+  cyber_grc_lead: ['grc', 'iso 27001', 'soc 2', 'pci', 'compliance', 'risk', 'ciso', 'roadmap', 'vendor', 'tprm', 'budget', 'tabletop', 'board', 'governance', 'audit', 'security champions', 'chinh sach', 'tuan thu'],
+  marketing_seo_content: ['seo', 'content', 'blog', 'copywriting', 'social', 'organic', 'keyword', 'editorial'],
+  marketing_perf_brand: ['ads', 'performance', 'facebook ads', 'google ads', 'roas', 'ctr', 'brand', 'pr', 'campaign', 'funnel', 'crm', 'email marketing']
+};
+
+const CYBER_STRONG_SIGNALS = [
+  'cybersecurity', 'cyber security', 'an toan thong tin', 'an ninh mang', 'infosec', 'information security',
+  'soc analyst', 'soc', 'siem', 'wazuh', 'splunk', 'pentest', 'pentester', 'penetration test', 'burp suite',
+  'owasp', 'appsec', 'devsecops', 'red team', 'blue team', 'purple team', 'threat hunting', 'incident response',
+  'malware', 'ransomware', 'forensics', 'wireshark', 'nmap', 'mitre', 'zero trust', 'edr', 'firewall',
+  'ids ips', 'kerberoasting', 'lsass', 'bug bounty', 'vulnerability assessment', 'cloud security',
+  'network security', 'security engineer', 'security analyst', 'chuyen vien bao mat', 'ky su bao mat',
+  'bao mat mang', 'bao mat ung dung', 'ciso', 'grc', 'iso 27001', 'ctf'
+];
+
+const PURE_SWE_TITLE_SIGNALS = [
+  'software engineer', 'software developer', 'frontend', 'front end', 'backend developer', 'backend engineer',
+  'fullstack', 'full stack', 'web developer', 'mobile developer', 'ios developer', 'android developer',
+  'react developer', 'node developer', 'java developer', 'python developer', 'lap trinh vien',
+  'qa engineer', 'qa tester', 'software tester', 'manual tester', 'automation tester'
+];
+
+function stringifyProfile(profile) {
+  if (!profile) return '';
+  if (typeof profile === 'string') return profile.slice(0, 3000);
+  if (typeof profile === 'object') {
+    try {
+      const parts = [];
+      for (const [k, v] of Object.entries(profile)) {
+        if (/avatar|photo|email|phone|address|password|secret|token|fullName|name/i.test(k)) continue;
+        if (typeof v === 'string') parts.push(v);
+        else if (Array.isArray(v)) parts.push(v.map(x => typeof x === 'string' ? x : JSON.stringify(x)).join(' '));
+        else if (v && typeof v === 'object') parts.push(JSON.stringify(v));
+      }
+      return parts.join(' ').slice(0, 3000);
+    } catch { return ''; }
+  }
+  return '';
+}
+
+function hasPhrase(paddedNormalizedText, phrase) {
+  const clean = normalize(phrase);
+  return Boolean(clean && paddedNormalizedText.includes(` ${clean} `));
+}
+
+function tokenizeMeaningful(text) {
+  const norm = normalize(text);
+  if (!norm) return [];
+  const words = norm.split(' ').filter(w => w.length >= 2 && !STOP_WORDS.has(w) && !/^\d+$/.test(w));
+  return [...new Set(words)];
+}
+
 function normalizeLevel(value) {
   const key = normalize(value);
   const aliases = { intern: 'fresher', internship: 'fresher', 'entry level': 'fresher', 'moi vao nghe': 'fresher', fresher: 'fresher', junior: 'junior', mid: 'middle', 'mid level': 'middle', middle: 'middle', senior: 'senior', lead: 'lead', 'team lead': 'lead' };
@@ -29,9 +99,55 @@ function resolveIndustry(jobTitle) {
   if (exact) return exact;
   const title = ` ${normalize(jobTitle)} `;
   if (title.trim().length > 300) return null;
-  const matches = meta.industries.filter(row => row.aliases.some(alias => title.includes(` ${normalize(alias)} `)));
-  // Ambiguous titles must be resolved by the user's explicit industry choice.
-  return matches.length === 1 ? matches[0].id : null;
+  const matchedEntries = meta.industries
+    .map(row => ({ id: row.id, aliases: row.aliases.map(normalize).filter(a => hasPhrase(title, a)) }))
+    .filter(entry => entry.aliases.length > 0);
+  if (matchedEntries.length === 1) return matchedEntries[0].id;
+  if (matchedEntries.length > 1) {
+    const dominant = matchedEntries.filter(entry =>
+      matchedEntries.every(other =>
+        other.id === entry.id ||
+        other.aliases.every(shortAlias => entry.aliases.some(longAlias => longAlias.length > shortAlias.length && ` ${longAlias} `.includes(` ${shortAlias} `)))
+      )
+    );
+    if (dominant.length === 1) return dominant[0].id;
+  }
+  return null;
+}
+
+function resolveIndustryFromContext({ industry, jobTitle = '', jdText = '', candidateProfile = '', allowRefinement = false } = {}) {
+  const explicit = normalizeIndustry(industry);
+  const profileStr = stringifyProfile(candidateProfile);
+  const titleNorm = ` ${normalize(jobTitle)} `;
+  const combinedNorm = ` ${normalize(`${jobTitle} ${jdText} ${profileStr}`)} `;
+
+  if (explicit === 'software-engineering' && allowRefinement) {
+    const titleResolved = resolveIndustry(jobTitle);
+    const hasPureSweTitle = PURE_SWE_TITLE_SIGNALS.some(sig => hasPhrase(titleNorm, sig));
+    if (titleResolved === 'cybersecurity' && !hasPureSweTitle) return 'cybersecurity';
+    if (!hasPureSweTitle) {
+      const cyberHits = CYBER_STRONG_SIGNALS.filter(sig => hasPhrase(combinedNorm, sig)).length;
+      if (cyberHits >= 2) return 'cybersecurity';
+    }
+  }
+  if (explicit) return explicit;
+
+  const fromTitle = resolveIndustry(jobTitle);
+  if (fromTitle) return fromTitle;
+
+  if (combinedNorm.trim().length >= 8) {
+    const scored = meta.industries.map(row => {
+      const hits = new Set(row.aliases.filter(alias => hasPhrase(combinedNorm, alias)).map(normalize)).size;
+      const extraCyber = row.id === 'cybersecurity'
+        ? CYBER_STRONG_SIGNALS.filter(sig => hasPhrase(combinedNorm, sig)).length
+        : 0;
+      return { id: row.id, score: Math.max(hits, extraCyber) };
+    }).sort((a, b) => b.score - a.score);
+    if (scored[0] && scored[0].score >= 2 && (!scored[1] || scored[0].score >= scored[1].score * 2)) {
+      return scored[0].id;
+    }
+  }
+  return null;
 }
 
 function validateRecord(row) {
@@ -62,7 +178,6 @@ function validateImport(rows) {
     if (row && typeof row === 'object') {
       if (ids.has(row.id)) codes.push('DUPLICATE_ID');
       ids.add(row.id);
-      // Exact normalized duplicates are rejected globally, not counted once per level.
       const questionKey = normalize(row.question);
       if (questions.has(questionKey)) codes.push('DUPLICATE_QUESTION');
       questions.add(questionKey);
@@ -77,10 +192,18 @@ const checked = validateImport(records);
 if (!checked.valid) throw new Error('INTERVIEW_BANK_INVALID_SEED: ' + JSON.stringify(checked.errors));
 const byId = new Map(records.map(row => [row.id, row]));
 const byPair = new Map();
+const rowIndexMeta = new Map();
 for (const row of records) {
   const key = `${row.industry}/${row.level}`;
   if (!byPair.has(key)) byPair.set(key, []);
   byPair.get(key).push(row);
+  const fullText = ` ${normalize(`${row.topic} ${row.question} ${(row.keyPoints || []).join(' ')} ${row.answerSample}`)} `;
+  const questionNorm = ` ${normalize(`${row.topic} ${row.question}`)} `;
+  const matchedTracks = Object.entries(SUBTRACKS)
+    .filter(([, terms]) => terms.some(t => hasPhrase(fullText, t)))
+    .map(([name]) => name);
+  const isPureJsTrivia = questionNorm.includes(' trong javascript ') || /\b(closure|const reference|strict equality objects|nullish default values|spread shallow|map result return)\b/.test(questionNorm);
+  rowIndexMeta.set(row.id, { fullText, tokens: new Set(tokenizeMeaningful(fullText)), tracks: new Set(matchedTracks), isPureJsTrivia });
 }
 function pairRows(industry, level) { return byPair.get(`${industry}/${level}`) || []; }
 
@@ -110,16 +233,75 @@ function getQuestion(id, scope) {
   return copy(row);
 }
 
-function selectQuestion({ industry, level, excludeIds = [], excludeTopics = [], seed: selectionSeed } = {}) {
+function scoreRowForProfile(row, profileCtx) {
+  const metaRow = rowIndexMeta.get(row.id);
+  if (!metaRow) return 0;
+  let score = 0;
+  for (const tok of profileCtx.titleTokens) {
+    if (metaRow.tokens.has(tok) || hasPhrase(metaRow.fullText, tok)) score += 5;
+  }
+  for (const tok of profileCtx.detailTokens) {
+    if (metaRow.tokens.has(tok)) score += 3;
+  }
+  for (const track of profileCtx.activeTracks) {
+    if (metaRow.tracks.has(track)) score += 8;
+  }
+  if (metaRow.isPureJsTrivia && !profileCtx.activeTracks.has('js_frontend') && profileCtx.activeTracks.size > 0) {
+    score -= 12;
+  }
+  return score;
+}
+
+function selectQuestion({ industry, level, excludeIds = [], excludeTopics = [], seed: selectionSeed, jobTitle = '', jdText = '', candidateProfile = '' } = {}) {
   const industryId = normalizeIndustry(industry), levelId = normalizeLevel(level);
   if (!industryId || !levelId) return null;
   const ids = new Set(Array.isArray(excludeIds) ? excludeIds.filter(x => typeof x === 'string').slice(0, 10000) : []);
   const topics = new Set(Array.isArray(excludeTopics) ? excludeTopics.filter(x => typeof x === 'string').slice(0, 1000) : []);
   const available = pairRows(industryId, levelId).filter(row => !ids.has(row.id) && !topics.has(row.topic));
   if (!available.length) return null;
-  // Optional seed changes the first question without storing candidate data or mutating the bank.
-  const index = typeof selectionSeed === 'string' && selectionSeed.length <= 200 ? crypto.createHash('sha256').update(selectionSeed).digest().readUInt32BE(0) % available.length : 0;
-  return copy(available[index]);
+
+  const profileStr = stringifyProfile(candidateProfile);
+  const titleNorm = normalize(jobTitle);
+  const jdNorm = normalize(jdText);
+  const profNorm = normalize(profileStr);
+  const contextText = [titleNorm, jdNorm, profNorm].filter(Boolean).join(' ');
+
+  if (!contextText && !(typeof selectionSeed === 'string' && selectionSeed.length <= 200)) {
+    return copy(available[0]);
+  }
+
+  let candidatePool = available;
+  if (contextText) {
+    const paddedContext = ` ${contextText} `;
+    const titleTokens = tokenizeMeaningful(titleNorm);
+    const titleSet = new Set(titleTokens);
+    const detailTokens = tokenizeMeaningful(`${jdNorm} ${profNorm}`).filter(t => !titleSet.has(t));
+    const activeTracks = new Set(
+      Object.entries(SUBTRACKS)
+        .filter(([, terms]) => terms.some(t => hasPhrase(paddedContext, t)))
+        .map(([name]) => name)
+    );
+    const profileCtx = { titleTokens, detailTokens, activeTracks };
+    const scored = available.map((row, idx) => ({ row, idx, score: scoreRowForProfile(row, profileCtx) }));
+    scored.sort((a, b) => (b.score - a.score) || (a.idx - b.idx));
+    const topScore = scored[0].score;
+    if (topScore > 0) {
+      const floor = Math.max(topScore - 4, Math.ceil(topScore * 0.7));
+      candidatePool = scored.filter(item => item.score >= floor).map(item => item.row);
+    } else {
+      const nonPenalized = scored.filter(item => item.score >= 0).map(item => item.row);
+      candidatePool = nonPenalized.length ? nonPenalized : available;
+    }
+  }
+
+  const effectiveSeed = typeof selectionSeed === 'string' && selectionSeed.length <= 200
+    ? selectionSeed
+    : (contextText ? `${industryId}|${levelId}|${titleNorm}|${jdNorm.slice(0, 300)}|${profNorm.slice(0, 300)}` : '');
+
+  const index = effectiveSeed
+    ? crypto.createHash('sha256').update(effectiveSeed).digest().readUInt32BE(0) % candidatePool.length
+    : 0;
+  return copy(candidatePool[index]);
 }
 
-module.exports = { catalog, listQuestions, selectQuestion, getQuestion, resolveIndustry, normalizeIndustry, normalizeLevel, validateRecord, validateImport };
+module.exports = { catalog, listQuestions, selectQuestion, getQuestion, resolveIndustry, resolveIndustryFromContext, normalizeIndustry, normalizeLevel, validateRecord, validateImport };

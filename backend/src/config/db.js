@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { TursoAdapter } = require('./turso');
 
 const DATA_DIR = path.join(__dirname, '../../data');
 const DB_FILE = path.join(DATA_DIR, 'store.json');
@@ -245,7 +246,47 @@ const initialData = {
 
 class Store {
   constructor() {
+    this.turso = new TursoAdapter();
+    this.writeQueue = Promise.resolve();
     this.data = this.loadData();
+    this.ready = this.init();
+  }
+
+  async init() {
+    if (!this.turso.enabled) {
+      console.log('ℹ️ Turso chưa cấu hình, sử dụng store.json cục bộ.');
+      return false;
+    }
+    try {
+      await this.turso.ensureSchema();
+      const hasData = await this.turso.hasAnyData();
+      if (!hasData) {
+        await this.turso.syncAll(this.data);
+        console.log('✅ Đã khởi tạo schema và đồng bộ dữ liệu ban đầu lên Turso Database.');
+      } else {
+        const remote = await this.turso.loadAll();
+        if (remote) {
+          this.data = remote;
+          this.writeLocalFile(this.data);
+        }
+        console.log('✅ Đã kết nối và đồng bộ dữ liệu từ Turso Database.');
+      }
+      return true;
+    } catch (e) {
+      console.warn('⚠️ Không thể kết nối Turso, tạm dùng store.json cục bộ:', e.message);
+      return false;
+    }
+  }
+
+  enqueueSync(task) {
+    if (!this.turso.enabled) return;
+    this.writeQueue = this.writeQueue
+      .then(() => task())
+      .catch((e) => console.error('⚠️ Lỗi đồng bộ Turso:', e.message));
+  }
+
+  async flush() {
+    await this.writeQueue;
   }
 
   loadData() {
@@ -257,15 +298,23 @@ class Store {
     } catch (e) {
       console.warn('Lỗi khi đọc file store.json, khởi tạo dữ liệu mặc định:', e.message);
     }
-    this.saveData(initialData);
+    this.writeLocalFile(initialData);
     return JSON.parse(JSON.stringify(initialData));
   }
 
-  saveData(dataToSave) {
+  writeLocalFile(dataToSave) {
     try {
       fs.writeFileSync(DB_FILE, JSON.stringify(dataToSave || this.data, null, 2), 'utf8');
     } catch (e) {
       console.error('Lỗi khi lưu store.json:', e.message);
+    }
+  }
+
+  saveData(dataToSave, { skipRemote = false } = {}) {
+    const target = dataToSave || this.data;
+    this.writeLocalFile(target);
+    if (!skipRemote) {
+      this.enqueueSync(() => this.turso.syncAll(target));
     }
   }
 
@@ -278,7 +327,8 @@ class Store {
 
   set(collection, list) {
     this.data[collection] = list;
-    this.saveData();
+    this.saveData(this.data, { skipRemote: true });
+    this.enqueueSync(() => this.turso.syncCollection(collection, list));
   }
 
   insert(collection, item) {
@@ -286,7 +336,8 @@ class Store {
       this.data[collection] = [];
     }
     this.data[collection].push(item);
-    this.saveData();
+    this.saveData(this.data, { skipRemote: true });
+    this.enqueueSync(() => this.turso.upsertItem(collection, item));
     return item;
   }
 
@@ -295,8 +346,10 @@ class Store {
     const index = list.findIndex(predicate);
     if (index !== -1) {
       list[index] = { ...list[index], ...updates };
-      this.saveData();
-      return list[index];
+      this.saveData(this.data, { skipRemote: true });
+      const updatedItem = list[index];
+      this.enqueueSync(() => this.turso.upsertItem(collection, updatedItem));
+      return updatedItem;
     }
     return null;
   }
