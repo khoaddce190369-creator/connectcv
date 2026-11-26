@@ -111,8 +111,8 @@
         </button>
       </div>
 
-      <!-- Center: Template Switcher Pills (4 Modern Popular Templates) -->
-      <div class="hidden md:flex items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-900 rounded-full border border-neutral-200/80 dark:border-neutral-800 text-xs">
+      <!-- Center: Template Switcher Pills (Chỉ hiện với Chủ sở hữu ở chế độ Chỉnh sửa) -->
+      <div id="desktopTemplateSwitcher" class="hidden items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-900 rounded-full border border-neutral-200/80 dark:border-neutral-800 text-xs">
         <button onclick="setTemplate('bento')" id="btnTpl-bento" class="px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer">
           Bento Grid
         </button>
@@ -127,10 +127,16 @@
         </button>
       </div>
 
-      <!-- Right: Chỉnh sửa, Theme & Action -->
+      <!-- Right: Preview Public, Chỉnh sửa, Theme -->
       <div class="flex items-center gap-2">
-        <!-- Nút Chỉnh Sửa Hồ Sơ -->
-        <button onclick="openCustomizerModal('profile')" class="btn-tactile-blue px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer">
+        <!-- Nút Xem góc độ Public (Chỉ hiện với Chủ sở hữu) -->
+        <button id="btnTogglePublicPreview" onclick="togglePublicPreview(true)" class="hidden px-3 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 text-xs font-semibold items-center gap-1.5 transition-colors cursor-pointer" title="Xem trang dưới góc độ khách truy cập">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="hidden sm:inline">Xem góc độ Public</span>
+        </button>
+
+        <!-- Nút Chỉnh Sửa Hồ Sơ (Chỉ hiện với Chủ sở hữu) -->
+        <button id="btnEditProfileNav" onclick="openCustomizerModal('profile')" class="hidden btn-tactile-blue px-3.5 py-1.5 rounded-xl text-xs font-bold items-center gap-1.5 shadow-xs cursor-pointer">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>
           <span>Chỉnh Sửa</span>
         </button>
@@ -144,12 +150,22 @@
 
     </div>
 
-    <!-- Mobile Template Selector Bar -->
-    <div class="flex md:hidden items-center justify-center gap-1 py-1.5 px-3 border-t border-neutral-100 dark:border-neutral-900 bg-neutral-50 dark:bg-neutral-900/60 overflow-x-auto text-[11px]">
+    <!-- Mobile Template Selector Bar (Chỉ hiện với Chủ sở hữu ở chế độ Chỉnh sửa) -->
+    <div id="mobileTemplateSwitcher" class="hidden items-center justify-center gap-1 py-1.5 px-3 border-t border-neutral-100 dark:border-neutral-900 bg-neutral-50 dark:bg-neutral-900/60 overflow-x-auto text-[11px]">
       <button onclick="setTemplate('bento')" id="btnTplMobile-bento" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Bento</button>
       <button onclick="setTemplate('magic')" id="btnTplMobile-magic" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Minimal</button>
       <button onclick="setTemplate('showcase')" id="btnTplMobile-showcase" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Showcase</button>
       <button onclick="setTemplate('terminal')" id="btnTplMobile-terminal" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Terminal</button>
+    </div>
+
+    <!-- Banner thông báo đang ở chế độ Preview Public (Chỉ hiện với Chủ sở hữu) -->
+    <div id="publicPreviewBanner" class="hidden bg-blue-600 text-white text-xs py-2 px-4">
+      <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+        <span class="font-medium">Bạn đang xem dưới góc độ Public — khách truy cập chỉ có quyền xem, không thể chỉnh sửa hay đổi mẫu.</span>
+        <button onclick="togglePublicPreview(false)" class="px-3 py-1 rounded-lg bg-white text-blue-700 font-bold text-[11px] hover:bg-blue-50 transition-colors cursor-pointer">
+          Quay lại Chỉnh sửa
+        </button>
+      </div>
     </div>
   </header>
 
@@ -192,11 +208,11 @@
         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
       </a>
 
-      <!-- Divider -->
-      <span class="w-[1px] h-4 bg-neutral-200 dark:bg-neutral-800 my-auto"></span>
+      <!-- Divider (Chỉ hiện với Chủ sở hữu ở chế độ Chỉnh sửa) -->
+      <span id="dockEditDivider" class="hidden w-[1px] h-4 bg-neutral-200 dark:bg-neutral-800 my-auto"></span>
 
-      <!-- Nút Chỉnh Sửa Modal -->
-      <button onclick="openCustomizerModal('profile')" class="w-9 h-9 rounded-full flex items-center justify-center text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Tùy biến hồ sơ">
+      <!-- Nút Chỉnh Sửa Modal (Chỉ hiện với Chủ sở hữu ở chế độ Chỉnh sửa) -->
+      <button id="dockEditBtn" onclick="openCustomizerModal('profile')" class="hidden w-9 h-9 rounded-full items-center justify-center text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Tùy biến hồ sơ">
         <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg>
       </button>
 
@@ -429,6 +445,93 @@
     let currentExperiences = [];
     let currentEducations = [];
     let currentTemplate = 'bento';
+    let isOwner = false;
+    let isPublicPreview = false;
+
+    function toVietnameseSlug(str) {
+      if (!str) return '';
+      return String(str)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    function checkPortfolioOwnership(subdomain) {
+      try {
+        const stored = localStorage.getItem('connectcv_user');
+        if (!stored) return false;
+        const u = JSON.parse(stored);
+        if (!u || (!u.id && !u.username && !u.email && !u.fullName)) return false;
+        if (u.role === 'HR' || u.role === 'Employer') return false;
+        const targetSlug = toVietnameseSlug(subdomain);
+        const userSub = u.subdomain ? toVietnameseSlug(u.subdomain) : '';
+        const nameSub = toVietnameseSlug(u.fullName || u.username || '');
+        return Boolean((userSub && userSub === targetSlug) || (nameSub && nameSub === targetSlug));
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function canEditPortfolio() {
+      return isOwner && !isPublicPreview;
+    }
+
+    function applyAccessControlUI() {
+      const editable = canEditPortfolio();
+      const desktopSwitcher = document.getElementById('desktopTemplateSwitcher');
+      const mobileSwitcher = document.getElementById('mobileTemplateSwitcher');
+      const btnEditNav = document.getElementById('btnEditProfileNav');
+      const btnPreview = document.getElementById('btnTogglePublicPreview');
+      const dockDivider = document.getElementById('dockEditDivider');
+      const dockEditBtn = document.getElementById('dockEditBtn');
+      const previewBanner = document.getElementById('publicPreviewBanner');
+      const isEmbedded = window.self !== window.top;
+
+      if (desktopSwitcher) {
+        desktopSwitcher.classList.toggle('hidden', !editable);
+        desktopSwitcher.classList.toggle('md:flex', editable);
+      }
+      if (mobileSwitcher) {
+        mobileSwitcher.classList.toggle('hidden', !editable);
+        mobileSwitcher.classList.toggle('flex', editable);
+        mobileSwitcher.classList.toggle('md:hidden', editable);
+      }
+      if (btnEditNav) {
+        btnEditNav.classList.toggle('hidden', !editable);
+        btnEditNav.classList.toggle('flex', editable);
+      }
+      if (btnPreview) {
+        const showPreviewBtn = isOwner && !isPublicPreview;
+        btnPreview.classList.toggle('hidden', !showPreviewBtn);
+        btnPreview.classList.toggle('flex', showPreviewBtn);
+      }
+      if (dockDivider) {
+        dockDivider.classList.toggle('hidden', !editable);
+      }
+      if (dockEditBtn) {
+        dockEditBtn.classList.toggle('hidden', !editable);
+        dockEditBtn.classList.toggle('flex', editable);
+      }
+      if (previewBanner) {
+        const showBanner = isOwner && isPublicPreview && !isEmbedded;
+        previewBanner.classList.toggle('hidden', !showBanner);
+      }
+    }
+
+    function togglePublicPreview(enable) {
+      if (!isOwner) return;
+      isPublicPreview = Boolean(enable);
+      applyAccessControlUI();
+      if (isPublicPreview) {
+        showToast('Đang xem dưới góc độ Public (khách chỉ có quyền xem)');
+      } else {
+        showToast('Đã quay lại chế độ Chỉnh sửa của chủ sở hữu');
+      }
+    }
 
     const SAMPLE_AVATARS = [
       'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=320&h=320&fit=crop',
@@ -480,14 +583,20 @@
       const navLabel = document.getElementById('navSubdomainLabel');
       if (navLabel) navLabel.innerText = `p/${currentSubdomain}`;
 
-      // 3. Phục hồi template từ query parameter hoặc localStorage
+      // 3. Kiểm tra phân quyền chủ sở hữu & chế độ xem trước Public
       const urlParams = new URLSearchParams(window.location.search);
+      isOwner = checkPortfolioOwnership(currentSubdomain);
+      isPublicPreview = isOwner && urlParams.get('preview') === 'public';
+      applyAccessControlUI();
+
+      // 4. Phục hồi template cố định của chủ sở hữu (chỉ chủ sở hữu mới được đổi qua ?tpl=)
       const tplParam = urlParams.get('tpl');
-      const savedTpl = tplParam || localStorage.getItem('portfolio_template') || 'bento';
-      currentTemplate = savedTpl;
+      const ownerSavedTpl = localStorage.getItem(`portfolio_template_${currentSubdomain}`) || localStorage.getItem('portfolio_template') || 'bento';
+      const savedTpl = (canEditPortfolio() && tplParam) ? tplParam : ownerSavedTpl;
+      currentTemplate = ['bento', 'magic', 'showcase', 'terminal'].includes(savedTpl) ? savedTpl : 'bento';
       updateTemplatePillState(currentTemplate);
 
-      // 4. Tải dữ liệu hồ sơ
+      // 5. Tải dữ liệu hồ sơ
       loadPortfolioData(currentSubdomain);
     });
 
@@ -501,9 +610,14 @@
       }
     }
 
-    // --- TEMPLATE SWITCHER ---
+    // --- TEMPLATE SWITCHER (Chỉ chủ sở hữu ở chế độ Chỉnh sửa) ---
     function setTemplate(tpl, notify = true) {
+      if (!canEditPortfolio()) {
+        showToast('Bạn chỉ có quyền xem trang Portfolio này.');
+        return;
+      }
       currentTemplate = tpl;
+      localStorage.setItem(`portfolio_template_${currentSubdomain}`, tpl);
       localStorage.setItem('portfolio_template', tpl);
       updateTemplatePillState(tpl);
       renderAll();
@@ -1406,6 +1520,10 @@
 
     // --- MODAL SECTION CUSTOMIZER LOGIC ---
     function openCustomizerModal(tab = 'profile') {
+      if (!canEditPortfolio()) {
+        showToast('Chỉ chủ sở hữu mới có quyền chỉnh sửa Portfolio này.');
+        return;
+      }
       const s = getNormalizedSocials();
 
       document.getElementById('inpCustName').value = currentProfile?.name || '';
@@ -1593,6 +1711,10 @@
 
     // SAVE ALL CUSTOMIZATIONS
     async function saveAllCustomizations() {
+      if (!canEditPortfolio()) {
+        showToast('Bạn không có quyền lưu thay đổi trên Portfolio này.');
+        return;
+      }
       const name = document.getElementById('inpCustName').value.trim();
       const role = document.getElementById('inpCustRole').value.trim();
       const location = document.getElementById('inpCustLocation').value.trim();
@@ -1680,7 +1802,7 @@
     }
 
     function copySubdomainUrl() {
-      const url = `https://connectcv.vn/p/${currentSubdomain}`;
+      const url = `${window.location.origin}/p/${currentSubdomain}`;
       navigator.clipboard.writeText(url).then(() => {
         showToast('Đã sao chép link: ' + url);
       });
