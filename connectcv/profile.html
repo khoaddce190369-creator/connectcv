@@ -166,8 +166,8 @@
           
           <!-- Avatar hình tròn lớn có viền trắng 4px & nút camera -->
           <div class="relative inline-block self-start">
-            <div class="w-32 h-32 sm:w-40 sm:h-40 lg:w-44 lg:h-44 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
-              <img id="userAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop" alt="Avatar" class="w-full h-full object-cover" />
+            <div class="w-32 h-32 sm:w-40 sm:h-40 lg:w-44 lg:h-44 rounded-full border-4 border-white shadow-xl overflow-hidden bg-slate-100">
+              <img id="userAvatar" src="/assets/default-avatar.svg" alt="Avatar" class="w-full h-full object-cover" />
             </div>
             <!-- Chấm Online -->
             <span class="absolute bottom-3 right-3 w-4.5 h-4.5 rounded-full bg-emerald-500 border-2 border-white" title="Đang trực tuyến"></span>
@@ -527,10 +527,12 @@
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 uppercase mb-1">Link Ảnh Đại Diện (Avatar URL):</label>
-          <div class="flex gap-2">
-            <input id="inpEditAvatar" type="text" class="input-field flex-1" placeholder="https://..." onchange="document.getElementById('userAvatar').src = this.value" />
-            <button type="button" onclick="cycleAvatarPreset()" class="btn-secondary text-xs px-3 py-1.5 font-bold whitespace-nowrap">Chọn Ảnh Mẫu</button>
+          <label class="block font-bold text-slate-700 uppercase mb-1">Ảnh Đại Diện (Avatar):</label>
+          <div class="flex flex-wrap gap-2">
+            <input id="inpEditAvatar" type="text" class="input-field flex-1 min-w-[180px]" placeholder="Dán link ảnh hoặc tải ảnh từ máy..." onchange="document.getElementById('userAvatar').src = this.value || '/assets/default-avatar.svg'" />
+            <input type="file" id="inpAvatarFile" accept="image/*" class="hidden" onchange="handleAvatarFileUpload(this)" />
+            <button type="button" onclick="document.getElementById('inpAvatarFile').click()" class="btn-secondary text-xs px-3 py-1.5 font-bold whitespace-nowrap cursor-pointer">Tải ảnh lên</button>
+            <button type="button" onclick="resetDefaultAvatar()" class="btn-secondary text-xs px-3 py-1.5 font-bold whitespace-nowrap cursor-pointer">Ảnh mặc định</button>
           </div>
         </div>
 
@@ -971,22 +973,104 @@
       `;
     }
 
+    const PENCIL_ICON_SVG = '<svg class="w-3.5 h-3.5 text-blue-600 shrink-0 inline-block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/></svg>';
+
+    function makeEditableFieldHtml(text, placeholder, focusInputId, canEdit) {
+      if (text && String(text).trim()) {
+        return escapeHtml(String(text).trim());
+      }
+      if (!canEdit) return '<span class="text-slate-400 italic">Chưa cập nhật</span>';
+      return `<button type="button" onclick="openEditProfileAndFocus('${focusInputId}')" class="inline-flex items-center gap-1.5 text-slate-400 hover:text-blue-600 font-medium transition-colors cursor-pointer group/pen" title="Nhấn để chỉnh sửa">${PENCIL_ICON_SVG}<span class="border-b border-dashed border-slate-300 group-hover/pen:border-blue-500">${placeholder}</span></button>`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function openEditProfileAndFocus(focusId) {
+      openEditProfileModal();
+      if (focusId) {
+        setTimeout(() => {
+          const el = document.getElementById(focusId);
+          if (el) el.focus();
+        }, 80);
+      }
+    }
+
+    function resetDefaultAvatar() {
+      const def = '/assets/default-avatar.svg';
+      const inp = document.getElementById('inpEditAvatar');
+      const img = document.getElementById('userAvatar');
+      if (inp) inp.value = def;
+      if (img) img.src = def;
+    }
+
+    function handleAvatarFileUpload(input) {
+      const file = input && input.files && input.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Vui lòng chọn ảnh có dung lượng nhỏ hơn 2MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        const inp = document.getElementById('inpEditAvatar');
+        const img = document.getElementById('userAvatar');
+        if (inp) inp.value = dataUrl;
+        if (img) img.src = dataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
     function renderProfileData() {
       const u = viewingUser || currentUser;
       if (!u) return;
 
       const isHR = u.role === 'HR' || u.role === 'Employer';
+      const canEdit = !isViewingOther;
 
-      // Header overview
-      document.getElementById('userFullName').innerText = u.fullName || u.username || 'Người dùng ConnectCV';
-      document.getElementById('userHeadline').innerText = u.title || 'Chuyên viên tài năng';
-      document.getElementById('userLocation').querySelector('span').innerText = u.location || 'Việt Nam';
-      document.getElementById('userExperienceText').innerText = `${u.experienceYears || 3} năm kinh nghiệm`;
-      document.getElementById('userAvatar').src = u.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop';
+      // Header overview (không tự chế thông tin, chưa có thì hiện icon cây bút để người dùng tự sửa)
+      const fullNameEl = document.getElementById('userFullName');
+      const displayName = (u.fullName || u.username || '').trim();
+      if (fullNameEl) {
+        if (canEdit) {
+          fullNameEl.innerHTML = `<span>${escapeHtml(displayName || 'Người dùng ConnectCV')}</span> <button type="button" onclick="openEditProfileAndFocus('inpEditFullName')" class="inline-flex items-center justify-center w-7 h-7 rounded-lg hover:bg-slate-100 align-middle ml-1 cursor-pointer" title="Chỉnh sửa tên">${PENCIL_ICON_SVG}</button>`;
+        } else {
+          fullNameEl.innerText = displayName || 'Người dùng ConnectCV';
+        }
+      }
+
+      const headlineEl = document.getElementById('userHeadline');
+      if (headlineEl) {
+        headlineEl.innerHTML = makeEditableFieldHtml(u.title, 'Thêm chức danh hoặc giới thiệu ngắn', 'inpEditHeadline', canEdit);
+      }
+
+      const locSpan = document.getElementById('userLocation')?.querySelector('span');
+      if (locSpan) {
+        locSpan.innerHTML = makeEditableFieldHtml(u.location, 'Thêm địa điểm', 'inpEditLocation', canEdit);
+      }
+
+      const expEl = document.getElementById('userExperienceText');
+      if (expEl) {
+        const expVal = Number(u.experienceYears);
+        expEl.innerHTML = expVal > 0
+          ? `${expVal} năm kinh nghiệm`
+          : makeEditableFieldHtml('', 'Thêm số năm kinh nghiệm', 'inpEditExperience', canEdit);
+      }
+
+      document.getElementById('userAvatar').src = u.avatar || '/assets/default-avatar.svg';
       
-      const sub = u.subdomain || 'tuan-nguyen';
-      document.getElementById('userSubdomainText').innerText = sub;
-      document.getElementById('btnPublicSubdomainLink').href = `/p/${sub}`;
+      const sub = (u.subdomain || '').trim();
+      const subTextEl = document.getElementById('userSubdomainText');
+      const subLinkEl = document.getElementById('btnPublicSubdomainLink');
+      if (sub) {
+        if (subTextEl) subTextEl.innerText = sub;
+        if (subLinkEl) subLinkEl.href = `/p/${sub}`;
+      } else {
+        if (subTextEl) subTextEl.innerHTML = canEdit ? `<span onclick="event.preventDefault(); openEditProfileAndFocus('inpEditSubdomain')" class="inline-flex items-center gap-1 text-slate-400 hover:text-blue-600 cursor-pointer">${PENCIL_ICON_SVG}<span>đặt-tên-link</span></span>` : 'chưa-thiết-lập';
+        if (subLinkEl) subLinkEl.href = '#';
+      }
 
       // Badges
       const planBadge = document.getElementById('userPlanBadge');
@@ -1056,23 +1140,32 @@
       const tabPortBtn = document.getElementById('btnTabGoPortfolio');
       if (tabPortBtn) tabPortBtn.href = `/p/${sub}`;
 
-      // About Tab
-      document.getElementById('userBioText').innerText = u.bio || 'Chưa cập nhật phần giới thiệu bản thân.';
+      // About Tab (hiển thị icon cây bút cho các mục chưa hoàn thiện)
+      const bioEl = document.getElementById('userBioText');
+      if (bioEl) bioEl.innerHTML = makeEditableFieldHtml(u.bio, 'Thêm phần giới thiệu bản thân', 'inpEditBio', canEdit);
       document.getElementById('contactEmail').innerText = u.email || 'Chưa cập nhật';
-      document.getElementById('contactPhone').innerText = u.phone || 'Chưa cập nhật';
-      document.getElementById('contactLinkedin').innerText = u.linkedin || 'Chưa cập nhật';
-      if (document.getElementById('contactFacebook')) document.getElementById('contactFacebook').innerText = u.facebook || 'Chưa cập nhật';
-      if (document.getElementById('contactBlog')) document.getElementById('contactBlog').innerText = u.blog || 'Chưa cập nhật';
-      document.getElementById('contactRate').innerText = u.hourlyRate || 'Thỏa thuận';
+      document.getElementById('contactPhone').innerHTML = makeEditableFieldHtml(u.phone, 'Thêm số điện thoại', 'inpEditPhone', canEdit);
+      document.getElementById('contactLinkedin').innerHTML = makeEditableFieldHtml(u.linkedin, 'Thêm liên kết LinkedIn', 'inpEditLinkedin', canEdit);
+      const fbEl = document.getElementById('contactFacebook');
+      if (fbEl) fbEl.innerHTML = makeEditableFieldHtml(u.facebook, 'Thêm liên kết Facebook', 'inpEditFacebook', canEdit);
+      const blogEl = document.getElementById('contactBlog');
+      if (blogEl) blogEl.innerHTML = makeEditableFieldHtml(u.blog, 'Thêm website / blog cá nhân', 'inpEditBlog', canEdit);
+      document.getElementById('contactRate').innerHTML = makeEditableFieldHtml(u.hourlyRate, 'Thêm mức thù lao mong muốn', 'inpEditRate', canEdit);
 
-      // Skills
+      // Skills (không tự chế kỹ năng mẫu khi user chưa thêm)
       const skillsContainer = document.getElementById('userSkillsContainer');
-      const skills = Array.isArray(u.skills) ? u.skills : (u.skills ? u.skills.split(',') : ['Figma', 'UI/UX']);
-      skillsContainer.innerHTML = skills.map(s => `
-        <span class="chip-pill chip-cyan font-bold text-xs py-1 px-3">
-          ${s.trim()}
-        </span>
-      `).join('');
+      const skills = Array.isArray(u.skills)
+        ? u.skills.filter(s => s && s.trim())
+        : (u.skills ? u.skills.split(',').map(s => s.trim()).filter(Boolean) : []);
+      if (skills.length > 0) {
+        skillsContainer.innerHTML = skills.map(s => `
+          <span class="chip-pill chip-cyan font-bold text-xs py-1 px-3">
+            ${escapeHtml(s.trim())}
+          </span>
+        `).join('');
+      } else {
+        skillsContainer.innerHTML = makeEditableFieldHtml('', 'Thêm kỹ năng chuyên môn của bạn', 'inpEditSkills', canEdit);
+      }
     }
 
     // --- TAB SWITCHING (PORTFOLIO / ABOUT / EXPERIENCE / EMPLOYER) ---
@@ -1275,9 +1368,9 @@
       document.getElementById('inpEditHeadline').value = currentUser.title || '';
       document.getElementById('inpEditPhone').value = currentUser.phone || '';
       document.getElementById('inpEditLocation').value = currentUser.location || '';
-      document.getElementById('inpEditExperience').value = currentUser.experienceYears || 3;
+      document.getElementById('inpEditExperience').value = currentUser.experienceYears || '';
       document.getElementById('inpEditRate').value = currentUser.hourlyRate || '';
-      document.getElementById('inpEditSubdomain').value = currentUser.subdomain || 'tuan-nguyen';
+      document.getElementById('inpEditSubdomain').value = currentUser.subdomain || '';
       document.getElementById('inpEditAvatar').value = currentUser.avatar || '';
       document.getElementById('inpEditBio').value = currentUser.bio || '';
       document.getElementById('inpEditSkills').value = Array.isArray(currentUser.skills) ? currentUser.skills.join(', ') : (currentUser.skills || '');

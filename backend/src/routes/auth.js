@@ -155,12 +155,12 @@ router.get('/github/callback', async (req, res) => {
         isPro: role === 'HR',
         role: role,
         github: ghUser.login || '',
-        avatar: ghUser.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0f172a&color=fff`,
+        avatar: '/assets/default-avatar.svg',
         aiCredits: role === 'HR' ? 40 : 20
       });
     } else {
       const updates = {};
-      if (ghUser.avatar_url && !user.avatar) updates.avatar = ghUser.avatar_url;
+      if (!user.avatar) updates.avatar = '/assets/default-avatar.svg';
       if (ghUser.login && !user.github) updates.github = ghUser.login;
       if (Object.keys(updates).length > 0) {
         user = UserModel.update(user.id, updates) || user;
@@ -292,13 +292,13 @@ router.post('/google', async (req, res) => {
         password_hash: null,
         isPro: assignedRole === 'HR',
         role: assignedRole,
-        avatar: userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=0284c7&color=fff`,
+        avatar: '/assets/default-avatar.svg',
         aiCredits: assignedRole === 'HR' ? 40 : 20
       });
     } else {
-      // Người dùng đã có tài khoản: Cập nhật avatar nếu thiếu, KHÔNG ĐỔI ROLE
-      if (userAvatar && !user.avatar) {
-        user = UserModel.update(user.id, { avatar: userAvatar }) || user;
+      // Người dùng đã có tài khoản: Giữ nguyên avatar hiện có, chỉ gán mặc định nếu chưa có
+      if (!user.avatar) {
+        user = UserModel.update(user.id, { avatar: '/assets/default-avatar.svg' }) || user;
       }
     }
 
@@ -433,14 +433,14 @@ router.put('/profile', optionalAuth, (req, res) => {
       const candData = {
         id: userId,
         userId: userId,
-        name: updates.fullName || updates.username || req.user?.username || 'Ứng viên ConnectCV',
-        role: updates.title || 'Chuyên viên tài năng',
-        avatar: updates.avatar || req.user?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop',
-        experienceYears: parseInt(updates.experienceYears || 2),
-        skills: updates.skills || ['Figma', 'UI/UX', 'ATS CV'],
+        name: updates.fullName || updates.username || req.user?.fullName || req.user?.username || '',
+        role: updates.title !== undefined ? updates.title : (req.user?.title || ''),
+        avatar: updates.avatar || req.user?.avatar || '/assets/default-avatar.svg',
+        experienceYears: updates.experienceYears !== undefined ? (parseInt(updates.experienceYears) || 0) : (req.user?.experienceYears || 0),
+        skills: updates.skills !== undefined ? updates.skills : (req.user?.skills || []),
         rating: 5.0,
-        bio: updates.bio || '',
-        subdomain: updates.subdomain || '',
+        bio: updates.bio !== undefined ? updates.bio : (req.user?.bio || ''),
+        subdomain: updates.subdomain !== undefined ? updates.subdomain : (req.user?.subdomain || ''),
         portfolioUrl: updates.subdomain ? `/p/${updates.subdomain}` : '/freelancer-profile.html',
         isPro: req.user?.isPro || false
       };
