@@ -112,19 +112,16 @@
       </div>
 
       <!-- Center: Template Switcher Pills (Chỉ hiện với Chủ sở hữu ở chế độ Chỉnh sửa) -->
-      <div id="desktopTemplateSwitcher" class="hidden items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-900 rounded-full border border-neutral-200/80 dark:border-neutral-800 text-xs">
-        <button onclick="setTemplate('bento')" id="btnTpl-bento" class="px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer">
-          Bento Grid
-        </button>
-        <button onclick="setTemplate('magic')" id="btnTpl-magic" class="px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer">
-          Minimalist
-        </button>
-        <button onclick="setTemplate('showcase')" id="btnTpl-showcase" class="px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer">
-          Creative Studio
-        </button>
-        <button onclick="setTemplate('terminal')" id="btnTpl-terminal" class="px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer">
-          Dev Terminal
-        </button>
+      <div id="desktopTemplateSwitcher" class="hidden items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-900 rounded-full border border-neutral-200/80 dark:border-neutral-800 text-xs max-w-[540px] lg:max-w-[660px] overflow-x-auto">
+        <button onclick="setTemplate('bento')" id="btnTpl-bento" class="px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer">Bento</button>
+        <button onclick="setTemplate('magic')" id="btnTpl-magic" class="px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer">Minimal</button>
+        <button onclick="setTemplate('showcase')" id="btnTpl-showcase" class="px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer">Studio</button>
+        <button onclick="setTemplate('terminal')" id="btnTpl-terminal" class="px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer">Terminal</button>
+        <button onclick="setTemplate('notion')" id="btnTpl-notion" class="px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer">Notion</button>
+        <button onclick="setTemplate('sidebar')" id="btnTpl-sidebar" class="px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer">Sidebar</button>
+        <button onclick="setTemplate('timeline')" id="btnTpl-timeline" class="px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer">Timeline</button>
+        <button onclick="setTemplate('editorial')" id="btnTpl-editorial" class="px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer">Editorial</button>
+        <button onclick="setTemplate('macos')" id="btnTpl-macos" class="px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer">MacOS</button>
       </div>
 
       <!-- Right: Preview Public, Chỉnh sửa, Theme -->
@@ -151,11 +148,16 @@
     </div>
 
     <!-- Mobile Template Selector Bar (Chỉ hiện với Chủ sở hữu ở chế độ Chỉnh sửa) -->
-    <div id="mobileTemplateSwitcher" class="hidden items-center justify-center gap-1 py-1.5 px-3 border-t border-neutral-100 dark:border-neutral-900 bg-neutral-50 dark:bg-neutral-900/60 overflow-x-auto text-[11px]">
+    <div id="mobileTemplateSwitcher" class="hidden items-center justify-start gap-1 py-1.5 px-3 border-t border-neutral-100 dark:border-neutral-900 bg-neutral-50 dark:bg-neutral-900/60 overflow-x-auto text-[11px]">
       <button onclick="setTemplate('bento')" id="btnTplMobile-bento" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Bento</button>
       <button onclick="setTemplate('magic')" id="btnTplMobile-magic" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Minimal</button>
-      <button onclick="setTemplate('showcase')" id="btnTplMobile-showcase" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Showcase</button>
+      <button onclick="setTemplate('showcase')" id="btnTplMobile-showcase" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Studio</button>
       <button onclick="setTemplate('terminal')" id="btnTplMobile-terminal" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Terminal</button>
+      <button onclick="setTemplate('notion')" id="btnTplMobile-notion" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Notion</button>
+      <button onclick="setTemplate('sidebar')" id="btnTplMobile-sidebar" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Sidebar</button>
+      <button onclick="setTemplate('timeline')" id="btnTplMobile-timeline" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Timeline</button>
+      <button onclick="setTemplate('editorial')" id="btnTplMobile-editorial" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Editorial</button>
+      <button onclick="setTemplate('macos')" id="btnTplMobile-macos" class="px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">MacOS</button>
     </div>
 
     <!-- Banner thông báo đang ở chế độ Preview Public (Chỉ hiện với Chủ sở hữu) -->
@@ -590,15 +592,28 @@
       applyAccessControlUI();
 
       // 4. Phục hồi template cố định của chủ sở hữu (chỉ chủ sở hữu mới được đổi qua ?tpl=)
-      const tplParam = urlParams.get('tpl');
+      const urlTpl = urlParams.get('tpl');
       const ownerSavedTpl = localStorage.getItem(`portfolio_template_${currentSubdomain}`) || localStorage.getItem('portfolio_template') || 'bento';
-      const savedTpl = (canEditPortfolio() && tplParam) ? tplParam : ownerSavedTpl;
-      currentTemplate = ['bento', 'magic', 'showcase', 'terminal'].includes(savedTpl) ? savedTpl : 'bento';
+      const savedTpl = (canEditPortfolio() && urlTpl) ? urlTpl : ownerSavedTpl;
+      currentTemplate = ALL_TEMPLATES.includes(savedTpl) ? savedTpl : 'bento';
       updateTemplatePillState(currentTemplate);
 
       // 5. Tải dữ liệu hồ sơ
       loadPortfolioData(currentSubdomain);
     });
+
+    const TEMPLATE_NAMES = {
+      bento: 'Bento Grid Modern',
+      magic: 'Minimalist Editorial',
+      showcase: 'Creative Studio Showcase',
+      terminal: 'Developer Terminal',
+      notion: 'Notion Workspace Docs',
+      sidebar: 'Executive Split Sidebar',
+      timeline: 'Career Timeline Resume',
+      editorial: 'Swiss Editorial Magazine',
+      macos: 'Interactive MacOS Window'
+    };
+    const ALL_TEMPLATES = Object.keys(TEMPLATE_NAMES);
 
     function toggleDarkMode() {
       if (document.documentElement.classList.contains('dark')) {
@@ -616,6 +631,7 @@
         showToast('Bạn chỉ có quyền xem trang Portfolio này.');
         return;
       }
+      if (!ALL_TEMPLATES.includes(tpl)) tpl = 'bento';
       currentTemplate = tpl;
       localStorage.setItem(`portfolio_template_${currentSubdomain}`, tpl);
       localStorage.setItem('portfolio_template', tpl);
@@ -627,27 +643,20 @@
       window.history.replaceState({}, '', url);
 
       if (notify) {
-        const names = {
-          bento: 'Bento Grid Modern',
-          magic: 'Minimalist Editorial',
-          showcase: 'Creative Studio Showcase',
-          terminal: 'Developer Terminal'
-        };
-        showToast(`Đã chuyển sang mẫu: ${names[tpl] || tpl}`);
+        showToast(`Đã chuyển sang mẫu: ${TEMPLATE_NAMES[tpl] || tpl}`);
       }
     }
 
     function updateTemplatePillState(tpl) {
-      const tpls = ['bento', 'magic', 'showcase', 'terminal'];
-      tpls.forEach(t => {
+      ALL_TEMPLATES.forEach(t => {
         const desktopBtn = document.getElementById(`btnTpl-${t}`);
         const mobileBtn = document.getElementById(`btnTplMobile-${t}`);
         const isActive = t === tpl;
 
         if (desktopBtn) {
           desktopBtn.className = isActive
-            ? 'px-3 py-1 rounded-full text-xs font-bold bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 shadow-xs transition-all cursor-pointer'
-            : 'px-3 py-1 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-all cursor-pointer';
+            ? 'px-2.5 py-1 rounded-full text-[11px] font-bold bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 shadow-xs whitespace-nowrap transition-all cursor-pointer'
+            : 'px-2.5 py-1 rounded-full text-[11px] font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white whitespace-nowrap transition-all cursor-pointer';
         }
         if (mobileBtn) {
           mobileBtn.className = isActive
@@ -926,6 +935,16 @@
         container.innerHTML = renderShowcaseTemplate();
       } else if (currentTemplate === 'terminal') {
         container.innerHTML = renderTerminalTemplate();
+      } else if (currentTemplate === 'notion') {
+        container.innerHTML = renderNotionTemplate();
+      } else if (currentTemplate === 'sidebar') {
+        container.innerHTML = renderSidebarTemplate();
+      } else if (currentTemplate === 'timeline') {
+        container.innerHTML = renderTimelineTemplate();
+      } else if (currentTemplate === 'editorial') {
+        container.innerHTML = renderEditorialTemplate();
+      } else if (currentTemplate === 'macos') {
+        container.innerHTML = renderMacOSTemplate();
       } else {
         container.innerHTML = renderMinimalTemplate();
       }
@@ -1264,12 +1283,12 @@
               ${s.linkedin ? `<span class="text-neutral-300">&bull;</span><a href="${s.linkedin}" target="_blank" class="text-xs font-mono text-blue-600 hover:underline">LinkedIn</a>` : ''}
               ${s.facebook ? `<span class="text-neutral-300">&bull;</span><a href="${s.facebook}" target="_blank" class="text-xs font-mono text-blue-600 hover:underline">Facebook</a>` : ''}
               ${s.blog ? `<span class="text-neutral-300">&bull;</span><a href="${s.blog}" target="_blank" class="text-xs font-mono text-emerald-600 hover:underline">Blog</a>` : ''}
-            </div>
           </div>
 
         </div>
       `;
     }
+
 
     // =========================================================================
     // TEMPLATE 3: CREATIVE STUDIO SHOWCASE (BEHANCE / DRIBBBLE PRO STYLE)
@@ -1448,9 +1467,469 @@
                 <span class="w-2 h-4 bg-emerald-400 animate-pulse"></span>
               </div>
 
+          </div>
+
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // TEMPLATE 5: NOTION WORKSPACE DOCS (NOTION PORTFOLIO / PM & BA STYLE)
+    // =========================================================================
+    function renderNotionTemplate() {
+      const s = getNormalizedSocials();
+      const socialBadges = renderSocialBadgesHtml();
+      const skillsHtml = (currentProfile.skills || []).map(sk =>
+        `<span class="px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-[11px] font-medium border border-neutral-200/70 dark:border-neutral-700">${sk}</span>`
+      ).join('');
+
+      return `
+        <div class="max-w-4xl mx-auto pb-24 animate-fade-up" id="about">
+          <!-- Notion Cover Banner -->
+          <div class="h-36 sm:h-44 w-full bg-slate-900 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 relative overflow-hidden">
+            <div class="max-w-4xl mx-auto h-full px-6 flex items-end justify-end pb-3">
+              <span class="px-2.5 py-1 rounded-md bg-white/10 text-white/80 font-mono text-[10px] border border-white/15">Notion Docs Style</span>
             </div>
           </div>
 
+          <div class="px-4 sm:px-8 -mt-12 space-y-8 relative z-10">
+            <!-- Page Icon & Title -->
+            <div class="space-y-4">
+              <img src="${currentProfile.avatar}" alt="${currentProfile.name}" class="w-24 h-24 rounded-2xl object-cover border-4 border-white dark:border-neutral-950 shadow-md bg-white" />
+              <div class="space-y-2">
+                <h1 class="font-heading font-extrabold text-3xl sm:text-4xl text-neutral-900 dark:text-white tracking-tight">${currentProfile.name}</h1>
+                <p class="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 font-medium">${currentProfile.role} · ${currentProfile.location || 'Việt Nam'}</p>
+              </div>
+              <div class="flex flex-wrap gap-2">${socialBadges}</div>
+            </div>
+
+            <!-- Notion Callout Box -->
+            <div class="p-4 sm:p-5 rounded-xl bg-neutral-100/90 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-start gap-3">
+              <div class="w-6 h-6 rounded-md bg-blue-600 text-white flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">i</div>
+              <div class="space-y-2 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                <p>${currentProfile.bio}</p>
+                <div class="flex flex-wrap gap-1.5 pt-1">${skillsHtml}</div>
+              </div>
+            </div>
+
+            <!-- Notion Database Table: Projects -->
+            <div class="space-y-3" id="projects">
+              <div class="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-2">
+                <h2 class="font-heading font-bold text-base text-neutral-900 dark:text-white">Cơ sở dữ liệu Dự án</h2>
+                <span class="text-[11px] font-mono text-neutral-400">${(currentProjects || []).length} mục</span>
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-850 text-neutral-500">
+                      <th class="py-2.5 px-3 font-semibold">Tên dự án</th>
+                      <th class="py-2.5 px-3 font-semibold hidden sm:table-cell">Mô tả</th>
+                      <th class="py-2.5 px-3 font-semibold">Công nghệ</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Liên kết</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
+                    ${(currentProjects || []).map(p => `
+                      <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+                        <td class="py-3 px-3 font-semibold text-neutral-900 dark:text-white">${p.title}</td>
+                        <td class="py-3 px-3 text-neutral-500 dark:text-neutral-400 max-w-xs hidden sm:table-cell">${p.description}</td>
+                        <td class="py-3 px-3">
+                          <div class="flex flex-wrap gap-1">
+                            ${(p.tags || []).slice(0, 2).map(t => `<span class="px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 text-[10px] font-medium">${t}</span>`).join('')}
+                          </div>
+                        </td>
+                        <td class="py-3 px-3 text-right whitespace-nowrap">
+                          ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 font-semibold hover:underline">Mở Demo</a>` : '<span class="text-neutral-400">—</span>'}
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Two-column Experience & Education -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-3">
+                <h2 class="font-heading font-bold text-base text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-800 pb-2">Kinh nghiệm làm việc</h2>
+                <div class="space-y-3">
+                  ${(currentExperiences || []).map(e => `
+                    <div class="p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 space-y-1">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="font-semibold text-xs text-neutral-900 dark:text-white">${e.title}</span>
+                        <span class="text-[10px] font-mono text-neutral-400">${e.period}</span>
+                      </div>
+                      <p class="text-[11px] font-medium text-blue-600 dark:text-blue-400">${e.company}</p>
+                      <p class="text-[11px] text-neutral-500 dark:text-neutral-400 leading-relaxed">${e.description || ''}</p>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+              <div class="space-y-3">
+                <h2 class="font-heading font-bold text-base text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-800 pb-2">Học vấn &amp; Liên hệ</h2>
+                <div class="space-y-3">
+                  ${(currentEducations || []).map(ed => `
+                    <div class="p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 space-y-1">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="font-semibold text-xs text-neutral-900 dark:text-white">${ed.school}</span>
+                        <span class="text-[10px] font-mono text-neutral-400">${ed.period}</span>
+                      </div>
+                      <p class="text-[11px] text-neutral-500 dark:text-neutral-400">${ed.degree}</p>
+                    </div>
+                  `).join('')}
+                  <div class="p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 text-xs space-y-1">
+                    <p class="font-semibold text-neutral-900 dark:text-white">Liên hệ trực tiếp</p>
+                    <p class="text-neutral-500">Email: <a href="mailto:${s.email}" class="text-blue-600 hover:underline">${s.email}</a></p>
+                    ${s.phone ? `<p class="text-neutral-500">Điện thoại: ${s.phone}</p>` : ''}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // TEMPLATE 6: EXECUTIVE SPLIT SIDEBAR (BRITTANY CHIANG / STICKY ASIDE STYLE)
+    // =========================================================================
+    function renderSidebarTemplate() {
+      const s = getNormalizedSocials();
+      const socialBadges = renderSocialBadgesHtml();
+
+      return `
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10 pb-24 animate-fade-up" id="about">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            <!-- Left Sticky Sidebar -->
+            <aside class="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
+              <div class="flex items-center gap-4">
+                <img src="${currentProfile.avatar}" alt="${currentProfile.name}" class="w-20 h-20 rounded-2xl object-cover border border-neutral-200 dark:border-neutral-800 shadow-xs" />
+                <div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 mb-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Sẵn sàng hợp tác
+                  </span>
+                  <h1 class="font-heading font-extrabold text-2xl sm:text-3xl text-neutral-900 dark:text-white tracking-tight">${currentProfile.name}</h1>
+                  <p class="text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400">${currentProfile.role}</p>
+                </div>
+              </div>
+
+              <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">${currentProfile.bio}</p>
+
+              <!-- Quick Section Links -->
+              <nav class="hidden lg:flex flex-col gap-2 text-xs font-semibold text-neutral-500 dark:text-neutral-400 pt-2">
+                <a href="#sidebar-exp" class="hover:text-neutral-900 dark:hover:text-white flex items-center gap-2 transition-colors">
+                  <span class="w-6 h-[1px] bg-neutral-300 dark:bg-neutral-700"></span> KINH NGHIỆM LÀM VIỆC
+                </a>
+                <a href="#projects" class="hover:text-neutral-900 dark:hover:text-white flex items-center gap-2 transition-colors">
+                  <span class="w-6 h-[1px] bg-neutral-300 dark:bg-neutral-700"></span> DỰ ÁN TIÊU BIỂU
+                </a>
+                <a href="#sidebar-skills" class="hover:text-neutral-900 dark:hover:text-white flex items-center gap-2 transition-colors">
+                  <span class="w-6 h-[1px] bg-neutral-300 dark:bg-neutral-700"></span> KỸ NĂNG &amp; HỌC VẤN
+                </a>
+              </nav>
+
+              <div class="flex flex-wrap gap-2">${socialBadges}</div>
+
+              <div class="pt-2">
+                <a href="mailto:${s.email}" class="btn-tactile-blue px-5 py-2.5 rounded-xl text-xs font-bold inline-flex items-center gap-2">
+                  Liên hệ trao đổi công việc
+                </a>
+              </div>
+            </aside>
+
+            <!-- Right Scrolling Content -->
+            <div class="lg:col-span-7 space-y-10">
+              <section id="sidebar-exp" class="space-y-4">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Kinh nghiệm làm việc</h2>
+                <div class="space-y-3">
+                  ${(currentExperiences || []).map(e => `
+                    <div class="p-5 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-blue-300 dark:hover:border-blue-700 transition-colors space-y-1.5">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="font-heading font-bold text-sm text-neutral-900 dark:text-white">${e.title} · <span class="text-blue-600 dark:text-blue-400">${e.company}</span></h3>
+                        <span class="text-[11px] font-mono text-neutral-400">${e.period}</span>
+                      </div>
+                      <p class="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">${e.description || ''}</p>
+                    </div>
+                  `).join('')}
+                </div>
+              </section>
+
+              <section id="projects" class="space-y-4">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Dự án nổi bật</h2>
+                <div class="space-y-4">
+                  ${(currentProjects || []).map(p => `
+                    <div class="p-4 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex flex-col sm:flex-row gap-4 hover:shadow-sm transition-all">
+                      <img src="${p.image}" alt="${p.title}" class="w-full sm:w-44 aspect-video sm:aspect-square object-cover rounded-xl shrink-0 bg-neutral-100" />
+                      <div class="flex-1 flex flex-col justify-between space-y-2">
+                        <div>
+                          <h3 class="font-heading font-bold text-sm text-neutral-900 dark:text-white">${p.title}</h3>
+                          <p class="text-xs text-neutral-600 dark:text-neutral-400 mt-1 leading-relaxed">${p.description}</p>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                          <div class="flex flex-wrap gap-1">
+                            ${(p.tags || []).slice(0, 3).map(t => `<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">${t}</span>`).join('')}
+                          </div>
+                          ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-600 hover:underline">Xem chi tiết &rarr;</a>` : ''}
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </section>
+
+              <section id="sidebar-skills" class="space-y-4">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Kỹ năng &amp; Học vấn</h2>
+                <div class="p-5 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-neutral-900 space-y-4">
+                  <div class="flex flex-wrap gap-1.5">
+                    ${(currentProfile.skills || []).map(sk => `<span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200">${sk}</span>`).join('')}
+                  </div>
+                  <div class="border-t border-neutral-100 dark:border-neutral-800 pt-3 space-y-2">
+                    ${(currentEducations || []).map(ed => `
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="font-semibold text-neutral-900 dark:text-white">${ed.school} — <span class="font-normal text-neutral-500">${ed.degree}</span></span>
+                        <span class="font-mono text-[11px] text-neutral-400">${ed.period}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // TEMPLATE 7: CAREER TIMELINE RESUME (READ.CV / CHRONOLOGICAL STYLE)
+    // =========================================================================
+    function renderTimelineTemplate() {
+      const s = getNormalizedSocials();
+      const socialBadges = renderSocialBadgesHtml();
+
+      return `
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 py-10 pb-24 space-y-12 animate-fade-up" id="about">
+          <!-- Centered Header -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 pb-8 border-b border-neutral-200 dark:border-neutral-800">
+            <div class="flex items-center gap-4">
+              <img src="${currentProfile.avatar}" alt="${currentProfile.name}" class="w-16 h-16 rounded-full object-cover border border-neutral-200 dark:border-neutral-700" />
+              <div>
+                <h1 class="font-heading font-extrabold text-2xl text-neutral-900 dark:text-white">${currentProfile.name}</h1>
+                <p class="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">${currentProfile.role} · ${currentProfile.location || 'Việt Nam'}</p>
+              </div>
+            </div>
+            <a href="mailto:${s.email}" class="px-4 py-2 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-xs font-bold hover:opacity-90 transition-opacity">Gửi Email</a>
+          </div>
+
+          <!-- Bio & Links -->
+          <div class="space-y-4">
+            <p class="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">${currentProfile.bio}</p>
+            <div class="flex flex-wrap gap-2">${socialBadges}</div>
+          </div>
+
+          <!-- Vertical Timeline: Experience & Education -->
+          <div class="space-y-6">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Hành trình nghề nghiệp</h2>
+            <div class="relative pl-6 border-l-2 border-neutral-200 dark:border-neutral-800 space-y-8">
+              ${(currentExperiences || []).map(e => `
+                <div class="relative space-y-1">
+                  <span class="absolute -left-[29px] top-1 w-3 h-3 rounded-full bg-blue-600 border-2 border-white dark:border-neutral-950"></span>
+                  <span class="text-[11px] font-mono font-semibold text-blue-600 dark:text-blue-400">${e.period}</span>
+                  <h3 class="font-heading font-bold text-sm sm:text-base text-neutral-900 dark:text-white">${e.title} · ${e.company}</h3>
+                  <p class="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">${e.description || ''}</p>
+                </div>
+              `).join('')}
+              ${(currentEducations || []).map(ed => `
+                <div class="relative space-y-1">
+                  <span class="absolute -left-[29px] top-1 w-3 h-3 rounded-full bg-neutral-400 border-2 border-white dark:border-neutral-950"></span>
+                  <span class="text-[11px] font-mono text-neutral-400">${ed.period}</span>
+                  <h3 class="font-heading font-bold text-sm text-neutral-900 dark:text-white">${ed.school}</h3>
+                  <p class="text-xs text-neutral-500">${ed.degree}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Projects Grid -->
+          <div class="space-y-4" id="projects">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Sản phẩm &amp; Dự án</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              ${(currentProjects || []).map(p => `
+                <div class="p-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 space-y-2.5">
+                  <img src="${p.image}" alt="${p.title}" class="w-full aspect-video object-cover rounded-xl bg-neutral-100" />
+                  <h3 class="font-heading font-bold text-sm text-neutral-900 dark:text-white">${p.title}</h3>
+                  <p class="text-xs text-neutral-500 line-clamp-2">${p.description}</p>
+                  <div class="flex items-center justify-between pt-1">
+                    <span class="text-[10px] font-mono text-neutral-400">${(p.tags || []).slice(0, 2).join(' · ')}</span>
+                    ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-600 hover:underline">Xem &rarr;</a>` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // TEMPLATE 8: SWISS EDITORIAL MAGAZINE (TYPOGRAPHY & GRID STYLE)
+    // =========================================================================
+    function renderEditorialTemplate() {
+      const s = getNormalizedSocials();
+      const socialBadges = renderSocialBadgesHtml();
+
+      return `
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 pb-24 space-y-12 animate-fade-up" id="about">
+          <!-- Swiss Masthead -->
+          <div class="border-y-2 border-neutral-900 dark:border-neutral-200 py-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+            <div class="md:col-span-8 space-y-2">
+              <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-neutral-500">HỒ SƠ NĂNG LỰC CHUYÊN GIA · ${currentProfile.location || 'VIỆT NAM'}</p>
+              <h1 class="font-heading font-extrabold text-4xl sm:text-5xl text-neutral-900 dark:text-white tracking-tight uppercase">${currentProfile.name}</h1>
+              <p class="text-base sm:text-lg font-medium text-neutral-700 dark:text-neutral-300">${currentProfile.role}</p>
+            </div>
+            <div class="md:col-span-4 flex md:justify-end">
+              <img src="${currentProfile.avatar}" alt="${currentProfile.name}" class="w-24 h-24 object-cover border border-neutral-900 dark:border-neutral-200" />
+            </div>
+          </div>
+
+          <!-- Editorial 2-Column Intro & Skills -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-8 border-b border-neutral-200 dark:border-neutral-800 pb-10">
+            <div class="md:col-span-7 space-y-4">
+              <h2 class="font-mono text-[11px] uppercase tracking-widest text-neutral-400">01 / Tuyên ngôn nghề nghiệp</h2>
+              <p class="text-base sm:text-lg text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">${currentProfile.bio}</p>
+              <div class="flex flex-wrap gap-2 pt-2">${socialBadges}</div>
+            </div>
+            <div class="md:col-span-5 space-y-4 md:border-l md:border-neutral-200 dark:md:border-neutral-800 md:pl-8">
+              <h2 class="font-mono text-[11px] uppercase tracking-widest text-neutral-400">02 / Năng lực cốt lõi</h2>
+              <div class="flex flex-wrap gap-1.5">
+                ${(currentProfile.skills || []).map(sk => `<span class="px-2.5 py-1 border border-neutral-300 dark:border-neutral-700 text-xs font-mono text-neutral-800 dark:text-neutral-200">${sk}</span>`).join('')}
+              </div>
+              <div class="pt-2 text-xs text-neutral-500">
+                Liên hệ trực tiếp: <a href="mailto:${s.email}" class="underline font-semibold text-neutral-900 dark:text-white">${s.email}</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Projects List -->
+          <div class="space-y-6" id="projects">
+            <h2 class="font-mono text-[11px] uppercase tracking-widest text-neutral-400">03 / Tác phẩm &amp; Dự án tiêu biểu</h2>
+            <div class="divide-y divide-neutral-200 dark:divide-neutral-800 border-y border-neutral-200 dark:border-neutral-800">
+              ${(currentProjects || []).map((p, idx) => `
+                <div class="py-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                  <div class="md:col-span-1 font-mono text-xs text-neutral-400">0${idx + 1}</div>
+                  <div class="md:col-span-4">
+                    <img src="${p.image}" alt="${p.title}" class="w-full aspect-video object-cover border border-neutral-200 dark:border-neutral-800" />
+                  </div>
+                  <div class="md:col-span-7 space-y-2">
+                    <h3 class="font-heading font-bold text-xl text-neutral-900 dark:text-white">${p.title}</h3>
+                    <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">${p.description}</p>
+                    <div class="flex items-center justify-between pt-1">
+                      <span class="font-mono text-[11px] text-neutral-400">${(p.tags || []).join(' / ')}</span>
+                      ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold uppercase tracking-wider text-neutral-900 dark:text-white underline">Xem bài &rarr;</a>` : ''}
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // TEMPLATE 9: INTERACTIVE MACOS WINDOW (DESKTOP OS / CREATIVE DEV STYLE)
+    // =========================================================================
+    function renderMacOSTemplate() {
+      const s = getNormalizedSocials();
+      const socialBadges = renderSocialBadgesHtml();
+
+      return `
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-24 space-y-6 animate-fade-up" id="about">
+          <!-- Window 1: About & Profile Finder -->
+          <div class="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-lg overflow-hidden">
+            <div class="px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              </div>
+              <span class="font-mono text-[11px] text-neutral-500">Finder — Hồ sơ ${currentProfile.name}</span>
+              <span class="text-[11px] text-neutral-400 font-mono">${currentProfile.location || 'Việt Nam'}</span>
+            </div>
+            <div class="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <div class="md:col-span-3 flex justify-center">
+                <img src="${currentProfile.avatar}" alt="${currentProfile.name}" class="w-32 h-32 rounded-3xl object-cover border border-neutral-200 dark:border-neutral-700 shadow-sm" />
+              </div>
+              <div class="md:col-span-9 space-y-3">
+                <h1 class="font-heading font-extrabold text-2xl sm:text-3xl text-neutral-900 dark:text-white">${currentProfile.name}</h1>
+                <p class="text-sm font-semibold text-blue-600 dark:text-blue-400">${currentProfile.role}</p>
+                <p class="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">${currentProfile.bio}</p>
+                <div class="flex flex-wrap gap-2 pt-1">${socialBadges}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Window 2 & 3 Split: Projects Folder + Notes Experience -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6" id="projects">
+            <!-- Projects Window -->
+            <div class="lg:col-span-8 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-md overflow-hidden">
+              <div class="px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                </div>
+                <span class="font-mono text-[11px] text-neutral-500">Applications / Dự án (${(currentProjects || []).length})</span>
+                <span></span>
+              </div>
+              <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                ${(currentProjects || []).map(p => `
+                  <div class="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/70 dark:bg-neutral-950/60 overflow-hidden flex flex-col">
+                    <img src="${p.image}" alt="${p.title}" class="w-full aspect-video object-cover bg-neutral-200" />
+                    <div class="p-3.5 flex-1 flex flex-col justify-between space-y-2">
+                      <div>
+                        <h3 class="font-heading font-bold text-sm text-neutral-900 dark:text-white">${p.title}</h3>
+                        <p class="text-xs text-neutral-500 mt-1 line-clamp-2">${p.description}</p>
+                      </div>
+                      <div class="flex items-center justify-between pt-1">
+                        <span class="text-[10px] font-mono text-neutral-400">${(p.tags || []).slice(0, 2).join(', ')}</span>
+                        ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-600 hover:underline">Mở app</a>` : ''}
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Notes Window: Experience & Skills -->
+            <div class="lg:col-span-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-md overflow-hidden flex flex-col">
+              <div class="px-4 py-2.5 bg-amber-50 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                </div>
+                <span class="font-mono text-[11px] text-neutral-500">Notes — Kinh nghiệm.md</span>
+                <span></span>
+              </div>
+              <div class="p-5 space-y-4 text-xs flex-1">
+                <div class="space-y-3">
+                  ${(currentExperiences || []).map(e => `
+                    <div class="pb-3 border-b border-neutral-100 dark:border-neutral-800 last:border-0">
+                      <p class="font-bold text-neutral-900 dark:text-white">${e.title}</p>
+                      <p class="text-blue-600 dark:text-blue-400 font-medium">${e.company} · <span class="text-neutral-400">${e.period}</span></p>
+                      <p class="text-neutral-500 mt-1 leading-relaxed">${e.description || ''}</p>
+                    </div>
+                  `).join('')}
+                </div>
+                <div class="pt-2 border-t border-neutral-200 dark:border-neutral-800">
+                  <p class="font-bold text-neutral-900 dark:text-white mb-2">Kỹ năng hệ thống</p>
+                  <div class="flex flex-wrap gap-1.5">
+                    ${(currentProfile.skills || []).map(sk => `<span class="px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-[11px] text-neutral-700 dark:text-neutral-300">${sk}</span>`).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       `;
     }
