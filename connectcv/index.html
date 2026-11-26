@@ -877,13 +877,120 @@
   </section>
 
   <!-- ==========================================================================
-       VIEW: PORTFOLIO CÁ NHÂN (CHỈ HIỂN THỊ PORTFOLIO CỦA BẢN THÂN HOẶC TẠO MỚI)
+       VIEW: PORTFOLIO & CỘNG ĐỒNG CHIA SẺ DỰ ÁN CÁ NHÂN
        ========================================================================== -->
-  <section id="view-portfolio" class="view-animate hidden flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-8">
-    <div id="personalPortfolioContainer">
+  <section id="view-portfolio" class="view-animate hidden flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
+    <!-- Thanh chuyển qua lại: Khám phá Dự án Cộng đồng <-> Portfolio của tôi -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-2 sm:p-2.5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-1.5">
+        <button type="button" id="btnPortSubTabExplore" onclick="switchPortfolioSubTab('explore')" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm transition-all flex items-center gap-2 cursor-pointer">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6z"/></svg>
+          <span>Khám phá Dự án Cộng đồng</span>
+        </button>
+        <button type="button" id="btnPortSubTabMine" onclick="switchPortfolioSubTab('mine')" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200 transition-all flex items-center gap-2 cursor-pointer">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+          <span>Portfolio của tôi</span>
+        </button>
+      </div>
+
+      <button type="button" onclick="openShareProjectModal('manual')" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        <span>Đăng Dự Án</span>
+      </button>
+    </div>
+
+    <!-- Khu vực 1: Khám phá Dự án Cộng đồng (Showcase Grid) -->
+    <div id="portfolioExploreSection" class="space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900">Dự án nổi bật từ cộng đồng</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Trưng bày sản phẩm thực tế, giao diện, mã nguồn và bản chạy thử từ các thành viên ConnectCV.</p>
+        </div>
+        <div class="relative w-full sm:w-64">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
+          <input id="showcaseSearchInput" type="text" oninput="renderPortfolioShowcaseGrid()" placeholder="Tìm dự án, tác giả, công nghệ..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-all" />
+        </div>
+      </div>
+
+      <div id="portfolioShowcaseGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered dynamically by renderPortfolioShowcaseGrid() -->
+      </div>
+    </div>
+
+    <!-- Khu vực 2: Portfolio Cá Nhân của tôi -->
+    <div id="personalPortfolioContainer" class="hidden">
       <!-- Rendered dynamically by renderPersonalPortfolioTab() -->
     </div>
   </section>
+
+  <!-- MODAL: ĐĂNG DỰ ÁN LÊN CỘNG ĐỒNG PORTFOLIO (CHỌN TỪ PORTFOLIO HOẶC TỰ ĐĂNG) -->
+  <div id="modalShareProjectShowcase" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this) closeShareProjectModal()">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-5 modal-animate relative">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3.5">
+        <div>
+          <h3 class="font-heading font-extrabold text-lg text-slate-900">Đăng Dự Án Lên Cộng Đồng</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Chọn dự án có sẵn từ Portfolio hoặc tự đăng dự án mới của bạn.</p>
+        </div>
+        <button type="button" onclick="closeShareProjectModal()" class="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center text-xl font-semibold cursor-pointer">&times;</button>
+      </div>
+
+      <!-- Chọn nguồn đăng -->
+      <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl text-xs font-bold">
+        <button type="button" id="btnShareModeManual" onclick="setShareProjectMode('manual')" class="py-2 rounded-lg bg-white text-slate-900 shadow-2xs transition-all cursor-pointer">
+          Tự đăng dự án mới
+        </button>
+        <button type="button" id="btnShareModePick" onclick="setShareProjectMode('pick')" class="py-2 rounded-lg text-slate-500 hover:text-slate-900 transition-all cursor-pointer">
+          Chọn từ Portfolio của tôi
+        </button>
+      </div>
+
+      <!-- Picker danh sách dự án có sẵn trong Portfolio -->
+      <div id="sharePortfolioPickerWrap" class="hidden space-y-2">
+        <label class="block text-xs font-bold text-slate-700">Chọn một dự án từ Portfolio của bạn để tự động điền:</label>
+        <div id="sharePortfolioPickerList" class="grid grid-cols-1 gap-2 max-h-44 overflow-y-auto pr-1"></div>
+      </div>
+
+      <form onsubmit="submitShowcaseProject(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Tiêu đề dự án <span class="text-rose-500">*</span></label>
+          <input id="spTitle" type="text" required placeholder="VD: Hệ thống đặt lịch khám bệnh thông minh" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition-all" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Mô tả dự án <span class="text-rose-500">*</span></label>
+          <textarea id="spDesc" rows="3" required placeholder="Mô tả bài toán, giải pháp và kết quả nổi bật của dự án..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition-all"></textarea>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Ảnh mô phỏng dự án <span class="text-rose-500">*</span></label>
+          <div class="flex gap-2">
+            <input id="spImage" type="text" required placeholder="Dán URL ảnh hoặc tải ảnh từ máy..." oninput="previewShowcaseImg(this.value)" class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition-all" />
+            <input id="spImageFile" type="file" accept="image/*" class="hidden" onchange="handleShowcaseImgUpload(this)" />
+            <button type="button" onclick="document.getElementById('spImageFile').click()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold whitespace-nowrap cursor-pointer">Tải ảnh lên</button>
+          </div>
+          <div id="spImagePreviewWrap" class="hidden mt-2 rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
+            <img id="spImagePreview" src="" alt="Preview" class="w-full max-h-40 object-cover" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Link GitHub / Mã nguồn <span class="text-slate-400 font-normal">(Không bắt buộc)</span></label>
+            <input id="spGithub" type="url" placeholder="https://github.com/username/repo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition-all" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Link Host / Live Demo <span class="text-slate-400 font-normal">(Không bắt buộc)</span></label>
+            <input id="spDemo" type="url" placeholder="https://my-project.vercel.app" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-blue-500 outline-none transition-all" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+          <button type="button" onclick="closeShareProjectModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer">Hủy</button>
+          <button type="submit" class="btn-primary px-5 py-2.5 rounded-xl font-bold cursor-pointer">Đăng Dự Án</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        VIEW 2: KHO MẪU CV CHUẨN ATS QUỐC TẾ (12 MẪU CAO CẤP)
@@ -2861,7 +2968,7 @@
         loadPortfolios();
       }
       if (tabName === 'portfolio') {
-        renderPersonalPortfolioTab();
+        switchPortfolioSubTab(activePortfolioSubTab || 'explore');
       }
       if (tabName === 'candidates') loadCandidates();
       if (tabName === 'jobs' && allJobsList.length === 0) loadJobs();
@@ -3887,15 +3994,29 @@
 
     let cachedPickerProjects = [];
 
+    function toVietnameseSlug(str) {
+      return String(str || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'ung-vien';
+    }
+
     function getMyPortfolioSubdomain() {
       let sub = 'tuan-nguyen';
       try {
-        if (currentUser && currentUser.subdomain) return currentUser.subdomain;
+        if (currentUser && currentUser.subdomain) return toVietnameseSlug(currentUser.subdomain);
+        if (currentUser && (currentUser.fullName || currentUser.username)) {
+          return toVietnameseSlug(currentUser.fullName || currentUser.username);
+        }
         const stored = localStorage.getItem('connectcv_user');
         if (stored) {
           const u = JSON.parse(stored);
-          if (u.subdomain) return u.subdomain;
-          if (u.username) return u.username.toLowerCase().replace(/[^a-z0-9]/g, '-');
+          if (u.subdomain) return toVietnameseSlug(u.subdomain);
+          if (u.fullName || u.username) return toVietnameseSlug(u.fullName || u.username);
         }
       } catch (e) {}
       return sub;
@@ -4031,6 +4152,288 @@
       return false;
     }
 
+    let activePortfolioSubTab = 'explore';
+    const DEFAULT_SHOWCASE_PROJECTS = [
+      {
+        id: 'sp_1',
+        title: 'Fintech Cashflow Analytics Dashboard',
+        description: 'Bảng điều khiển theo dõi dòng tiền doanh nghiệp vừa và nhỏ theo thời gian thực, cảnh báo biến động chi phí và xuất báo cáo PDF.',
+        image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
+        githubUrl: 'https://github.com/tuannguyen-dev/fintech-cashflow',
+        demoUrl: 'https://connectcv.id.vn',
+        author: 'Nguyễn Minh Tuấn',
+        subdomain: 'tuan-nguyen',
+        authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+        likes: 42
+      },
+      {
+        id: 'sp_2',
+        title: 'Chiến dịch Ra mắt GreenEats Organic',
+        description: 'Bộ nhận diện thương hiệu, bao bì sản phẩm và kế hoạch truyền thông đa kênh giúp tăng 38% độ nhận diện trong 3 tháng đầu.',
+        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80',
+        githubUrl: '',
+        demoUrl: 'https://connectcv.id.vn/p/hoang-yen',
+        author: 'Lê Hoàng Yến',
+        subdomain: 'hoang-yen',
+        authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
+        likes: 31
+      },
+      {
+        id: 'sp_3',
+        title: 'AI Career Copilot & ATS Resume Scanner',
+        description: 'Ứng dụng phân tích độ khớp CV với mô tả công việc (JD) và mô phỏng phỏng vấn giọng nói chuẩn STAR.',
+        image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&auto=format&fit=crop&q=80',
+        githubUrl: 'https://github.com/khoaddce190369-creator/connectcv',
+        demoUrl: 'https://connectcv.id.vn',
+        author: 'Trần Quốc Bảo',
+        subdomain: 'quoc-bao',
+        authorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
+        likes: 58
+      }
+    ];
+
+    function getShowcaseProjects() {
+      let custom = [];
+      try {
+        custom = JSON.parse(localStorage.getItem('connectcv_showcase_projects') || '[]');
+      } catch (e) {}
+      return [...custom, ...DEFAULT_SHOWCASE_PROJECTS];
+    }
+
+    function switchPortfolioSubTab(tab) {
+      activePortfolioSubTab = tab === 'mine' ? 'mine' : 'explore';
+      const btnExplore = document.getElementById('btnPortSubTabExplore');
+      const btnMine = document.getElementById('btnPortSubTabMine');
+      const secExplore = document.getElementById('portfolioExploreSection');
+      const secMine = document.getElementById('personalPortfolioContainer');
+
+      const activeCls = 'px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm transition-all flex items-center gap-2 cursor-pointer';
+      const inactiveCls = 'px-4 py-2 rounded-xl text-xs font-bold bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200 transition-all flex items-center gap-2 cursor-pointer';
+
+      if (activePortfolioSubTab === 'explore') {
+        if (btnExplore) btnExplore.className = activeCls;
+        if (btnMine) btnMine.className = inactiveCls;
+        if (secExplore) secExplore.classList.remove('hidden');
+        if (secMine) secMine.classList.add('hidden');
+        renderPortfolioShowcaseGrid();
+      } else {
+        if (btnMine) btnMine.className = activeCls;
+        if (btnExplore) btnExplore.className = inactiveCls;
+        if (secMine) secMine.classList.remove('hidden');
+        if (secExplore) secExplore.classList.add('hidden');
+        renderPersonalPortfolioTab();
+      }
+    }
+
+    function renderPortfolioShowcaseGrid() {
+      const grid = document.getElementById('portfolioShowcaseGrid');
+      if (!grid) return;
+      const kw = (document.getElementById('showcaseSearchInput')?.value || '').toLowerCase().trim();
+      const likedIds = JSON.parse(localStorage.getItem('connectcv_liked_showcase') || '[]');
+
+      const items = getShowcaseProjects().filter(p => {
+        if (!kw) return true;
+        return `${p.title} ${p.description} ${p.author}`.toLowerCase().includes(kw);
+      });
+
+      if (items.length === 0) {
+        grid.innerHTML = `<div class="col-span-full bg-white rounded-2xl border border-slate-200 p-10 text-center text-xs text-slate-500">Không tìm thấy dự án phù hợp.</div>`;
+        return;
+      }
+
+      grid.innerHTML = items.map((p, idx) => {
+        const isLiked = likedIds.includes(String(p.id));
+        const likeCount = Number(p.likes || 0) + (isLiked ? 1 : 0);
+        return `
+          <article class="bg-white rounded-2xl border border-slate-200 hover:border-blue-400 shadow-2xs hover:shadow-md transition-all overflow-hidden flex flex-col anim-hero-fade-up" style="animation-delay: ${Math.min(idx * 45, 220)}ms;">
+            <div class="aspect-[16/10] bg-slate-100 overflow-hidden border-b border-slate-100 relative">
+              <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy" />
+            </div>
+            <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between gap-2">
+                  <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 hover:text-blue-600 cursor-pointer">
+                    <img src="${p.authorAvatar || '/assets/default-avatar.svg'}" alt="${p.author}" class="w-5 h-5 rounded-full object-cover border border-slate-200" />
+                    <span>${p.author || 'Thành viên'}</span>
+                  </button>
+                  <button type="button" onclick="toggleLikeShowcaseProject('${p.id}')" class="inline-flex items-center gap-1 text-xs font-semibold ${isLiked ? 'text-rose-600' : 'text-slate-400 hover:text-rose-600'} transition-colors cursor-pointer">
+                    <svg class="w-4 h-4" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                    <span class="tabular-nums">${likeCount}</span>
+                  </button>
+                </div>
+                <h3 class="font-heading font-bold text-sm sm:text-base text-slate-900 leading-snug line-clamp-1">${p.title}</h3>
+                <p class="text-xs text-slate-600 leading-relaxed line-clamp-2">${p.description}</p>
+              </div>
+
+              <div class="pt-2.5 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold">
+                ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 py-1.5 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-center transition-colors">Live Demo</a>` : ''}
+                ${p.githubUrl ? `<a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-center transition-colors">GitHub</a>` : ''}
+                ${!p.demoUrl && !p.githubUrl ? `<button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition-colors cursor-pointer">Xem Portfolio</button>` : ''}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function toggleLikeShowcaseProject(id) {
+      let liked = [];
+      try { liked = JSON.parse(localStorage.getItem('connectcv_liked_showcase') || '[]'); } catch (e) {}
+      const strId = String(id);
+      if (liked.includes(strId)) {
+        liked = liked.filter(x => x !== strId);
+      } else {
+        liked.push(strId);
+      }
+      localStorage.setItem('connectcv_liked_showcase', JSON.stringify(liked));
+      renderPortfolioShowcaseGrid();
+    }
+
+    function openShareProjectModal(mode = 'manual') {
+      const modal = document.getElementById('modalShareProjectShowcase');
+      if (modal) modal.classList.remove('hidden');
+      setShareProjectMode(mode);
+    }
+
+    function closeShareProjectModal() {
+      const modal = document.getElementById('modalShareProjectShowcase');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function setShareProjectMode(mode) {
+      const btnManual = document.getElementById('btnShareModeManual');
+      const btnPick = document.getElementById('btnShareModePick');
+      const pickerWrap = document.getElementById('sharePortfolioPickerWrap');
+      const activeCls = 'py-2 rounded-lg bg-white text-slate-900 shadow-2xs transition-all cursor-pointer';
+      const inactiveCls = 'py-2 rounded-lg text-slate-500 hover:text-slate-900 transition-all cursor-pointer';
+
+      if (mode === 'pick') {
+        if (btnPick) btnPick.className = activeCls;
+        if (btnManual) btnManual.className = inactiveCls;
+        if (pickerWrap) pickerWrap.classList.remove('hidden');
+        await loadUserPortfolioProjectsForPicker();
+      } else {
+        if (btnManual) btnManual.className = activeCls;
+        if (btnPick) btnPick.className = inactiveCls;
+        if (pickerWrap) pickerWrap.classList.add('hidden');
+      }
+    }
+
+    async function loadUserPortfolioProjectsForPicker() {
+      const listEl = document.getElementById('sharePortfolioPickerList');
+      if (!listEl) return;
+      listEl.innerHTML = '<div class="text-xs text-slate-400 py-2">Đang tải dự án từ Portfolio...</div>';
+
+      const sub = getMyPortfolioSubdomain();
+      let projects = [];
+      try {
+        const res = await fetch(`/api/portfolios/by-subdomain/${encodeURIComponent(sub)}`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.projects)) {
+          projects = data.projects;
+        }
+      } catch (e) {}
+
+      if (projects.length === 0) {
+        try {
+          projects = JSON.parse(localStorage.getItem(`portfolio_projects_${sub}`) || '[]');
+        } catch (e) {}
+      }
+
+      window._pickerPortProjects = projects;
+      if (projects.length === 0) {
+        listEl.innerHTML = '<div class="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-xl p-3">Portfolio của bạn chưa có dự án nào. Bạn hãy chuyển sang tab <strong>Tự đăng dự án mới</strong> hoặc thêm dự án trong trang Portfolio nhé.</div>';
+        return;
+      }
+
+      listEl.innerHTML = projects.map((pr, idx) => `
+        <button type="button" onclick="pickPortfolioProject(${idx})" class="w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 flex items-center gap-3 transition-all cursor-pointer">
+          <img src="${pr.image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300'}" class="w-12 h-9 rounded-lg object-cover border border-slate-200 shrink-0" />
+          <div class="min-w-0 flex-1">
+            <div class="font-bold text-slate-900 truncate">${pr.title || 'Dự án chưa đặt tên'}</div>
+            <div class="text-[11px] text-slate-500 truncate">${pr.description || ''}</div>
+          </div>
+          <span class="text-[11px] font-bold text-blue-600 shrink-0">Chọn</span>
+        </button>
+      `).join('');
+    }
+
+    function pickPortfolioProject(idx) {
+      const pr = (window._pickerPortProjects || [])[idx];
+      if (!pr) return;
+      document.getElementById('spTitle').value = pr.title || '';
+      document.getElementById('spDesc').value = pr.description || '';
+      document.getElementById('spImage').value = pr.image || '';
+      document.getElementById('spGithub').value = pr.githubUrl || '';
+      document.getElementById('spDemo').value = pr.demoUrl || '';
+      previewShowcaseImg(pr.image || '');
+      showToast('Đã điền thông tin từ dự án trong Portfolio!');
+    }
+
+    function previewShowcaseImg(url) {
+      const wrap = document.getElementById('spImagePreviewWrap');
+      const img = document.getElementById('spImagePreview');
+      if (url && url.trim()) {
+        if (img) img.src = url.trim();
+        if (wrap) wrap.classList.remove('hidden');
+      } else if (wrap) {
+        wrap.classList.add('hidden');
+      }
+    }
+
+    function handleShowcaseImgUpload(input) {
+      const file = input && input.files && input.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Vui lòng chọn ảnh nhỏ hơn 2MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('spImage').value = e.target.result;
+        previewShowcaseImg(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function submitShowcaseProject(e) {
+      e.preventDefault();
+      const title = document.getElementById('spTitle').value.trim();
+      const description = document.getElementById('spDesc').value.trim();
+      const image = document.getElementById('spImage').value.trim();
+      const githubUrl = document.getElementById('spGithub').value.trim();
+      const demoUrl = document.getElementById('spDemo').value.trim();
+
+      if (!title || !description || !image) {
+        showToast('Vui lòng nhập đầy đủ Tiêu đề, Mô tả và Ảnh mô phỏng dự án.');
+        return;
+      }
+
+      const newProj = {
+        id: 'sp_' + Date.now(),
+        title,
+        description,
+        image,
+        githubUrl,
+        demoUrl,
+        author: (currentUser && (currentUser.fullName || currentUser.username)) || 'Thành viên ConnectCV',
+        subdomain: getMyPortfolioSubdomain(),
+        authorAvatar: (currentUser && currentUser.avatar) || '/assets/default-avatar.svg',
+        likes: 0
+      };
+
+      let custom = [];
+      try { custom = JSON.parse(localStorage.getItem('connectcv_showcase_projects') || '[]'); } catch (err) {}
+      custom.unshift(newProj);
+      localStorage.setItem('connectcv_showcase_projects', JSON.stringify(custom));
+
+      closeShareProjectModal();
+      e.target.reset();
+      previewShowcaseImg('');
+      switchPortfolioSubTab('explore');
+      showToast('Đã đăng dự án lên Cộng đồng Portfolio!');
+    }
+
     function renderPersonalPortfolioTab() {
       const container = document.getElementById('personalPortfolioContainer');
       if (!container) return;
@@ -4095,7 +4498,7 @@
               <button type="button" onclick="openPortfolioTemplateModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-all cursor-pointer">
                 Đổi mẫu giao diện
               </button>
-              <button type="button" onclick="switchTab('community'); setTimeout(() => openCreatePortfolioModal('portfolio'), 150);" class="px-4 py-2.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-all cursor-pointer">
+              <button type="button" onclick="openShareProjectModal('pick')" class="px-4 py-2.5 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-all cursor-pointer">
                 Chia sẻ lên Cộng đồng
               </button>
               <a href="/p/${sub}" target="_blank" class="btn-primary px-5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2">
