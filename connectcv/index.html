@@ -902,17 +902,14 @@
     <!-- Khu vực 1: Khám phá Dự án Cộng đồng (Showcase Grid) -->
     <div id="portfolioExploreSection" class="space-y-5">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900">Dự án nổi bật từ cộng đồng</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Trưng bày sản phẩm thực tế, giao diện, mã nguồn và bản chạy thử từ các thành viên ConnectCV.</p>
-        </div>
+        <h2 class="font-heading font-extrabold text-xl sm:text-2xl text-slate-900">Dự án nổi bật từ cộng đồng</h2>
         <div class="relative w-full sm:w-64">
           <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
           <input id="showcaseSearchInput" type="text" oninput="renderPortfolioShowcaseGrid()" placeholder="Tìm dự án, tác giả, công nghệ..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-all" />
         </div>
       </div>
 
-      <div id="portfolioShowcaseGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div id="portfolioShowcaseGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Rendered dynamically by renderPortfolioShowcaseGrid() -->
       </div>
     </div>
@@ -4156,39 +4153,87 @@
     const DEFAULT_SHOWCASE_PROJECTS = [
       {
         id: 'sp_1',
-        title: 'Fintech Cashflow Analytics Dashboard',
-        description: 'Bảng điều khiển theo dõi dòng tiền doanh nghiệp vừa và nhỏ theo thời gian thực, cảnh báo biến động chi phí và xuất báo cáo PDF.',
-        image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
-        githubUrl: 'https://github.com/tuannguyen-dev/fintech-cashflow',
+        title: 'Sổ Thu Chi & Quản Lý Tài Chính Cá Nhân GenZ',
+        description: 'Ứng dụng web theo dõi thu chi hằng ngày, tự động phân loại hóa đơn ăn uống, cà phê và cảnh báo vượt hạn mức tiết kiệm cuối tháng cho sinh viên và người đi làm trẻ.',
+        image: 'assets/showcase/proj-fintech-vn.jpg',
+        githubUrl: 'https://github.com/tuannguyen-dev/so-thu-chi-vn',
         demoUrl: 'https://connectcv.id.vn',
+        tags: ['React', 'Tailwind CSS', 'Fintech'],
         author: 'Nguyễn Minh Tuấn',
+        authorRole: 'Frontend & UI/UX',
         subdomain: 'tuan-nguyen',
         authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-        likes: 42
+        likes: 128
       },
       {
         id: 'sp_2',
-        title: 'Chiến dịch Ra mắt GreenEats Organic',
-        description: 'Bộ nhận diện thương hiệu, bao bì sản phẩm và kế hoạch truyền thông đa kênh giúp tăng 38% độ nhận diện trong 3 tháng đầu.',
-        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80',
-        githubUrl: '',
-        demoUrl: 'https://connectcv.id.vn/p/hoang-yen',
-        author: 'Lê Hoàng Yến',
-        subdomain: 'hoang-yen',
-        authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
-        likes: 31
+        title: 'Hệ Thống Đặt Phòng Homestay & Trải Nghiệm Đà Lạt',
+        description: 'Nền tảng đặt phòng homestay view đồi thông kèm bản đồ quán cà phê, lịch trình săn mây và thanh toán VietQR tức thì không qua trung gian.',
+        image: 'assets/showcase/proj-dalat-booking.jpg',
+        githubUrl: 'https://github.com/quocbao-dev/dalat-stay',
+        demoUrl: 'https://connectcv.id.vn',
+        tags: ['UI/UX', 'Mobile App', 'Du lịch'],
+        author: 'Trần Quốc Bảo',
+        authorRole: 'Product Designer',
+        subdomain: 'quoc-bao',
+        authorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
+        likes: 96
       },
       {
         id: 'sp_3',
-        title: 'AI Career Copilot & ATS Resume Scanner',
-        description: 'Ứng dụng phân tích độ khớp CV với mô tả công việc (JD) và mô phỏng phỏng vấn giọng nói chuẩn STAR.',
-        image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&auto=format&fit=crop&q=80',
-        githubUrl: 'https://github.com/khoaddce190369-creator/connectcv',
+        title: 'Bộ Nhận Diện Thương Hiệu Cà Phê Rang Xay Mộc',
+        description: 'Thiết kế bao bì túi giấy kraft, ly mang đi và bộ hướng dẫn nhận diện thương hiệu cho chuỗi cà phê đặc sản tại Cần Thơ và TP.HCM.',
+        image: 'assets/showcase/proj-brand-coffee.jpg',
+        githubUrl: '',
+        demoUrl: 'https://connectcv.id.vn/p/hoang-yen',
+        tags: ['Branding', 'Bao bì', 'F&B'],
+        author: 'Lê Hoàng Yến',
+        authorRole: 'Brand Designer',
+        subdomain: 'hoang-yen',
+        authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
+        likes: 84
+      },
+      {
+        id: 'sp_4',
+        title: 'Phần Mềm Quản Lý Quán Cà Phê & Gọi Món Tại Bàn (POS)',
+        description: 'Giải pháp quản lý sơ đồ bàn, in bill bếp tự động, kiểm soát tồn kho nguyên liệu theo định lượng và báo cáo doanh thu ca làm việc.',
+        image: 'assets/showcase/proj-pos-cafe.jpg',
+        githubUrl: 'https://github.com/minhhoang-se/cafe-pos-vn',
         demoUrl: 'https://connectcv.id.vn',
-        author: 'Trần Quốc Bảo',
-        subdomain: 'quoc-bao',
-        authorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
-        likes: 58
+        tags: ['Node.js', 'POS', 'F&B Tech'],
+        author: 'Lê Minh Hoàng',
+        authorRole: 'Fullstack Developer',
+        subdomain: 'minh-hoang-se',
+        authorAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop&crop=face',
+        likes: 112
+      },
+      {
+        id: 'sp_5',
+        title: 'Trợ Lý Luyện Nói IELTS Speaking AI Theo Thời Gian Thực',
+        description: 'Web app giúp sinh viên luyện phản xạ IELTS Speaking Part 1-3 bằng giọng nói, tự động chấm điểm phát âm, từ vựng và gợi ý câu trả lời tự nhiên.',
+        image: 'assets/showcase/proj-ai-ielts.jpg',
+        githubUrl: 'https://github.com/dangkhoa/ielts-voice-ai',
+        demoUrl: 'https://connectcv.id.vn',
+        tags: ['AI Voice', 'EdTech', 'Next.js'],
+        author: 'Đinh Đăng Khoa',
+        authorRole: 'AI Product Builder',
+        subdomain: 'dinh-dang-khoa',
+        authorAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop&crop=face',
+        likes: 145
+      },
+      {
+        id: 'sp_6',
+        title: 'Thiết Kế Nội Thất Nhà Phố Nhiệt Đới Hiện Đại (4x16m)',
+        description: 'Phương án tối ưu ánh sáng tự nhiên và thông gió cho nhà ống đô thị Việt Nam, kết hợp vật liệu gỗ ấm, giếng trời và mảng xanh trong nhà.',
+        image: 'assets/showcase/proj-interior-vn.jpg',
+        githubUrl: '',
+        demoUrl: '',
+        tags: ['Kiến trúc', 'Nội thất 3D', 'Nhà phố'],
+        author: 'Vũ Quỳnh Anh',
+        authorRole: 'Interior Designer',
+        subdomain: 'quynh-anh',
+        authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face',
+        likes: 73
       }
     ];
 
@@ -4244,32 +4289,84 @@
       grid.innerHTML = items.map((p, idx) => {
         const isLiked = likedIds.includes(String(p.id));
         const likeCount = Number(p.likes || 0) + (isLiked ? 1 : 0);
+        const tagsHtml = (p.tags || []).slice(0, 3).map(t => `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-medium">#${t}</span>`).join('');
+
+        // Featured Spotlight Card cho dự án đầu tiên (layout ngang 2 cột kiểu Behance / Threads)
+        if (idx === 0) {
+          return `
+            <article class="md:col-span-2 bg-white rounded-2xl border border-slate-200 hover:border-blue-400 shadow-xs hover:shadow-md transition-all overflow-hidden grid grid-cols-1 lg:grid-cols-12 anim-hero-fade-up">
+              <div class="lg:col-span-7 aspect-[16/10] lg:aspect-auto lg:min-h-[320px] bg-slate-100 overflow-hidden relative group/img">
+                <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover/img:scale-[1.03] transition-transform duration-500" loading="lazy" />
+                <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-slate-900/85 text-white text-[11px] font-bold tracking-wide uppercase">Tiêu điểm</span>
+              </div>
+              <div class="lg:col-span-5 p-5 sm:p-6 flex flex-col justify-between gap-4">
+                <div class="space-y-3">
+                  <!-- Instagram-style Author Header -->
+                  <div class="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                    <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="flex items-center gap-2.5 text-left group/auth cursor-pointer">
+                      <img src="${p.authorAvatar || '/assets/default-avatar.svg'}" alt="${p.author}" class="w-9 h-9 rounded-full object-cover border-2 border-blue-600 p-0.5 bg-white" />
+                      <div>
+                        <div class="text-xs font-bold text-slate-900 group-hover/auth:text-blue-600 transition-colors">${p.author || 'Thành viên'}</div>
+                        <div class="text-[11px] text-slate-400">${p.authorRole || 'ConnectCV Creator'}</div>
+                      </div>
+                    </button>
+                    <button type="button" onclick="toggleLikeShowcaseProject('${p.id}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${isLiked ? 'border-rose-200 bg-rose-50 text-rose-600' : 'border-slate-200 bg-slate-50 text-slate-500 hover:text-rose-600'} text-xs font-bold transition-colors cursor-pointer">
+                      <svg class="w-4 h-4" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                      <span class="tabular-nums">${likeCount}</span>
+                    </button>
+                  </div>
+
+                  <h3 class="font-heading font-extrabold text-lg sm:text-xl text-slate-900 leading-snug">${p.title}</h3>
+                  <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed">${p.description}</p>
+                  ${tagsHtml ? `<div class="flex flex-wrap gap-1.5 pt-1">${tagsHtml}</div>` : ''}
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center gap-2.5 text-xs font-bold">
+                  ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-center shadow-xs transition-colors">Chạy thử (Live Demo)</a>` : ''}
+                  ${p.githubUrl ? `<a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-center transition-colors">Mã nguồn GitHub</a>` : ''}
+                </div>
+              </div>
+            </article>
+          `;
+        }
+
+        // Các card tiếp theo: Bố cục Instagram / Dribbble Card 2 cột rộng rãi
         return `
           <article class="bg-white rounded-2xl border border-slate-200 hover:border-blue-400 shadow-2xs hover:shadow-md transition-all overflow-hidden flex flex-col anim-hero-fade-up" style="animation-delay: ${Math.min(idx * 45, 220)}ms;">
-            <div class="aspect-[16/10] bg-slate-100 overflow-hidden border-b border-slate-100 relative">
-              <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <!-- Top Author Bar kiểu Instagram -->
+            <div class="px-4 py-3 flex items-center justify-between gap-2">
+              <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="flex items-center gap-2.5 text-left group/auth cursor-pointer min-w-0">
+                <img src="${p.authorAvatar || '/assets/default-avatar.svg'}" alt="${p.author}" class="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0" />
+                <div class="min-w-0">
+                  <div class="text-xs font-bold text-slate-900 group-hover/auth:text-blue-600 truncate">${p.author || 'Thành viên'}</div>
+                  <div class="text-[11px] text-slate-400 truncate">${p.authorRole || 'ConnectCV Creator'}</div>
+                </div>
+              </button>
+              <div class="flex items-center gap-1.5 shrink-0">
+                ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-bold transition-colors">Demo</a>` : ''}
+                ${p.githubUrl ? `<a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold transition-colors">GitHub</a>` : ''}
+              </div>
             </div>
-            <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+
+            <!-- Ảnh dự án sắc nét -->
+            <div class="aspect-[16/10] bg-slate-100 overflow-hidden border-y border-slate-100 relative group/img">
+              <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover/img:scale-[1.03] transition-transform duration-500" loading="lazy" />
+            </div>
+
+            <!-- Engagement & Caption kiểu Instagram / Threads -->
+            <div class="p-4 flex-1 flex flex-col justify-between space-y-2.5">
               <div class="space-y-1.5">
                 <div class="flex items-center justify-between gap-2">
-                  <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 hover:text-blue-600 cursor-pointer">
-                    <img src="${p.authorAvatar || '/assets/default-avatar.svg'}" alt="${p.author}" class="w-5 h-5 rounded-full object-cover border border-slate-200" />
-                    <span>${p.author || 'Thành viên'}</span>
+                  <button type="button" onclick="toggleLikeShowcaseProject('${p.id}')" class="inline-flex items-center gap-1.5 text-xs font-bold ${isLiked ? 'text-rose-600' : 'text-slate-600 hover:text-rose-600'} transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                    <span class="tabular-nums">${likeCount} lượt thích</span>
                   </button>
-                  <button type="button" onclick="toggleLikeShowcaseProject('${p.id}')" class="inline-flex items-center gap-1 text-xs font-semibold ${isLiked ? 'text-rose-600' : 'text-slate-400 hover:text-rose-600'} transition-colors cursor-pointer">
-                    <svg class="w-4 h-4" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                    <span class="tabular-nums">${likeCount}</span>
-                  </button>
+                  <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="text-[11px] font-semibold text-blue-600 hover:underline cursor-pointer">Xem Portfolio</button>
                 </div>
-                <h3 class="font-heading font-bold text-sm sm:text-base text-slate-900 leading-snug line-clamp-1">${p.title}</h3>
+                <h3 class="font-heading font-bold text-sm sm:text-base text-slate-900 leading-snug">${p.title}</h3>
                 <p class="text-xs text-slate-600 leading-relaxed line-clamp-2">${p.description}</p>
               </div>
-
-              <div class="pt-2.5 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold">
-                ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 py-1.5 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-center transition-colors">Live Demo</a>` : ''}
-                ${p.githubUrl ? `<a href="${p.githubUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-center transition-colors">GitHub</a>` : ''}
-                ${!p.demoUrl && !p.githubUrl ? `<button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="flex-1 py-1.5 px-3 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition-colors cursor-pointer">Xem Portfolio</button>` : ''}
-              </div>
+              ${tagsHtml ? `<div class="flex flex-wrap gap-1.5 pt-1">${tagsHtml}</div>` : ''}
             </div>
           </article>
         `;
