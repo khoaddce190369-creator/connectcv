@@ -519,4 +519,16 @@ router.post('/export-docx', async (req, res) => {
   }
 });
 
+router.post('/agent', async (req, res) => {
+  try {
+    const { processCvAgentRequest } = require('../services/cvAgentService');
+    const result = await processCvAgentRequest(req.body);
+    if (!result.success) return res.status(result.code === 'AGENT_INPUT_INVALID' ? 400 : 503).json(result);
+    return res.json(result);
+  } catch (error) {
+    console.error('[CV agent] AGENT_PROVIDER_UNAVAILABLE:', safeError(error));
+    return res.status(503).json({ success: false, code: 'AGENT_PROVIDER_UNAVAILABLE', message: 'AI Agent chỉnh sửa CV hiện đang bận. Vui lòng thử lại sau.' });
+  }
+});
+
 module.exports = router;

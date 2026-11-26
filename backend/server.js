@@ -85,6 +85,17 @@ app.use('/api/payment', require('./src/routes/payment'));
 // ==========================================
 // 2. TÍCH HỢP TÍNH NĂNG MỚI (AI STUDIO & CV RENDERER)
 // ==========================================
+app.get('/ai/runtime.js', (req, res) => {
+  let pdfReady = false;
+  try {
+    pdfReady = require('./features/connectcv/src/services/pdfService').isRendererReady();
+  } catch {}
+  res.type('application/javascript').set('Cache-Control', 'no-store').send(
+    'window.connectCVParentOrigins=' + JSON.stringify([`${req.protocol}://${req.get('host')}`, 'https://connectcv.id.vn']) +
+    ';window.connectCVServerPdf=' + JSON.stringify(pdfReady) + ';'
+  );
+});
+
 const featuresMountPath = path.join(__dirname, 'features/connectcv/mount.js');
 if (fs.existsSync(featuresMountPath)) {
   try {

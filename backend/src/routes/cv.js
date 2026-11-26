@@ -738,168 +738,26 @@ router.get('/template/:id', (req, res) => {
 
 /**
  * @route   POST /api/cv/ai-agent
- * @desc    AI Agent Chat trực tiếp hiểu yêu cầu và chỉnh sửa dữ liệu CV trên mẫu hiện tại
+ * @desc    Sandboxed AI Agent v2.0 chỉnh sửa trực tiếp CV trên /cv-editor
  */
-router.post('/ai-agent', optionalAuth, async (req, res) => {
+const rateLimit = require('express-rate-limit');
+const { processCvEditorAgent } = require('../services/cvEditorAgentService');
+const aiAgentLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  limit: 30,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { success: false, code: 'AGENT_RATE_LIMIT', message: 'Bạn gửi yêu cầu AI Agent quá nhanh. Vui lòng chờ vài phút rồi thử lại.' }
+});
+
+router.post('/ai-agent', optionalAuth, aiAgentLimiter, async (req, res) => {
   try {
-    const { message = '', cvData = {}, history = [] } = req.body;
-    const userMsg = String(message).trim();
-    if (!userMsg) {
-      return res.status(400).json({ success: false, message: 'Vui lòng nhập yêu cầu cho trợ lý AI.' });
-    }
-
-    // 1. Thử gọi Gemini AI Agent nếu khả dụng
-    if (callGeminiJSON) {
-      try {
-        const recentHistory = Array.isArray(history)
-          ? history.slice(-6).map(h => `${h.role === 'user' ? 'Người dùng' : 'AI Agent'}: ${h.text}`).join('\n')
-          : '';
-
-        const prompt = `Bạn là AI Agent chuyên chỉnh sửa CV trực tiếp trên trình tạo CV của ConnectCV.
-Nhiệm vụ: Đọc tin nhắn của người dùng, hiểu thông tin họ cung cấp hoặc yêu cầu chỉnh sửa, và trả về JSON chứa:
-1. "reply": Câu trả lời tiếng Việt tự nhiên, ngắn gọn, lịch sự xác nhận những phần đã cập nhật vào CV (hoặc hỏi thêm nếu cần).
-2. "updates": Đối tượng chứa CÁC TRƯỜNG CẦN CẬP NHẬT vào CV hiện tại (chỉ đưa vào những trường thay đổi hoặc được yêu cầu tạo mới).
-
-Cấu trúc của "updates" (tất cả đều tùy chọn, chỉ xuất hiện khi có thay đổi):
-{
-  "profile": {
-    "fullName": "Họ và tên (viết hoa hoặc chuẩn họ tên)",
-    "jobTitle": "Chức danh / Vị trí ứng tuyển",
-    "email": "...",
-    "phone": "...",
-    "address": "...",
-    "website": "...",
-    "dob": "..."
-  },
-  "objective": "Đoạn mục tiêu nghề nghiệp súc tích 2-4 câu chuyên nghiệp",
-  "experience": [
-    {
-      "id": "exp_1",
-      "company": "Tên công ty",
-      "position": "Vị trí",
-      "startDate": "MM/YYYY",
-      "endDate": "MM/YYYY hoặc Hiện tại",
-      "description": ["Gạch đầu dòng 1", "Gạch đầu dòng 2"]
-    }
-  ],
-  "education": [
-    {
-      "id": "edu_1",
-      "school": "Tên trường",
-      "degree": "Chuyên ngành / Bằng cấp",
-      "startDate": "YYYY",
-      "endDate": "YYYY",
-      "gpa": "..."
-    }
-  ],
-  "skills": [
-    { "id": "sk_1", "name": "Tên kỹ năng", "level": 85 }
-  ],
-  "projects": [
-    {
-      "id": "proj_1",
-      "name": "Tên dự án",
-      "role": "Vai trò",
-      "duration": "Thời gian",
-      "description": ["Mô tả kết quả đạt được"]
-    }
-  ]
-}
-
-QUY TẮC QUAN TRỌNG:
-- Nếu người dùng chỉ yêu cầu sửa 1 phần (ví dụ đổi tên, thêm 1 kỹ năng, viết lại mục tiêu, thêm 1 kinh nghiệm), hãy giữ nguyên các phần khác trong mảng (hoặc chỉ trả về mảng đã gộp đầy đủ với dữ liệu cũ).
-- Nếu người dùng cung cấp thông tin cá nhân mới (tên, sđt, email, vị trí, kinh nghiệm, học vấn, kỹ năng), hãy điền đầy đủ và chính xác vào CV.
-- Đảm bảo văn phong súc tích để CV trình bày vừa vặn trên 1 trang A4.
-
-Lịch sử chat gần đây:
-${recentHistory || '(Chưa có)'}
-
-Dữ liệu CV hiện tại:
-${JSON.stringify({
-  profile: cvData.profile || {},
-  objective: cvData.objective || '',
-  experience: cvData.experience || [],
-  education: cvData.education || [],
-  skills: cvData.skills || [],
-  projects: cvData.projects || []
-})}
-
-Yêu cầu mới của người dùng: "${userMsg}"`;
-
-        const aiRes = await callGeminiJSON(prompt);
-        if (aiRes && (aiRes.reply || aiRes.updates)) {
-          return res.json({
-            success: true,
-            reply: aiRes.reply || 'Tôi đã cập nhật CV theo yêu cầu của bạn.',
-            updates: aiRes.updates || {}
-          });
-        }
-      } catch (aiErr) {
-        console.warn('Gemini AI Agent fallback:', aiErr.message);
-      }
-    }
-
-    // 2. Deterministic Smart Fallback Parser (luôn hoạt động ngay cả khi offline/hết quota)
-    const updates = {};
-    const changedParts = [];
-    const lower = userMsg.toLowerCase();
-
-    const profileUpdates = {};
-    const emailMatch = userMsg.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-    if (emailMatch) {
-      profileUpdates.email = emailMatch[0];
-      changedParts.push(`Email (${emailMatch[0]})`);
-    }
-    const phoneMatch = userMsg.match(/(0|\+84)[0-9\s.-]{8,12}/);
-    if (phoneMatch) {
-      profileUpdates.phone = phoneMatch[0].trim();
-      changedParts.push(`Số điện thoại (${profileUpdates.phone})`);
-    }
-    const nameMatch = userMsg.match(/(?:tên(?: tôi)? là|tôi tên|họ tên[:\s]+)\s*([A-ZÀ-Ỹa-zà-ỹ\s]{3,35})(?:,|\.|;|\n|$)/i);
-    if (nameMatch && nameMatch[1]) {
-      profileUpdates.fullName = nameMatch[1].trim().toUpperCase();
-      changedParts.push(`Họ tên (${profileUpdates.fullName})`);
-    }
-    const roleMatch = userMsg.match(/(?:vị trí|chức danh|ứng tuyển|làm)\s+([A-ZÀ-Ỹa-zà-ỹ0-9\/\s&-]{3,45})(?:,|\.|;|\n|tại|$)/i);
-    if (roleMatch && roleMatch[1]) {
-      profileUpdates.jobTitle = roleMatch[1].trim();
-      changedParts.push(`Vị trí (${profileUpdates.jobTitle})`);
-    }
-    if (Object.keys(profileUpdates).length > 0) {
-      updates.profile = { ...(cvData.profile || {}), ...profileUpdates };
-    }
-
-    const skillMatch = userMsg.match(/(?:kỹ năng|skill|thành thạo|biết)[:\s]+([^\n.]+)/i);
-    if (skillMatch && skillMatch[1]) {
-      const newSkills = skillMatch[1]
-        .split(/,|;|và/)
-        .map(s => s.trim())
-        .filter(s => s.length > 1 && s.length < 35)
-        .map((s, idx) => ({ id: `sk_ai_${Date.now()}_${idx}`, name: s, level: 85 }));
-      if (newSkills.length > 0) {
-        const existingNames = new Set((cvData.skills || []).map(s => (s.name || '').toLowerCase()));
-        updates.skills = [
-          ...(cvData.skills || []),
-          ...newSkills.filter(ns => !existingNames.has(ns.name.toLowerCase()))
-        ];
-        changedParts.push(`${newSkills.length} kỹ năng`);
-      }
-    }
-
-    if (lower.includes('mục tiêu') || lower.includes('giới thiệu') || lower.includes('tóm tắt')) {
-      const roleForObj = profileUpdates.jobTitle || cvData?.profile?.jobTitle || 'Chuyên viên';
-      updates.objective = `Ứng viên vị trí ${roleForObj} với tư duy giải quyết vấn đề thực tế và tinh thần trách nhiệm cao. Mong muốn đóng góp chuyên môn để nâng cao hiệu suất công việc và tạo ra giá trị bền vững cho doanh nghiệp.`;
-      changedParts.push('Mục tiêu nghề nghiệp');
-    }
-
-    const reply = changedParts.length > 0
-      ? `Tôi đã cập nhật trực tiếp vào CV cho bạn: ${changedParts.join(', ')}. Bạn có thể xem thay đổi ở trang CV bên trái hoặc nhắn tiếp nếu muốn điều chỉnh thêm!`
-      : `Tôi đã tiếp nhận thông tin của bạn ("${userMsg}"). Để AI cập nhật chính xác nhất, bạn có thể nhắn cụ thể hơn ví dụ: "Đổi tên thành..., vị trí..., kỹ năng: React, Figma, viết lại mục tiêu nghề nghiệp..."`;
-
-    return res.json({ success: true, reply, updates });
-  } catch (err) {
-    console.error('Lỗi POST /api/cv/ai-agent:', err);
-    return res.status(500).json({ success: false, message: 'Lỗi xử lý AI Agent.' });
+    res.setHeader('Cache-Control', 'no-store');
+    const result = await processCvEditorAgent(req.body);
+    return res.status(result.status).json(result.body);
+  } catch {
+    console.error('[POST /api/cv/ai-agent] AGENT_INTERNAL_ERROR');
+    return res.status(503).json({ success: false, code: 'AGENT_UNAVAILABLE', message: 'Trợ lý AI Agent hiện đang bận. Vui lòng thử lại sau ít giây.' });
   }
 });
 

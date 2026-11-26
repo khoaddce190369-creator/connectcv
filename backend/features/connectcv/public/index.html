@@ -82,6 +82,156 @@
     /* ── Draft saved badge ──────────────────────────────────── */
     .draft-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #059669; background: #d1fae5; padding: 3px 8px; border-radius: 20px; border: 1px solid #6ee7b7; }
 
+    /* ── ConnectCV AI Agent Editor (Self-contained Styles) ─── */
+    .cv-agent-drawer {
+      background: linear-gradient(135deg, rgba(250,245,255,0.96), rgba(238,242,255,0.92), rgba(239,246,255,0.96));
+      border: 2px solid #c4b5fd;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 28px rgba(109,40,217,0.12);
+    }
+    .cv-agent-drawer-head {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+      border-bottom: 1px solid rgba(196,181,253,0.6); padding-bottom: 12px;
+    }
+    .cv-agent-badge {
+      padding: 2px 8px; border-radius: 9999px; font-size: 9px; font-weight: 800;
+      background: #ede9fe; color: #6d28d9; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .cv-agent-toggle-label {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600;
+      color: #475569; background: #ffffff; padding: 4px 10px; border-radius: 8px;
+      border: 1px solid #ddd6fe; cursor: pointer;
+    }
+    .cv-agent-toggle-label input { accent-color: #7c3aed; }
+    .cv-agent-messages {
+      height: 280px; overflow-y: auto; padding: 12px; background: #f8fafc;
+      border-radius: 12px; border: 1px solid #e9d5ff; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .cv-agent-avatar {
+      width: 28px; height: 28px; border-radius: 9999px; flex-shrink: 0;
+      background: linear-gradient(135deg, #9333ea, #4f46e5); color: #ffffff;
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
+      box-shadow: 0 2px 6px rgba(124,58,237,0.25);
+    }
+    .cv-agent-avatar-user {
+      width: 28px; height: 28px; border-radius: 9999px; flex-shrink: 0;
+      background: #6d28d9; color: #ffffff;
+      display: flex; align-items: center; justify-content: center; font-size: 11px;
+    }
+    .cv-agent-bubble-user {
+      background: linear-gradient(90deg, #7c3aed, #4f46e5); color: #ffffff;
+      padding: 10px 13px; border-radius: 16px 2px 16px 16px; max-width: 85%;
+      line-height: 1.5; box-shadow: 0 2px 6px rgba(79,70,229,0.2);
+    }
+    .cv-agent-bubble-user-label { font-size: 10px; color: #ddd6fe; font-weight: 700; margin-bottom: 2px; }
+    .cv-agent-bubble-bot {
+      background: #ffffff; border: 1px solid #ddd6fe; border-radius: 2px 16px 16px 16px;
+      padding: 12px 14px; max-width: 90%; color: #1e293b; line-height: 1.5;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.05); display: flex; flex-direction: column; gap: 8px;
+    }
+    .cv-agent-bubble-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      border-bottom: 1px solid #f3e8ff; padding-bottom: 6px; font-size: 11px;
+    }
+    .cv-agent-mode-pill {
+      font-size: 9px; font-weight: 700; color: #6d28d9; background: #f5f3ff;
+      padding: 2px 6px; border-radius: 6px; border: 1px solid #ddd6fe;
+    }
+    .cv-agent-thought {
+      font-size: 10.5px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0;
+      border-radius: 8px; padding: 7px 9px; font-style: italic; display: flex; align-items: flex-start; gap: 6px;
+    }
+    .cv-agent-typing {
+      background: #ffffff; border: 1px solid #ddd6fe; border-radius: 2px 14px 14px 14px;
+      padding: 10px 12px; color: #64748b; font-style: italic; display: flex; align-items: center; gap: 8px;
+    }
+    .cv-agent-card {
+      margin-top: 6px; padding: 10px 12px; background: #faf5ff; border: 1px solid #d8b4fe;
+      border-radius: 12px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .cv-agent-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #e9d5ff; padding-bottom: 6px;
+    }
+    .cv-agent-card-title { font-size: 11px; font-weight: 700; color: #581c87; display: inline-flex; align-items: center; gap: 6px; }
+    .cv-agent-card-count { font-size: 10px; color: #7e22ce; font-weight: 600; }
+    .cv-agent-action-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .cv-agent-action-item { background: #ffffff; border: 1px solid #e9d5ff; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+    .cv-agent-action-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .cv-agent-item-check { accent-color: #7c3aed; cursor: pointer; }
+    .cv-agent-type-badge {
+      padding: 2px 6px; border-radius: 4px; background: #f3e8ff; color: #6b21a8;
+      font-family: ui-monospace, monospace; font-size: 9px; font-weight: 700; text-transform: uppercase;
+    }
+    .cv-agent-action-desc { font-size: 11px; font-weight: 600; color: #334155; }
+    .cv-agent-diff-box { display: flex; flex-direction: column; gap: 3px; font-size: 10.5px; margin-top: 2px; }
+    .cv-agent-diff-label { font-size: 10px; font-weight: 700; color: #64748b; }
+    .cv-diff-old {
+      background: #fef2f2; color: #991b1b; border-left: 3px solid #f87171;
+      padding: 4px 7px; border-radius: 4px; text-decoration: line-through; word-break: break-word;
+    }
+    .cv-diff-new {
+      background: #ecfdf5; color: #065f46; border-left: 3px solid #10b981;
+      padding: 4px 7px; border-radius: 4px; font-weight: 500; word-break: break-word;
+    }
+    .cv-agent-card-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 4px; }
+    .cv-agent-ml-auto { margin-left: auto; }
+    .cv-agent-status-ok { font-size: 11px; font-weight: 700; color: #059669; display: inline-flex; align-items: center; gap: 5px; }
+    .cv-agent-status-warn { font-size: 11px; font-weight: 600; color: #b45309; display: inline-flex; align-items: center; gap: 5px; }
+    .cv-agent-status-muted { font-size: 11px; font-weight: 600; color: #64748b; display: inline-flex; align-items: center; gap: 5px; }
+    .cv-agent-btn-apply {
+      font-size: 11px; font-weight: 700; color: #ffffff; padding: 6px 12px; border-radius: 8px;
+      background: linear-gradient(90deg, #7c3aed, #4f46e5); border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(124,58,237,0.25);
+    }
+    .cv-agent-btn-apply:hover { filter: brightness(1.06); }
+    .cv-agent-btn-subtle {
+      font-size: 11px; font-weight: 600; color: #334155; background: #ffffff;
+      border: 1px solid #cbd5e1; border-radius: 8px; padding: 5px 10px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .cv-agent-btn-subtle:hover:not(:disabled) { background: #f1f5f9; }
+    .cv-agent-btn-subtle:disabled { opacity: 0.45; cursor: not-allowed; }
+    .cv-agent-followups { border-top: 1px solid #f1f5f9; padding-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .cv-agent-followups-title { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; }
+    .cv-agent-followups-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cv-agent-followup-chip {
+      font-size: 10.5px; font-weight: 600; color: #5b21b6; background: #f5f3ff;
+      border: 1px solid #ddd6fe; border-radius: 8px; padding: 4px 9px; cursor: pointer; text-align: left;
+    }
+    .cv-agent-followup-chip:hover { background: #ede9fe; }
+    .cv-agent-error {
+      padding: 10px 12px; background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: 10px; color: #b91c1c; font-size: 11.5px; text-align: center;
+    }
+    .cv-agent-chip {
+      flex-shrink: 0; padding: 4px 10px; background: #ffffff; color: #334155;
+      border: 1px solid #ddd6fe; border-radius: 9999px; font-size: 11px; font-weight: 500; cursor: pointer;
+    }
+    .cv-agent-chip:hover { background: #f3e8ff; color: #581c87; }
+    .cv-agent-input {
+      flex: 1; padding: 10px 14px; background: #ffffff; border: 1px solid #c4b5fd;
+      border-radius: 12px; font-size: 13px; resize: none; outline: none;
+    }
+    .cv-agent-input:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.18); }
+    .cv-agent-mode-bar {
+      display: flex; align-items: center; gap: 4px; padding: 4px;
+      background: #f5f3ff; border-bottom: 1px solid #ddd6fe; font-size: 11px; font-weight: 700;
+    }
+    .cv-agent-mode-tab {
+      flex: 1; padding: 6px 8px; border-radius: 8px; text-align: center; color: #475569;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border: none; background: transparent;
+    }
+    .cv-agent-mode-tab.active { background: #ffffff; color: #6d28d9; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    @keyframes cv-agent-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.55); background-color: #ecfdf5; border-color: #10b981; }
+      70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); background-color: #ecfdf5; border-color: #10b981; }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+    .cv-agent-highlight { animation: cv-agent-pulse 1.8s ease-out; border-color: #10b981 !important; }
+
   </style>
 <script src="/ai/runtime.js"></script>
 <script src="/ai/js/community-publication.js"></script>
@@ -91,6 +241,7 @@
 <script src="/ai/js/profile-autosave.js"></script>
 <script src="/ai/js/profile-image.js"></script>
 <script src="/ai/js/account-bridge.js"></script>
+<script src="/ai/js/cv-agent.js"></script>
 <script>
 // Authentication tokens are supplied through an in-memory hook.
 window.addEventListener('connectcv:logout',()=>{for(const key of Object.keys(sessionStorage))if(key.startsWith('connectcv_'))sessionStorage.removeItem(key);location.reload();});
@@ -818,7 +969,72 @@ window.fetch=async function(resource,options={}){
 <button class="px-2 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-mono text-[11px] transition" id="btn-toggle-json" onclick="toggleJsonDrawer()" title="Xem/Chỉnh sửa mã JSON (Dành cho Lập trình viên)" type="button">
 <i class="fa-solid fa-code"></i> JSON
                   </button>
+<button class="px-2.5 py-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-bold text-[11px] transition shadow-sm flex items-center space-x-1.5 cursor-pointer ring-2 ring-purple-300" id="btn-toggle-cv-agent" onclick="toggleCvAgentDrawer()" title="Mở AI Agent Chỉnh Sửa CV Trực Tiếp (Cursor / Antigravity Style)" type="button">
+<i class="fa-solid fa-robot"></i><span>AI Agent Sửa CV</span>
+</button>
 </div>
+</div>
+<!-- ======================================================== -->
+<!-- BẢN ĐIỀU KHIỂN AI AGENT CHỈNH SỬA CV TRỰC TIẾP (SANDBOX) -->
+<!-- ======================================================== -->
+<div class="hidden cv-agent-drawer space-y-3" id="cv-agent-editor-drawer">
+  <div class="cv-agent-drawer-head">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-sm">
+        <i class="fa-solid fa-robot text-base"></i>
+      </div>
+      <div>
+        <h3 class="text-sm font-extrabold text-purple-900 flex items-center gap-2">
+          ConnectCV AI Agent Editor
+          <span class="cv-agent-badge">Live Agent</span>
+        </h3>
+        <p class="text-[11px] text-slate-500">Chat chỉnh sửa trực tiếp CV, xem Diff trước/sau &amp; cập nhật Live Preview (Sandbox bảo mật)</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-1.5 flex-wrap">
+      <label class="cv-agent-toggle-label" title="Bật để áp dụng ngay vào CV; tắt để xem Diff và duyệt từng mục">
+        <input type="checkbox" id="cv-agent-auto-apply-check" checked onchange="toggleCvAgentAutoApply(this)">
+        <span>Tự động áp dụng</span>
+      </label>
+      <button class="cv-agent-btn-subtle" id="btn-cv-agent-undo" onclick="cvAgentUndo()" disabled title="Hoàn tác thay đổi của AI Agent" type="button">
+        <i class="fa-solid fa-rotate-left"></i><span>Hoàn tác</span>
+      </button>
+      <button class="cv-agent-btn-subtle" id="btn-cv-agent-redo" onclick="cvAgentRedo()" disabled title="Làm lại thay đổi vừa hoàn tác" type="button">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+      <button class="cv-agent-btn-subtle" onclick="clearCvAgentHistory()" title="Làm mới cuộc trò chuyện AI Agent" type="button">
+        <i class="fa-solid fa-broom"></i>
+      </button>
+      <button class="w-7 h-7 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-700 flex items-center justify-center font-bold text-xs transition" onclick="toggleCvAgentDrawer(false)" title="Thu nhỏ AI Agent" type="button">
+        ✕
+      </button>
+    </div>
+  </div>
+  <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-slate-600 text-[11px] no-scrollbar">
+    <span class="text-[10px] font-bold text-purple-700 shrink-0 uppercase"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i>Gợi ý:</span>
+    <button type="button" onclick="sendCvAgentPrompt('Tối ưu hóa phần tóm tắt bản thân cho súc tích và chuyên nghiệp theo chuẩn ATS dựa trên hồ sơ hiện có')" class="cv-agent-chip">✨ Tối ưu phần Tóm tắt</button>
+    <button type="button" onclick="sendCvAgentPrompt('Thêm kỹ năng: Docker, Kubernetes, CI/CD, Redis, PostgreSQL')" class="cv-agent-chip">➕ Thêm kỹ năng Backend</button>
+    <button type="button" onclick="sendCvAgentPrompt('Chuẩn hóa bullet points kinh nghiệm theo công thức STAR (giữ nguyên sự thật, dùng [X%] cho số liệu tôi sẽ tự điền)')" class="cv-agent-chip">🎯 Chuẩn hóa STAR kinh nghiệm</button>
+    <button type="button" onclick="sendCvAgentPrompt('Rà soát và may đo lại toàn bộ CV để khớp nhất với JD ở trên mà không bịa thêm kinh nghiệm')" class="cv-agent-chip">🔍 May đo theo JD</button>
+  </div>
+  <div class="cv-agent-messages text-xs" id="cv-agent-messages">
+    <div class="flex items-start gap-2 text-xs">
+      <div class="cv-agent-avatar"><i class="fa-solid fa-robot"></i></div>
+      <div class="cv-agent-bubble-bot">
+        <div class="font-bold text-purple-700 text-xs flex items-center gap-1.5"><span>Xin chào! Tôi là ConnectCV AI Agent 🤖</span></div>
+        <p class="text-slate-600">Tôi có thể phân tích, hiển thị <b>Diff Trước/Sau</b> và <b>trực tiếp chỉnh sửa CV</b> của bạn theo thời gian thực (tự động đồng bộ bản xem trước CV).</p>
+      </div>
+    </div>
+  </div>
+  <div class="flex items-center gap-2 pt-1">
+    <textarea id="cv-agent-input" rows="1" maxlength="2000" placeholder="Chat với AI Agent để sửa CV (VD: 'Thêm kỹ năng: React, Node.js', 'Viết lại tóm tắt')..." class="cv-agent-input"></textarea>
+    <button type="button" id="btn-cv-agent-stop" onclick="stopCvAgentRequest()" class="hidden h-10 px-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition flex items-center justify-center gap-1 text-xs shadow-sm shrink-0 cursor-pointer" title="Dừng yêu cầu đang chạy">
+      <i class="fa-solid fa-stop"></i><span class="hidden sm:inline">Dừng</span>
+    </button>
+    <button type="button" id="btn-cv-agent-send" onclick="sendCvAgentMessage()" class="h-10 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 active:scale-95 text-white font-bold rounded-xl transition flex items-center justify-center gap-1.5 text-xs shadow-md shrink-0 disabled:opacity-50 cursor-pointer">
+      <i class="fa-solid fa-paper-plane"></i><span class="hidden sm:inline">Gửi Lệnh</span>
+    </button>
+  </div>
 </div>
 <!-- 1. Thông tin cá nhân & Liên hệ -->
 <div class="space-y-2.5">
@@ -1488,6 +1704,15 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
 </button>
 </div>
 </div>
+<!-- MODE SWITCHER: Tư Vấn Chung vs Sửa CV Trực Tiếp (AI Agent) -->
+<div class="cv-agent-mode-bar">
+<button type="button" id="tab-chat-mode-advice" onclick="switchChatMode('advice')" class="cv-agent-mode-tab active">
+<i class="fa-solid fa-comments"></i><span>Tư Vấn Chung</span>
+</button>
+<button type="button" id="tab-chat-mode-agent" onclick="switchChatMode('agent')" class="cv-agent-mode-tab">
+<i class="fa-solid fa-robot text-purple-600"></i><span>Sửa CV Trực Tiếp</span>
+</button>
+</div>
 <!-- Collapsible Profile Drawer (Cá nhân hóa hồ sơ) -->
 <div class="hidden bg-purple-50/95 border-b border-purple-200/60 p-3 text-xs space-y-2 flex-shrink-0 animate-in fade-in duration-200" id="chatbot-profile-drawer">
 <div class="flex justify-between items-center text-[11px] font-bold text-purple-900">
@@ -1507,7 +1732,7 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
 </div>
 <p class="px-3 py-2 text-[10px] text-slate-600 bg-slate-50">Tên hiển thị không gửi tới AI. Câu hỏi, tối đa 4 tin nhắn gần đây và vị trí bạn nhập được gửi để nhận gợi ý AI; không nhập contact, mật khẩu hoặc bí mật. Hướng dẫn ứng dụng dùng nội dung ConnectCV, không gọi AI.</p>
 <!-- Quick Action Question Chips (Gợi ý câu hỏi nhanh) -->
-<div class="px-3 py-2 bg-slate-100/90 border-b border-slate-200 flex items-center space-x-1.5 overflow-x-auto no-scrollbar text-[11px] flex-shrink-0 select-none">
+<div class="px-3 py-2 bg-slate-100/90 border-b border-slate-200 flex items-center space-x-1.5 overflow-x-auto no-scrollbar text-[11px] flex-shrink-0 select-none" id="chatbot-suggestions-advice">
 <span class="text-slate-400 font-bold text-[10px] flex-shrink-0 mr-0.5"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i>Gợi ý:</span>
 <button class="flex-shrink-0 px-2.5 py-1 bg-white hover:bg-purple-100 hover:text-purple-800 text-slate-700 border border-slate-200 hover:border-purple-300 rounded-full font-medium transition text-[11px] shadow-2xs" onclick="askChatbotPrompt('Làm sao để CV của tôi đạt điểm ATS trên 90%?')" type="button">
             🎯 Đối chiếu kỹ năng với JD
@@ -1521,6 +1746,13 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
 <button class="flex-shrink-0 px-2.5 py-1 bg-white hover:bg-purple-100 hover:text-purple-800 text-slate-700 border border-slate-200 hover:border-purple-300 rounded-full font-medium transition text-[11px] shadow-2xs" onclick="askChatbotPrompt('AI có hỗ trợ viết thư ứng tuyển Upwork / Fiverr không?')" type="button">
             ✍️ Góp ý Proposal
           </button>
+</div>
+<div class="hidden px-3 py-2 bg-purple-100 border-b border-purple-200 flex items-center space-x-1.5 overflow-x-auto no-scrollbar text-[11px] flex-shrink-0 select-none" id="chatbot-suggestions-agent">
+<span class="text-purple-800 font-bold text-[10px] flex-shrink-0 mr-0.5"><i class="fa-solid fa-robot text-purple-600 mr-1"></i>Lệnh sửa:</span>
+<button class="cv-agent-chip" onclick="askChatbotPrompt('Tối ưu hóa phần tóm tắt bản thân cho chuẩn ATS dựa trên hồ sơ hiện có')" type="button">✨ Tối ưu tóm tắt</button>
+<button class="cv-agent-chip" onclick="askChatbotPrompt('Thêm kỹ năng: Docker, Kubernetes, CI/CD, Redis')" type="button">➕ Thêm skill Backend</button>
+<button class="cv-agent-chip" onclick="askChatbotPrompt('Sửa vị trí mục tiêu thành Senior Fullstack Engineer')" type="button">🎯 Sửa chức danh</button>
+<button class="flex-shrink-0 px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-full font-bold transition text-[11px] shadow-sm" onclick="toggleCvAgentDrawer(true)" type="button">🚀 Mở AI Agent Studio</button>
 </div>
 <!-- Chat Messages Scroll Container -->
 <div class="flex-1 overflow-y-auto space-y-3.5 p-3.5 bg-slate-50 text-xs" id="chatbot-messages">
@@ -2202,6 +2434,10 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
 
     let currentEducationList = [];
     let currentExperienceList = [];
+    window.getCvExperienceList = () => currentExperienceList;
+    window.setCvExperienceList = (l) => { currentExperienceList = l; if(typeof renderExperienceList==='function') renderExperienceList(); };
+    window.getCvEducationList = () => currentEducationList;
+    window.setCvEducationList = (l) => { currentEducationList = l; if(typeof renderEducationList==='function') renderEducationList(); };
 
     const SAMPLE_PROFILES = {
       backend: {
@@ -3265,6 +3501,58 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
         if (iframe) iframe.style.opacity = '1';
       }
     }
+
+    // Tự động đồng bộ bản xem trước CV trực quan ngay sau khi AI Agent chỉnh sửa (không tốn quota AI)
+    let agentPreviewDebounce = null;
+    window.refreshCvVisualPreviewFromProfile = function () {
+      if (!latestCVData) return;
+      clearTimeout(agentPreviewDebounce);
+      agentPreviewDebounce = setTimeout(async () => {
+        const tmplId = currentAppliedTemplate?.id || currentSelectedTemplateId;
+        if (!tmplId || !latestCVData) return;
+        const renderVersion = ++templateRenderVersion;
+        const renderLanguage = latestCVData.language || currentCVLanguage || 'vi';
+        const iframe = document.getElementById('cv-rendered-iframe');
+        if (iframe) iframe.style.opacity = '0.55';
+        try {
+          let profileObj = {};
+          try { profileObj = JSON.parse(document.getElementById('cv-profile')?.value || '{}'); } catch {}
+          const mergedCvData = {
+            ...latestCVData,
+            fullName: profileObj.fullName || latestCVData.fullName,
+            targetRole: profileObj.targetRole || latestCVData.targetRole,
+            summary: profileObj.summary ?? latestCVData.summary,
+            tailoredSummary: profileObj.summary ?? latestCVData.tailoredSummary,
+            skills: Array.isArray(profileObj.skills) ? profileObj.skills : latestCVData.skills,
+            tailoredSkills: Array.isArray(profileObj.skills) ? profileObj.skills : latestCVData.tailoredSkills,
+            experience: Array.isArray(profileObj.experience) ? profileObj.experience : latestCVData.experience,
+            tailoredExperience: Array.isArray(profileObj.experience) ? profileObj.experience : latestCVData.tailoredExperience,
+            education: Array.isArray(profileObj.education) ? profileObj.education : latestCVData.education,
+            tailoredEducation: Array.isArray(profileObj.education) ? profileObj.education : latestCVData.tailoredEducation,
+            sourceProfile: profileObj,
+            language: renderLanguage
+          };
+          const res = await fetch('/api/cv/render', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cvData: mergedCvData, templateId: tmplId, profile: profileObj, language: renderLanguage })
+          });
+          const data = await res.json();
+          if (renderVersion !== templateRenderVersion) return;
+          if (data.success && data.renderedHtml) {
+            latestCVData = mergedCvData;
+            latestRenderedHtml = data.renderedHtml;
+            cvLanguageCache = { vi: null, en: null };
+            cvLanguageCache[renderLanguage] = { cvData: latestCVData, renderedHtml: latestRenderedHtml };
+            renderCVResult(latestCVData, latestRenderedHtml);
+          }
+        } catch (err) {
+          console.warn('Không thể tự động re-render bản xem trước CV:', err?.message || 'error');
+        } finally {
+          if (iframe) iframe.style.opacity = '1';
+        }
+      }, 150);
+    };
 
     // Mở xem toàn màn hình
     function toggleCVFullscreen() {
@@ -6262,6 +6550,7 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
     // 8. CHATBOT TƯ VẤN VIÊN NỔI Ở GÓC MÀN HÌNH (chatbot.js)
     // ========================================================
     let chatbotHistory = [];
+    let floatingAgentHistory = [];
     let chatbotGeneration = 0, chatbotRequest = null;
     window.addEventListener('connectcv:logout', () => {
       for (const id of ['chat-user-name','chat-user-role','chatbot-input']) {
@@ -6325,6 +6614,7 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
       const previous=chatbotRequest;chatbotRequest=null;previous?.controller.abort();
       const send=document.getElementById('btn-chatbot-send');if(send)send.disabled=false;
       chatbotHistory = [];
+      if (typeof floatingAgentHistory !== 'undefined') floatingAgentHistory = [];
       const container = document.getElementById('chatbot-messages');
       const nameEl = document.getElementById('chat-user-name');
       const userName = (nameEl && nameEl.value.trim()) ? nameEl.value.trim() : 'Bạn';
@@ -6433,10 +6723,34 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
       return safe;
     }
 
+    let currentChatMode = 'advice';
+    function switchChatMode(mode) {
+      currentChatMode = mode;
+      const tabAdvice = document.getElementById('tab-chat-mode-advice');
+      const tabAgent = document.getElementById('tab-chat-mode-agent');
+      const input = document.getElementById('chatbot-input');
+      const suggestionsAdvice = document.getElementById('chatbot-suggestions-advice');
+      const suggestionsAgent = document.getElementById('chatbot-suggestions-agent');
+      if (mode === 'agent') {
+        tabAgent?.classList.add('active');
+        tabAdvice?.classList.remove('active');
+        if (input) input.placeholder = 'Nhập lệnh sửa CV (VD: Thêm kỹ năng: React, tối ưu tóm tắt)...';
+        if (suggestionsAdvice) suggestionsAdvice.classList.add('hidden');
+        if (suggestionsAgent) suggestionsAgent.classList.remove('hidden');
+      } else {
+        tabAdvice?.classList.add('active');
+        tabAgent?.classList.remove('active');
+        if (input) input.placeholder = 'Nhập câu hỏi về CV, phỏng vấn, ATS...';
+        if (suggestionsAdvice) suggestionsAdvice.classList.remove('hidden');
+        if (suggestionsAgent) suggestionsAgent.classList.add('hidden');
+      }
+    }
+
     function recoverFailedChatMessage(text){
       const input=document.getElementById('chatbot-input');if(input&&!input.value)input.value=text;
-      const last=chatbotHistory.at(-1);
-      if(last?.role==='user'&&last.message===text)chatbotHistory.pop();
+      const targetHistory = (typeof currentChatMode !== 'undefined' && currentChatMode === 'agent' && typeof floatingAgentHistory !== 'undefined') ? floatingAgentHistory : chatbotHistory;
+      const last=targetHistory.at(-1);
+      if(last?.role==='user'&&last.message===text)targetHistory.pop();
     }
     // Gửi tin nhắn đến API chatbot
     async function sendChatbotMessage() {
@@ -6446,7 +6760,9 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
       const container = document.getElementById('chatbot-messages');
 
       if (!text || sendBtn.disabled) return;
-      if(text.length>1000){showToastError('Câu hỏi tối đa 1.000 ký tự.','Câu hỏi quá dài');return;}
+      const isAgent = currentChatMode === 'agent';
+      const maxChars = isAgent ? 2000 : 1000;
+      if(text.length>maxChars){showToastError(`Nội dung tối đa ${maxChars.toLocaleString('vi-VN')} ký tự.`,'Nội dung quá dài');return;}
 
       const operation={generation:chatbotGeneration,controller:new AbortController()};
       chatbotRequest=operation;
@@ -6455,6 +6771,7 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
 
       const userName = document.getElementById('chat-user-name').value || 'Bạn';
       const userRole = document.getElementById('chat-user-role').value || 'Ứng viên';
+      const activeHistory = isAgent ? floatingAgentHistory : chatbotHistory;
 
       // 1. Thêm tin nhắn của User vào khung chat (đã escape chống XSS)
       const userBubble = document.createElement('div');
@@ -6469,7 +6786,7 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
         </div>
       `;
       container.appendChild(userBubble);
-      chatbotHistory.push({ role: 'user', message: text });
+      activeHistory.push({ role: 'user', message: text });
       input.value = '';
       container.scrollTop = container.scrollHeight;
 
@@ -6484,23 +6801,35 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
           <i class="fa-solid fa-robot text-sm"></i>
         </div>
         <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-slate-400 italic flex items-center">
-          <i class="fa-solid fa-circle-notch fa-spin text-purple-500 mr-2"></i> ConnectCV chatbot đang suy nghĩ...
+          <i class="fa-solid fa-circle-notch fa-spin text-purple-500 mr-2"></i> ${isAgent ? 'ConnectCV AI Agent đang phân tích & tạo bản vá CV...' : 'ConnectCV chatbot đang suy nghĩ...'}
         </div>
       `;
       container.appendChild(typingBubble);
       container.scrollTop = container.scrollHeight;
 
+      const beforeSnapshot = isAgent && typeof window.getCvCurrentSnapshot === 'function' ? window.getCvCurrentSnapshot() : null;
+
       try {
-        const request=async()=>{const res = await fetch('/api/chatbot/message', {
-          method: 'POST',
-          signal: operation.controller.signal,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        const request = async () => {
+          const url = isAgent ? '/api/chatbot/agent' : '/api/chatbot/message';
+          const payload = isAgent ? {
             message: text,
-            history: chatbotHistory.slice(-4).map(h=>({role:h.role,message:h.message.slice(0,2000)})),
+            history: activeHistory.slice(-4).map(h=>({role:h.role,message:h.message.slice(0,2000)})),
+            currentProfile: beforeSnapshot || {},
+            targetJob: document.getElementById('cv-jd')?.value || ''
+          } : {
+            message: text,
+            history: activeHistory.slice(-4).map(h=>({role:h.role,message:h.message.slice(0,2000)})),
             context: { targetRole: userRole.trim().slice(0,150) }
-          })
-        });return await res.json();};
+          };
+          const res = await fetch(url, {
+            method: 'POST',
+            signal: operation.controller.signal,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          return await res.json();
+        };
         const cancelled=new Promise((_,reject)=>{cancel=()=>reject(new Error('CHAT_CANCELLED'));operation.controller.signal.addEventListener('abort',cancel,{once:true});});
         const data=await Promise.race([request(),cancelled,new Promise((_,reject)=>{timer=setTimeout(()=>{reject(new Error('CHAT_TIMEOUT'));operation.controller.abort();},60000);})]);
         if(!current())return;
@@ -6509,8 +6838,21 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
 
         if (data.success && data.data) {
           const reply = data.data.reply;
-          const suggestions = data.data.suggestedQuestions || [];
-          chatbotHistory.push({ role: 'assistant', message: reply });
+          const suggestions = data.data.suggestedQuestions || data.data.suggestedFollowUps || [];
+          activeHistory.push({ role: 'assistant', message: reply });
+
+          let actionsHtml = '';
+          if (isAgent && Array.isArray(data.data.actions) && data.data.actions.length > 0) {
+            const shouldAutoApply = typeof window.getCvAgentAutoApply === 'function' ? window.getCvAgentAutoApply() : true;
+            let cardStatus = 'pending';
+            if (shouldAutoApply && typeof window.applyCvAgentActionsBatch === 'function') {
+              const appliedCount = window.applyCvAgentActionsBatch(data.data.actions, { silent: false });
+              cardStatus = appliedCount > 0 ? 'applied' : 'noop';
+            }
+            if (typeof window.renderCvAgentActionCard === 'function') {
+              actionsHtml = window.renderCvAgentActionCard(data.data.actions, cardStatus, beforeSnapshot);
+            }
+          }
 
           const botBubble = document.createElement('div');
           botBubble.className = 'flex items-start space-x-3 text-xs';
@@ -6520,15 +6862,15 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
             </div>
             <div class="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-200 shadow-sm max-w-[88%] text-slate-800 leading-relaxed space-y-2.5">
               <div class="font-bold text-purple-700 text-[11px] flex items-center justify-between border-b border-slate-100 pb-1.5">
-                <span class="flex items-center"><i class="fa-solid fa-sparkles text-purple-500 mr-1.5"></i> ConnectCV chatbot</span>
-                <span class="text-[9px] font-normal text-slate-400">${data.data.responseKind === 'product-guide' ? 'Hướng dẫn ConnectCV' : 'Gợi ý AI'}</span>
+                <span class="flex items-center"><i class="fa-solid fa-sparkles text-purple-500 mr-1.5"></i> ${isAgent ? 'ConnectCV AI Agent Editor' : 'ConnectCV chatbot'}</span>
+                <span class="text-[9px] font-normal text-slate-400">${isAgent ? 'Live CV Agent' : (data.data.responseKind === 'product-guide' ? 'Hướng dẫn ConnectCV' : 'Gợi ý AI')}</span>
               </div>
               <div class="text-xs text-slate-800 leading-relaxed">${renderMarkdownSafe(reply)}</div>
-
+              ${actionsHtml}
               ${suggestions.length > 0 ? `
                 <div class="pt-2 border-t border-slate-100">
                   <div class="text-[10px] font-bold text-slate-400 uppercase mb-1.5 flex items-center">
-                    <i class="fa-solid fa-compass mr-1 text-purple-500"></i> Câu hỏi gợi ý tiếp theo:
+                    <i class="fa-solid fa-compass mr-1 text-purple-500"></i> ${isAgent ? 'Gợi ý tiếp theo:' : 'Câu hỏi gợi ý tiếp theo:'}
                   </div>
                   <div class="flex flex-wrap gap-1.5">
                     ${suggestions.map(s => `

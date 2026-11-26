@@ -3,6 +3,7 @@ const express=require('express');
 const router=express.Router();
 const {callGeminiJSON}=require('../services/geminiService');
 const {validateChat,chatError,guides,localReply,buildPrompt,aiReply}=require('../services/chatbotService');
+const {processCvAgentRequest}=require('../services/cvAgentService');
 function capabilities(){return {pdfReady:require('../services/pdfService').isRendererReady(),transactionalCredits:process.env.FEATURE_STORE_BACKEND==='firestore'};}
 router.post('/message',async(req,res)=>{
  try{
@@ -16,6 +17,13 @@ router.post('/message',async(req,res)=>{
  // Provider error text is untrusted and may contain conversation/profile data.
  // Keep a fixed diagnostic code instead of copying that text into route logs.
  }catch{console.error('[Chatbot message] CHAT_PROVIDER_UNAVAILABLE');return res.status(503).json({success:false,code:'CHAT_PROVIDER_UNAVAILABLE',message:'Không thể nhận gợi ý AI lúc này. Bạn có thể hỏi cách sử dụng CV, PDF, phỏng vấn hoặc Credits để xem hướng dẫn ứng dụng.'});}
+});
+router.post('/agent',async(req,res)=>{
+ try{
+  const result=await processCvAgentRequest(req.body);
+  if(!result.success)return res.status(result.code==='AGENT_INPUT_INVALID'?400:503).json(result);
+  return res.json(result);
+ }catch{console.error('[Chatbot agent] AGENT_PROVIDER_UNAVAILABLE');return res.status(503).json({success:false,code:'AGENT_PROVIDER_UNAVAILABLE',message:'AI Agent chỉnh sửa CV hiện đang bận. Vui lòng thử lại sau ít giây.'});}
 });
 router.get('/faq',(req,res)=>res.json({success:true,data:guides(capabilities())}));
 module.exports=router;

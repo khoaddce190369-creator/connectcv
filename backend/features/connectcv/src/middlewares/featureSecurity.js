@@ -40,6 +40,12 @@ async function featureSecurity(req,res,next){
   if(result.error)return res.status(400).json(chatError(result.error));
   req.body=result.value;
  }
+ if(fullPath==='/api/chatbot/agent'||fullPath==='/api/cv/agent'){
+  const {validateAgentInput}=require('../services/cvAgentService');
+  const result=validateAgentInput(req.body);
+  if(result.error)return res.status(400).json({success:false,code:'AGENT_INPUT_INVALID',message:result.error.details[0]?.message||'Dữ liệu AI Agent không hợp lệ.'});
+  req.body=result.value;
+ }
  if(fullPath==='/api/interview/live-chat'){
   const prepared=require('../services/interviewLiveSession').prepareLiveInput(req.body);
   if(prepared.error)return res.status(400).json(prepared.error);
@@ -53,7 +59,7 @@ async function featureSecurity(req,res,next){
  }
  for(const key of ['message','userMessage','question','candidateAnswer','jobTitle','companyName','position','reviewText','answer','text','jdText'])if(body[key]!==undefined&&typeof body[key]!=='string')
   return res.status(400).json({success:false,message:'Trường văn bản không hợp lệ: '+key});
- for(const key of ['userProfile','profile','candidateProfile'])if(body[key]!==undefined){
+ for(const key of ['userProfile','profile','candidateProfile','currentProfile'])if(body[key]!==undefined){
   const p=body[key];
   if(p===null||Array.isArray(p)||!['object','string'].includes(typeof p))return res.status(400).json({success:false,message:'Hồ sơ không hợp lệ.'});
   const text=JSON.stringify(p,(k,v)=>/avatar|photo/i.test(k)?undefined:v);
@@ -62,7 +68,7 @@ async function featureSecurity(req,res,next){
  // Account bucket cannot be reset by spoofing X-Forwarded-For. Socket bucket is
  // deliberately conservative behind a proxy; use a shared store for replicas.
  const utility=['/api/cv/templates/recommend','/api/cv/auto-match-jobs','/api/cv/render','/api/interview/tts'].includes(fullPath);
- const ai=['/api/cv/generate','/api/cv/translate','/api/cv/ats-score','/api/chatbot/message','/api/interview/start','/api/interview/transcribe','/api/interview/live-chat','/api/interview/live-summary','/api/interview/evaluate','/api/interview/proposal'].includes(fullPath);
+ const ai=['/api/cv/generate','/api/cv/translate','/api/cv/ats-score','/api/cv/agent','/api/chatbot/message','/api/chatbot/agent','/api/interview/start','/api/interview/transcribe','/api/interview/live-chat','/api/interview/live-summary','/api/interview/evaluate','/api/interview/proposal'].includes(fullPath);
  const group=utility?'utility':'action';
  const now=clock(),window=300000,limit=utility?120:15;
  if(buckets.size>10000)for(const [k,v]of buckets)if(v.until<=now)buckets.delete(k);
@@ -76,8 +82,9 @@ async function featureSecurity(req,res,next){
  const summaryService=fullPath==='/api/interview/live-summary'?require('../services/interviewSummaryGrounding'):null;
  const summaryHistory=req.body.history||req.body.conversationHistory||[];
  const localSummary=summaryService&&Array.isArray(summaryHistory)&&summaryHistory.slice(-20).every(turn=>turn&&typeof turn==='object'&&String(turn.message||turn.content||'').length<=3000)&&!summaryService.answeredPairs(summaryHistory).some(summaryService.needsModel);
+ const localAgent=(fullPath==='/api/chatbot/agent'||fullPath==='/api/cv/agent')&&require('../services/cvAgentService').isDeterministicAgentRequest(req.body);
  const localChat=fullPath==='/api/chatbot/message'&&require('../services/chatbotService').localTopic(req.body.message)!==null;
- try{if(ai&&!localChat&&!localSummary&&!req.liveInterviewPrepared?.plan.local)await consumeBudget(req.user.id);}
+ try{if(ai&&!localChat&&!localAgent&&!localSummary&&!req.liveInterviewPrepared?.plan.local)await consumeBudget(req.user.id);}
  catch(error){return res.status(error.status||503).json({success:false,code:'FEATURE_BUDGET',message:error.status===429?'Đã đạt giới hạn 100 yêu cầu/ngày. Vui lòng quay lại ngày mai.':'Chưa cấu hình kho quota bền vững hoặc dịch vụ đang bận.'});}
  next();
 }
