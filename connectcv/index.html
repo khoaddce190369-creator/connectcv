@@ -79,28 +79,28 @@
         </a>
       </div>
 
-      <!-- Các Tab Điều Hướng Chính: LUÔN HIỂN THỊ TRÊN MỌI THIẾT BỊ -->
+      <!-- Các Tab Điều Hướng Chính: LUÔN HIỂN THỊ TRÊN MỌI THIẾT BỊ (VIẾT IN HOA) -->
       <nav id="mainNavTabs" class="flex items-center gap-1 sm:gap-1.5 text-xs font-semibold text-slate-600 whitespace-nowrap overflow-x-auto py-1.5 px-1">
-        <button id="nav-jobs" onclick="switchTab('jobs')" class="nav-tab-active whitespace-nowrap px-3.5 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-sm border border-blue-600 transition-all duration-200 active:scale-95 cursor-pointer">
-          Việc làm
+        <button id="nav-jobs" onclick="switchTab('jobs')" class="nav-tab-active uppercase tracking-wide whitespace-nowrap px-3.5 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-sm border border-blue-600 transition-all duration-200 active:scale-95 cursor-pointer">
+          VIỆC LÀM
         </button>
-        <button id="nav-community" onclick="switchTab('community')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
-          Cộng đồng
+        <button id="nav-interview" onclick="switchTab('interview')" class="uppercase tracking-wide whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
+          PHỎNG VẤN AI
         </button>
-        <button id="nav-portfolio" onclick="switchTab('portfolio')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
-          Portfolio
+        <button id="nav-cv" onclick="switchTab('cv')" class="uppercase tracking-wide whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
+          TẠO CV
         </button>
-        <button id="nav-candidates" onclick="switchTab('candidates')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
-          Ứng viên
+        <button id="nav-portfolio" onclick="switchTab('portfolio')" class="uppercase tracking-wide whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
+          PORTFOLIO
         </button>
-        <button id="nav-cv" onclick="switchTab('cv')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
-          Tạo CV
+        <button id="nav-candidates" onclick="switchTab('candidates')" class="uppercase tracking-wide whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
+          ỨNG VIÊN
         </button>
-        <button id="nav-interview" onclick="switchTab('interview')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
-          Phỏng vấn
+        <button id="nav-community" onclick="switchTab('community')" class="uppercase tracking-wide whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
+          CỘNG ĐỒNG
         </button>
-        <button id="nav-wallet" onclick="switchTab('wallet')" class="whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
-          Gói dịch vụ
+        <button id="nav-wallet" onclick="switchTab('wallet')" class="uppercase tracking-wide whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer">
+          GÓI DỊCH VỤ
         </button>
       </nav>
 
@@ -613,97 +613,116 @@
        VIEW: VISUAL PORTFOLIO SHOWCASE & CỘNG ĐỒNG SÁNG TẠO
        ========================================================================== -->
   <!-- ==========================================================================
-       VIEW: CỘNG ĐỒNG SÁNG TẠO (MẠNG XÃ HỘI PHONG CÁCH INSTAGRAM)
+       VIEW: CỘNG ĐỒNG CHIA SẺ KIẾN THỨC & BLOG (PHONG CÁCH REDDIT)
        ========================================================================== -->
   <section id="view-community" class="view-animate hidden flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-6">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       
-      <!-- CỘT CHÍNH: STORIES + BẢNG ĐĂNG BÀI + INSTAGRAM FEED (8 COLS) -->
-      <main class="lg:col-span-8 space-y-5">
+      <!-- CỘT CHÍNH: TẠO BÀI VIẾT + THANH SẮP XẾP + DANH SÁCH BÀI VIẾT REDDIT (8 COLS) -->
+      <main class="lg:col-span-8 space-y-4">
         
-        <!-- Instagram Stories Bar (Tác giả & Portfolio nổi bật) -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs">
-          <div id="communityStoriesBar" class="flex items-center gap-4 overflow-x-auto scrollbar-none pb-1">
-            <!-- Rendered via JS -->
+        <!-- Quick Create Post Bar (Reddit Style) -->
+        <div class="bg-white rounded-xl border border-slate-200 p-3 sm:p-3.5 shadow-2xs flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-heading font-bold text-xs shrink-0">
+            r/
           </div>
+          <button type="button" onclick="openCreatePortfolioModal('blog')" class="flex-1 text-left px-4 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs sm:text-sm text-slate-500 transition-colors cursor-pointer">
+            Chia sẻ bài viết, kinh nghiệm phỏng vấn, kiến thức chuyên môn...
+          </button>
+          <button type="button" onclick="openCreatePortfolioModal('blog')" class="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+            <span class="hidden sm:inline">Viết bài</span>
+          </button>
         </div>
 
-        <!-- Quick Post Composer (Đăng bài tự do / Blog / Sản phẩm / Dự án từ Portfolio) -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-2xs space-y-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shrink-0">
-              C
-            </div>
-            <button type="button" onclick="openCreatePortfolioModal('blog')" class="flex-1 text-left px-4 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 text-xs sm:text-sm text-slate-500 transition-colors cursor-pointer">
-              Chia sẻ bài viết, blog, sản phẩm hoặc dự án từ Portfolio...
+        <!-- Reddit Sort & View Filter Bar -->
+        <div class="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 shadow-2xs flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="document.getElementById('socialSortSelect').value='newest'; handleSocialSort('newest');" class="px-3 py-1.5 rounded-lg font-semibold bg-slate-100 text-slate-800 hover:bg-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>Mới nhất</span>
+            </button>
+            <button type="button" onclick="document.getElementById('socialSortSelect').value='likes'; handleSocialSort('likes');" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/></svg>
+              <span>Nổi bật (Top)</span>
+            </button>
+            <button type="button" onclick="document.getElementById('socialSortSelect').value='comments'; handleSocialSort('comments');" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+              <span>Thảo luận</span>
             </button>
           </div>
-          <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-xs font-semibold">
-            <button type="button" onclick="openCreatePortfolioModal('blog')" class="py-2 px-2 rounded-xl hover:bg-slate-50 text-slate-700 flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
-              <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
-              <span>Viết Blog</span>
-            </button>
-            <button type="button" onclick="openCreatePortfolioModal('product')" class="py-2 px-2 rounded-xl hover:bg-slate-50 text-slate-700 flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
-              <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
-              <span>Đăng Sản Phẩm</span>
-            </button>
-            <button type="button" onclick="openCreatePortfolioModal('portfolio')" class="py-2 px-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
-              <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-              <span>Từ Portfolio</span>
-            </button>
-          </div>
+
+          <select id="socialSortSelect" onchange="handleSocialSort(this.value)" class="bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 px-2.5 py-1.5 focus:outline-none cursor-pointer">
+            <option value="newest">Sắp xếp: Mới nhất</option>
+            <option value="likes">Sắp xếp: Nhiều Upvote</option>
+            <option value="comments">Sắp xếp: Nhiều bình luận</option>
+          </select>
         </div>
 
-        <!-- Instagram Feed Posts -->
-        <div id="portfolioGridContainer" class="space-y-6">
-          <!-- Dynamic Instagram-style Posts -->
+        <!-- Reddit Feed Posts -->
+        <div id="portfolioGridContainer" class="space-y-3.5">
+          <!-- Dynamic Reddit-style Posts -->
         </div>
 
       </main>
 
-      <!-- CỘT PHẢI: KHÁM PHÁ, BỘ LỌC & CHỦ ĐỀ (4 COLS - STICKY) -->
+      <!-- CỘT PHẢI: THÔNG TIN DIỄN ĐÀN, CHỦ ĐỀ & NỘI QUY (4 COLS - STICKY) -->
       <aside class="lg:col-span-4 sticky top-24 space-y-4">
         
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
-          <div class="flex items-center justify-between">
-            <h2 class="font-heading font-bold text-base text-slate-900">Cộng Đồng</h2>
-            <span id="portfolioCountText" class="text-xs font-semibold text-slate-400">Đang tải...</span>
+        <!-- About Community Card (Reddit Sidebar Style) -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+          <div class="bg-slate-900 px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <h2 class="font-heading font-bold text-sm text-white">r/ConnectCV</h2>
+            </div>
+            <span id="portfolioCountText" class="text-[11px] font-semibold text-slate-300">Đang tải...</span>
           </div>
 
-          <div class="relative">
-            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
-            <input id="socialSearchInput" oninput="handleSocialSearch(this.value)" type="text" placeholder="Tìm bài viết, blog, tác giả..." class="w-full pl-9 pr-3 py-2 bg-slate-100 border border-transparent rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 transition-all"/>
-          </div>
+          <div class="p-4 space-y-4">
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Diễn đàn chia sẻ kiến thức nghề nghiệp, kinh nghiệm phỏng vấn thực chiến, review CV chuẩn ATS và thảo luận công nghệ dành cho cộng đồng ConnectCV.
+            </p>
 
-          <div class="flex items-center justify-between text-xs border-b border-slate-100 pb-3">
-            <span class="text-slate-500 font-semibold">Sắp xếp:</span>
-            <select id="socialSortSelect" onchange="handleSocialSort(this.value)" class="bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 px-2.5 py-1 focus:outline-none cursor-pointer">
-              <option value="newest">Mới nhất</option>
-              <option value="likes">Nhiều lượt thích</option>
-              <option value="comments">Nhiều bình luận</option>
-            </select>
-          </div>
+            <div class="relative">
+              <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
+              <input id="socialSearchInput" oninput="handleSocialSearch(this.value)" type="text" placeholder="Tìm bài viết, chủ đề, tác giả..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 transition-all"/>
+            </div>
 
-          <div class="space-y-1 text-xs" id="socialCatFilterGroup">
-            <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider pb-1">Khám phá chủ đề</span>
-            <div class="flex flex-wrap gap-1.5">
-              <button onclick="filterSocialCategory('all')" id="socialCatAll" class="px-3 py-1.5 rounded-full font-semibold bg-slate-900 text-white transition-all cursor-pointer">Tất cả</button>
-              <button onclick="filterSocialCategory('blog')" id="socialCatBlog" class="px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Blog</button>
-              <button onclick="filterSocialCategory('fintech')" id="socialCatFintech" class="px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Fintech</button>
-              <button onclick="filterSocialCategory('branding')" id="socialCatBranding" class="px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Branding</button>
-              <button onclick="filterSocialCategory('saas')" id="socialCatSaas" class="px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">SaaS &amp; AI</button>
-              <button onclick="filterSocialCategory('uiux')" id="socialCatUiux" class="px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">UI/UX</button>
-              <button onclick="filterSocialCategory('design-system')" id="socialCatDesignSystem" class="px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Design System</button>
-              <button onclick="filterSocialCategory('3d')" id="socialCat3d" class="px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">3D</button>
+            <div class="space-y-2 text-xs" id="socialCatFilterGroup">
+              <span class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Chủ đề thảo luận (Flair)</span>
+              <div class="flex flex-wrap gap-1.5">
+                <button onclick="filterSocialCategory('all')" id="socialCatAll" class="px-2.5 py-1 rounded-md font-semibold bg-slate-900 text-white transition-all cursor-pointer">Tất cả</button>
+                <button onclick="filterSocialCategory('blog')" id="socialCatBlog" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Blog &amp; Kinh nghiệm</button>
+                <button onclick="filterSocialCategory('fintech')" id="socialCatFintech" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Fintech</button>
+                <button onclick="filterSocialCategory('branding')" id="socialCatBranding" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Branding</button>
+                <button onclick="filterSocialCategory('saas')" id="socialCatSaas" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">SaaS &amp; AI</button>
+                <button onclick="filterSocialCategory('uiux')" id="socialCatUiux" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">UI/UX</button>
+                <button onclick="filterSocialCategory('design-system')" id="socialCatDesignSystem" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Design System</button>
+                <button onclick="filterSocialCategory('3d')" id="socialCat3d" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">3D</button>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
+              <button type="button" onclick="openCreatePortfolioModal('blog')" class="w-full py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                <span>Tạo bài viết mới</span>
+              </button>
+              <button type="button" onclick="openCreatePortfolioModal('portfolio')" class="w-full py-2 px-4 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <span>Chia sẻ từ Portfolio</span>
+              </button>
             </div>
           </div>
+        </div>
 
-          <div class="pt-3 border-t border-slate-100">
-            <button type="button" onclick="openCreatePortfolioModal('portfolio')" class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-              <span>Đăng dự án từ Portfolio</span>
-            </button>
-          </div>
+        <!-- Community Rules Card (Reddit Style) -->
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs space-y-2.5">
+          <h3 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-700">Quy tắc cộng đồng</h3>
+          <ol class="text-xs text-slate-600 space-y-2 list-decimal list-inside">
+            <li>Chia sẻ trải nghiệm thực tế, rõ ràng và có giá trị học hỏi.</li>
+            <li>Tôn trọng quan điểm khác biệt, góp ý mang tính xây dựng.</li>
+            <li>Không spam quảng cáo hoặc tin tuyển dụng sai chuyên mục.</li>
+          </ol>
         </div>
 
       </aside>
@@ -2660,7 +2679,7 @@
 
       // 5. Đồng bộ Tab từ URL hash
       const hash = window.location.hash.replace('#', '') || 'jobs';
-      if (['jobs', 'portfolio', 'cv', 'interview', 'candidates', 'wallet'].includes(hash)) {
+      if (['jobs', 'community', 'portfolio', 'cv', 'interview', 'candidates', 'wallet'].includes(hash)) {
         switchTab(hash);
       } else {
         switchTab('jobs');
@@ -2670,7 +2689,7 @@
     // Lắng nghe thay đổi hash trên thanh địa chỉ URL
     window.addEventListener('hashchange', () => {
       const hash = window.location.hash.replace('#', '') || 'jobs';
-      if (['jobs', 'portfolio', 'cv', 'interview', 'candidates', 'wallet'].includes(hash)) {
+      if (['jobs', 'community', 'portfolio', 'cv', 'interview', 'candidates', 'wallet'].includes(hash)) {
         switchTab(hash);
       }
     });
@@ -2687,7 +2706,7 @@
         if (el) el.classList.add('hidden');
         const navBtn = document.getElementById(`nav-${v}`);
         if (navBtn) {
-          navBtn.className = 'whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer';
+          navBtn.className = 'uppercase tracking-wide whitespace-nowrap px-3.5 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 font-semibold cursor-pointer';
         }
       });
 
@@ -2702,7 +2721,7 @@
 
       const activeNav = document.getElementById(`nav-${tabName}`);
       if (activeNav) {
-        activeNav.className = 'nav-tab-active whitespace-nowrap px-3.5 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-sm border border-blue-600 transition-all duration-200 active:scale-95 cursor-pointer';
+        activeNav.className = 'nav-tab-active uppercase tracking-wide whitespace-nowrap px-3.5 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-sm border border-blue-600 transition-all duration-200 active:scale-95 cursor-pointer';
       }
 
       // Xử lý nạp dữ liệu khi vào từng tab
@@ -2956,7 +2975,6 @@
     }
 
     function renderPortfoliosList(list) {
-      renderCommunityStories();
       const container = document.getElementById('portfolioGridContainer');
       const countEl = document.getElementById('portfolioCountText');
       if (countEl) countEl.innerText = `${list.length} bài viết`;
@@ -2965,12 +2983,12 @@
 
       if (list.length === 0) {
         container.innerHTML = `
-          <div class="bg-white p-10 rounded-2xl border border-slate-200 text-center space-y-3">
+          <div class="bg-white p-10 rounded-xl border border-slate-200 text-center space-y-3">
             <div class="w-12 h-12 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2a7.5 7.5 0 010 14.65z"/></svg>
             </div>
             <p class="text-xs font-semibold text-slate-700">Chưa có bài viết phù hợp</p>
-            <p class="text-[11px] text-slate-400">Hãy thử từ khóa khác hoặc bấm "Đăng bài mới" để chia sẻ cùng mọi người!</p>
+            <p class="text-[11px] text-slate-400">Hãy thử từ khóa khác hoặc bấm "Tạo bài viết mới" để chia sẻ cùng cộng đồng!</p>
           </div>
         `;
         return;
@@ -2979,89 +2997,78 @@
       container.innerHTML = list.map((p, idx) => {
         const liked = isSocialPostLiked(p.id);
         const commentCount = (p.comments || []).length;
-        const postTypeLabel = p.postMode === 'blog' ? 'Blog' : p.postMode === 'portfolio' ? 'Từ Portfolio' : (p.categoryName || 'Sản phẩm');
+        const postTypeLabel = p.postMode === 'blog' ? 'Blog' : p.postMode === 'portfolio' ? 'Portfolio' : (p.categoryName || 'Thảo luận');
+        const subredditTag = 'r/' + postTypeLabel.replace(/\s+/g, '');
         const postTime = p.isCustom ? 'Vừa xong' : ['2 giờ trước', '5 giờ trước', '1 ngày trước', '2 ngày trước'][idx % 4];
-        const hashtagsHtml = (p.tags || []).slice(0, 5).map(t => `<span class="text-blue-600 hover:underline cursor-pointer">#${t.replace(/[^a-zA-Z0-9\u00C0-\u1EF9]/g, '')}</span>`).join(' ');
+        const hashtagsHtml = (p.tags || []).slice(0, 4).map(t => `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px] font-medium">#${t.replace(/[^a-zA-Z0-9\u00C0-\u1EF9]/g, '')}</span>`).join(' ');
 
         const mediaBlock = p.image
-          ? `<div class="bg-slate-100 cursor-pointer overflow-hidden border-y border-slate-100" ondblclick="toggleLikeSocialPost('${p.id}', event)" onclick="openPortfolioModal('${p.id}')">
-               <img src="${p.image}" alt="${p.title}" class="w-full max-h-[460px] object-cover" loading="lazy" />
+          ? `<div class="mt-2.5 rounded-lg border border-slate-200 bg-slate-50 overflow-hidden cursor-pointer max-w-md" onclick="openPortfolioModal('${p.id}')">
+               <img src="${p.image}" alt="${p.title}" class="w-full max-h-[240px] object-cover" loading="lazy" />
              </div>`
           : '';
 
         return `
-          <article class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden anim-hero-fade-up" style="animation-delay: ${Math.min(idx * 40, 240)}ms;">
+          <article class="flex bg-white rounded-xl border border-slate-200 hover:border-slate-300 shadow-2xs overflow-hidden transition-colors anim-hero-fade-up" style="animation-delay: ${Math.min(idx * 35, 210)}ms;">
             
-            <!-- Instagram Post Header -->
-            <div class="px-4 py-3 flex items-center justify-between gap-2">
-              <div class="flex items-center gap-3 min-w-0 cursor-pointer" onclick="window.location.href = '/p/${p.subdomain || 'tuan-nguyen'}'">
-                <div class="p-0.5 rounded-full border-2 border-blue-600 shrink-0">
-                  <img src="${p.authorAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop'}" class="w-8 h-8 rounded-full object-cover border border-white" alt="${p.author}" />
-                </div>
-                <div class="min-w-0">
-                  <div class="flex items-center gap-1">
-                    <span class="font-bold text-sm text-slate-900 hover:text-blue-600 truncate">${p.author}</span>
-                    <svg class="w-3.5 h-3.5 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd"/></svg>
-                    <span class="text-slate-300 text-xs">&bull;</span>
-                    <span class="text-xs text-slate-400 font-normal shrink-0">${postTime}</span>
-                  </div>
-                  <span class="text-[11px] text-slate-500 block leading-none mt-0.5">@${p.subdomain || 'creator'}</span>
-                </div>
-              </div>
-              <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold ${p.postMode === 'portfolio' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-600'} shrink-0">
-                ${postTypeLabel}
-              </span>
-            </div>
-
-            <!-- Instagram Photo / Media -->
-            ${mediaBlock}
-
-            <!-- Instagram Action Bar -->
-            <div class="px-4 pt-3 pb-1 flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <button type="button" onclick="toggleLikeSocialPost('${p.id}', event)" class="hover:scale-110 active:scale-90 transition-transform cursor-pointer" title="Thích">
-                  <svg id="card-heart-${p.id}" class="w-6 h-6 ${liked ? 'fill-rose-500 text-rose-500' : 'text-slate-800 hover:text-slate-500'}" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
-                  </svg>
-                </button>
-                <button type="button" onclick="openPortfolioModal('${p.id}')" class="hover:scale-110 transition-transform text-slate-800 hover:text-slate-500 cursor-pointer" title="Bình luận">
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.53 1.11.237 1.638-.344.622-.843 1.344-1.42 1.956 1.109.07 2.253-.16 3.167-.655.432-.234.954-.25 1.405-.078.966.368 2.02.559 3.091.559z"/></svg>
-                </button>
-                <button type="button" onclick="navigator.clipboard?.writeText(window.location.origin + '/p/${p.subdomain || ''}'); showToast('Đã sao chép liên kết bài viết!');" class="hover:scale-110 transition-transform text-slate-800 hover:text-slate-500 cursor-pointer" title="Chia sẻ">
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
-                </button>
-              </div>
-              <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer">
-                <span>Portfolio</span>
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+            <!-- Cột Trái: Reddit Upvote / Downvote Column -->
+            <div class="w-11 sm:w-12 bg-slate-50/80 border-r border-slate-100 flex flex-col items-center py-3 gap-1 shrink-0 select-none">
+              <button type="button" onclick="toggleLikeSocialPost('${p.id}', event)" class="p-1 rounded hover:bg-slate-200/70 transition-colors cursor-pointer ${liked ? 'text-orange-600' : 'text-slate-400 hover:text-orange-600'}" title="Upvote">
+                <svg id="card-heart-${p.id}" class="w-5 h-5" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                </svg>
+              </button>
+              <span id="card-like-${p.id}" class="text-xs font-bold tabular-nums ${liked ? 'text-orange-600' : 'text-slate-700'}">${p.likes || 0}</span>
+              <button type="button" onclick="showToast('Đã ghi nhận phản hồi bài viết')" class="p-1 rounded hover:bg-slate-200/70 text-slate-400 hover:text-blue-600 transition-colors cursor-pointer" title="Downvote">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
               </button>
             </div>
 
-            <!-- Likes & Caption -->
-            <div class="px-4 pb-3 space-y-1.5">
-              <div class="text-xs font-bold text-slate-900">
-                <span id="card-like-${p.id}" class="tabular-nums">${p.likes || 0}</span> lượt thích
+            <!-- Cột Phải: Nội dung bài viết kiểu Reddit / Blog -->
+            <div class="flex-1 min-w-0 p-3.5 sm:p-4 space-y-2">
+              <!-- Meta Header: Subreddit + Author + Time -->
+              <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
+                <span class="px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-700 border border-blue-100">${subredditTag}</span>
+                <span>&bull;</span>
+                <span>Đăng bởi <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="font-semibold text-slate-700 hover:text-blue-600 hover:underline cursor-pointer">u/${p.subdomain || 'member'}</button></span>
+                <span>&bull;</span>
+                <span>${postTime}</span>
               </div>
 
-              <div class="text-xs sm:text-[13px] text-slate-800 leading-relaxed">
-                <span class="font-bold mr-1.5 cursor-pointer hover:text-blue-600" onclick="openPortfolioModal('${p.id}')">${p.title}</span>
-                <span class="text-slate-600">${p.description}</span>
-              </div>
+              <!-- Title -->
+              <h3 onclick="openPortfolioModal('${p.id}')" class="font-heading font-bold text-base sm:text-[17px] text-slate-900 hover:text-blue-600 transition-colors cursor-pointer leading-snug">
+                ${p.title}
+              </h3>
 
-              ${hashtagsHtml ? `<div class="text-xs flex flex-wrap gap-1.5 pt-0.5">${hashtagsHtml}</div>` : ''}
+              <!-- Body Excerpt -->
+              <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed line-clamp-3">
+                ${p.description}
+              </p>
 
-              ${commentCount > 0 ? `
-                <button type="button" onclick="openPortfolioModal('${p.id}')" class="text-xs text-slate-400 hover:text-slate-600 font-medium pt-0.5 block cursor-pointer">
-                  Xem tất cả ${commentCount} bình luận
+              <!-- Tags / Flairs -->
+              ${hashtagsHtml ? `<div class="flex flex-wrap gap-1.5 pt-0.5">${hashtagsHtml}</div>` : ''}
+
+              <!-- Compact Media Thumbnail (optional) -->
+              ${mediaBlock}
+
+              <!-- Reddit Bottom Action Bar -->
+              <div class="pt-1.5 flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-semibold text-slate-500">
+                <button type="button" onclick="openPortfolioModal('${p.id}')" class="inline-flex items-center gap-1.5 px-2 py-1 -ml-2 rounded-md hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+                  <span>${commentCount} Bình luận</span>
                 </button>
-              ` : ''}
+                <button type="button" onclick="navigator.clipboard?.writeText(window.location.origin + '/p/${p.subdomain || ''}'); showToast('Đã sao chép liên kết bài viết!');" class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"/></svg>
+                  <span>Chia sẻ</span>
+                </button>
+                <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="inline-flex items-center gap-1 px-2 py-1 rounded-md hover:bg-blue-50 text-blue-600 transition-colors ml-auto cursor-pointer">
+                  <span>Hồ sơ tác giả</span>
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+                </button>
+              </div>
             </div>
-
-            <!-- Quick Inline Comment Input -->
-            <form onsubmit="submitInlineCommunityComment(event, '${p.id}')" class="px-4 py-2.5 border-t border-slate-100 flex items-center gap-2 text-xs">
-              <input id="inline-cmt-${p.id}" type="text" placeholder="Thêm bình luận..." class="flex-1 bg-transparent text-slate-800 placeholder-slate-400 focus:outline-none" />
-              <button type="submit" class="font-bold text-blue-600 hover:text-blue-800 px-2 py-1 cursor-pointer">Đăng</button>
-            </form>
           </article>
         `;
       }).join('');
