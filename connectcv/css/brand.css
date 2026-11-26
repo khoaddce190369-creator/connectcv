@@ -965,4 +965,16 @@ button:active:not(:disabled), a.btn-primary:active, a.btn-navy:active, a.btn-sec
   animation: heroSignalPing 2.2s ease-in-out infinite;
 }
 
+/* Scene 6: Community Forum (Upvote & Discussion) */
+@keyframes heroUpvoteBounce {
+  0%, 100% { transform: translateY(0px); }
+  45%      { transform: translateY(-2.5px); }
+  65%      { transform: translateY(0px); }
+}
+.anim-upvote-bounce {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heroUpvoteBounce 2.6s ease-in-out infinite;
+}
+
 

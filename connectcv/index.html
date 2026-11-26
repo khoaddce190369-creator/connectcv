@@ -153,62 +153,62 @@
         </svg>
       </div>
 
-      <!-- Animated Interactive Feature Cards: Left (CV Chuẩn ATS + Portfolio) & Right (Phỏng Vấn AI + Tìm Việc) -->
-      <!-- LEFT STACK -->
-      <div class="hidden lg:flex flex-col gap-3 absolute top-1/2 -translate-y-1/2 left-2.5 xl:left-5 2xl:left-10 w-[168px] xl:w-[205px] 2xl:w-[234px] z-20">
-        <!-- Card 1: CV Chuẩn ATS (Đi lại bàn nộp hồ sơ) -->
-        <div onclick="switchTab('cv')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.12s;" title="Mở kho mẫu CV & tạo CV">
-          <span class="absolute -inset-2.5 rounded-3xl" aria-hidden="true"></span>
-          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <div class="flex items-center gap-2">
+      <!-- Animated Interactive Feature Cards (Xếp từ trên xuống theo độ quan trọng, cân bằng 2 bên) -->
+      <!-- LEFT STACK: 1. CV Chuẩn ATS -> 2. Portfolio Cá Nhân -> 3. Cộng Đồng -->
+      <div class="hidden lg:flex flex-col gap-2 xl:gap-2.5 absolute top-1/2 -translate-y-1/2 left-2.5 xl:left-5 2xl:left-10 w-[172px] xl:w-[205px] 2xl:w-[230px] z-20">
+        <!-- Card 1 (Top): CV Chuẩn ATS -->
+        <div onclick="switchTab('cv')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-2.5 xl:p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.1s;" title="Mở kho mẫu CV & tạo CV">
+          <span class="absolute -inset-2 rounded-3xl" aria-hidden="true"></span>
+          <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div class="flex items-center gap-1.5">
               <span class="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               </span>
-              <span class="text-slate-900 font-bold text-xs leading-none">CV Chuẩn ATS</span>
+              <span class="text-slate-900 font-bold text-[11px] xl:text-xs leading-none">CV Chuẩn ATS</span>
             </div>
-            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </div>
-          <div class="pt-1.5">
-            <svg viewBox="0 0 220 105" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <line x1="8" y1="95" x2="212" y2="95" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
+          <div class="pt-1">
+            <svg viewBox="0 0 220 96" class="w-full h-[60px] xl:h-[70px] overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="8" y1="88" x2="212" y2="88" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
               <g>
-                <rect x="136" y="59" width="5" height="36" rx="1.5" fill="#1E293B" />
-                <rect x="196" y="59" width="5" height="36" rx="1.5" fill="#1E293B" />
-                <rect x="141" y="63" width="55" height="22" rx="2" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
-                <rect x="128" y="53" width="80" height="7" rx="3" fill="#0F172A" />
-                <rect x="174" y="37" width="26" height="16" rx="3" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.2" />
-                <text x="187" y="48" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="800" fill="#2563EB">HR</text>
-                <path d="M135 49 H164 L167 53 H132 L135 49 Z" fill="#94A3B8" />
+                <rect x="136" y="52" width="5" height="36" rx="1.5" fill="#1E293B" />
+                <rect x="196" y="52" width="5" height="36" rx="1.5" fill="#1E293B" />
+                <rect x="141" y="56" width="55" height="22" rx="2" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1" />
+                <rect x="128" y="46" width="80" height="7" rx="3" fill="#0F172A" />
+                <rect x="174" y="30" width="26" height="16" rx="3" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.2" />
+                <text x="187" y="41" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="800" fill="#2563EB">HR</text>
+                <path d="M135 42 H164 L167 46 H132 L135 42 Z" fill="#94A3B8" />
                 <g class="anim-cv-tray">
-                  <rect x="138" y="39" width="22" height="11" rx="1.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2" />
-                  <line x1="142" y1="43" x2="154" y2="43" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" />
-                  <line x1="142" y1="46.5" x2="151" y2="46.5" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" />
+                  <rect x="138" y="32" width="22" height="11" rx="1.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2" />
+                  <line x1="142" y1="36" x2="154" y2="36" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" />
+                  <line x1="142" y1="39.5" x2="151" y2="39.5" stroke="#CBD5E1" stroke-width="1.2" stroke-linecap="round" />
                 </g>
                 <g class="anim-submit-check">
-                  <circle cx="159" cy="31" r="7.5" fill="#10B981" />
-                  <path d="M155.5 31.2 L158 33.7 L162.5 28.8" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="159" cy="24" r="7.5" fill="#10B981" />
+                  <path d="M155.5 24.2 L158 26.7 L162.5 21.8" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                 </g>
               </g>
               <g class="anim-walk-person">
                 <g class="anim-walk-bob">
                   <g class="anim-leg-b">
-                    <rect x="78" y="62" width="6" height="30" rx="3" fill="#334155" />
-                    <rect x="77" y="90" width="10.5" height="4.5" rx="2" fill="#0F172A" />
+                    <rect x="78" y="55" width="6" height="30" rx="3" fill="#334155" />
+                    <rect x="77" y="83" width="10.5" height="4.5" rx="2" fill="#0F172A" />
                   </g>
                   <g class="anim-leg-a">
-                    <rect x="85" y="62" width="6" height="30" rx="3" fill="#1E293B" />
-                    <rect x="84" y="90" width="10.5" height="4.5" rx="2" fill="#0F172A" />
+                    <rect x="85" y="55" width="6" height="30" rx="3" fill="#1E293B" />
+                    <rect x="84" y="83" width="10.5" height="4.5" rx="2" fill="#0F172A" />
                   </g>
-                  <rect x="75" y="32" width="19" height="32" rx="6" fill="#2563EB" />
-                  <path d="M83 32 L87 32 L85 40 Z" fill="#FFFFFF" />
-                  <circle cx="84.5" cy="20" r="9" fill="#FDE68A" stroke="#0F172A" stroke-width="1.2" />
-                  <path d="M75.5 18.5 C75.5 12.5 81 9.5 86 10 C90.5 10.5 93.5 13.5 93.5 17.5 C90 15.5 83.5 15 75.5 18.5 Z" fill="#0F172A" />
-                  <circle cx="89" cy="20" r="1.1" fill="#0F172A" />
+                  <rect x="75" y="25" width="19" height="32" rx="6" fill="#2563EB" />
+                  <path d="M83 25 L87 25 L85 33 Z" fill="#FFFFFF" />
+                  <circle cx="84.5" cy="13" r="9" fill="#FDE68A" stroke="#0F172A" stroke-width="1.2" />
+                  <path d="M75.5 11.5 C75.5 5.5 81 2.5 86 3 C90.5 3.5 93.5 6.5 93.5 10.5 C90 8.5 83.5 8 75.5 11.5 Z" fill="#0F172A" />
+                  <circle cx="89" cy="13" r="1.1" fill="#0F172A" />
                   <g class="anim-arm-submit">
-                    <rect x="86" y="36" width="17" height="5" rx="2.5" fill="#1D4ED8" />
-                    <rect x="100" y="29" width="12.5" height="16" rx="1.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2" />
-                    <line x1="103" y1="33" x2="109.5" y2="33" stroke="#2563EB" stroke-width="1.2" stroke-linecap="round" />
-                    <line x1="103" y1="36.5" x2="109.5" y2="36.5" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" />
+                    <rect x="86" y="29" width="17" height="5" rx="2.5" fill="#1D4ED8" />
+                    <rect x="100" y="22" width="12.5" height="16" rx="1.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2" />
+                    <line x1="103" y1="26" x2="109.5" y2="26" stroke="#2563EB" stroke-width="1.2" stroke-linecap="round" />
+                    <line x1="103" y1="29.5" x2="109.5" y2="29.5" stroke="#94A3B8" stroke-width="1.2" stroke-linecap="round" />
                   </g>
                 </g>
               </g>
@@ -216,167 +216,231 @@
           </div>
         </div>
 
-        <!-- Card 2: Portfolio Cá Nhân (Trưng bày dự án & con trỏ tương tác) -->
-        <div onclick="switchTab('portfolio')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.22s;" title="Tạo Portfolio cá nhân">
-          <span class="absolute -inset-2.5 rounded-3xl" aria-hidden="true"></span>
-          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <div class="flex items-center gap-2">
+        <!-- Card 2 (Middle): Portfolio Cá Nhân -->
+        <div onclick="switchTab('portfolio')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-2.5 xl:p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.18s;" title="Tạo Portfolio cá nhân">
+          <span class="absolute -inset-2 rounded-3xl" aria-hidden="true"></span>
+          <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div class="flex items-center gap-1.5">
               <span class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6z"/></svg>
               </span>
-              <span class="text-slate-900 font-bold text-xs leading-none">Portfolio Cá Nhân</span>
+              <span class="text-slate-900 font-bold text-[11px] xl:text-xs leading-none">Portfolio Cá Nhân</span>
             </div>
-            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </div>
-          <div class="pt-1.5">
-            <svg viewBox="0 0 220 96" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Browser Frame -->
-              <rect x="14" y="6" width="192" height="84" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.3" />
-              <path d="M14 13 C14 9 17 6 21 6 H199 C203 6 206 9 206 13 V22 H14 V13 Z" fill="#0F172A" />
-              <circle cx="24" cy="14" r="2" fill="#F43F5E" />
-              <circle cx="31" cy="14" r="2" fill="#F59E0B" />
-              <circle cx="38" cy="14" r="2" fill="#10B981" />
-              <rect x="52" y="10.5" width="110" height="7" rx="3.5" fill="#1E293B" />
-              <!-- Live Badge -->
-              <rect x="172" y="10" width="26" height="8" rx="4" fill="#10B981" />
-              <text x="185" y="16" text-anchor="middle" font-family="Inter, sans-serif" font-size="5" font-weight="800" fill="#FFFFFF">LIVE</text>
-              <!-- Profile Header Row inside Browser -->
-              <circle cx="34" cy="36" r="8" fill="#2563EB" />
-              <rect x="47" y="31" width="44" height="4" rx="2" fill="#0F172A" />
-              <rect x="47" y="38" width="28" height="3" rx="1.5" fill="#94A3B8" />
-              <!-- 3 Project Cards -->
-              <rect x="26" y="50" width="52" height="32" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
-              <rect x="31" y="55" width="42" height="14" rx="2" fill="#E2E8F0" />
-              <rect x="31" y="73" width="26" height="3.5" rx="1.5" fill="#475569" />
-
-              <rect x="84" y="50" width="52" height="32" rx="4" class="anim-portfolio-glow" stroke-width="1.4" />
-              <rect x="89" y="55" width="42" height="14" rx="2" fill="#DBEAFE" />
-              <rect x="89" y="73" width="30" height="3.5" rx="1.5" fill="#2563EB" />
-
-              <rect x="142" y="50" width="52" height="32" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
-              <rect x="147" y="55" width="42" height="14" rx="2" fill="#DCFCE7" />
-              <rect x="147" y="73" width="28" height="3.5" rx="1.5" fill="#10B981" />
-              <!-- Animated Cursor -->
+          <div class="pt-1">
+            <svg viewBox="0 0 220 92" class="w-full h-[58px] xl:h-[68px] overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="14" y="4" width="192" height="84" rx="7" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.3" />
+              <path d="M14 11 C14 7 17 4 21 4 H199 C203 4 206 7 206 11 V20 H14 V11 Z" fill="#0F172A" />
+              <circle cx="24" cy="12" r="2" fill="#F43F5E" />
+              <circle cx="31" cy="12" r="2" fill="#F59E0B" />
+              <circle cx="38" cy="12" r="2" fill="#10B981" />
+              <rect x="52" y="8.5" width="110" height="7" rx="3.5" fill="#1E293B" />
+              <rect x="172" y="8" width="26" height="8" rx="4" fill="#10B981" />
+              <text x="185" y="14" text-anchor="middle" font-family="Inter, sans-serif" font-size="5" font-weight="800" fill="#FFFFFF">LIVE</text>
+              <circle cx="34" cy="34" r="8" fill="#2563EB" />
+              <rect x="47" y="29" width="44" height="4" rx="2" fill="#0F172A" />
+              <rect x="47" y="36" width="28" height="3" rx="1.5" fill="#94A3B8" />
+              <rect x="26" y="48" width="52" height="32" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+              <rect x="31" y="53" width="42" height="14" rx="2" fill="#E2E8F0" />
+              <rect x="31" y="71" width="26" height="3.5" rx="1.5" fill="#475569" />
+              <rect x="84" y="48" width="52" height="32" rx="4" class="anim-portfolio-glow" stroke-width="1.4" />
+              <rect x="89" y="53" width="42" height="14" rx="2" fill="#DBEAFE" />
+              <rect x="89" y="71" width="30" height="3.5" rx="1.5" fill="#2563EB" />
+              <rect x="142" y="48" width="52" height="32" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+              <rect x="147" y="53" width="42" height="14" rx="2" fill="#DCFCE7" />
+              <rect x="147" y="71" width="28" height="3.5" rx="1.5" fill="#10B981" />
               <g class="anim-cursor-glide">
-                <path d="M56 54 L56 68 L60 64.5 L63.5 71 L66 69.8 L62.5 63.5 L67.5 63.5 Z" fill="#0F172A" stroke="#FFFFFF" stroke-width="1.2" stroke-linejoin="round" />
+                <path d="M56 52 L56 66 L60 62.5 L63.5 69 L66 67.8 L62.5 61.5 L67.5 61.5 Z" fill="#0F172A" stroke="#FFFFFF" stroke-width="1.2" stroke-linejoin="round" />
               </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Card 3 (Bottom): Cộng Đồng (Diễn đàn kiến thức & Upvote) -->
+        <div onclick="switchTab('community')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-2.5 xl:p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.26s;" title="Tham gia Cộng đồng chia sẻ kiến thức">
+          <span class="absolute -inset-2 rounded-3xl" aria-hidden="true"></span>
+          <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div class="flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
+              </span>
+              <span class="text-slate-900 font-bold text-[11px] xl:text-xs leading-none">Cộng Đồng</span>
+            </div>
+            <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </div>
+          <div class="pt-1">
+            <svg viewBox="0 0 220 82" class="w-full h-[54px] xl:h-[62px] overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Reddit-style Forum Card -->
+              <rect x="14" y="6" width="192" height="70" rx="7" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.3" />
+              <!-- Left Upvote Column -->
+              <rect x="14" y="6" width="28" height="70" rx="7" fill="#F8FAFC" />
+              <line x1="42" y1="6" x2="42" y2="76" stroke="#E2E8F0" stroke-width="1" />
+              <g class="anim-upvote-bounce">
+                <path d="M23 30 L28 23 L33 30" stroke="#F97316" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+              </g>
+              <rect x="23" y="36" width="10" height="4" rx="2" fill="#0F172A" />
+              <path d="M23 47 L28 53 L33 47" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              <!-- Post Meta & Content Lines -->
+              <circle cx="56" cy="20" r="5.5" fill="#2563EB" />
+              <rect x="66" y="17.5" width="38" height="4.5" rx="2" fill="#DBEAFE" />
+              <rect x="50" y="32" width="136" height="5" rx="2.5" fill="#0F172A" />
+              <rect x="50" y="42" width="118" height="3.5" rx="1.75" fill="#64748B" />
+              <rect x="50" y="50" width="94" height="3.5" rx="1.75" fill="#94A3B8" />
+              <!-- Animated Comment Bubble -->
+              <g class="anim-signal-ping">
+                <rect x="50" y="60" width="32" height="9" rx="4.5" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1" />
+                <circle cx="58" cy="64.5" r="1.5" fill="#2563EB" />
+                <rect x="63" y="63.3" width="14" height="2.4" rx="1.2" fill="#2563EB" />
+              </g>
+              <rect x="90" y="60" width="28" height="9" rx="4.5" fill="#F1F5F9" />
             </svg>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT STACK -->
-      <div class="hidden lg:flex flex-col gap-3 absolute top-1/2 -translate-y-1/2 right-2.5 xl:right-5 2xl:right-10 w-[168px] xl:w-[205px] 2xl:w-[234px] z-20">
-        <!-- Card 3: Phỏng Vấn AI -->
-        <div onclick="switchTab('interview')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.18s;" title="Luyện phỏng vấn AI">
-          <span class="absolute -inset-2.5 rounded-3xl" aria-hidden="true"></span>
-          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <div class="flex items-center gap-2">
+      <!-- RIGHT STACK: 1. Phỏng Vấn AI -> 2. Tìm Việc Làm -> 3. Đăng Tin Tuyển Dụng (HR/Guest) -->
+      <div class="hidden lg:flex flex-col gap-2 xl:gap-2.5 absolute top-1/2 -translate-y-1/2 right-2.5 xl:right-5 2xl:right-10 w-[172px] xl:w-[205px] 2xl:w-[230px] z-20">
+        <!-- Card 1 (Top): Phỏng Vấn AI -->
+        <div onclick="switchTab('interview')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-2.5 xl:p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.14s;" title="Luyện phỏng vấn AI">
+          <span class="absolute -inset-2 rounded-3xl" aria-hidden="true"></span>
+          <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div class="flex items-center gap-1.5">
               <div class="flex items-end gap-0.5 h-3.5 shrink-0">
                 <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0s;"></span>
                 <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0.2s;"></span>
                 <span class="w-1 bg-blue-600 rounded-full anim-voice-bar" style="animation-delay: 0.4s;"></span>
               </div>
-              <span class="text-slate-900 font-bold text-xs leading-none">Phỏng Vấn AI</span>
+              <span class="text-slate-900 font-bold text-[11px] xl:text-xs leading-none">Phỏng Vấn AI</span>
             </div>
-            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </div>
-          <div class="pt-1.5">
-            <svg viewBox="0 0 220 105" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <line x1="8" y1="95" x2="212" y2="95" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
-              <rect x="30" y="64" width="160" height="5.5" rx="2.5" fill="#0F172A" />
-              <rect x="40" y="69.5" width="5" height="25.5" rx="1.5" fill="#1E293B" />
-              <rect x="175" y="69.5" width="5" height="25.5" rx="1.5" fill="#1E293B" />
+          <div class="pt-1">
+            <svg viewBox="0 0 220 96" class="w-full h-[60px] xl:h-[70px] overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="8" y1="88" x2="212" y2="88" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" />
+              <rect x="30" y="57" width="160" height="5.5" rx="2.5" fill="#0F172A" />
+              <rect x="40" y="62.5" width="5" height="25.5" rx="1.5" fill="#1E293B" />
+              <rect x="175" y="62.5" width="5" height="25.5" rx="1.5" fill="#1E293B" />
               <g>
-                <path d="M44 48 V76 H68" stroke="#64748B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-                <line x1="56" y1="76" x2="56" y2="95" stroke="#475569" stroke-width="3" stroke-linecap="round" />
-                <line x1="48" y1="95" x2="64" y2="95" stroke="#475569" stroke-width="3" stroke-linecap="round" />
-                <path d="M56 60 H77 V91" stroke="#1E293B" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
-                <rect x="74" y="90" width="10.5" height="4.5" rx="2" fill="#0F172A" />
-                <rect x="49" y="36" width="19" height="27" rx="6" fill="#0F172A" />
+                <path d="M44 41 V69 H68" stroke="#64748B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                <line x1="56" y1="69" x2="56" y2="88" stroke="#475569" stroke-width="3" stroke-linecap="round" />
+                <line x1="48" y1="88" x2="64" y2="88" stroke="#475569" stroke-width="3" stroke-linecap="round" />
+                <path d="M56 53 H77 V84" stroke="#1E293B" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                <rect x="74" y="83" width="10.5" height="4.5" rx="2" fill="#0F172A" />
+                <rect x="49" y="29" width="19" height="27" rx="6" fill="#0F172A" />
                 <g class="anim-interview-hand">
-                  <path d="M62 42 L81 51 L89 47" stroke="#2563EB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M62 35 L81 44 L89 40" stroke="#2563EB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
                 </g>
                 <g class="anim-interview-nod">
-                  <circle cx="58.5" cy="23" r="9" fill="#FDE68A" stroke="#0F172A" stroke-width="1.2" />
-                  <path d="M49.5 21.5 C49.5 15.5 55 12.5 60 13 C64.5 13.5 67.5 16.5 67.5 20.5 C64 18.5 57.5 18 49.5 21.5 Z" fill="#0F172A" />
-                  <circle cx="63" cy="23" r="1.1" fill="#0F172A" />
-                  <path d="M51 21 C51 13 66 13 66 21" stroke="#2563EB" stroke-width="2" stroke-linecap="round" />
-                  <rect x="48.5" y="20" width="3.5" height="6.5" rx="1.5" fill="#2563EB" />
-                  <path d="M51 26 L62 28.5" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" />
+                  <circle cx="58.5" cy="16" r="9" fill="#FDE68A" stroke="#0F172A" stroke-width="1.2" />
+                  <path d="M49.5 14.5 C49.5 8.5 55 5.5 60 6 C64.5 6.5 67.5 9.5 67.5 13.5 C64 11.5 57.5 11 49.5 14.5 Z" fill="#0F172A" />
+                  <circle cx="63" cy="16" r="1.1" fill="#0F172A" />
+                  <path d="M51 14 C51 6 66 6 66 14" stroke="#2563EB" stroke-width="2" stroke-linecap="round" />
+                  <rect x="48.5" y="13" width="3.5" height="6.5" rx="1.5" fill="#2563EB" />
+                  <path d="M51 19 L62 21.5" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" />
                 </g>
               </g>
               <g class="anim-speech-ripple">
-                <path d="M84 19 C88 22 88 28 84 31" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" />
-                <path d="M90 16 C96 21 96 29 90 34" stroke="#60A5FA" stroke-width="1.6" stroke-linecap="round" />
+                <path d="M84 12 C88 15 88 21 84 24" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M90 9 C96 14 96 22 90 27" stroke="#60A5FA" stroke-width="1.6" stroke-linecap="round" />
               </g>
               <g>
-                <rect x="148" y="53" width="8" height="11" fill="#334155" />
-                <rect x="136" y="61" width="32" height="3" rx="1.5" fill="#334155" />
-                <rect x="116" y="10" width="72" height="45" rx="5" fill="#0F172A" />
-                <rect x="120" y="14" width="64" height="37" rx="3" fill="#F8FAFC" />
+                <rect x="148" y="46" width="8" height="11" fill="#334155" />
+                <rect x="136" y="54" width="32" height="3" rx="1.5" fill="#334155" />
+                <rect x="116" y="3" width="72" height="45" rx="5" fill="#0F172A" />
+                <rect x="120" y="7" width="64" height="37" rx="3" fill="#F8FAFC" />
                 <g class="anim-ai-core">
-                  <circle cx="152" cy="29" r="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5" />
-                  <circle cx="152" cy="29" r="4" fill="#2563EB" />
+                  <circle cx="152" cy="22" r="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5" />
+                  <circle cx="152" cy="22" r="4" fill="#2563EB" />
                 </g>
-                <rect x="133" y="43" width="4" height="4.5" rx="1.5" fill="#2563EB" />
-                <rect x="140" y="41" width="4" height="6.5" rx="1.5" fill="#2563EB" />
-                <rect x="147" y="40" width="4" height="7.5" rx="1.5" fill="#10B981" />
-                <rect x="154" y="41" width="4" height="6.5" rx="1.5" fill="#2563EB" />
-                <rect x="161" y="42" width="4" height="5.5" rx="1.5" fill="#2563EB" />
-                <rect x="168" y="43" width="4" height="4.5" rx="1.5" fill="#94A3B8" />
-                <rect x="165" y="17" width="16" height="7.5" rx="2" fill="#10B981" />
-                <text x="173" y="22.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="5" font-weight="800" fill="#FFFFFF">AI</text>
+                <rect x="133" y="36" width="4" height="4.5" rx="1.5" fill="#2563EB" />
+                <rect x="140" y="34" width="4" height="6.5" rx="1.5" fill="#2563EB" />
+                <rect x="147" y="33" width="4" height="7.5" rx="1.5" fill="#10B981" />
+                <rect x="154" y="34" width="4" height="6.5" rx="1.5" fill="#2563EB" />
+                <rect x="161" y="35" width="4" height="5.5" rx="1.5" fill="#2563EB" />
+                <rect x="168" y="36" width="4" height="4.5" rx="1.5" fill="#94A3B8" />
+                <rect x="165" y="10" width="16" height="7.5" rx="2" fill="#10B981" />
+                <text x="173" y="15.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="5" font-weight="800" fill="#FFFFFF">AI</text>
               </g>
             </svg>
           </div>
         </div>
 
-        <!-- Card 4: Tìm Việc Nhanh (Kính lúp quét & khớp việc làm phù hợp) -->
-        <div onclick="document.getElementById('jobKeywordInput')?.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(() => document.getElementById('jobKeywordInput')?.focus(), 350);" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.28s;" title="Tìm kiếm việc làm phù hợp">
-          <span class="absolute -inset-2.5 rounded-3xl" aria-hidden="true"></span>
-          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <div class="flex items-center gap-2">
+        <!-- Card 2 (Middle): Tìm Việc Làm -->
+        <div onclick="document.getElementById('jobKeywordInput')?.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(() => document.getElementById('jobKeywordInput')?.focus(), 350);" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-2.5 xl:p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.22s;" title="Tìm kiếm việc làm phù hợp">
+          <span class="absolute -inset-2 rounded-3xl" aria-hidden="true"></span>
+          <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div class="flex items-center gap-1.5">
               <span class="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
               </span>
-              <span class="text-slate-900 font-bold text-xs leading-none">Tìm Việc Làm</span>
+              <span class="text-slate-900 font-bold text-[11px] xl:text-xs leading-none">Tìm Việc Làm</span>
             </div>
-            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </div>
-          <div class="pt-1.5">
-            <svg viewBox="0 0 220 96" class="w-full h-auto overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Job Row 1 -->
-              <rect x="16" y="8" width="188" height="22" rx="5" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.2" />
-              <rect x="24" y="14" width="10" height="10" rx="2.5" fill="#CBD5E1" />
-              <rect x="40" y="14.5" width="66" height="4" rx="2" fill="#475569" />
-              <rect x="40" y="21" width="42" height="3" rx="1.5" fill="#94A3B8" />
-              <!-- Job Row 2 (Highlighted Match) -->
-              <rect x="16" y="36" width="188" height="24" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.4" />
-              <rect x="24" y="43" width="10" height="10" rx="2.5" fill="#2563EB" />
-              <rect x="40" y="43" width="76" height="4" rx="2" fill="#0F172A" />
-              <rect x="40" y="50" width="48" height="3" rx="1.5" fill="#2563EB" />
+          <div class="pt-1">
+            <svg viewBox="0 0 220 92" class="w-full h-[58px] xl:h-[68px] overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="16" y="6" width="188" height="22" rx="5" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.2" />
+              <rect x="24" y="12" width="10" height="10" rx="2.5" fill="#CBD5E1" />
+              <rect x="40" y="12.5" width="66" height="4" rx="2" fill="#475569" />
+              <rect x="40" y="19" width="42" height="3" rx="1.5" fill="#94A3B8" />
+              <rect x="16" y="34" width="188" height="24" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.4" />
+              <rect x="24" y="41" width="10" height="10" rx="2.5" fill="#2563EB" />
+              <rect x="40" y="41" width="76" height="4" rx="2" fill="#0F172A" />
+              <rect x="40" y="48" width="48" height="3" rx="1.5" fill="#2563EB" />
               <g class="anim-job-match">
-                <rect x="156" y="42" width="40" height="12" rx="6" fill="#10B981" />
-                <text x="176" y="50" text-anchor="middle" font-family="Inter, sans-serif" font-size="6" font-weight="800" fill="#FFFFFF">96% FIT</text>
+                <rect x="156" y="40" width="40" height="12" rx="6" fill="#10B981" />
+                <text x="176" y="48" text-anchor="middle" font-family="Inter, sans-serif" font-size="6" font-weight="800" fill="#FFFFFF">96% FIT</text>
               </g>
-              <!-- Job Row 3 -->
-              <rect x="16" y="66" width="188" height="22" rx="5" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.2" />
-              <rect x="24" y="72" width="10" height="10" rx="2.5" fill="#CBD5E1" />
-              <rect x="40" y="72.5" width="58" height="4" rx="2" fill="#475569" />
-              <rect x="40" y="79" width="38" height="3" rx="1.5" fill="#94A3B8" />
-              <!-- Animated Magnifying Glass -->
+              <rect x="16" y="64" width="188" height="22" rx="5" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.2" />
+              <rect x="24" y="70" width="10" height="10" rx="2.5" fill="#CBD5E1" />
+              <rect x="40" y="70.5" width="58" height="4" rx="2" fill="#475569" />
+              <rect x="40" y="77" width="38" height="3" rx="1.5" fill="#94A3B8" />
               <g class="anim-search-scan">
-                <circle cx="122" cy="24" r="11" fill="#FFFFFF" fill-opacity="0.85" stroke="#0F172A" stroke-width="2.2" />
-                <circle cx="122" cy="24" r="6" fill="#EFF6FF" />
-                <line x1="130" y1="32" x2="138" y2="40" stroke="#0F172A" stroke-width="2.8" stroke-linecap="round" />
+                <circle cx="122" cy="22" r="11" fill="#FFFFFF" fill-opacity="0.85" stroke="#0F172A" stroke-width="2.2" />
+                <circle cx="122" cy="22" r="6" fill="#EFF6FF" />
+                <line x1="130" y1="30" x2="138" y2="38" stroke="#0F172A" stroke-width="2.8" stroke-linecap="round" />
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Card 3 (Bottom): Đăng Tin Tuyển Dụng (Chỉ hiển thị cho HR hoặc người chưa đăng ký) -->
+        <div id="heroPostJobAnimCard" onclick="openPostJobModal()" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-2.5 xl:p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.3s;" title="Đăng tin tuyển dụng mới">
+          <span class="absolute -inset-2 rounded-3xl" aria-hidden="true"></span>
+          <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div class="flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+              </span>
+              <span class="text-slate-900 font-bold text-[11px] xl:text-xs leading-none">Đăng Tin Tuyển</span>
+            </div>
+            <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </div>
+          <div class="pt-1">
+            <svg viewBox="0 0 220 82" class="w-full h-[54px] xl:h-[62px] overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="14" y="10" width="124" height="62" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2" />
+              <g class="anim-job-publish">
+                <rect x="22" y="18" width="108" height="46" rx="4" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.3" />
+                <rect x="28" y="25" width="14" height="14" rx="3" fill="#2563EB" />
+                <rect x="47" y="26" width="46" height="4.5" rx="2" fill="#0F172A" />
+                <rect x="47" y="34" width="32" height="3.5" rx="1.75" fill="#94A3B8" />
+                <rect x="28" y="47" width="42" height="10" rx="5" fill="#EFF6FF" />
+                <rect x="92" y="47" width="30" height="10" rx="5" fill="#10B981" />
+                <text x="107" y="54" text-anchor="middle" font-family="Inter, sans-serif" font-size="5.5" font-weight="800" fill="#FFFFFF">LIVE</text>
+              </g>
+              <g class="anim-signal-ping">
+                <path d="M148 30 C155 35 155 47 148 52" stroke="#2563EB" stroke-width="2" stroke-linecap="round" />
+                <path d="M158 24 C168 32 168 50 158 58" stroke="#60A5FA" stroke-width="1.7" stroke-linecap="round" />
+                <circle cx="186" cy="34" r="6" fill="#0F172A" />
+                <path d="M174 54 C174 45 198 45 198 54" fill="#2563EB" />
               </g>
             </svg>
           </div>
         </div>
       </div>
 
-      <div class="max-w-4xl lg:px-[184px] xl:px-[224px] 2xl:px-0 mx-auto text-center space-y-6 relative z-10">
+      <div class="max-w-4xl lg:px-[188px] xl:px-[224px] 2xl:px-0 mx-auto text-center space-y-6 relative z-10">
         
         <!-- Top Row: Startup Badge (Tạm ẩn theo yêu cầu)
         <div class="flex flex-wrap items-center justify-center gap-2 anim-hero-fade-up">
@@ -392,38 +456,6 @@
         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.18] font-heading max-w-3xl mx-auto anim-hero-fade-up" style="animation-delay: 0.1s;">
           Tìm việc làm phù hợp, chuẩn bị <span id="heroDynamicPhrase" class="text-blue-600 inline-block transition-all duration-300">hồ sơ chuyên nghiệp</span>
         </h1>
-
-        <!-- Animated Post Job Card (Chỉ hiển thị cho HR hoặc người chưa đăng ký) -->
-        <div id="heroPostJobAnimCard" onclick="openPostJobModal()" class="relative max-w-sm mx-auto bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up text-left" style="animation-delay: 0.2s;" title="Đăng tin tuyển dụng mới">
-          <span class="absolute -inset-2.5 rounded-3xl" aria-hidden="true"></span>
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex items-center gap-2 shrink-0">
-              <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-              </span>
-              <span class="text-slate-900 font-bold text-xs whitespace-nowrap">Đăng Tin Tuyển Dụng</span>
-            </div>
-            <!-- Compact Animated Job Publish Scene -->
-            <svg viewBox="0 0 150 42" class="w-36 h-10 overflow-visible shrink-0" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="4" width="96" height="34" rx="5" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2" />
-              <g class="anim-job-publish">
-                <rect x="10" y="9" width="84" height="24" rx="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.2" />
-                <rect x="15" y="14" width="12" height="12" rx="2.5" fill="#2563EB" />
-                <rect x="32" y="15" width="34" height="3.5" rx="1.5" fill="#0F172A" />
-                <rect x="32" y="21.5" width="22" height="3" rx="1.5" fill="#94A3B8" />
-                <rect x="70" y="15" width="19" height="9" rx="4.5" fill="#10B981" />
-                <text x="79.5" y="21.2" text-anchor="middle" font-family="Inter, sans-serif" font-size="4.8" font-weight="800" fill="#FFFFFF">LIVE</text>
-              </g>
-              <g class="anim-signal-ping">
-                <path d="M110 15 C115 18 115 24 110 27" stroke="#2563EB" stroke-width="1.8" stroke-linecap="round" />
-                <path d="M117 11 C124 16 124 26 117 31" stroke="#60A5FA" stroke-width="1.5" stroke-linecap="round" />
-                <circle cx="136" cy="17" r="4" fill="#0F172A" />
-                <path d="M129 30 C129 25 143 25 143 30" fill="#2563EB" />
-              </g>
-            </svg>
-            <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
-          </div>
-        </div>
 
         <!-- ====================================================================
              KHU VỰC BẢN TIN & QUẢNG CÁO CONNECTCV (PHONG CÁCH THREADS / TELEGRAM)
@@ -1415,7 +1447,7 @@
             <div class="flex items-center gap-2">
               <span id="modalCompanyName" class="font-bold text-sm text-neutral-900">NovaTech Solutions</span>
               <span class="text-neutral-300">&bull;</span>
-              <span id="modalJobLocation" class="text-xs text-neutral-500 font-medium">Hồ Chí Minh / Hybrid</span>
+              <span id="modalJobLocation" class="text-xs text-neutral-500 font-medium">Hồ Chí Minh</span>
             </div>
             <h2 id="modalJobTitle" class="font-heading font-bold text-lg sm:text-xl text-neutral-900 mt-0.5 leading-snug">Senior Product Designer</h2>
           </div>
@@ -3409,8 +3441,11 @@
         return;
       }
 
+      window._socialExpandedPosts = window._socialExpandedPosts || {};
+
       container.innerHTML = list.map((p, idx) => {
         const liked = isSocialPostLiked(p.id);
+        const isExpanded = !!window._socialExpandedPosts[String(p.id)];
         const commentCount = (p.comments || []).length;
         const postTypeLabel = p.postMode === 'blog' ? 'Blog' : p.postMode === 'portfolio' ? 'Portfolio' : (p.categoryName || 'Thảo luận');
         const subredditTag = 'r/' + postTypeLabel.replace(/\s+/g, '');
@@ -3461,9 +3496,12 @@
               </h3>
 
               <!-- Body Excerpt -->
-              <p class="text-xs sm:text-[13px] text-slate-600 leading-relaxed line-clamp-3">
-                ${p.description}
-              </p>
+              <div>
+                <p id="post-desc-${p.id}" class="text-xs sm:text-[13px] text-slate-600 leading-relaxed whitespace-pre-line ${isExpanded ? '' : 'line-clamp-3'}">${p.description}</p>
+                <button id="post-expand-btn-${p.id}" type="button" onclick="toggleSocialPostExpand('${p.id}', event)" class="${isExpanded ? '' : 'hidden '}text-xs font-semibold text-blue-600 hover:text-blue-700 mt-1 cursor-pointer transition-colors">
+                  ${isExpanded ? 'Thu gọn' : 'Xem thêm'}
+                </button>
+              </div>
 
               <!-- Tags / Flairs -->
               ${hashtagsHtml ? `<div class="flex flex-wrap gap-1.5 pt-0.5">${hashtagsHtml}</div>` : ''}
@@ -3486,6 +3524,35 @@
           </article>
         `;
       }).join('');
+
+      // Hiển thị nút "Xem thêm" nếu nội dung bài viết dài vượt quá 3 dòng
+      requestAnimationFrame(() => {
+        list.forEach(p => {
+          if (window._socialExpandedPosts[String(p.id)]) return;
+          const descEl = document.getElementById(`post-desc-${p.id}`);
+          const toggleBtn = document.getElementById(`post-expand-btn-${p.id}`);
+          if (descEl && toggleBtn && descEl.scrollHeight > descEl.clientHeight + 2) {
+            toggleBtn.classList.remove('hidden');
+          }
+        });
+      });
+    }
+
+    function toggleSocialPostExpand(id, event) {
+      if (event) event.stopPropagation();
+      window._socialExpandedPosts = window._socialExpandedPosts || {};
+      const strId = String(id);
+      const nextState = !window._socialExpandedPosts[strId];
+      window._socialExpandedPosts[strId] = nextState;
+
+      const descEl = document.getElementById(`post-desc-${strId}`);
+      const btnEl = document.getElementById(`post-expand-btn-${strId}`);
+      if (descEl) {
+        descEl.classList.toggle('line-clamp-3', !nextState);
+      }
+      if (btnEl) {
+        btnEl.textContent = nextState ? 'Thu gọn' : 'Xem thêm';
+      }
     }
 
     async function submitInlineCommunityComment(e, postId) {
@@ -4270,7 +4337,7 @@
         const companyName = j.company || 'Doanh Nghiệp Đối Tác';
         const initial = companyName.charAt(0).toUpperCase();
         const salaryText = formatJobSalary(j.budget, j.minBudget);
-        const locText = j.location || 'Từ xa';
+        const locText = (j.location || 'Toàn quốc').replace(/\s*[\/·\-|]\s*(Hybrid|Remote)(\s*100%)?/gi, '').replace(/^(Hybrid|Remote)(\s*100%)?$/gi, 'Toàn quốc').trim() || 'Toàn quốc';
         const typeText = j.type === 'Freelance' ? 'Dự án Freelance' : 'Toàn thời gian';
         const timeText = formatJobTime(j.createdAt);
         const isSaved = savedIds.includes(String(j.id));
@@ -4465,7 +4532,7 @@
       if (compEl) compEl.innerText = companyName;
 
       const locEl = document.getElementById('modalJobLocation');
-      if (locEl) locEl.innerText = job.location || 'Từ xa';
+      if (locEl) locEl.innerText = (job.location || 'Toàn quốc').replace(/\s*[\/·\-|]\s*(Hybrid|Remote)(\s*100%)?/gi, '').replace(/^(Hybrid|Remote)(\s*100%)?$/gi, 'Toàn quốc').trim() || 'Toàn quốc';
 
       const titleEl = document.getElementById('modalJobTitle');
       if (titleEl) titleEl.innerText = job.title;
