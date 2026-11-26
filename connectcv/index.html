@@ -151,9 +151,10 @@
 
       <!-- Animated Interactive Feature Cards: Left (CV Chuẩn ATS + Portfolio) & Right (Phỏng Vấn AI + Tìm Việc) -->
       <!-- LEFT STACK -->
-      <div class="hidden lg:flex flex-col gap-3 absolute top-1/2 -translate-y-1/2 left-2.5 xl:left-5 2xl:left-10 w-[168px] xl:w-[205px] 2xl:w-[234px] z-10">
+      <div class="hidden lg:flex flex-col gap-3 absolute top-1/2 -translate-y-1/2 left-2.5 xl:left-5 2xl:left-10 w-[168px] xl:w-[205px] 2xl:w-[234px] z-20">
         <!-- Card 1: CV Chuẩn ATS (Đi lại bàn nộp hồ sơ) -->
-        <div onclick="switchTab('cv')" class="bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.12s;" title="Mở kho mẫu CV & tạo CV">
+        <div onclick="switchTab('cv')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.12s;" title="Mở kho mẫu CV & tạo CV">
+          <span class="absolute -inset-2.5 rounded-3xl" aria-hidden="true"></span>
           <div class="flex items-center justify-between pb-2 border-b border-slate-100">
             <div class="flex items-center gap-2">
               <span class="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
@@ -212,7 +213,8 @@
         </div>
 
         <!-- Card 2: Portfolio Cá Nhân (Trưng bày dự án & con trỏ tương tác) -->
-        <div onclick="switchTab('portfolio')" class="bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.22s;" title="Tạo Portfolio cá nhân">
+        <div onclick="switchTab('portfolio')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.22s;" title="Tạo Portfolio cá nhân">
+          <span class="absolute -inset-2.5 rounded-3xl" aria-hidden="true"></span>
           <div class="flex items-center justify-between pb-2 border-b border-slate-100">
             <div class="flex items-center gap-2">
               <span class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
@@ -260,9 +262,10 @@
       </div>
 
       <!-- RIGHT STACK -->
-      <div class="hidden lg:flex flex-col gap-3 absolute top-1/2 -translate-y-1/2 right-2.5 xl:right-5 2xl:right-10 w-[168px] xl:w-[205px] 2xl:w-[234px] z-10">
+      <div class="hidden lg:flex flex-col gap-3 absolute top-1/2 -translate-y-1/2 right-2.5 xl:right-5 2xl:right-10 w-[168px] xl:w-[205px] 2xl:w-[234px] z-20">
         <!-- Card 3: Phỏng Vấn AI -->
-        <div onclick="switchTab('interview')" class="bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.18s;" title="Luyện phỏng vấn AI">
+        <div onclick="switchTab('interview')" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.18s;" title="Luyện phỏng vấn AI">
+          <span class="absolute -inset-2.5 rounded-3xl" aria-hidden="true"></span>
           <div class="flex items-center justify-between pb-2 border-b border-slate-100">
             <div class="flex items-center gap-2">
               <div class="flex items-end gap-0.5 h-3.5 shrink-0">
@@ -326,7 +329,8 @@
         </div>
 
         <!-- Card 4: Tìm Việc Nhanh (Kính lúp quét & khớp việc làm phù hợp) -->
-        <div onclick="document.getElementById('jobKeywordInput')?.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(() => document.getElementById('jobKeywordInput')?.focus(), 350);" class="bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.28s;" title="Tìm kiếm việc làm phù hợp">
+        <div onclick="document.getElementById('jobKeywordInput')?.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(() => document.getElementById('jobKeywordInput')?.focus(), 350);" class="relative bg-white/95 border border-slate-200 hover:border-blue-400 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 p-3 cursor-pointer transition-all anim-hero-fade-up" style="animation-delay: 0.28s;" title="Tìm kiếm việc làm phù hợp">
+          <span class="absolute -inset-2.5 rounded-3xl" aria-hidden="true"></span>
           <div class="flex items-center justify-between pb-2 border-b border-slate-100">
             <div class="flex items-center gap-2">
               <span class="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
