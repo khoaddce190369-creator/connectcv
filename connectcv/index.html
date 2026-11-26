@@ -671,28 +671,34 @@
           </button>
         </div>
 
-        <!-- Reddit Sort & View Filter Bar -->
-        <div class="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 shadow-2xs flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div class="flex items-center gap-1.5">
-            <button type="button" onclick="document.getElementById('socialSortSelect').value='newest'; handleSocialSort('newest');" class="px-3 py-1.5 rounded-lg font-semibold bg-slate-100 text-slate-800 hover:bg-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer">
+        <!-- Reddit Sort, Search & View Filter Bar -->
+        <div class="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-2.5 text-xs">
+          <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+            <button type="button" onclick="document.getElementById('socialSortSelect').value='newest'; handleSocialSort('newest');" class="px-3 py-1.5 rounded-lg font-semibold bg-slate-100 text-slate-800 hover:bg-slate-200 transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer">
               <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               <span>Mới nhất</span>
             </button>
-            <button type="button" onclick="document.getElementById('socialSortSelect').value='likes'; handleSocialSort('likes');" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer">
+            <button type="button" onclick="document.getElementById('socialSortSelect').value='likes'; handleSocialSort('likes');" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer">
               <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/></svg>
-              <span>Nổi bật (Top)</span>
+              <span>Nổi bật</span>
             </button>
-            <button type="button" onclick="document.getElementById('socialSortSelect').value='comments'; handleSocialSort('comments');" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer">
+            <button type="button" onclick="document.getElementById('socialSortSelect').value='comments'; handleSocialSort('comments');" class="px-3 py-1.5 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer">
               <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
               <span>Thảo luận</span>
             </button>
           </div>
 
-          <select id="socialSortSelect" onchange="handleSocialSort(this.value)" class="bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 px-2.5 py-1.5 focus:outline-none cursor-pointer">
-            <option value="newest">Sắp xếp: Mới nhất</option>
-            <option value="likes">Sắp xếp: Nhiều Upvote</option>
-            <option value="comments">Sắp xếp: Nhiều bình luận</option>
-          </select>
+          <div class="flex items-center gap-2 w-full md:w-auto">
+            <div class="relative flex-1 md:w-52">
+              <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
+              <input id="socialSearchInput" oninput="handleSocialSearch(this.value)" type="text" placeholder="Tìm bài viết, ngành, tác giả..." class="w-full pl-8 pr-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 transition-all"/>
+            </div>
+            <select id="socialSortSelect" onchange="handleSocialSort(this.value)" class="hidden sm:block bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 px-2 py-1.5 focus:outline-none cursor-pointer">
+              <option value="newest">Mới nhất</option>
+              <option value="likes">Nhiều Upvote</option>
+              <option value="comments">Nhiều bình luận</option>
+            </select>
+          </div>
         </div>
 
         <!-- Reddit Feed Posts -->
@@ -717,25 +723,21 @@
 
           <div class="p-4 space-y-4">
             <p class="text-xs text-slate-600 leading-relaxed">
-              Diễn đàn chia sẻ kiến thức nghề nghiệp, kinh nghiệm phỏng vấn thực chiến, review CV chuẩn ATS và thảo luận công nghệ dành cho cộng đồng ConnectCV.
+              Diễn đàn chia sẻ kiến thức nghề nghiệp, kinh nghiệm phỏng vấn thực chiến, review CV chuẩn ATS và thảo luận chuyên môn đa ngành dành cho cộng đồng ConnectCV.
             </p>
-
-            <div class="relative">
-              <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
-              <input id="socialSearchInput" oninput="handleSocialSearch(this.value)" type="text" placeholder="Tìm bài viết, chủ đề, tác giả..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-blue-500 transition-all"/>
-            </div>
 
             <div class="space-y-2 text-xs" id="socialCatFilterGroup">
               <span class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Chủ đề thảo luận (Flair)</span>
               <div class="flex flex-wrap gap-1.5">
                 <button onclick="filterSocialCategory('all')" id="socialCatAll" class="px-2.5 py-1 rounded-md font-semibold bg-slate-900 text-white transition-all cursor-pointer">Tất cả</button>
-                <button onclick="filterSocialCategory('blog')" id="socialCatBlog" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Blog &amp; Kinh nghiệm</button>
-                <button onclick="filterSocialCategory('fintech')" id="socialCatFintech" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Fintech</button>
-                <button onclick="filterSocialCategory('branding')" id="socialCatBranding" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Branding</button>
-                <button onclick="filterSocialCategory('saas')" id="socialCatSaas" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">SaaS &amp; AI</button>
-                <button onclick="filterSocialCategory('uiux')" id="socialCatUiux" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">UI/UX</button>
-                <button onclick="filterSocialCategory('design-system')" id="socialCatDesignSystem" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Design System</button>
-                <button onclick="filterSocialCategory('3d')" id="socialCat3d" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">3D</button>
+                <button onclick="filterSocialCategory('cybersecurity')" id="socialCatCyber" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">An toàn thông tin</button>
+                <button onclick="filterSocialCategory('it')" id="socialCatIt" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Công nghệ thông tin</button>
+                <button onclick="filterSocialCategory('hospitality')" id="socialCatHospitality" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Quản trị khách sạn</button>
+                <button onclick="filterSocialCategory('marketing')" id="socialCatMarketing" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Marketing &amp; Content</button>
+                <button onclick="filterSocialCategory('finance')" id="socialCatFinance" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Tài chính &amp; Kế toán</button>
+                <button onclick="filterSocialCategory('hr')" id="socialCatHr" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Nhân sự &amp; Phỏng vấn</button>
+                <button onclick="filterSocialCategory('uiux')" id="socialCatUiux" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">UI/UX &amp; Sản phẩm</button>
+                <button onclick="filterSocialCategory('business')" id="socialCatBusiness" class="px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer">Kinh doanh &amp; Logistics</button>
               </div>
             </div>
 
@@ -2812,125 +2814,433 @@
     }
 
     async function loadPortfolios() {
+      const curatedBlogs = getDefaultSocialPosts();
       try {
         const res = await fetch('/api/portfolios');
         const data = await res.json();
         if (data.success && data.portfolios && data.portfolios.length > 0) {
-          allPortfoliosList = data.portfolios;
+          // Giữ lại các bài viết mới do người dùng tự đăng (bỏ các mẫu demo cũ pf_1..pf_6)
+          const userPosts = data.portfolios.filter(p => !/^pf_[1-6]$/.test(String(p.id || '')));
+          allPortfoliosList = [...userPosts, ...curatedBlogs];
         } else {
-          allPortfoliosList = getDefaultSocialPosts();
+          allPortfoliosList = curatedBlogs;
         }
       } catch (e) {
-        console.warn('Dùng dữ liệu mẫu cộng đồng:', e);
-        allPortfoliosList = getDefaultSocialPosts();
+        console.warn('Dùng dữ liệu bài viết cộng đồng:', e);
+        allPortfoliosList = curatedBlogs;
       }
       applySocialFiltersAndRender();
     }
 
     function getDefaultSocialPosts() {
       return [
+        // --- AN TOÀN THÔNG TIN (4 BÀI) ---
         {
-          id: 'pf_1',
-          title: 'Fintech Mobile Banking 2.0',
-          category: 'uiux',
-          categoryName: 'UI/UX & App',
-          author: 'Nguyễn Minh Tuấn',
-          subdomain: 'tuan-nguyen',
+          id: 'blog_sec_1',
+          postMode: 'blog',
+          title: 'Từ Junior lên SOC Analyst Tier 2: Cách lọc cảnh báo giả để không bị ngợp khi trực ca',
+          category: 'cybersecurity',
+          categoryName: 'An toàn thông tin',
+          author: 'Phạm Hoàng Minh',
+          subdomain: 'hoang-minh-sec',
           authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-          authorRole: 'Senior UI/UX Designer',
-          image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
-          tags: ['Fintech', 'Figma', 'Design System'],
-          budget: '$2,500 USD',
-          duration: '4 tuần',
-          likes: 248,
-          description: 'Hệ thống thiết kế và giao diện ngân hàng số thế hệ mới, tối ưu hóa tỷ lệ chuyển đổi dòng tiền 35% với hơn 40 màn hình và design tokens chuẩn WCAG.',
+          authorRole: 'SOC Analyst Tier 2',
+          image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=80',
+          tags: ['SOC', 'SIEM', 'An toàn thông tin', 'Blue Team'],
+          likes: 186,
+          createdAt: '2026-11-25T09:15:00Z',
+          description: 'Mới vào trực SOC, điều khiến mình stress nhất không phải là hacker tấn công mà là hàng nghìn alert đổ về SIEM mỗi ngày. Sau gần hai năm làm việc, mình rút ra nguyên tắc 3 bước khi triage: kiểm tra ngữ cảnh tài sản (asset criticality) trước, đối chiếu hành vi bất thường theo chuỗi thời gian (process tree trên EDR), rồi mới kết luận true/false positive. Đừng chỉ nhìn vào một rule đơn lẻ rồi đóng ticket vội, hãy viết playbook ghi chú rõ lý do whitelist để ca sau không mất công điều tra lại.',
           comments: [
-            { id: 'c1', author: 'Trần Quốc Bảo', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face', content: 'Bộ micro-interactions phần thanh toán rất mượt mà, phối màu xanh navy rất trang nhã!', createdAt: '2026-11-18T10:30:00Z' }
+            { id: 'c_sec1', author: 'Nguyễn Đức Anh', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face', content: 'Chuẩn luôn bạn, xem process tree trên EDR giúp loại tới 70% cảnh báo giả từ mấy script quản trị nội bộ.', createdAt: '2026-11-25T11:20:00Z' }
           ]
         },
         {
-          id: 'pf_2',
-          title: 'GreenEats Organic Brand Identity',
-          category: 'branding',
-          categoryName: 'Thương hiệu & Logo',
-          author: 'Lê Hoàng Yến',
-          subdomain: 'hoang-yen',
-          authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
-          authorRole: 'Brand & Visual Designer',
-          image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80',
-          tags: ['Branding', 'Packaging', 'Eco'],
-          budget: '$1,800 USD',
-          duration: '3 tuần',
-          likes: 195,
-          description: 'Bộ nhận diện thương hiệu thực phẩm hữu cơ tối giản kết hợp gam màu đất mộc mạc và giấy tái chế thân thiện môi trường.',
-          comments: []
-        },
-        {
-          id: 'pf_3',
-          title: 'AI Dashboard & Analytics SaaS Platform',
-          category: 'web',
-          categoryName: 'Website & Code',
-          author: 'Trần Quốc Bảo',
-          subdomain: 'quoc-bao',
+          id: 'blog_sec_2',
+          postMode: 'blog',
+          title: '5 lỗi bảo mật API mình gặp nhiều nhất khi đi Pentest cho các startup tại Việt Nam',
+          category: 'cybersecurity',
+          categoryName: 'An toàn thông tin',
+          author: 'Trần Tuấn Kiệt',
+          subdomain: 'tuan-kiet-pentest',
           authorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
-          authorRole: 'Senior Full-Stack & UI Engineer',
-          image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&auto=format&fit=crop&q=80',
-          tags: ['SaaS', 'React', 'Tailwind', 'Data Viz'],
-          budget: '$3,200 USD',
-          duration: '6 tuần',
-          likes: 315,
-          description: 'Bảng điều khiển trực quan hóa dữ liệu AI theo thời gian thực, tích hợp chế độ Dark Mode tinh tế và hiệu năng render 60fps.',
+          authorRole: 'Penetration Tester',
+          tags: ['OWASP', 'Pentest', 'API Security', 'Red Team'],
+          likes: 242,
+          createdAt: '2026-11-24T14:30:00Z',
+          description: 'Làm việc với hơn 15 dự án vừa và nhỏ năm nay, có tới 80% hệ thống dính lỗi BOLA/IDOR — tức là chỉ cần đổi ID đơn hàng hoặc ID hồ sơ trên URL là xem được dữ liệu người khác vì backend quên kiểm tra quyền sở hữu. Ngoài ra còn có lỗi lộ thông tin nhạy cảm qua API response (trả thừa trường mật khẩu hash hoặc số CCCD), không giới hạn số lần gọi OTP (rate limiting), và dùng JWT nhưng quên xác thực thuật toán ký. Các bạn dev nhớ check kỹ danh sách OWASP API Top 10 trước khi go-live nhé.',
           comments: []
         },
         {
-          id: 'pf_4',
-          title: 'Matte Titanium Wireless Earbuds 3D Render',
-          category: '3d',
-          categoryName: '3D & Motion',
-          author: 'Đặng Tuấn Anh',
-          subdomain: 'tuan-anh-3d',
-          authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face',
-          authorRole: '3D Artist & Motion Designer',
-          image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80',
-          tags: ['Cinema4D', 'Octane', '3D Product'],
-          budget: '$1,500 USD',
-          duration: '2 tuần',
-          likes: 420,
-          description: 'Kết xuất 3D thương mại studio chuyên nghiệp cho dòng tai nghe không dây cao cấp, giả lập ánh sáng softbox và vật liệu titan nhám.',
+          id: 'blog_sec_3',
+          postMode: 'blog',
+          title: 'Mới chuyển sang An toàn thông tin nên thi CompTIA Security+, eJPT hay CEH trước?',
+          category: 'cybersecurity',
+          categoryName: 'An toàn thông tin',
+          author: 'Lê Gia Khánh',
+          subdomain: 'gia-khanh-cyber',
+          authorAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Cybersecurity Specialist',
+          tags: ['Chứng chỉ', 'Security+', 'eJPT', 'Định hướng'],
+          likes: 164,
+          createdAt: '2026-11-23T08:45:00Z',
+          description: 'Nhiều bạn sinh viên hỏi mình câu này vì chi phí thi chứng chỉ không hề rẻ. Theo trải nghiệm cá nhân: nếu bạn chưa vững nền tảng mạng, mã hóa và quản trị rủi ro, hãy học Security+ để có tư duy tổng quan chuẩn quốc tế. Nếu bạn thích thực hành tấn công thử nghiệm (Red Team) và muốn tự tay gõ lệnh trên máy ảo thật, eJPT thực tế và đáng tiền hơn nhiều so với việc học vẹt lý thuyết trắc nghiệm. Còn CEH thường phù hợp khi bạn cần đáp ứng tiêu chuẩn hồ sơ đấu thầu hoặc yêu cầu từ phía doanh nghiệp lớn.',
           comments: []
         },
         {
-          id: 'pf_5',
-          title: 'Artisan Coffee Roasters Organic Packaging',
-          category: 'packaging',
-          categoryName: 'Bao bì & In ấn',
-          author: 'Vũ Quỳnh Anh',
-          subdomain: 'quynh-anh',
-          authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face',
-          authorRole: 'Packaging & Print Specialist',
-          image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&auto=format&fit=crop&q=80',
-          tags: ['Packaging', 'Print', 'Typography'],
-          budget: '$1,400 USD',
-          duration: '3 tuần',
-          likes: 288,
-          description: 'Trọn bộ bao bì túi cà phê giấy kraft mộc, tem nhãn chai cold-brew và hộp quà Tết sang trọng phong cách tối giản.',
+          id: 'blog_sec_4',
+          postMode: 'blog',
+          title: 'Vì sao lỗ hổng SQL Injection vẫn xuất hiện dù dự án đã sử dụng ORM hiện đại?',
+          category: 'cybersecurity',
+          categoryName: 'An toàn thông tin',
+          author: 'Vũ Đức Mạnh',
+          subdomain: 'duc-manh-appsec',
+          authorAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'AppSec Engineer',
+          tags: ['AppSec', 'SQL Injection', 'Backend', 'Code Review'],
+          likes: 129,
+          createdAt: '2026-11-21T16:10:00Z',
+          description: 'Nhiều lập trình viên tin rằng cứ dùng Prisma, Sequelize hay Hibernate là miễn nhiễm với SQL Injection. Thực tế khi cần viết báo cáo phức tạp hoặc tìm kiếm toàn văn, dev thường gọi hàm rawQuery rồi vô tình nối chuỗi trực tiếp biến đầu vào từ người dùng, hoặc truyền thẳng tham số sắp xếp (ORDER BY) mà không qua danh sách cho phép (whitelist). Giải pháp luôn là dùng Parameterized Query cho mọi câu lệnh thuần và kiểm tra kiểu dữ liệu nghiêm ngặt ở tầng API.',
           comments: []
         },
+
+        // --- CÔNG NGHỆ THÔNG TIN / IT (5 BÀI) ---
         {
-          id: 'pf_6',
-          title: 'Neon Cyberpunk Music Festival Key Visual',
-          category: 'branding',
-          categoryName: 'Thương hiệu & Poster',
-          author: 'Linh Trần',
-          subdomain: 'linh-tran',
+          id: 'blog_it_1',
+          postMode: 'blog',
+          title: 'Tối ưu câu truy vấn SQL từ 12 giây xuống còn 80ms nhờ hiểu đúng Composite Index',
+          category: 'it',
+          categoryName: 'Công nghệ thông tin',
+          author: 'Nguyễn Hải Nam',
+          subdomain: 'hai-nam-dev',
+          authorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Senior Backend Engineer',
+          image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+          tags: ['PostgreSQL', 'SQL', 'Database', 'Backend'],
+          likes: 312,
+          createdAt: '2026-11-25T10:00:00Z',
+          description: 'Tuần trước hệ thống báo cáo của bên mình bị chậm hẳn khi bảng đơn hàng chạm mốc 4 triệu dòng. Nhìn lại thì các cột điều kiện đều đã đánh index đơn lẻ, nhưng truy vấn lọc theo trạng thái + ngày tạo vẫn phải quét tuần tự (Sequential Scan). Sau khi chạy EXPLAIN ANALYZE và gom lại thành một Composite Index đúng thứ tự cột có độ phân biệt cao, thời gian phản hồi giảm từ 12 giây xuống 80ms. Kinh nghiệm là luôn đo đạc bằng EXPLAIN trước khi đoán mò.',
+          comments: [
+            { id: 'c_it1', author: 'Trần Quốc Bảo', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face', content: 'Rất thực tế! Nhiều bạn mới hay tạo index tràn lan làm chậm thao tác ghi mà không để ý thứ tự cột.', createdAt: '2026-11-25T12:00:00Z' }
+          ]
+        },
+        {
+          id: 'blog_it_2',
+          postMode: 'blog',
+          title: 'Fresher IT đi phỏng vấn hay mất điểm ở đâu? Không phải thiếu thuật toán mà là cách kể về đồ án',
+          category: 'it',
+          categoryName: 'Công nghệ thông tin',
+          author: 'Đỗ Thùy Linh',
+          subdomain: 'thuy-linh-lead',
           authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
-          authorRole: 'Key Visual & Art Director',
-          image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop&q=80',
-          tags: ['Photoshop', 'Key Visual', 'Cyberpunk'],
-          budget: '$2,100 USD',
-          duration: '3 tuần',
-          likes: 376,
-          description: 'Key Visual chủ đề âm nhạc điện tử quy mô 10.000 người, kết hợp kỹ thuật 3D và digital painting tạo độ tương phản cao.',
+          authorRole: 'Tech Lead',
+          tags: ['Phỏng vấn IT', 'Fresher', 'Đồ án', 'Software Dev'],
+          likes: 275,
+          createdAt: '2026-11-24T09:20:00Z',
+          description: 'Mình phỏng vấn khá nhiều bạn sinh viên mới ra trường. Rất nhiều bạn làm đồ án rất tâm huyết nhưng khi hỏi "Tại sao em chọn Redis thay vì lưu thẳng vào database?" hay "Nếu có 1000 người dùng bấm đặt hàng cùng lúc thì code này xử lý sao?" thì lại lúng túng. Nhà tuyển dụng không đòi hỏi Fresher phải xây hệ thống triệu người dùng, họ chỉ muốn thấy bạn hiểu mình đang viết gì và có tư duy giải quyết vấn đề, chứ không chỉ làm theo video hướng dẫn.',
+          comments: []
+        },
+        {
+          id: 'blog_it_3',
+          postMode: 'blog',
+          title: '3 thói quen nhỏ giúp mình vượt qua vòng Review Code khắt khe ở công ty Product',
+          category: 'it',
+          categoryName: 'Công nghệ thông tin',
+          author: 'Lê Minh Hoàng',
+          subdomain: 'minh-hoang-se',
+          authorAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Software Engineer',
+          tags: ['Clean Code', 'Code Review', 'Git', 'Kinh nghiệm'],
+          likes: 198,
+          createdAt: '2026-11-22T15:40:00Z',
+          description: 'Hồi mới đi làm, mỗi lần mở Pull Request là mình nhận cả chục comment sửa code. Dần dần mình tập 3 thói quen: (1) Chia nhỏ PR dưới 300 dòng để người review dễ đọc bối cảnh; (2) Tự review lại diff của chính mình trước khi gắn tên đồng nghiệp; (3) Viết rõ các trường hợp biên (edge cases) đã tự kiểm tra vào phần mô tả PR. Không chỉ PR được duyệt nhanh hơn mà bản thân cũng ít tạo bug ngớ ngẩn hơn hẳn.',
+          comments: []
+        },
+        {
+          id: 'blog_it_4',
+          postMode: 'blog',
+          title: 'Lộ trình tự học System Design cho Backend Developer 1-2 năm kinh nghiệm',
+          category: 'it',
+          categoryName: 'Công nghệ thông tin',
+          author: 'Trần Đăng Khoa',
+          subdomain: 'dang-khoa-arch',
+          authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Senior System Engineer',
+          tags: ['System Design', 'Backend', 'Architecture', 'Scalability'],
+          likes: 221,
+          createdAt: '2026-11-20T11:15:00Z',
+          description: 'Đừng vội nhảy vào đọc kiến trúc của Netflix hay Uber khi bạn chưa nắm vững những viên gạch cơ bản. Hãy bắt đầu từ: cách hoạt động của Load Balancer, khi nào dùng Cache (Cache-Aside vs Write-Through), giải quyết tác vụ nặng bằng Message Queue (RabbitMQ/Kafka), và cách thiết kế Idempotency Key để tránh trừ tiền hai lần khi mạng chập chờn. Hiểu sâu từng thành phần rồi tự vẽ lại bài toán rút gọn link hay hệ thống thông báo sẽ thấy tư duy hệ thống lên rất nhanh.',
+          comments: []
+        },
+        {
+          id: 'blog_it_5',
+          postMode: 'blog',
+          title: 'Đừng chỉ học thuộc lệnh Git: Hiểu rebase, cherry-pick và xử lý conflict sạch sẽ',
+          category: 'it',
+          categoryName: 'Công nghệ thông tin',
+          author: 'Ngô Thảo Vy',
+          subdomain: 'thao-vy-devops',
+          authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'DevOps Engineer',
+          tags: ['Git', 'DevOps', 'Teamwork', 'CI/CD'],
+          likes: 154,
+          createdAt: '2026-11-18T13:50:00Z',
+          description: 'Trong nhóm phát triển phần mềm, lịch sử commit lộn xộn khiến việc tìm nguyên nhân lỗi (git bisect) hoặc hoàn tác bản vá (revert) trở thành cơn ác mộng. Khi làm việc trên nhánh tính năng riêng, bạn nên dùng git pull --rebase origin main để giữ lịch sử thẳng hàng thay vì tạo hàng loạt merge commit thừa. Tuyệt đối không rebase trên nhánh dùng chung như main hoặc develop để tránh ghi đè lịch sử của đồng đội.',
+          comments: []
+        },
+
+        // --- QUẢN TRỊ KHÁCH SẠN & DỊCH VỤ (3 BÀI) ---
+        {
+          id: 'blog_hosp_1',
+          postMode: 'blog',
+          title: 'Quy trình L.E.A.R.N xử lý phàn nàn khách VIP tại quầy Lễ tân 5 sao mà không mất bình tĩnh',
+          category: 'hospitality',
+          categoryName: 'Quản trị khách sạn',
+          author: 'Nguyễn Phương Thảo',
+          subdomain: 'phuong-thao-hotel',
+          authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Front Office Manager',
+          image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80',
+          tags: ['Quản trị khách sạn', 'Lễ tân', 'CSKH', 'Hospitality'],
+          likes: 207,
+          createdAt: '2026-11-24T17:00:00Z',
+          description: 'Làm lễ tân khách sạn quốc tế, chuyện gặp khách nóng tính vì phòng chưa kịp dọn hay sự cố điều hòa là điều khó tránh. Bí quyết giữ sự chuyên nghiệp nằm gọn trong 5 bước L.E.A.R.N: Listen (Lắng nghe trọn vẹn, không ngắt lời), Empathize (Đồng cảm chân thành), Apologize (Xin lỗi thay mặt khách sạn chứ không đổ lỗi cho bộ phận khác), React/Resolve (Đưa phương án khắc phục cụ thể trong khả năng), và Notify (Ghi nhận vào logbook để ca sau theo dõi và chăm sóc bù cho khách).',
+          comments: []
+        },
+        {
+          id: 'blog_hosp_2',
+          postMode: 'blog',
+          title: 'Hiểu đúng 3 chỉ số sống còn của ngành Quản trị khách sạn: Occupancy, ADR và RevPAR',
+          category: 'hospitality',
+          categoryName: 'Quản trị khách sạn',
+          author: 'Võ Quốc Hưng',
+          subdomain: 'quoc-hung-revenue',
+          authorAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Revenue Manager',
+          tags: ['Revenue Management', 'Khách sạn', 'RevPAR', 'Phân tích'],
+          likes: 143,
+          createdAt: '2026-11-21T10:25:00Z',
+          description: 'Nhiều bạn sinh viên ngành Du lịch - Khách sạn khi đi phỏng vấn chỉ biết đến công suất phòng (Occupancy Rate). Thực tế, lấp đầy 100% phòng bằng cách phá giá lại làm giảm lợi nhuận ròng vì tốn chi phí dọn phòng và khấu hao. Nhà quản lý luôn nhìn vào RevPAR (Doanh thu trên mỗi phòng khả dụng = ADR × Occupancy). Biết cách cân bằng giá bán trung bình (ADR) theo mùa vụ và từng kênh OTA mới là chìa khóa giúp bạn ghi điểm khi ứng tuyển vị trí Giám sát hoặc Quản lý.',
+          comments: []
+        },
+        {
+          id: 'blog_hosp_3',
+          postMode: 'blog',
+          title: 'Thực tập bộ phận F&B khách sạn quốc tế: Những kỹ năng thực tế trường lớp ít dạy',
+          category: 'hospitality',
+          categoryName: 'Quản trị khách sạn',
+          author: 'Trần Yến Nhi',
+          subdomain: 'yen-nhi-fb',
+          authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'F&B Supervisor',
+          tags: ['F&B', 'Khách sạn', 'Thực tập', 'Dịch vụ'],
+          likes: 118,
+          createdAt: '2026-11-19T08:15:00Z',
+          description: 'Ngoài cách cầm khay hay bưng đồ ăn chuẩn mực, điều giúp bạn được giữ lại làm nhân viên chính thức sau kỳ thực tập F&B là "quan sát chủ động" và khả năng nhớ dị ứng thực phẩm (allergy) của khách. Chỉ cần bạn tinh ý đặt ly nước ấm trước khi khách ho, hoặc chủ động xác nhận lại với bếp khi bàn có trẻ nhỏ ăn không cay, quản lý ca sẽ đánh giá rất cao thái độ phục vụ tận tâm của bạn.',
+          comments: []
+        },
+
+        // --- MARKETING & CONTENT (3 BÀI) ---
+        {
+          id: 'blog_mkt_1',
+          postMode: 'blog',
+          title: 'Đừng chỉ nhìn lượt tiếp cận: Cách đọc chỉ số CPA và ROAS trong Performance Marketing',
+          category: 'marketing',
+          categoryName: 'Marketing & Content',
+          author: 'Lê Minh Phương',
+          subdomain: 'minh-phuong-mkt',
+          authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Performance Marketing Lead',
+          image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
+          tags: ['Digital Marketing', 'ROAS', 'Performance', 'Ads'],
+          likes: 179,
+          createdAt: '2026-11-23T15:10:00Z',
+          description: 'Một chiến dịch có hàng trăm nghìn lượt xem nhưng không tạo ra đơn hàng thì vẫn là đốt ngân sách. Khi tối ưu quảng cáo, hãy đặt mục tiêu dựa trên biên lợi nhuận thực tế của sản phẩm để tính ra ngưỡng ROAS hòa vốn. Nếu CPA (chi phí trên mỗi chuyển đổi) tăng cao, hãy kiểm tra lần lượt từ tỷ lệ nhấp (CTR - lỗi ở nội dung/hình ảnh quảng cáo) đến tỷ lệ thoát trên trang đích (Landing Page - lỗi ở thông điệp hoặc tốc độ tải trang).',
+          comments: []
+        },
+        {
+          id: 'blog_mkt_2',
+          postMode: 'blog',
+          title: '6 lỗi Technical SEO cơ bản khiến bài viết đầu tư công sức mãi không lên nổi trang nhất',
+          category: 'marketing',
+          categoryName: 'Marketing & Content',
+          author: 'Phan Thành Đạt',
+          subdomain: 'thanh-dat-seo',
+          authorAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'SEO Specialist',
+          tags: ['SEO', 'Content', 'Google Search', 'Marketing'],
+          likes: 138,
+          createdAt: '2026-11-20T14:20:00Z',
+          description: 'Nhiều bạn viết bài rất hay nhưng lại bỏ qua phần kỹ thuật nền tảng: đặt nhiều thẻ H1 trên cùng một trang, ảnh tải lên nặng tới vài MB làm điểm Core Web Vitals đỏ rực, quên gắn thẻ canonical dẫn đến trùng lặp nội dung, hoặc không tối ưu liên kết nội bộ (internal link) cho các bài viết trụ cột. Dành 15 phút kiểm tra bằng Google Search Console và PageSpeed Insights trước khi xuất bản sẽ giúp bài viết có cơ hội xếp hạng tốt hơn rất nhiều.',
+          comments: []
+        },
+        {
+          id: 'blog_mkt_3',
+          postMode: 'blog',
+          title: 'Viết nội dung B2B sao cho tự nhiên, không bị khô khan như đọc tài liệu hướng dẫn?',
+          category: 'marketing',
+          categoryName: 'Marketing & Content',
+          author: 'Hoàng Ngọc Mai',
+          subdomain: 'ngoc-mai-content',
+          authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'B2B Content Strategist',
+          tags: ['B2B', 'Content Marketing', 'Copywriting', 'Truyền thông'],
+          likes: 121,
+          createdAt: '2026-11-17T09:40:00Z',
+          description: 'Sai lầm phổ biến khi viết cho doanh nghiệp là cố nhồi nhét thuật ngữ hàn lâm để tỏ ra chuyên nghiệp. Thực tế người đọc B2B cũng là con người — họ đang tìm giải pháp cho vấn đề đau đầu tại công ty. Hãy mở đầu bằng một tình huống thực tế họ hay gặp (ví dụ: cuối tháng mất 3 ngày đối soát file Excel), phân tích nguyên nhân gốc rễ, rồi mới đưa ra giải pháp kèm số liệu minh họa cụ thể.',
+          comments: []
+        },
+
+        // --- TÀI CHÍNH & KẾ TOÁN (3 BÀI) ---
+        {
+          id: 'blog_fin_1',
+          postMode: 'blog',
+          title: '4 sai sót chứng từ kế toán viên mới ra trường hay gặp nhất vào mùa quyết toán thuế',
+          category: 'finance',
+          categoryName: 'Tài chính & Kế toán',
+          author: 'Nguyễn Minh Trang',
+          subdomain: 'minh-trang-audit',
+          authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Senior Auditor',
+          tags: ['Kế toán', 'Kiểm toán', 'Thuế', 'Tài chính'],
+          likes: 192,
+          createdAt: '2026-11-24T11:00:00Z',
+          description: 'Mùa quyết toán năm nào cũng gặp những lỗi rất đáng tiếc làm chi phí bị loại khi thanh tra: hóa đơn giá trị từ 20 triệu trở lên nhưng thanh toán bằng tiền mặt hoặc chuyển từ tài khoản cá nhân; thiếu biên bản nghiệm thu đi kèm hợp đồng dịch vụ; hạch toán nhầm chi phí không phục vụ hoạt động sản xuất kinh doanh; và quên đối chiếu công nợ định kỳ cuối năm. Tạo một checklist kiểm tra chứng từ hàng tháng sẽ giúp bạn nhẹ gánh đi rất nhiều vào tháng 3.',
+          comments: []
+        },
+        {
+          id: 'blog_fin_2',
+          postMode: 'blog',
+          title: 'Đọc nhanh Báo cáo tài chính: Đừng chỉ nhìn lợi nhuận, hãy soi Báo cáo lưu chuyển tiền tệ',
+          category: 'finance',
+          categoryName: 'Tài chính & Kế toán',
+          author: 'Đinh Hoàng Long',
+          subdomain: 'hoang-long-fin',
+          authorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Financial Analyst',
+          tags: ['Tài chính', 'Phân tích đầu tư', 'Báo cáo tài chính'],
+          likes: 165,
+          createdAt: '2026-11-22T10:30:00Z',
+          description: 'Có những doanh nghiệp báo lãi ròng hàng chục tỷ trên giấy nhưng lại mất khả năng thanh toán nợ ngắn hạn vì tiền nằm hết trong hàng tồn kho và các khoản phải thu khó đòi. Khi phân tích sức khỏe tài chính, mình luôn đối chiếu dòng tiền thuần từ hoạt động kinh doanh (CFO) với lợi nhuận sau thuế. Nếu doanh nghiệp làm ăn có lãi liên tục nhưng CFO âm nhiều năm liền, đó là dấu hiệu cảnh báo rất rõ ràng.',
+          comments: []
+        },
+        {
+          id: 'blog_fin_3',
+          postMode: 'blog',
+          title: 'Làm Chuyên viên Quan hệ Khách hàng Doanh nghiệp tại ngân hàng: Áp lực KPI và bài học thẩm định',
+          category: 'finance',
+          categoryName: 'Tài chính & Kế toán',
+          author: 'Trần Quang Huy',
+          subdomain: 'quang-huy-bank',
+          authorAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Corporate Relationship Manager',
+          tags: ['Ngân hàng', 'Tín dụng', 'Thẩm định', 'Tài chính'],
+          likes: 112,
+          createdAt: '2026-11-18T16:45:00Z',
+          description: 'Nghề RM doanh nghiệp không chỉ là tìm khách vay vốn để đạt chỉ tiêu giải ngân. Trình độ của người làm tín dụng nằm ở bước thẩm định thực địa: xuống tận kho xưởng xem máy móc có chạy thật không, kiểm tra hóa đơn đầu ra đầu vào có khớp với dòng tiền qua tài khoản không. Giữ được chất lượng nợ xấu thấp mới là nền tảng để đi đường dài trong ngành ngân hàng.',
+          comments: []
+        },
+
+        // --- NHÂN SỰ & PHỎNG VẤN (3 BÀI) ---
+        {
+          id: 'blog_hr_1',
+          postMode: 'blog',
+          title: 'Nhà tuyển dụng nhìn gì trong 10 giây đầu khi mở CV của bạn? Góc nhìn từ người lọc hồ sơ mỗi ngày',
+          category: 'hr',
+          categoryName: 'Nhân sự & Phỏng vấn',
+          author: 'Lê Bảo Ngọc',
+          subdomain: 'bao-ngoc-hr',
+          authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Senior HRBP',
+          image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&auto=format&fit=crop&q=80',
+          tags: ['Review CV', 'Tuyển dụng', 'ATS', 'Nhân sự'],
+          likes: 348,
+          createdAt: '2026-11-25T08:00:00Z',
+          description: 'Khi một vị trí nhận về hơn 150 hồ sơ, HR không thể đọc từng chữ ngay lập tức. 10 giây đầu tiên chúng mình lướt qua 3 điểm: (1) Tiêu đề vị trí và kinh nghiệm gần nhất có khớp với JD không; (2) Kết quả công việc có con số cụ thể không (ví dụ: tăng 25% doanh số, rút ngắn 40% thời gian xử lý) thay vì chép lại mô tả công việc; (3) Bố cục có sạch sẽ, không lỗi chính tả và không dùng thanh phần trăm tự chấm điểm kỹ năng gây rối mắt.',
+          comments: [
+            { id: 'c_hr1', author: 'Phạm Hoàng Minh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face', content: 'Đoạn bỏ thanh % kỹ năng quá đúng, nhìn "HTML 90%" không ai biết đo bằng thước nào.', createdAt: '2026-11-25T09:40:00Z' }
+          ]
+        },
+        {
+          id: 'blog_hr_2',
+          postMode: 'blog',
+          title: 'Áp dụng mô hình STAR khi phỏng vấn sao cho tự nhiên, không bị cảm giác đang trả bài',
+          category: 'hr',
+          categoryName: 'Nhân sự & Phỏng vấn',
+          author: 'Phạm Quốc Duy',
+          subdomain: 'quoc-duy-ta',
+          authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Talent Acquisition Lead',
+          tags: ['Phỏng vấn', 'STAR', 'Kỹ năng mềm', 'Career'],
+          likes: 214,
+          createdAt: '2026-11-23T12:15:00Z',
+          description: 'Nhiều ứng viên biết khung STAR (Situation - Task - Action - Result) nhưng lại kể quá dài dòng ở phần bối cảnh (Situation) và quên mất phần quan trọng nhất là Action: chính bạn đã làm gì. Tỷ lệ thời gian lý tưởng cho một câu trả lời 2 phút là: 20% nêu ngắn gọn vấn đề, 60% nói rõ quyết định và hành động cá nhân của bạn (dùng chữ "tôi", hạn chế nói chung chung "nhóm em"), và 20% chốt lại kết quả đo lường được.',
+          comments: []
+        },
+        {
+          id: 'blog_hr_3',
+          postMode: 'blog',
+          title: 'Nhảy việc dưới 1 năm có phải điểm trừ tuyệt đối? Cách giải thích khéo léo trước nhà tuyển dụng',
+          category: 'hr',
+          categoryName: 'Nhân sự & Phỏng vấn',
+          author: 'Vũ Thị Thanh Vân',
+          subdomain: 'thanh-van-hr',
+          authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'HR Manager',
+          tags: ['Nhảy việc', 'Phỏng vấn', 'Định hướng nghề nghiệp'],
+          likes: 187,
+          createdAt: '2026-11-19T14:00:00Z',
+          description: 'Thị trường biến động khiến việc nghỉ việc sớm vì công ty cắt giảm nhân sự hoặc định hướng sản phẩm thay đổi là chuyện bình thường. Điều khiến người phỏng vấn e ngại không phải là số tháng làm việc, mà là thái độ đổ lỗi cho sếp cũ hay đồng nghiệp. Hãy trả lời thẳng thắn, ngắn gọn về sự lệch pha mục tiêu hoặc yếu tố khách quan, sau đó nhấn mạnh bài học bạn rút ra và lý do vị trí hiện tại phù hợp với lộ trình dài hạn của bạn.',
+          comments: []
+        },
+
+        // --- UI/UX & SẢN PHẨM (1 BÀI) + KINH DOANH & LOGISTICS (2 BÀI) ---
+        {
+          id: 'blog_uiux_1',
+          postMode: 'blog',
+          title: 'Từ bản vẽ Figma đẹp mắt đến sản phẩm thật: Vì sao UI/UX Designer cần hiểu giới hạn Frontend',
+          category: 'uiux',
+          categoryName: 'UI/UX & Sản phẩm',
+          author: 'Nguyễn Minh Tuấn',
+          subdomain: 'tuan-nguyen',
+          authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Senior Product Designer',
+          image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
+          tags: ['UI/UX', 'Design System', 'Figma', 'Product Design'],
+          likes: 234,
+          createdAt: '2026-11-24T13:10:00Z',
+          description: 'Hồi mới làm thiết kế, mình hay vẽ những màn hình có bóng đổ phức tạp hoặc bảng dữ liệu 12 cột rất đẹp trên màn hình 27 inch, nhưng khi đưa sang cho anh em dev thì lại vỡ giao diện trên laptop 13 inch. Khi bắt đầu tìm hiểu về Flexbox, Grid, các trạng thái Empty/Loading/Error và quy chuẩn Design Tokens dùng chung với code, chất lượng bàn giao tăng lên rõ rệt và team không còn tranh cãi mỗi khi nghiệm thu giao diện.',
+          comments: []
+        },
+        {
+          id: 'blog_biz_1',
+          postMode: 'blog',
+          title: 'Kinh nghiệm làm Sales B2B cho người hướng nội: Lắng nghe đúng nỗi đau quan trọng hơn nói hay',
+          category: 'business',
+          categoryName: 'Kinh doanh & Logistics',
+          author: 'Lê Trung Kiên',
+          subdomain: 'trung-kien-b2b',
+          authorAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'B2B Sales Manager',
+          tags: ['Sales B2B', 'Đàm phán', 'Kinh doanh'],
+          likes: 168,
+          createdAt: '2026-11-22T09:05:00Z',
+          description: 'Nhiều bạn nghĩ làm kinh doanh phải hoạt ngôn, nói liên tục. Thực tế trong bán hàng B2B, khách hàng doanh nghiệp không thiếu người chào hàng; cái họ cần là người hiểu quy trình vận hành đang vướng ở đâu. Chuẩn bị 5 câu hỏi mở sắc bén trước cuộc họp, lắng nghe 70% thời gian và tóm tắt lại đúng vấn đề của họ sẽ tạo dựng niềm tin nhanh hơn bất kỳ bài thuyết trình dài dòng nào.',
+          comments: []
+        },
+        {
+          id: 'blog_biz_2',
+          postMode: 'blog',
+          title: 'Phân biệt nhanh điều kiện FOB, CIF và DDP trong Incoterms 2020 qua tình huống giao nhận tại cảng',
+          category: 'business',
+          categoryName: 'Kinh doanh & Logistics',
+          author: 'Phạm Thu Hà',
+          subdomain: 'thu-ha-logistics',
+          authorAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face',
+          authorRole: 'Logistics Coordinator',
+          tags: ['Logistics', 'Xuất nhập khẩu', 'Incoterms 2020'],
+          likes: 149,
+          createdAt: '2026-11-16T15:30:00Z',
+          description: 'Sinh viên ngành Xuất nhập khẩu hay nhầm giữa điểm chuyển giao chi phí và điểm chuyển giao rủi ro của điều kiện CIF. Cần nhớ: với cả FOB và CIF, rủi ro đều chuyển từ người bán sang người mua ngay khi hàng được xếp an toàn lên tàu tại cảng đi; điểm khác biệt của CIF là người bán phải trả thêm cước tàu chính và mua bảo hiểm đến cảng đích. Còn DDP là mức trách nhiệm cao nhất của người bán, giao tận kho người mua và lo luôn thủ tục thông quan nhập khẩu.',
           comments: []
         }
       ];
@@ -2945,12 +3255,15 @@
           const cat = (p.category || '').toLowerCase();
           const target = activeSocialCat.toLowerCase();
           if (cat === target) return true;
-          if (target === 'fintech' && (p.tags || []).some(t => /fintech|bank|finance|tiền/i.test(t))) return true;
-          if (target === 'branding' && (p.tags || []).some(t => /brand|logo|poster|visual|nhận diện/i.test(t))) return true;
-          if (target === 'saas' && (p.tags || []).some(t => /saas|ai|dashboard|analytics/i.test(t))) return true;
-          if (target === 'uiux' && (p.tags || []).some(t => /ui|ux|app|figma/i.test(t))) return true;
-          if (target === 'design-system' && (p.tags || []).some(t => /design system|system|tokens/i.test(t))) return true;
-          if (target === '3d' && (p.tags || []).some(t => /3d|render|motion|c4d|packaging|bao bì|print/i.test(t))) return true;
+          const tagStr = (p.tags || []).join(' ').toLowerCase();
+          if (target === 'cybersecurity' && /soc|siem|pentest|owasp|appsec|an toàn thông tin|security/.test(tagStr)) return true;
+          if (target === 'it' && /sql|backend|git|devops|system design|clean code|software|fresher/.test(tagStr)) return true;
+          if (target === 'hospitality' && /khách sạn|lễ tân|f&b|hospitality|revpar/.test(tagStr)) return true;
+          if (target === 'marketing' && /marketing|seo|content|roas|b2b|copywriting/.test(tagStr)) return true;
+          if (target === 'finance' && /kế toán|kiểm toán|thuế|tài chính|ngân hàng|tín dụng/.test(tagStr)) return true;
+          if (target === 'hr' && /tuyển dụng|review cv|phỏng vấn|star|nhân sự|ats/.test(tagStr)) return true;
+          if (target === 'uiux' && /ui|ux|figma|design system|product design/.test(tagStr)) return true;
+          if (target === 'business' && /sales|đàm phán|kinh doanh|logistics|xuất nhập khẩu|incoterms/.test(tagStr)) return true;
           return false;
         });
       }
@@ -3064,11 +3377,14 @@
 
             <!-- Cột Phải: Nội dung bài viết kiểu Reddit / Blog -->
             <div class="flex-1 min-w-0 p-3.5 sm:p-4 space-y-2">
-              <!-- Meta Header: Subreddit + Author + Time -->
-              <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
-                <span class="px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-700 border border-blue-100">${subredditTag}</span>
+              <!-- Meta Header: Avatar ở góc trái trên + Tác giả + Subreddit + Thời gian -->
+              <div class="flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="flex items-center gap-1.5 group/author cursor-pointer" title="Xem hồ sơ ${p.author}">
+                  <img src="${p.authorAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop'}" alt="${p.author}" class="w-5 h-5 rounded-full object-cover border border-slate-200 group-hover/author:ring-2 group-hover/author:ring-blue-500 transition-all" />
+                  <span class="font-semibold text-slate-700 group-hover/author:text-blue-600 transition-colors">u/${p.subdomain || 'member'}</span>
+                </button>
                 <span>&bull;</span>
-                <span>Đăng bởi <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="font-semibold text-slate-700 hover:text-blue-600 hover:underline cursor-pointer">u/${p.subdomain || 'member'}</button></span>
+                <span class="px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-700 border border-blue-100">${subredditTag}</span>
                 <span>&bull;</span>
                 <span>${postTime}</span>
               </div>
@@ -3099,10 +3415,6 @@
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"/></svg>
                   <span>Chia sẻ</span>
                 </button>
-                <button type="button" onclick="window.location.href='/p/${p.subdomain || 'tuan-nguyen'}'" class="inline-flex items-center gap-1 px-2 py-1 rounded-md hover:bg-blue-50 text-blue-600 transition-colors ml-auto cursor-pointer">
-                  <span>Hồ sơ tác giả</span>
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
-                </button>
               </div>
             </div>
           </article>
@@ -3131,22 +3443,23 @@
       activeSocialCat = cat;
       const buttons = [
         { id: 'socialCatAll', cat: 'all' },
-        { id: 'socialCatBlog', cat: 'blog' },
-        { id: 'socialCatFintech', cat: 'fintech' },
-        { id: 'socialCatBranding', cat: 'branding' },
-        { id: 'socialCatSaas', cat: 'saas' },
+        { id: 'socialCatCyber', cat: 'cybersecurity' },
+        { id: 'socialCatIt', cat: 'it' },
+        { id: 'socialCatHospitality', cat: 'hospitality' },
+        { id: 'socialCatMarketing', cat: 'marketing' },
+        { id: 'socialCatFinance', cat: 'finance' },
+        { id: 'socialCatHr', cat: 'hr' },
         { id: 'socialCatUiux', cat: 'uiux' },
-        { id: 'socialCatDesignSystem', cat: 'design-system' },
-        { id: 'socialCat3d', cat: '3d' }
+        { id: 'socialCatBusiness', cat: 'business' }
       ];
 
       buttons.forEach(b => {
         const el = document.getElementById(b.id);
         if (el) {
           if (b.cat === cat) {
-            el.className = 'px-3 py-1.5 rounded-full font-semibold bg-slate-900 text-white transition-all cursor-pointer';
+            el.className = 'px-2.5 py-1 rounded-md font-semibold bg-slate-900 text-white transition-all cursor-pointer';
           } else {
-            el.className = 'px-3 py-1.5 rounded-full font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer';
+            el.className = 'px-2.5 py-1 rounded-md font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all cursor-pointer';
           }
         }
       });
