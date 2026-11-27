@@ -91,6 +91,7 @@ function isPlainObject(v) {
 function stripUnsafeChars(val) {
   if (val === null || val === undefined) return '';
   return String(val)
+    .normalize('NFC')
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
     .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '');
 }
@@ -442,7 +443,8 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
 
     if (rawUpdates.theme.bgColor !== undefined) {
       const bgHex = sanitizeHexColor(rawUpdates.theme.bgColor);
-      if (bgHex && bgHex !== String(curTheme.bgColor || '').toLowerCase()) {
+      const curBgNorm = String(curTheme.bgColor || '#ffffff').toLowerCase();
+      if (bgHex && bgHex !== curBgNorm) {
         cleanTheme.bgColor = bgHex;
         const curText = sanitizeHexColor(rawUpdates.theme.textColor) || sanitizeHexColor(curTheme.textColor) || '#1f2937';
         if (contrastRatio(curText, bgHex) < 3.0 && rawUpdates.theme.textColor === undefined) {
@@ -950,11 +952,12 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
     if (Object.keys(nextVis).length > 0) clean.sectionsVisibility = { ...curVis, ...nextVis };
   }
 
-  // 14. Section Order (ensures permutation of all valid section keys)
+  // 14. Section Order (ensures permutation of all valid section keys; _forceSectionOrder emits even when target is already at requested edge)
   if (Array.isArray(rawUpdates.sectionOrder)) {
     const curOrder = Array.isArray(currentCvData?.sectionOrder) && currentCvData.sectionOrder.length > 0
       ? currentCvData.sectionOrder
       : DEFAULT_SECTION_ORDER;
+    const forceOrder = rawUpdates._forceSectionOrder === true;
     const validProvided = dedupeStrings(
       rawUpdates.sectionOrder.filter(k => typeof k === 'string' && ALLOWED_ORDER_KEYS.has(k))
     );
@@ -963,7 +966,7 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
         ...validProvided,
         ...DEFAULT_SECTION_ORDER.filter(k => !validProvided.includes(k))
       ];
-      if (JSON.stringify(fullOrder) !== JSON.stringify(curOrder)) {
+      if (forceOrder || JSON.stringify(fullOrder) !== JSON.stringify(curOrder)) {
         clean.sectionOrder = fullOrder;
       }
     }
@@ -1455,18 +1458,32 @@ function parseSkillTokens(str) {
     .filter(s => s.name && s.name.length <= 70 && s.name.split(/\s+/).length <= 10);
 }
 
-const NEW_CLAUSE_START_NORM_RE = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+)?(?:doi|sua|cap\s+nhat|thay(?:\s+doi|\s+the)?|them|bo\s+sung|xoa|bo|go|loai\s+bo|viet(?:\s+lai)?|(?:toi\s+uu|nang\s+cap)\s+(?:muc\s+tieu|phan|cv|mo\s+ta|kinh\s+nghiem)|chinh|dat\s+(?:lai|mau|ten|level|muc|font|phong|co\s+chu)|(?:tang|giam)\s+(?:co\s+chu|chu|gian\s+dong|dan\s+dong|khoang\s+cach|level|muc)|thu\s+nho|phong\s+to|(?:an|hien|bat|tat)\s+(?:tat\s+ca|toan\s+bo|het|moi|muc|phan|section|anh|hinh|avatar|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu)|sap\s+xep|(?:dua|chuyen|day|keo)\s+(?:muc|phan|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|sang|thanh|font|phong|mau)|(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|giai\s+thuong|hoat\s+dong(?:\s+ngoai\s+khoa)?|so\s+thich|(?:nguoi\s+)?tham\s+chieu)\s+(?:len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau))|canh\s+(?:trai|phai|giua|deu)|in\s+(?:dam|nghieng)|gach\s+chan|lam\s+cho|cho\s+(?:chu|ten|mau|co\s+chu|gian\s+dong)|toi\s+ten|ten\s+(?:toi\s+|cua\s+toi\s+)?(?:la|mau)|ho\s+(?:va\s+)?ten\s*(?:la|thanh|sang|:)|font(?:\s+chu)?|phong(?:\s+chu)?|co\s+chu|gian\s+dong|dan\s+dong|cach\s+dong|khoang\s+cach\s+dong|email\s*(?:la|thanh|sang|:)|e-mail\s*(?:la|thanh|sang|:)|sdt\s*(?:la|thanh|sang|:)|so\s+dien\s+thoai\s*(?:la|thanh|sang|:)|dien\s+thoai\s*(?:la|thanh|sang|:)|dia\s+chi\s*(?:la|thanh|sang|:)|website\s*(?:la|thanh|sang|:)|linkedin\s*(?:la|thanh|sang|:)|github\s*(?:la|thanh|sang|:)|portfolio\s*(?:la|thanh|sang|:)|avatar\s*(?:la|thanh|sang|:)|anh\s+dai\s+dien\s*(?:la|thanh|sang|:)|ngay\s+sinh\s*(?:la|thanh|sang|:)|gioi\s+tinh\s*(?:la|thanh|sang|:))\b/i;
+const COLOR_VALUE_NORM_PART = '(?:#[0-9a-f]{3,6}\\b|rgb\\s*\\(|\\b(?:do|xanh|tim|vang|cam|den|trang|hong|xam|nau|kem|red|blue|green|purple|violet|indigo|amber|gold|orange|pink|rose|teal|cyan|navy|gray|grey|slate|black|white|crimson|burgundy)\\b)';
 
-// Matches elliptical (verbless) 2nd+ clauses ONLY when the preceding clause already has its own predicate (thành/sang/là/:/lên/xuống),
+const NEW_CLAUSE_START_NORM_RE = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+)?(?:doi|sua|cap\s+nhat|thay(?:\s+doi|\s+the)?|them|bo\s+sung|xoa|bo|go|loai\s+bo|viet(?:\s+lai)?|(?:toi\s+uu|nang\s+cap)\s+(?:muc\s+tieu|phan|cv|mo\s+ta|kinh\s+nghiem)|chinh|dat\s+(?:lai|mau|ten|level|muc|font|phong|co\s+chu)|(?:tang|giam)\s+(?:co\s+chu|chu|gian\s+dong|dan\s+dong|khoang\s+cach|level|muc)|thu\s+nho|phong\s+to|(?:an|hien|bat|tat)\s+(?:tat\s+ca|toan\s+bo|het|moi|muc|phan|section|anh|hinh|avatar|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|tuy\s+chinh|custom\s+sections?)|sap\s+xep|(?:dua|chuyen|day|keo)\s+(?:muc|phan|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|tuy\s+chinh|custom\s+sections?|sang|thanh|font|phong|mau)|(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|giai\s+thuong|hoat\s+dong(?:\s+ngoai\s+khoa)?|so\s+thich|(?:nguoi\s+)?tham\s+chieu|muc\s+tuy\s+chinh|tuy\s+chinh|custom\s+sections?)\s+(?:len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau))|canh\s+(?:trai|phai|giua|deu)|in\s+(?:dam|nghieng)|gach\s+chan|lam\s+cho|cho\s+(?:chu|ten|mau|co\s+chu|gian\s+dong)|toi\s+ten|ten\s+(?:toi\s+|cua\s+toi\s+)?(?:la|mau)|ho\s+(?:va\s+)?ten\s*(?:la|thanh|sang|:)|font(?:\s+chu)?|phong(?:\s+chu)?|co\s+chu|gian\s+dong|dan\s+dong|cach\s+dong|khoang\s+cach\s+dong|email\s*(?:la|thanh|sang|:)|e-mail\s*(?:la|thanh|sang|:)|sdt\s*(?:la|thanh|sang|:)|so\s+dien\s+thoai\s*(?:la|thanh|sang|:)|dien\s+thoai\s*(?:la|thanh|sang|:)|dia\s+chi\s*(?:la|thanh|sang|:)|website\s*(?:la|thanh|sang|:)|linkedin\s*(?:la|thanh|sang|:)|github\s*(?:la|thanh|sang|:)|portfolio\s*(?:la|thanh|sang|:)|avatar\s*(?:la|thanh|sang|:)|anh\s+dai\s+dien\s*(?:la|thanh|sang|:)|ngay\s+sinh\s*(?:la|thanh|sang|:)|gioi\s+tinh\s*(?:la|thanh|sang|:))\b/i;
+
+// Matches elliptical (verbless) 2nd+ clauses ONLY when the preceding clause already has its own predicate (thành/sang/là/:/lên/xuống/color/number),
 // so multi-target clauses like "đổi màu tiêu đề và tên công ty sang đỏ" or "đổi email và điện thoại cùng lúc" are NEVER split prematurely!
-const ELLIPTICAL_ASSIGNMENT_CLAUSE_NORM_RE = /^(?:(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+cua\s+toi|\s+ung\s+vien)?|email|e-mail|thu\s+dien\s+tu|sdt|so\s+dien\s+thoai|dien\s+thoai|phone|dia\s+chi|noi\s+o|cho\s+o|que\s+quan|ngay\s+sinh|sinh\s+ngay|dob|gioi\s+tinh|gender|website|trang\s+web|portfolio|linkedin|github|gitlab|behance|avatar|anh\s+dai\s+dien|vi\s+tri(?:\s+ung\s+tuyen|\s+cong\s+viec|\s+lam\s+viec|\s+kinh\s+nghiem)?|chuc\s+danh|chuc\s+vu|muc\s+tieu(?:\s+nghe\s+nghiep)?)\s+(?:thanh|sang|la|:)\s*\S+|mau\s+(?:[a-z0-9#]+\s+){0,6}?(?:sang|thanh|la|:)\s*\S+|(?:le\s+(?:trai|phai|tren|duoi|trang)|margin(?:-(?:left|right|top|bottom))?)\s*(?:thanh|sang|la|:)?\s*\d+|(?:ten\s+(?:cong\s+ty|truong|du\s+an)|cong\s+ty|truong(?:\s+dai\s+hoc)?|bang\s+cap|chuyen\s+nganh|gpa|nam\s+(?:tot\s+nghiep|chung\s+chi|giai\s+thuong)|vai\s+tro(?:\s+du\s+an)?|cong\s+nghe(?:\s+du\s+an)?|so\s+thich|level\s+\S+)(?:\s+.+?)?\s+(?:thanh|sang|la|:)\s*\S+)/i;
+const ELLIPTICAL_ASSIGNMENT_CLAUSE_NORM_RE = new RegExp(
+  `^(?:` +
+    `(?:ho\\s+(?:va\\s+)?ten|ten(?:\\s+toi|\\s+cua\\s+toi|\\s+ung\\s+vien)?|email|e-mail|thu\\s+dien\\s+tu|sdt|so\\s+dien\\s+thoai|dien\\s+thoai|phone|dia\\s+chi|noi\\s+o|cho\\s+o|que\\s+quan|ngay\\s+sinh|sinh\\s+ngay|dob|gioi\\s+tinh|gender|website|trang\\s+web|portfolio|linkedin|github|gitlab|behance|avatar|anh\\s+dai\\s+dien|vi\\s+tri(?:\\s+ung\\s+tuyen|\\s+cong\\s+viec|\\s+lam\\s+viec|\\s+kinh\\s+nghiem)?|chuc\\s+danh|chuc\\s+vu|muc\\s+tieu(?:\\s+nghe\\s+nghiep)?)\\s+(?:thanh|sang|la|:)\\s*\\S+|` +
+    `mau\\s+(?:[a-z0-9#]+\\s+){0,6}?(?:(?:sang|thanh|la|:)\\s*\\S+|${COLOR_VALUE_NORM_PART})|` +
+    `(?:(?:mau\\s+)?(?:chu|van\\s+ban|nen(?:\\s+cv)?)|text\\s*color|background)\\s+(?:(?:sang|thanh|la|mau|:)\\s*)?${COLOR_VALUE_NORM_PART}|` +
+    `(?:le\\s+(?:trai|phai|tren|duoi|trang)|margin(?:-(?:left|right|top|bottom))?)\\s*(?:thanh|sang|la|:)?\\s*\\d+|` +
+    `(?:ten\\s+(?:cong\\s+ty|truong|du\\s+an|muc\\s+tuy\\s+chinh)|cong\\s+ty|truong(?:\\s+dai\\s+hoc)?|bang\\s+cap|chuyen\\s+nganh|gpa|nam\\s+(?:tot\\s+nghiep|chung\\s+chi|giai\\s+thuong)|vai\\s+tro(?:\\s+du\\s+an)?|cong\\s+nghe(?:\\s+du\\s+an)?|so\\s+thich|level\\s+\\S+)(?:\\s+.+?)?\\s+(?:thanh|sang|la|:)\\s*\\S+` +
+  `)`,
+  'i'
+);
 
-const PREV_CLAUSE_HAS_PREDICATE_NORM_RE = /\b(?:thanh|sang|la|len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau)|xoa|them|bo\s+sung|an|hien)\b|:/i;
+const PREV_CLAUSE_HAS_PREDICATE_NORM_RE = new RegExp(
+  `\\b(?:thanh|sang|la|len\\s+(?:dau|tren|truoc)|xuong\\s+(?:cuoi|duoi|sau)|xoa|them|bo\\s+sung|an|hien)\\b|:|${COLOR_VALUE_NORM_PART}|\\b\\d+(?:\\.\\d+)?(?:px|pt|cm|mm)\\b`,
+  'i'
+);
 
 function expandEllipticalIndexedClauses(clauseList) {
   const expanded = [];
-  const prefixRe = /^((?:hãy\s+|vui lòng\s+)?(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên\s+công\s+ty|công\s+ty|vị\s+trí(?:\s+công\s+việc|\s+làm\s+việc|\s+kinh\s+nghiệm)?|chức\s+vụ(?:\s+công\s+việc|\s+kinh\s+nghiệm)?|tên\s+trường|trường(?:\s+đại\s+học)?|bằng\s+cấp|chuyên\s+ngành|tên\s+dự\s+án|vai\s+trò(?:\s+dự\s+án)?|công\s+nghệ(?:\s+dự\s+án)?|chứng\s+chỉ|giải\s+thưởng|level(?:\s+kỹ\s+năng)?))\s+(.+)$/i;
-  const splitEllipticalRe = /(?:,\s*|\s+và\s+)(?=(?:thứ\s+|số\s+|mục\s+|#)?(?:\d{1,2}|một|nhất|hai|ba|bốn|tư|năm|sáu|đầu(?:\s+tiên)?|cuối(?:\s+cùng)?)\s+(?:thành|sang|là|:)\s+)/i;
+  const prefixRe = /^((?:hãy\s+|vui lòng\s+)?(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên\s+công\s+ty|công\s+ty|vị\s+trí(?:\s+công\s+việc|\s+làm\s+việc|\s+kinh\s+nghiệm)?|chức\s+vụ(?:\s+công\s+việc|\s+kinh\s+nghiệm)?|tên\s+trường|trường(?:\s+đại\s+học)?|bằng\s+cấp|chuyên\s+ngành|tên\s+dự\s+án|vai\s+trò(?:\s+dự\s+án)?|công\s+nghệ(?:\s+dự\s+án)?|(?:năm\s+|tên\s+|đơn\s+vị(?:\s+cấp)?\s+|nơi\s+cấp\s+)?(?:chứng\s+chỉ|certificate|giải\s+thưởng|award)|(?:tên\s+|tiêu\s+đề\s+)?(?:mục\s+tùy\s+chỉnh|custom\s+sections?|mục\s+tự\s+tạo)|level(?:\s+kỹ\s+năng)?))\s+(.+)$/i;
+  const splitEllipticalRe = /(?:,\s*|\s+và\s+)(?=(?:(?:thứ\s+|số\s+|mục\s+|năm\s+|#)?(?:\d{1,4}|một|nhất|hai|ba|bốn|tư|năm|sáu|đầu(?:\s+tiên)?|cuối(?:\s+cùng)?)|[A-Za-zÀ-ỹ0-9+#./_-]{1,35}(?:\s+[A-Za-zÀ-ỹ0-9+#./_-]{1,35}){0,2})\s+(?:thành|sang|là|:)\s+\S+)/i;
   const leadingActionRe = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+)?(?:doi|sua|cap\s+nhat|thay|them|bo\s+sung|xoa|bo|go|loai\s+bo|viet|toi\s+uu|nang\s+cap|chinh|dat|tang|giam|thu\s+nho|phong\s+to|an|hien|bat|tat|sap\s+xep|dua|chuyen|day|keo|canh|in|gach|lam|cho|toi\s+ten|ten\s+(?:toi\s+)?la|ho\s+(?:va\s+)?ten\s*(?:la|:))\b/i;
 
   for (const c of clauseList) {
@@ -1474,14 +1491,18 @@ function expandEllipticalIndexedClauses(clauseList) {
     if (m && splitEllipticalRe.test(m[2])) {
       const sharedHead = m[1].trim();
       const parts = m[2].split(splitEllipticalRe).map(p => p.trim()).filter(Boolean);
-      if (parts.length >= 2) {
+      if (parts.length >= 2 && parts.every(p => /^(?!thành\b|sang\b|là\b|:).+?\s+(?:thành|sang|là|:)\s+\S+/i.test(p))) {
         parts.forEach(p => expanded.push(`${sharedHead} ${p}`));
         continue;
       }
     }
     const cNorm = normalizeCheck(c);
     if (!leadingActionRe.test(cNorm) && ELLIPTICAL_ASSIGNMENT_CLAUSE_NORM_RE.test(cNorm)) {
-      expanded.push(`đổi ${c}`);
+      if (/^(?:chữ|văn\s+bản|nền)(?=\s)/i.test(c.trim())) {
+        expanded.push(`đổi màu ${c}`);
+      } else {
+        expanded.push(`đổi ${c}`);
+      }
     } else {
       expanded.push(c);
     }
@@ -1541,7 +1562,7 @@ const SECTION_LOOKUP = [
   { key: 'activities', label: 'Hoạt động ngoại khóa', re: /\b(?:hoat\s+dong(?:\s+ngoai\s+khoa)?|tinh\s+nguyen|activities)\b/i },
   { key: 'interests', label: 'Sở thích', re: /\b(?:so\s+thich|interests?|hobbies)\b/i },
   { key: 'references', label: 'Người tham chiếu', re: /\b(?:nguoi\s+tham\s+chieu|tham\s+chieu|references?)\b/i },
-  { key: 'customSections', label: 'Mục tùy chỉnh', re: /\b(?:custom\s+sections?|muc\s+tuy\s+chinh|muc\s+tu\s+tao)\b/i }
+  { key: 'customSections', label: 'Mục tùy chỉnh', re: /\b(?:custom\s+sections?|muc\s+tuy\s+chinh|tuy\s+chinh|muc\s+tu\s+tao|tu\s+tao|muc\s+rieng)\b/i }
 ];
 
 function findSectionKeyFromText(text) {
@@ -1609,8 +1630,8 @@ function applySingleClause(clauseRaw, state) {
     return base;
   };
 
-  // ─── A. SECTION REORDERING ("đưa học vấn lên đầu và kỹ năng xuống cuối", "đưa học vấn xuống cuối và mục tiêu lên đầu") ───
-  const reorderTopBottom = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:dua|chuyen|day|keo|dat|sap\s+xep|xep)\s+)?(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(.+?)\s+(len\s+dau(?:\s+tien|\s+cv|\s+trang)?|len\s+tren\s+cung|xuong\s+cuoi(?:\s+cung|\s+cv|\s+trang)?|xuong\s+duoi\s+cung)$/i);
+  // ─── A. SECTION REORDERING ("đưa học vấn lên đầu và kỹ năng xuống cuối", "đưa mục tùy chỉnh lên đầu / xuống cuối") ───
+  const reorderTopBottom = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:dua|chuyen|day|keo|dat|sap\s+xep|xep)\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+?)\s+(len\s+dau(?:\s+tien|\s+cv|\s+trang)?|len\s+tren\s+cung|xuong\s+cuoi(?:\s+cung|\s+cv|\s+trang)?|xuong\s+duoi\s+cung)$/i);
   if (reorderTopBottom) {
     const secKey = findSectionKeyFromText(reorderTopBottom[1]);
     if (secKey && ALLOWED_ORDER_KEYS.has(secKey)) {
@@ -1619,12 +1640,13 @@ function applySingleClause(clauseRaw, state) {
       const isTop = /^len/.test(reorderTopBottom[2]);
       const nextOrder = isTop ? [secKey, ...without] : [...without, secKey];
       updates.sectionOrder = nextOrder;
+      updates._forceSectionOrder = true;
       workingCv.sectionOrder = nextOrder;
       return true;
     }
   }
 
-  const reorderRelative = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:dua|chuyen|day|keo|dat|doi\s+cho|sap\s+xep|xep)\s+)?(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(.+?)\s+(len\s+truoc|truoc|len\s+tren|xuong\s+sau|sau|xuong\s+duoi)\s+(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(.+)$/i);
+  const reorderRelative = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:dua|chuyen|day|keo|dat|doi\s+cho|sap\s+xep|xep)\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+?)\s+(len\s+truoc|truoc|len\s+tren|xuong\s+sau|sau|xuong\s+duoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+)$/i);
   if (reorderRelative) {
     const srcKey = findSectionKeyFromText(reorderRelative[1]);
     const dstKey = findSectionKeyFromText(reorderRelative[3]);
@@ -1635,6 +1657,7 @@ function applySingleClause(clauseRaw, state) {
       const before = /truoc|tren/.test(reorderRelative[2]);
       without.splice(before ? dstIdx : dstIdx + 1, 0, srcKey);
       updates.sectionOrder = without;
+      updates._forceSectionOrder = true;
       workingCv.sectionOrder = without;
       return true;
     }
@@ -1654,10 +1677,10 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  const toggleVisMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(an|tat|hien|bat|hien\s+thi)\s+(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(.+)$/i);
+  const toggleVisMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(an|tat|hien|bat|hien\s+thi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+)$/i);
   if (toggleVisMatch && !/\b(?:anh\s+dai\s+dien|avatar)\b/i.test(norm)) {
     const parts = toggleVisMatch[2].split(/\s*(?:,|;|\s+(?:va|hoac|cung)\s+)\s*/i).filter(Boolean);
-    const matchedKeys = parts.map(p => findSectionKeyFromText(p.replace(/^(?:muc\s+(?!tieu\b)|phan\s+|section\s+)/i, '')));
+    const matchedKeys = parts.map(p => findSectionKeyFromText(p.replace(/^(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)/i, '')));
     if (matchedKeys.length > 0 && matchedKeys.every(Boolean)) {
       const visible = /^(?:hien|bat)/.test(toggleVisMatch[1]);
       const curVis = { ...(workingCv.sectionsVisibility || {}), ...(updates.sectionsVisibility || {}) };
@@ -1676,11 +1699,11 @@ function applySingleClause(clauseRaw, state) {
     const parts = splitOutsideParens(multiSecClearMatch[1].replace(/[.!?]+$/, ''), true);
     if (parts.length >= 2) {
       const isPureSecPart = partStr => {
-        const pNorm = normalizeCheck(partStr).replace(/^(?:tat\s+ca|toan\s+bo|het|cac|muc\s+(?!tieu\b)|phan)\s+/g, '').trim();
+        const pNorm = normalizeCheck(partStr).replace(/^(?:tat\s+ca|toan\s+bo|het|cac|muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan)\s+/g, '').trim();
         const sk = findSectionKeyFromText(pNorm);
         if (!sk) return null;
         const leftover = pNorm
-          .replace(/\b(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|gioi\s+thieu|tom\s+tat|objective|summary|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|skill|du\s+an|projects?|project|chung\s+chi|certificates?|giai\s+thuong|thanh\s+tuu|awards?|hoat\s+dong(?:\s+ngoai\s+khoa)?|activities|so\s+thich|interests?|hobbies|nguoi\s+tham\s+chieu|tham\s+chieu|references?|custom\s+sections?|muc\s+tuy\s+chinh)\b/gi, '')
+          .replace(/\b(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|gioi\s+thieu|tom\s+tat|objective|summary|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|skill|du\s+an|projects?|project|chung\s+chi|certificates?|giai\s+thuong|thanh\s+tuu|awards?|hoat\s+dong(?:\s+ngoai\s+khoa)?|activities|so\s+thich|interests?|hobbies|nguoi\s+tham\s+chieu|tham\s+chieu|references?|custom\s+sections?|muc\s+tuy\s+chinh|tuy\s+chinh|muc\s+tu\s+tao)\b/gi, '')
           .trim();
         return leftover.length === 0 ? sk : null;
       };
@@ -1698,6 +1721,170 @@ function applySingleClause(clauseRaw, state) {
         return true;
       }
     }
+  }
+
+  // ─── C0. FULL CUSTOM SECTIONS ("mục tùy chỉnh" / "custom section" / "mục tự tạo"): DELETE, RENAME TITLE, EDIT ITEMS, MULTI-ADD ───
+  if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+|toàn bộ\s+|hết\s+|sạch\s+|các\s+)?(?:custom\s+sections?|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo|mục\s+riêng)\s*[.!?]*$/i.test(raw)) {
+    updates.customSections = []; workingCv.customSections = []; return true;
+  }
+  const delSingleCsMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:custom\s+sections?|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo|mục\s+riêng)\s+([^\r\n!?]+)$/i);
+  if (delSingleCsMatch) {
+    const curCs = Array.isArray(workingCv.customSections) ? workingCv.customSections : [];
+    if (curCs.length === 0) { notices.push('Hiện tại CV chưa có mục tùy chỉnh nào để xóa.'); return true; }
+    const tail = sanitizeText(delSingleCsMatch[1].replace(/[.!?]+$/, ''), 120);
+    if (isPurePositionalSelector(tail)) {
+      const pos = resolveOneBasedIndex(tail, curCs.length);
+      if (pos.outOfRange || pos.index0 === null) {
+        notices.push(`CV hiện chỉ có ${curCs.length} mục tùy chỉnh nên không thể xóa mục #${pos.requested1}.`);
+        return true;
+      }
+      const nextCs = curCs.filter((_, i) => i !== pos.index0);
+      updates.customSections = nextCs; workingCv.customSections = nextCs;
+      return true;
+    }
+    const tNorm = normalizeCheck(tail).replace(/\.\.\.+$/, '').trim();
+    const byTitleIdx = curCs.findIndex(cs => normalizeCheck(cs.title || '').includes(tNorm) || tNorm.includes(normalizeCheck(cs.title || '')));
+    if (byTitleIdx !== -1) {
+      const nextCs = curCs.filter((_, i) => i !== byTitleIdx);
+      updates.customSections = nextCs; workingCv.customSections = nextCs;
+      return true;
+    }
+    notices.push(`Không tìm thấy mục tùy chỉnh "${tail}" trong CV để xóa.`);
+    return true;
+  }
+
+  if (isEditVerb && Array.isArray(workingCv.customSections)) {
+    const curCs = workingCv.customSections;
+    // Edit custom section items/content ("đổi nội dung mục tùy chỉnh Ngoại ngữ thành Tiếng Anh, Tiếng Nhật")
+    const csContentEdit = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:nội dung|các ý|danh sách)\s+(?:của\s+)?(?:custom\s+sections?|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo)(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n!?]+)/i);
+    if (csContentEdit && curCs.length > 0) {
+      const selRaw = (csContentEdit[1] || '').trim();
+      const selNorm = normalizeCheck(selRaw).replace(/\.\.\.+$/, '').trim();
+      let idx = 0;
+      if (selRaw && !isPurePositionalSelector(selRaw)) {
+        idx = curCs.findIndex(cs => normalizeCheck(cs.title || '').includes(selNorm));
+        if (idx === -1) { notices.push(`Không tìm thấy mục tùy chỉnh "${selRaw}" trong CV.`); return true; }
+      } else if (selRaw) {
+        idx = resolveOneBasedIndex(selRaw, curCs.length).index0 ?? 0;
+      }
+      const newItems = splitOutsideParens(csContentEdit[2].replace(/[.!?]+$/, ''), true).map(x => sanitizeText(x, 300)).filter(Boolean);
+      const nextCs = curCs.map((cs, i) => (i === idx ? { ...cs, items: newItems } : { ...cs }));
+      updates.customSections = nextCs; workingCv.customSections = nextCs;
+      return true;
+    }
+
+    // Rename custom section title ("đổi tên mục tùy chỉnh CORE SKILLS... thành TECH STACK", "đổi tên mục CORE SKILLS & TECH STACK thành TECH STACK")
+    const csTitleEdit = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên\s+|tiêu\s+đề\s+)?(?:custom\s+sections?|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo|mục\s+riêng)(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i) ||
+      (curCs.length > 0 ? raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên|tiêu\s+đề)\s+mục\s+(.+?)\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i) : null);
+    if (csTitleEdit) {
+      if (curCs.length === 0) {
+        notices.push('Hiện tại CV chưa có mục tùy chỉnh nào để đổi tên. Bạn có thể tạo trước bằng lệnh "thêm mục tùy chỉnh: TECH STACK".');
+        return true;
+      }
+      const selRaw = (csTitleEdit[1] || '').replace(/^của\s+/i, '').trim();
+      const selNorm = normalizeCheck(selRaw).replace(/\.\.\.+$/, '').trim();
+      const newTitle = sanitizeText(csTitleEdit[2].replace(/[.!?]+$/, ''), 100);
+      if (newTitle) {
+        let targetIdx = -1;
+        if (selRaw && !isPurePositionalSelector(selRaw)) {
+          targetIdx = curCs.findIndex(cs => {
+            const cNorm = normalizeCheck(cs.title || '');
+            return cNorm.includes(selNorm) || (cNorm.length >= 3 && selNorm.includes(cNorm));
+          });
+          if (targetIdx === -1) {
+            // Only intercept generic "đổi tên mục X" if X actually referred to customSections!
+            if (/\b(?:custom\s+section|tuy\s+chinh|tu\s+tao|muc\s+rieng)\b/i.test(norm)) {
+              notices.push(`Không tìm thấy mục tùy chỉnh "${sanitizeText(selRaw, 80)}" trong CV hiện tại.`);
+              return true;
+            }
+          }
+        } else {
+          const pos = resolveOneBasedIndex(selRaw || raw, curCs.length);
+          if (pos.outOfRange || pos.index0 === null) {
+            notices.push(`CV hiện chỉ có ${curCs.length} mục tùy chỉnh nên không thể sửa mục #${pos.requested1}.`);
+            return true;
+          }
+          targetIdx = pos.index0;
+        }
+        if (targetIdx >= 0) {
+          const nextCs = curCs.map((cs, i) => (i === targetIdx ? { ...cs, title: newTitle } : { ...cs }));
+          updates.customSections = nextCs; workingCv.customSections = nextCs;
+          return true;
+        }
+      }
+    }
+  }
+
+  // Add 1 or N custom sections ("thêm 2 mục tùy chỉnh: Ngoại ngữ, Tin học", "thêm 2 mục tùy chỉnh: Ngoại ngữ: Tiếng Anh; Tin học: Excel", "thêm custom section Ngoại ngữ: Tiếng Anh, Tiếng Nhật")
+  const addCsCmdMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|tạo)\s+(?:(\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:custom\s+sections?|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo|mục\s+riêng)(?=$|[\s,:;.!?)])/i);
+  if (addCsCmdMatch) {
+    const reqCount = parseSmallCount(addCsCmdMatch[1]) || (addCsCmdMatch[1] && /cac|nhieu/i.test(normalizeCheck(addCsCmdMatch[1])) ? 2 : 1);
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|tạo)\s+(?:(?:\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:custom\s+sections?|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo|mục\s+riêng)\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+    if (!tail) {
+      notices.push('Bạn muốn đặt tiêu đề gì và thêm nội dung gì cho mục tùy chỉnh? (VD: "thêm mục tùy chỉnh Ngoại ngữ: Tiếng Anh, Tiếng Nhật" hoặc "thêm 2 mục tùy chỉnh: Ngoại ngữ, Tin học").');
+      return true;
+    }
+    const nextCs = Array.isArray(workingCv.customSections) ? workingCv.customSections.map(c => ({ ...c })) : [];
+    const curVis = { ...(workingCv.sectionsVisibility || {}), ...(updates.sectionsVisibility || {}) };
+    if (curVis.customSections === false) {
+      curVis.customSections = true;
+      updates.sectionsVisibility = curVis;
+      workingCv.sectionsVisibility = curVis;
+    }
+
+    const parseOneCsSpec = (specStr, idx) => {
+      const trimmed = specStr.trim();
+      if (!trimmed) return null;
+      const colonIdx = trimmed.indexOf(':');
+      if (colonIdx !== -1) {
+        const title = sanitizeText(trimmed.slice(0, colonIdx), 100) || `Mục bổ sung ${idx + 1}`;
+        const items = splitOutsideParens(trimmed.slice(colonIdx + 1), true).map(x => sanitizeText(x, 300)).filter(Boolean);
+        return { id: `cs_ai_${Date.now()}_${idx}`, title, items };
+      }
+      const parenMatch = trimmed.match(/^([^(]+?)\s*\(([^)]+)\)\s*$/);
+      if (parenMatch) {
+        const title = sanitizeText(parenMatch[1], 100) || `Mục bổ sung ${idx + 1}`;
+        const items = splitOutsideParens(parenMatch[2], true).map(x => sanitizeText(x, 300)).filter(Boolean);
+        return { id: `cs_ai_${Date.now()}_${idx}`, title, items };
+      }
+      const dashMatch = trimmed.match(/^(.+?)\s+[-–—]\s+(.+)$/);
+      if (dashMatch) {
+        const title = sanitizeText(dashMatch[1], 100) || `Mục bổ sung ${idx + 1}`;
+        const items = splitOutsideParens(dashMatch[2], true).map(x => sanitizeText(x, 300)).filter(Boolean);
+        return { id: `cs_ai_${Date.now()}_${idx}`, title, items };
+      }
+      return { id: `cs_ai_${Date.now()}_${idx}`, title: sanitizeText(trimmed, 100) || `Mục bổ sung ${idx + 1}`, items: [] };
+    };
+
+    const colonCount = (tail.match(/:/g) || []).length;
+    if (/[;\n]/.test(tail)) {
+      tail.split(/\s*[;\n]+\s*/).filter(Boolean).forEach((entry, idx) => {
+        const csObj = parseOneCsSpec(entry, idx);
+        if (csObj) nextCs.push(csObj);
+      });
+    } else if (colonCount >= 2 && /\s+và\s+[^,:;]+:/i.test(tail)) {
+      tail.split(/\s+và\s+(?=[^,:;]+:)/i).filter(Boolean).forEach((entry, idx) => {
+        const csObj = parseOneCsSpec(entry, idx);
+        if (csObj) nextCs.push(csObj);
+      });
+    } else if (reqCount >= 2 || (!tail.includes(':') && /(?:,|\s+và\s+)/i.test(tail))) {
+      const parts = splitOutsideParens(tail, true);
+      if (parts.length >= 2) {
+        parts.forEach((entry, idx) => {
+          const csObj = parseOneCsSpec(entry, idx);
+          if (csObj) nextCs.push(csObj);
+        });
+      } else {
+        const csObj = parseOneCsSpec(tail, 0);
+        if (csObj) nextCs.push(csObj);
+      }
+    } else {
+      const csObj = parseOneCsSpec(tail, 0);
+      if (csObj) nextCs.push(csObj);
+    }
+
+    updates.customSections = nextCs; workingCv.customSections = nextCs;
+    return true;
   }
 
   // Delete explicit section ("xóa mục CORE SKILLS & TECH STACK" -> checks customSections by title FIRST so built-in skills are preserved!)
@@ -1771,51 +1958,78 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
+  // Protect Vietnamese non-color words ("mẫu" = sample/template, "máu", "mậu", "mâu") from colliding with unaccented "mau" ("màu" = color)!
+  const colorSafeNorm = normalizeCheck(raw.replace(/(?:^|[\s,:;(])(?:mẫu|máu|mậu|mâu)(?=$|[\s,:;.!?)])/gi, ' '));
+
   // Unsupported non-CV-section color targets (footer / page border)
-  if (/\b(?:chan\s+trang|footer|vien\s+trang)\b/i.test(norm) && /\b(?:mau|color|rgb\s*\()\b|#[0-9a-f]{3,6}\b/i.test(norm)) {
+  if (/\b(?:chan\s+trang|footer|vien\s+trang)\b/i.test(norm) && (/\b(?:mau|color|rgb\s*\()\b|#[0-9a-f]{3,6}\b/i.test(colorSafeNorm))) {
     notices.push('Mẫu CV chuẩn A4 hiện không có vùng màu riêng cho chân trang (footer). Bạn có thể đổi màu chủ đạo CV, màu họ tên, màu tên công ty, màu tên trường, màu tiêu đề mục hoặc màu riêng của từng mục.');
     return true;
   }
 
-  // Detect scoped color targets (supports COMBINED targets like "đổi màu tiêu đề và tên công ty sang đỏ" AND missing-color prompt "đổi màu tiêu đề và tên công ty cùng lúc"!)
-  const hasColorIntent = /\b(?:mau|color|tong\s+mau|rgb\s*\()\b|#[0-9a-f]{3,6}\b/i.test(norm) ||
-    /(?:đổi|sửa|chỉnh|thay|chuyển|tô)\s+.+?\s+(?:thành|sang)\s+(?:màu\s+)?(?:đỏ|xanh|tím|vàng|cam|đen|trắng|hồng|xám|nâu)/i.test(raw);
+  // Detect scoped color targets (supports COMBINED targets like "đổi màu tiêu đề và tên công ty sang đỏ", compound fg+bg "đổi màu chữ trắng trên nền đen", AND missing-color prompt!)
+  const hasColorIntent = /\b(?:mau|color|tong\s+mau|rgb\s*\()\b|#[0-9a-f]{3,6}\b/i.test(colorSafeNorm) ||
+    /(?:đổi|sửa|chỉnh|thay|chuyển|tô)\s+.+?\s+(?:thành|sang)\s+(?:màu\s+)?(?:đỏ|xanh|tím|vàng|cam|đen|trắng|hồng|xám|nâu|kem)/i.test(raw) ||
+    /(?:^|[\s,:;(])(?:chữ|nền)\s+(?:màu\s+)?(?:đỏ|xanh|tím|vàng|cam|đen|trắng|hồng|xám|nâu|kem|#[0-9a-f]{3,6})/i.test(raw);
+
+  const mentionsAccentedBg = /\b(?:mau\s+nen|nen\s+cv|nen\s+trang|nen\s+mau|background)\b/i.test(colorSafeNorm) || /(?:^|[\s,:;(])nền(?=$|[\s,:;.!?)])/i.test(raw);
+  const mentionsAccentedText = (/\b(?:mau\s+chu|mau\s+van\s+ban|chu\s+mau|text\s*color)\b/i.test(colorSafeNorm) ||
+    (/(?:^|[\s,:;(])(?:chữ|văn\s+bản)(?=$|[\s,:;.!?)])/i.test(raw) && !/\b(?:co\s+chu|font\s+chu|phong\s+chu|kieu\s+chu)\b/i.test(norm)));
 
   if (hasColorIntent) {
-    const colors = extractAllColors(raw, norm);
+    const colors = extractAllColors(raw, colorSafeNorm);
     if (colors.length > 0) {
       const chosen = colors[0];
       const themeUpdates = { ...(updates.theme || {}) };
-      const hasGradient = /\b(?:gradient|ombre|chuyen\s+sac|chuyen\s+mau|linear-gradient|radial-gradient)\b/i.test(norm) ||
-        (/\btu\s+(?:mau\s+)?\S+\s+sang\s+(?:mau\s+)?\S+/i.test(norm) && colors.length >= 2);
-      if (hasGradient || colors.length >= 2) {
+
+      // Compound foreground + background in one clause ("đổi màu chữ trắng trên nền đen", "nền đen chữ trắng", "màu nền #f8fafc chữ #111827")
+      if (mentionsAccentedText && mentionsAccentedBg && colors.length >= 2) {
+        const textPosMatch = /(?:chữ|văn\s+bản|text)/i.exec(raw);
+        const bgPosMatch = /(?:nền|background)/i.exec(raw);
+        const textIdx = textPosMatch ? textPosMatch.index : 0;
+        const bgIdx = bgPosMatch ? bgPosMatch.index : 9999;
+        if (textIdx <= bgIdx) {
+          themeUpdates.textColor = colors[0].hex;
+          themeUpdates.bgColor = colors[1].hex;
+        } else {
+          themeUpdates.bgColor = colors[0].hex;
+          themeUpdates.textColor = colors[1].hex;
+        }
+        updates.theme = themeUpdates;
+        workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+        return true;
+      }
+
+      const hasGradient = /\b(?:gradient|ombre|chuyen\s+sac|chuyen\s+mau|linear-gradient|radial-gradient)\b/i.test(colorSafeNorm) ||
+        (/\btu\s+(?:mau\s+)?\S+\s+sang\s+(?:mau\s+)?\S+/i.test(colorSafeNorm) && colors.length >= 2);
+      if (hasGradient) {
         notices.push(`Mẫu CV chuẩn ATS chỉ hỗ trợ mã màu đơn sắc (không dùng gradient nhiều màu khi xuất PDF), nên hệ thống áp dụng màu đơn sắc ${chosen.label}.`);
       }
 
       // Accumulate ALL explicitly mentioned sub-targets in the clause (so "đổi màu tiêu đề và tên công ty sang đỏ" sets BOTH!)
       let matchedMultiSubTarget = false;
 
-      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+cong\s+ty|cong\s+ty\s+(?:sang\s+|thanh\s+)?mau)\b/i.test(norm)) {
+      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+cong\s+ty|cong\s+ty\s+(?:sang\s+|thanh\s+)?mau)\b/i.test(colorSafeNorm)) {
         themeUpdates.companyColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+truong|truong(?:\s+dai\s+hoc|\s+hoc)?\s+(?:sang\s+|thanh\s+)?mau)\b/i.test(norm)) {
+      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+truong|truong(?:\s+dai\s+hoc|\s+hoc)?\s+(?:sang\s+|thanh\s+)?mau)\b/i.test(colorSafeNorm)) {
         themeUpdates.schoolColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:ten\s+du\s+an|mau\s+(?:ten\s+)?du\s+an)\b/i.test(norm)) {
+      if (/\b(?:ten\s+du\s+an|mau\s+(?:ten\s+)?du\s+an)\b/i.test(colorSafeNorm)) {
         themeUpdates.projectColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:mau\s+(?:chuc\s+danh|vi\s+tri(?:\s+ung\s+tuyen)?)|(?:chuc\s+danh|vi\s+tri\s+ung\s+tuyen)\s+(?:thanh\s+|sang\s+)?mau)\b/i.test(norm)) {
+      if (/\b(?:mau\s+(?:chuc\s+danh|vi\s+tri(?:\s+ung\s+tuyen)?)|(?:chuc\s+danh|vi\s+tri\s+ung\s+tuyen)\s+(?:thanh\s+|sang\s+)?mau)\b/i.test(colorSafeNorm)) {
         themeUpdates.jobTitleColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:tieu\s+de(?:\s+(?:cac\s+|tat\s+ca\s+)?muc)?|mau\s+tieu\s+de)\b/i.test(norm)) {
+      if (/\b(?:tieu\s+de(?:\s+(?:cac\s+|tat\s+ca\s+)?muc)?|mau\s+tieu\s+de)\b/i.test(colorSafeNorm)) {
         themeUpdates.headingColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:ho\s+(?:va\s+)?ten|ten\s+(?:toi|ung\s+vien))\b/i.test(norm)) {
+      if (/\b(?:ho\s+(?:va\s+)?ten|ten\s+(?:toi|ung\s+vien))\b/i.test(colorSafeNorm)) {
         themeUpdates.nameColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
@@ -1827,7 +2041,7 @@ function applySingleClause(clauseRaw, state) {
       }
 
       // Color ALL sections ("đổi màu tất cả mục sang xanh")
-      if (/\b(?:tat\s+ca|toan\s+bo|moi|cac)\s+(?:cac\s+)?(?:muc|phan|section)s?\b/i.test(norm)) {
+      if (/\b(?:tat\s+ca|toan\s+bo|moi|cac)\s+(?:cac\s+)?(?:muc|phan|section)s?\b/i.test(colorSafeNorm)) {
         const allSecColors = { ...(workingCv.theme?.sectionColors || {}), ...(themeUpdates.sectionColors || {}) };
         for (const sk of ALLOWED_SECTION_COLOR_KEYS) {
           allSecColors[sk] = chosen.hex;
@@ -1840,11 +2054,11 @@ function applySingleClause(clauseRaw, state) {
         return true;
       }
 
-      // Per-section scoped color ("đổi màu kinh nghiệm làm việc sang màu đỏ", "đổi màu mục tiêu sang đỏ")
+      // Per-section scoped color ("đổi màu kinh nghiệm làm việc sang màu đỏ", "đổi màu mục tiêu sang đỏ", "đổi màu mục tùy chỉnh sang đỏ")
       const secColorTarget = findSectionKeyFromText(
-        norm.replace(/\b(?:doi|sua|chinh|thay|chuyen|to|mau|color|sang|thanh|la|cua|cho|o|trong|phan)\b|\bmuc\s+(?!tieu\b)/g, ' ')
+        colorSafeNorm.replace(/\b(?:doi|sua|chinh|thay|chuyen|to|mau|color|sang|thanh|la|cua|cho|o|trong|phan)\b|\bmuc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)/g, ' ')
       );
-      if (secColorTarget && !/\b(?:chu\s+dao|toan\s+bo\s+cv|tong\s+mau)\b/i.test(norm)) {
+      if (secColorTarget && !/\b(?:chu\s+dao|toan\s+bo\s+cv|tong\s+mau)\b/i.test(colorSafeNorm)) {
         const nextSecColors = { ...(workingCv.theme?.sectionColors || {}), ...(themeUpdates.sectionColors || {}), [secColorTarget]: chosen.hex };
         themeUpdates.sectionColors = nextSecColors;
         updates.theme = themeUpdates;
@@ -1859,32 +2073,35 @@ function applySingleClause(clauseRaw, state) {
   }
 
   const isNameColorPhrase =
-    !/\b(?:cong\s+ty|truong|du\s+an|chung\s+chi|giai\s+thuong|chuc\s+danh)\b/i.test(norm) && (
-      /\b(?:doi|sua|chinh|thay|chuyen|cho)?\s*mau\s+(?:cua\s+)?(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+ung\s+vien|\s+tren\s+cv)?)\b/i.test(norm) ||
-      /\b(?:doi|sua|chinh|thay|chuyen)\s+(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+cua\s+toi)?)\s+(?:thanh|sang|la|qua)\s+mau\b/i.test(norm) ||
+    !/\b(?:cong\s+ty|truong|du\s+an|chung\s+chi|giai\s+thuong|chuc\s+danh)\b/i.test(colorSafeNorm) && (
+      /\b(?:doi|sua|chinh|thay|chuyen|cho)?\s*mau\s+(?:cua\s+)?(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+ung\s+vien|\s+tren\s+cv)?)\b/i.test(colorSafeNorm) ||
+      /\b(?:doi|sua|chinh|thay|chuyen)\s+(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+cua\s+toi)?)\s+(?:thanh|sang|la|qua)\s+mau\b/i.test(colorSafeNorm) ||
       /(?:đổi|sửa|chỉnh|thay|chuyển)\s+(?:họ(?:\s+và)?\s+tên|tên(?:\s+tôi|\s+của\s+tôi)?)\s+(?:thành|sang)\s+(?:đỏ(?:\s+đậm)?|xanh(?:\s+lá|\s+dương|\s+navy|\s+ngọc)?|tím|vàng|cam|đen|trắng|hồng|xám|nâu|kem|red|blue|green|purple|black|white|#[0-9a-f]{3,6}|rgb\([^)]+\))\s*$/i.test(raw) ||
-      /^(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi)?)\s+mau\s+/i.test(norm)
+      /^(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi)?)\s+mau\s+/i.test(colorSafeNorm)
     );
 
   const hasAccentedPhongFont = /(?:^|[\s,:;(])phông(?=$|[\s,:;.!?)])/i.test(raw);
 
-  if (STYLE_INTENT_RE.test(norm) || isNameColorPhrase || hasAccentedPhongFont) {
+  if (STYLE_INTENT_RE.test(colorSafeNorm) || isNameColorPhrase || hasAccentedPhongFont) {
     let matchedTheme = false;
     const themeUpdates = { ...(updates.theme || {}) };
-    const colors = extractAllColors(raw, norm);
+    const colors = extractAllColors(raw, colorSafeNorm);
 
     if (colors.length > 0 && (hasColorIntent || isNameColorPhrase)) {
       const chosen = colors[0];
-      if (/\b(?:mau\s+nen|nen\s+cv|nen\s+trang|nen\s+mau|background)\b/i.test(norm)) {
+      if (colors.length >= 2 && !/\b(?:gradient|ombre|chuyen\s+sac|chuyen\s+mau)\b/i.test(colorSafeNorm)) {
+        notices.push(`Mẫu CV chuẩn ATS chỉ hỗ trợ mã màu đơn sắc cho từng vùng (không dùng gradient nhiều màu), nên hệ thống áp dụng màu ${chosen.label}.`);
+      }
+      if (mentionsAccentedBg) {
         themeUpdates.bgColor = chosen.hex;
         matchedTheme = true;
       } else if (
         isNameColorPhrase ||
-        (/\b(?:ten|ho\s+ten)\b/i.test(norm) && !/\b(?:cong\s+ty|truong|du\s+an|chung\s+chi|giai\s+thuong|chuc\s+danh|chu\s+dao|toan\s+bo|tong\s+mau)\b/i.test(norm))
+        (/\b(?:ten|ho\s+ten)\b/i.test(colorSafeNorm) && !/\b(?:cong\s+ty|truong|du\s+an|chung\s+chi|giai\s+thuong|chuc\s+danh|chu\s+dao|toan\s+bo|tong\s+mau)\b/i.test(colorSafeNorm))
       ) {
         themeUpdates.nameColor = chosen.hex;
         matchedTheme = true;
-      } else if (/\b(?:mau\s+chu|mau\s+van\s+ban|chu\s+mau|text\s*color)\b/i.test(norm) && !/\b(?:tieu\s+de|chu\s+dao|ten)\b/i.test(norm)) {
+      } else if (mentionsAccentedText && !/\b(?:tieu\s+de|chu\s+dao|ten)\b/i.test(colorSafeNorm)) {
         themeUpdates.textColor = chosen.hex;
         matchedTheme = true;
       } else {
@@ -1983,7 +2200,7 @@ function applySingleClause(clauseRaw, state) {
   }
 
   // ─── E. GENERIC N-FIRST / N-LAST SLICE DELETION ACROSS ALL ARRAY SECTIONS ("xóa 3 kỹ năng cuối", "xóa 100 kỹ năng cuối") ───
-  const sliceDelNorm = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loai\s+bo)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b))?(.+?)\s+(cuoi(?:\s+cung)?|dau(?:\s+tien)?)$/);
+  const sliceDelNorm = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loai\s+bo)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(.+?)\s+(cuoi(?:\s+cung)?|dau(?:\s+tien)?)$/);
   if (sliceDelNorm) {
     const countN = parseSmallCount(sliceDelNorm[1]);
     const secKey = findSectionKeyFromText(sliceDelNorm[2]);
@@ -2149,7 +2366,7 @@ function applySingleClause(clauseRaw, state) {
 
   // F6. Add skills (validates level 1..5 AND updates level if existing skill is re-added with a new explicit level!)
   const addSkillMatch = raw.match(new RegExp(`(?:(?:thêm|bổ sung|add)\\s+(?:vào\\s+)?(?:\\d+\\s+|các\\s+|một\\s+số\\s+|vài\\s+|những\\s+)?${SKILL_NOUN_RE}|^(?:${SKILL_NOUN_RE}|thành thạo))\\s*(?::|\\s)\\s*([^\\r\\n!?]+)`, 'i'));
-  if (addSkillMatch && !STYLE_INTENT_RE.test(normalizeCheck(addSkillMatch[1]))) {
+  if (addSkillMatch && !STYLE_INTENT_RE.test(normalizeCheck(addSkillMatch[1].replace(/(?:^|[\s,:;(])(?:mẫu|máu|mậu|mâu)(?=$|[\s,:;.!?)])/gi, ' ')))) {
     const allParsed = parseSkillTokens(addSkillMatch[1]);
     const invalid = allParsed.filter(s => s.invalidLevel !== undefined);
     const parsed = allParsed.filter(s => s.invalidLevel === undefined);
@@ -3060,10 +3277,10 @@ function applySingleClause(clauseRaw, state) {
     notices.push('Không tìm thấy người tham chiếu phù hợp để xóa.');
     return true;
   }
-  const addRefCmdMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:người\s+)?tham chiếu(?=$|[\s,:;.!?)])/i);
+  const addRefCmdMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:mục\s+)?(?:người\s+)?tham chiếu(?=$|[\s,:;.!?)])/i);
   if (addRefCmdMatch) {
     const reqCount = parseSmallCount(addRefCmdMatch[1]) || (addRefCmdMatch[1] && /cac|nhieu/i.test(normalizeCheck(addRefCmdMatch[1])) ? 2 : 1);
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:người\s+)?tham chiếu\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:mục\s+)?(?:người\s+)?tham chiếu\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
     if (!tail) {
       notices.push('Bạn muốn thêm người tham chiếu nào (họ tên, chức vụ, công ty, email/SĐT)?');
       return true;
@@ -3089,12 +3306,12 @@ function applySingleClause(clauseRaw, state) {
         } : null;
       };
 
-      const honorificStartRe = /^(?:anh|chị|ông|bà|cô|chú|thầy|ts\.?|ths\.?|pgs\.?|gs\.?|mr\.?|ms\.?|mrs\.?|dr\.?)\s+/i;
-      const roleOrCompKeywordRe = /\b(?:giám\s+đốc|trưởng\s+phòng|phó\s+phòng|quản\s+lý|leader|manager|director|ceo|cto|cfo|hr|chuyên\s+viên|kỹ\s+sư|công\s+ty|tập\s+đoàn|doanh\s+nghiệp|chi\s+nhánh|corp|group|ltd|jsc)\b|@|(?:\+84|0)\d{8,}/i;
+      const honorificNormRe = /^(?:anh|chi|ong|ba|co|chu|thay|ts\.?|ths\.?|pgs\.?|gs\.?|mr\.?|ms\.?|mrs\.?|dr\.?)\s+/i;
+      const roleOrCompNormRe = /\b(?:giam\s+doc|truong\s+phong|pho\s+phong|quan\s+ly|leader|manager|director|ceo|cto|cfo|hr|chuyen\s+vien|ky\s+su|cong\s+ty|tap\s+doan|doanh\s+nghiep|chi\s+nhanh|corp|group|ltd|jsc)\b|@|(?:\+84|0)\d{8,}/i;
       const commaParts = splitOutsideParens(tail, true);
       const secondPartsLookLikePeople = commaParts.length >= 2 && (
-        commaParts.slice(1).some(p => honorificStartRe.test(p.trim())) ||
-        !commaParts.slice(1).some(p => roleOrCompKeywordRe.test(p))
+        commaParts.slice(1).some(p => honorificNormRe.test(normalizeCheck(p))) ||
+        !commaParts.slice(1).some(p => roleOrCompNormRe.test(normalizeCheck(p)))
       );
       const isMultiRef = reqCount >= 2 || /[;\n]|\s+và\s+/i.test(tail) || secondPartsLookLikePeople;
 
@@ -3112,28 +3329,7 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // J6. Custom Sections
-  if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+)?(?:custom\s+sections?|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo)(?=$|[\s,:;.!?)])/i.test(raw)) {
-    updates.customSections = []; workingCv.customSections = []; return true;
-  }
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|tạo)\s+(?:1\s+|một\s+)?(?:custom\s+section|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo)(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|tạo)\s+(?:1\s+|một\s+)?(?:custom\s+section|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo)\s*:?\s*/i, '').trim();
-    if (!tail) {
-      notices.push('Bạn muốn đặt tiêu đề gì và thêm nội dung gì cho mục tùy chỉnh? (VD: "thêm custom section Ngoại ngữ: Tiếng Anh, Tiếng Nhật").');
-      return true;
-    }
-    const nextCs = Array.isArray(workingCv.customSections) ? workingCv.customSections.map(c => ({ ...c })) : [];
-    const colonIdx = tail.indexOf(':');
-    const title = colonIdx !== -1 ? sanitizeText(tail.slice(0, colonIdx), 100) : sanitizeText(tail, 100);
-    const itemsRaw = colonIdx !== -1 ? splitOutsideParens(tail.slice(colonIdx + 1), true) : [];
-    nextCs.push({
-      id: `cs_ai_${Date.now()}`,
-      title: title || 'Mục bổ sung',
-      items: itemsRaw.map(x => sanitizeText(x, 300)).filter(Boolean)
-    });
-    updates.customSections = nextCs; workingCv.customSections = nextCs;
-    return true;
-  }
+  // (Note: J6 Custom Sections are handled with top priority at section C0 above!)
 
   // ─── K0. SPELLCHECK / TYPO PROOFREADER ("sửa lỗi chính tả trong mục tiêu", "kiểm tra chính tả kinh nghiệm / toàn bộ CV") ───
   if (/\b(?:(?:sua|chinh|kiem\s+tra|soat|ra\s+soat)\s+(?:loi\s+)?chinh\s+ta|loi\s+chinh\s+ta|fix\s+(?:typo|spelling))\b/i.test(norm)) {
@@ -3205,7 +3401,7 @@ function applySingleClause(clauseRaw, state) {
     updates.objective = newObj; workingCv.objective = newObj; return true;
   }
 
-  if (/(?:viết(?:\s+lại)?|cập nhật|sửa|sữa|tối ưu|nâng cấp|làm mới)\s+(?:lại\s+)?(?:phần\s+)?(?:mục tiêu|giới thiệu|tóm tắt|objective|summary)/i.test(raw) && !STYLE_INTENT_RE.test(norm)) {
+  if (/(?:viết(?:\s+lại)?|cập nhật|sửa|sữa|tối ưu|nâng cấp|làm mới)\s+(?:lại\s+)?(?:phần\s+)?(?:mục tiêu|giới thiệu|tóm tắt|objective|summary)/i.test(raw) && !STYLE_INTENT_RE.test(colorSafeNorm)) {
     const roleForObj = workingCv?.profile?.jobTitle || 'Chuyên viên';
     const curObj = String(workingCv?.objective || '').trim();
     const yearMatch = curObj.match(/(\d+\+?\s*năm)/i);
@@ -3306,7 +3502,7 @@ function applySingleClause(clauseRaw, state) {
 
   // Profile Job Title (only when NOT referring to experience index!)
   const roleMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)?\s*(?:tên\s+)?(?:vị trí(?:\s+ứng tuyển|\s+mục tiêu)?|chức danh|tiêu đề nghề nghiệp)\s*(?:thành|sang|là|:)\s*([^,;\n!?]{1,90})/i);
-  if (roleMatch && roleMatch[1] && !STYLE_INTENT_RE.test(normalizeCheck(roleMatch[1]))) {
+  if (roleMatch && roleMatch[1] && !STYLE_INTENT_RE.test(normalizeCheck(roleMatch[1].replace(/(?:^|[\s,:;(])(?:mẫu|máu|mậu|mâu)(?=$|[\s,:;.!?)])/gi, ' ')))) {
     const role = sanitizeText(roleMatch[1].replace(/[.!?]+$/, ''), 90);
     if (role && !/\b(?:cong ty|tai |email|sdt)\b/i.test(normalizeCheck(role))) {
       profileUpdates.jobTitle = role; matchedProfile = true;
@@ -3339,7 +3535,7 @@ function applySingleClause(clauseRaw, state) {
   if (matchedProfile) return true;
 
   // L2. Missing-value prompt when user asks to change field(s) WITHOUT giving new value(s) ("đổi email và điện thoại cùng lúc", "đổi email", "sửa tên và chức danh")
-  if (isEditVerb && !/\b(?:thanh|sang|la)\b|:/i.test(norm) && !STYLE_INTENT_RE.test(norm)) {
+  if (isEditVerb && !/\b(?:thanh|sang|la)\b|:/i.test(norm) && !STYLE_INTENT_RE.test(colorSafeNorm)) {
     const fieldSpecs = [
       { re: /\b(?:email|e-mail|thu\s+dien\s+tu)\b/i, label: 'Email', example: 'email thành ten@gmail.com' },
       { re: /\b(?:so\s+dien\s+thoai|dien\s+thoai|sdt|phone)\b/i, label: 'Số điện thoại', example: 'số điện thoại thành 0912345678' },
@@ -3631,7 +3827,7 @@ NHIỆM VỤ:
 Đọc yêu cầu người dùng và trả về DUY NHẤT JSON hợp lệ {"reply": "...", "updates": {...}}:
 - "reply": Văn bản thuần (KHÔNG dùng ** Markdown), trung thực 100%, chỉ báo đã sửa những gì thực sự thay đổi trong "updates".
 - "updates": CHỈ chứa các khóa thực sự thay đổi:
-  1. "theme": { "primaryColor", "nameColor", "textColor", "bgColor", "headingColor", "companyColor", "sectionColors": { "experience"|"education"|"skills"|...: "#RRGGBB" }, "fontFamily" CHỈ trong [${SUPPORTED_FONTS_LIST_STR}] (TUYỆT ĐỐI KHÔNG đổi Arial/Times/Calibri sang Roboto/Merriweather — nếu ngoài danh sách thì để {} và giải thích), "fontSize": "small"|"medium"|"large", "lineSpacing": "compact"|"normal"|"relaxed" }
+  1. "theme": { "primaryColor", "nameColor", "textColor", "bgColor", "headingColor", "companyColor", "schoolColor", "projectColor", "jobTitleColor", "sectionColors": { "experience"|"education"|"skills"|...: "#RRGGBB" }, "fontFamily" CHỈ trong [${SUPPORTED_FONTS_LIST_STR}] (TUYỆT ĐỐI KHÔNG đổi Arial/Times/Calibri sang Roboto/Merriweather — nếu ngoài danh sách thì để {} và giải thích), "fontSize": "small"|"medium"|"large", "fontSizePx": 8..36, "lineSpacing": "compact"|"normal"|"relaxed", "lineSpacingNum": 0.8..3.0, "marginTop"|"marginRight"|"marginBottom"|"marginLeft" }
   2. "profile": { "fullName" (<=50 ký tự), "jobTitle", "email", "phone", "address", "website", "avatar", "showAvatar", "dateOfBirth", "gender" }
   3. "objective", "experience", "education", "skills" (level 1..5), "projects", "certificates", "awards", "activities", "interests", "references", "customSections", "sectionsVisibility", "sectionOrder".
 - Mọi chỉ số vị trí ("2", "thứ 2", "hai", "đầu tiên", "cuối cùng") đều tính 1-based.

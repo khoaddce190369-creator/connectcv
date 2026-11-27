@@ -1167,7 +1167,7 @@ test('Round 5 Audit (All 12 Fail + Partial Cases): schoolColor variants, hiện 
   assert.equal(pt20.body.updates.theme?.fontSizePx, 20);
 
   const indexHtml = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
-  assert.ok(/index-20261127-v[89]\.js/.test(indexHtml), 'index.html must reference cache-proof versioned bundle');
+  assert.ok(/index-20261127-v\d+\.js/.test(indexHtml), 'index.html must reference cache-proof versioned bundle');
   const v8Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v8.js'), 'utf8');
   assert.ok(v8Bundle.includes('theme.marginLeft'), 'v8 bundle must reference theme.marginLeft');
   assert.ok(v8Bundle.includes('theme.fontSizePx'), 'v8 bundle must reference theme.fontSizePx');
@@ -1261,7 +1261,7 @@ test('Round 6 Audit (All 7 Fail + Partial Cases): multi-references add, cert yea
   });
   assert.equal(fpx25.body.updates.theme?.fontSizePx, 25);
   const indexHtml = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
-  assert.ok(indexHtml.includes('index-20261127-v9.js'), 'index.html must load cache-busted index-20261127-v9.js');
+  assert.ok(/index-20261127-v(?:9|10)\.js/.test(indexHtml), 'index.html must load cache-busted bundle');
   const v9Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v9.js'), 'utf8');
   assert.ok(v9Bundle.includes('theme.fontSizePx>=8&&theme.fontSizePx<=36'), 'v9 bundle must render fontSizePx up to 36');
   assert.ok(!v9Bundle.includes('fontSizePx<=24'), 'v9 bundle must NOT cap fontSizePx at 24');
@@ -1282,4 +1282,106 @@ test('Round 6 Audit (All 7 Fail + Partial Cases): multi-references add, cert yea
   });
   assert.deepEqual(askBoth.body.updates, {});
   assert.ok(/Email/i.test(askBoth.body.reply) && /Số điện thoại/i.test(askBoth.body.reply), `Expected prompt for Email & Số điện thoại, got: ${askBoth.body.reply}`);
+});
+
+test('Round 7 Audit (All 10 Fail + Partial Cases): NFD two-ref add, compound cert year edits, verbless color+size clauses, customSections order/multi-add/rename, "Dự án mẫu" non-color, lineSpacingNum 2.6, white-on-black fg+bg, and #f8fafc bg + #111827 text', async () => {
+  const cv7 = {
+    theme: { primaryColor: '#0284c7', bgColor: '#ffffff', textColor: '#1f2937', fontSize: 'medium', fontSizePx: 0, lineSpacing: 'normal', lineSpacingNum: 0 },
+    profile: { fullName: 'NGUYỄN VĂN AN', jobTitle: 'Sales Executive', email: 'an@old.com', phone: '0987654321' },
+    objective: 'Mục tiêu ban đầu.',
+    experience: [
+      { id: 'exp-1', position: 'Sales B2B', company: 'CÔNG TY CP TẬP ĐOÀN CÔNG NGHỆ NEXTTECH', startDate: '03/2022', endDate: 'Hiện tại', current: true, description: ['Chốt 20 hợp đồng'] }
+    ],
+    education: [{ id: 'edu-1', school: 'NEU', degree: 'Cử nhân', startDate: '2016', endDate: '2020', gpa: '3.5' }],
+    skills: [{ id: 'sk-1', name: 'UX', level: 5 }],
+    projects: [{ id: 'proj-1', name: 'CRM B2B', role: 'Lead', time: '2023', technologies: 'HubSpot', description: ['Mô tả cũ'] }],
+    certificates: [
+      { id: 'cert-1', name: 'HubSpot Inbound Sales', issuer: 'HubSpot', year: '2022' },
+      { id: 'cert-2', name: 'TOEIC 850', issuer: 'IIG', year: '2020' }
+    ],
+    awards: [],
+    activities: [],
+    interests: [],
+    references: [{ id: 'ref-1', name: 'Ông Trần Minh', position: 'Director', company: 'NextTech', email: '', phone: '' }],
+    customSections: [{ id: 'cs-1', title: 'CORE SKILLS & TECH STACK', items: ['Node.js', 'React'] }]
+  };
+
+  // Fail #1: "thêm 2 người tham chiếu: Anh A, Chị B" (even with NFD Unicode!) -> adds 2 separate references!
+  const nfdMsg = 'thêm 2 người tham chiếu: Anh A, Chi\u0323 B';
+  const refRes = await editorAgent.processCvEditorAgent({ message: nfdMsg, cvData: cv7 });
+  assert.equal(refRes.body.updates.references.length, 3);
+  assert.equal(refRes.body.updates.references[1].name, 'Anh A');
+  assert.equal(refRes.body.updates.references[1].position, '');
+  assert.equal(refRes.body.updates.references[2].name, 'Chị B');
+  assert.equal(refRes.body.updates.references[2].position, '');
+
+  // Fail #2: "đổi năm chứng chỉ 2022 thành 2023 và 2020 thành 2021" -> cert-1 year="2023" AND cert-2 year="2021"!
+  const dualCert = await editorAgent.processCvEditorAgent({
+    message: 'đổi năm chứng chỉ 2022 thành 2023 và 2020 thành 2021',
+    cvData: cv7
+  });
+  assert.equal(dualCert.body.updates.certificates[0].year, '2023');
+  assert.equal(dualCert.body.updates.certificates[1].year, '2021');
+
+  // Fail #3: "đổi tên công ty NEXTTECH thành NEXT và màu công ty đỏ và cỡ chữ 14" -> applies ALL 3!
+  const compColorSize = await editorAgent.processCvEditorAgent({
+    message: 'đổi tên công ty NEXTTECH thành NEXT và màu công ty đỏ và cỡ chữ 14',
+    cvData: cv7
+  });
+  assert.equal(compColorSize.body.updates.experience?.[0]?.company, 'NEXT');
+  assert.equal(compColorSize.body.updates.theme?.companyColor, '#dc2626');
+  assert.equal(compColorSize.body.updates.theme?.fontSizePx, 14);
+
+  // Fail #4: "đưa mục tùy chỉnh lên đầu" & "đưa mục tùy chỉnh xuống cuối" -> reorders customSections!
+  const csTop = await editorAgent.processCvEditorAgent({ message: 'đưa mục tùy chỉnh lên đầu', cvData: cv7 });
+  assert.equal(csTop.body.updates.sectionOrder?.[0], 'customSections');
+  const csBottom = await editorAgent.processCvEditorAgent({ message: 'đưa mục tùy chỉnh xuống cuối', cvData: cv7 });
+  assert.equal(csBottom.body.updates.sectionOrder?.[csBottom.body.updates.sectionOrder.length - 1], 'customSections');
+
+  // Fail #5: "thêm 2 mục tùy chỉnh: Ngoại ngữ, Tin học" -> adds 2 separate customSections!
+  const add2Cs = await editorAgent.processCvEditorAgent({
+    message: 'thêm 2 mục tùy chỉnh: Ngoại ngữ, Tin học',
+    cvData: { ...cv7, customSections: [] }
+  });
+  assert.equal(add2Cs.body.updates.customSections?.length, 2);
+  assert.equal(add2Cs.body.updates.customSections[0].title, 'Ngoại ngữ');
+  assert.equal(add2Cs.body.updates.customSections[1].title, 'Tin học');
+
+  // Fail #6: "đổi tên mục tùy chỉnh CORE SKILLS... thành TECH STACK" -> renames customSections[0].title!
+  const renameCs = await editorAgent.processCvEditorAgent({
+    message: 'đổi tên mục tùy chỉnh CORE SKILLS... thành TECH STACK',
+    cvData: cv7
+  });
+  assert.equal(renameCs.body.updates.customSections?.[0]?.title, 'TECH STACK');
+
+  // Fail #7: "đổi mô tả dự án thành Dự án mẫu" -> updates projects[0].description (NEVER triggers "bạn muốn đổi sang màu nào?")!
+  const projSample = await editorAgent.processCvEditorAgent({
+    message: 'đổi mô tả dự án thành Dự án mẫu',
+    cvData: cv7
+  });
+  assert.deepEqual(projSample.body.updates.projects?.[0]?.description, ['Dự án mẫu']);
+  assert.ok(!/sang màu nào/i.test(projSample.body.reply));
+
+  // Partial #1: lineSpacingNum: 2.6 -> accepted by backend AND v10 bundle!
+  const ls26 = await editorAgent.processCvEditorAgent({ message: 'giãn dòng 2.6', cvData: cv7 });
+  assert.equal(ls26.body.updates.theme?.lineSpacingNum, 2.6);
+  const v10Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v10.js'), 'utf8');
+  assert.ok(v10Bundle.includes('theme.lineSpacingNum>=0.8&&theme.lineSpacingNum<=3'));
+
+  // Partial #2: "đổi màu chữ trắng trên nền đen" -> sets BOTH textColor="#ffffff" AND bgColor="#111827" with ZERO rejection or ATS gradient notice!
+  const whiteOnBlack = await editorAgent.processCvEditorAgent({
+    message: 'đổi màu chữ trắng trên nền đen',
+    cvData: cv7
+  });
+  assert.equal(whiteOnBlack.body.updates.theme?.textColor, '#ffffff');
+  assert.equal(whiteOnBlack.body.updates.theme?.bgColor, '#111827');
+  assert.ok(!/gradient|trùng hoặc quá sát/i.test(whiteOnBlack.body.reply), `Unexpected warning in reply: ${whiteOnBlack.body.reply}`);
+
+  // Partial #3: "đổi màu nền #f8fafc và chữ #111827" -> sets BOTH bgColor="#f8fafc" AND textColor="#111827"!
+  const hexBgAndText = await editorAgent.processCvEditorAgent({
+    message: 'đổi màu nền #f8fafc và chữ #111827',
+    cvData: { ...cv7, theme: { ...cv7.theme, bgColor: '#111827', textColor: '#ffffff' } }
+  });
+  assert.equal(hexBgAndText.body.updates.theme?.bgColor, '#f8fafc');
+  assert.equal(hexBgAndText.body.updates.theme?.textColor, '#111827');
 });
