@@ -30,8 +30,55 @@ const MAX_FULLNAME_LEN = 50;
 
 const DEFAULT_SECTION_ORDER = [
   'objective', 'experience', 'education', 'skills', 'projects',
-  'certificates', 'awards', 'activities', 'interests', 'references'
+  'certificates', 'awards', 'activities', 'interests', 'references', 'customSections'
 ];
+
+function sanitizeCssMargin(val) {
+  if (val === '' || val === null) return '';
+  if (typeof val !== 'string') return null;
+  const m = val.trim().toLowerCase().match(/^(-?\d+(?:\.\d+)?)\s*(mm|cm|px)$/);
+  if (!m) return null;
+  const num = parseFloat(m[1]);
+  const unit = m[2];
+  if (!Number.isFinite(num) || num < 0) return null;
+  const mmEquiv = unit === 'cm' ? num * 10 : (unit === 'px' ? num * 0.264583 : num);
+  if (mmEquiv > 35.5) return null;
+  if (unit === 'cm') return `${Math.round(num * 10 * 10) / 10}mm`;
+  if (unit === 'mm') return `${Math.round(num * 10) / 10}mm`;
+  return `${Math.round(num)}px`;
+}
+
+const COMMON_VI_TYPO_PAIRS = [
+  [/(?:^|(?<=[\s,.;:!?()]))kĩ\s+năng(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'K' ? 'Kỹ năng' : 'kỹ năng')],
+  [/(?:^|(?<=[\s,.;:!?()]))quản\s+lí(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'Q' ? 'Quản lý' : 'quản lý')],
+  [/(?:^|(?<=[\s,.;:!?()]))xử\s+lí(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'X' ? 'Xử lý' : 'xử lý')],
+  [/(?:^|(?<=[\s,.;:!?()]))chuyên\s+nghành(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'C' ? 'Chuyên ngành' : 'chuyên ngành')],
+  [/(?:^|(?<=[\s,.;:!?()]))nghành(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'N' ? 'Ngành' : 'ngành')],
+  [/(?:^|(?<=[\s,.;:!?()]))kinh\s+ngiệm(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'K' ? 'Kinh nghiệm' : 'kinh nghiệm')],
+  [/(?:^|(?<=[\s,.;:!?()]))thuyết\s+trinh(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'T' ? 'Thuyết trình' : 'thuyết trình')],
+  [/(?:^|(?<=[\s,.;:!?()]))phát\s+triễn(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'P' ? 'Phát triển' : 'phát triển')],
+  [/(?:^|(?<=[\s,.;:!?()]))tiềm\s+nămg(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'T' ? 'Tiềm năng' : 'tiềm năng')],
+  [/(?:^|(?<=[\s,.;:!?()]))sữa\s+chữa(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'S' ? 'Sửa chữa' : 'sửa chữa')],
+  [/(?:^|(?<=[\s,.;:!?()]))giử(?=$|[\s,.;:!?()])/gi, m => (m[0] === 'G' ? 'Giữ' : 'giữ')],
+  [/(?:^|(?<=[\s,.;:!?()]))xuat\s+sac(?=$|[\s,.;:!?()])/gi, 'xuất sắc']
+];
+
+function fixVietnameseTextTypos(str) {
+  if (typeof str !== 'string' || !str.trim()) return str;
+  let out = str
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/([,;:])([^\s\d])/g, '$1 $2')
+    .trim();
+  for (const [re, rep] of COMMON_VI_TYPO_PAIRS) {
+    out = out.replace(re, rep);
+  }
+  if (out.length > 0) {
+    out = out.charAt(0).toUpperCase() + out.slice(1);
+  }
+  out = out.replace(/([.!?]\s+)([a-zàáảãạăắằẳẵặâấầẩẫậđèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵ])/g, (_, p1, ch) => p1 + ch.toUpperCase());
+  return out;
+}
 
 // ─────────────────────────────────────────────────────────
 // 1. SANITIZERS & UNICODE BIDI / XSS / CSS / COLOR HELPERS
@@ -405,10 +452,13 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
     }
 
     for (const [cKey, minRatio, errLabel] of [
-      ['primaryColor', 2.1, 'màu chủ đạo'],
-      ['textColor', 2.8, 'màu chữ'],
-      ['headingColor', 2.1, 'màu tiêu đề mục'],
-      ['companyColor', 2.1, 'màu tên công ty']
+      ['primaryColor', 1.35, 'màu chủ đạo'],
+      ['textColor', 1.6, 'màu chữ'],
+      ['headingColor', 1.35, 'màu tiêu đề mục'],
+      ['companyColor', 1.35, 'màu tên công ty'],
+      ['schoolColor', 1.35, 'màu tên trường'],
+      ['projectColor', 1.35, 'màu tên dự án'],
+      ['jobTitleColor', 1.35, 'màu chức danh']
     ]) {
       if (rawUpdates.theme[cKey] !== undefined) {
         if (rawUpdates.theme[cKey] === '') {
@@ -416,10 +466,16 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
         } else {
           const hex = sanitizeHexColor(rawUpdates.theme[cKey]);
           if (hex) {
-            if (contrastRatio(hex, effectiveBg) < minRatio) {
-              warningsOut.push(`Không thể đổi ${errLabel} sang ${hex} vì quá trùng với màu nền (${effectiveBg}), sẽ gây mất chữ.`);
-            } else if (hex !== String(curTheme[cKey] || '').toLowerCase()) {
-              cleanTheme[cKey] = hex;
+            const cr = contrastRatio(hex, effectiveBg);
+            if (cr < minRatio) {
+              warningsOut.push(`Không thể đổi ${errLabel} sang ${hex} vì trùng hoặc quá sát màu nền (${effectiveBg}, độ tương phản ${cr.toFixed(1)}:1), sẽ làm mất chữ.`);
+            } else {
+              if (cr < 2.2) {
+                warningsOut.push(`Lưu ý: ${errLabel} (${hex}) có độ tương phản thấp (${cr.toFixed(1)}:1) trên nền ${effectiveBg}; bạn có thể chọn tông đậm hơn nếu muốn in rõ nét hơn.`);
+              }
+              if (hex !== String(curTheme[cKey] || '').toLowerCase()) {
+                cleanTheme[cKey] = hex;
+              }
             }
           }
         }
@@ -433,10 +489,16 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
         const nHex = sanitizeHexColor(rawUpdates.theme.nameColor);
         if (nHex) {
           const headerBg = getHeaderBackgroundHex(currentCvData, { ...curTheme, ...cleanTheme });
-          if (contrastRatio(nHex, headerBg) < 2.1) {
-            warningsOut.push(`Không thể đổi màu tên ứng viên sang ${nHex} vì quá chìm trên nền phần đầu CV (${headerBg}), sẽ gây mất chữ.`);
-          } else if (nHex !== String(curTheme.nameColor || '').toLowerCase()) {
-            cleanTheme.nameColor = nHex;
+          const cr = contrastRatio(nHex, headerBg);
+          if (cr < 1.35) {
+            warningsOut.push(`Không thể đổi màu tên ứng viên sang ${nHex} vì trùng hoặc quá sát màu nền phần đầu CV (${headerBg}, độ tương phản ${cr.toFixed(1)}:1), sẽ làm mất chữ.`);
+          } else {
+            if (cr < 2.2) {
+              warningsOut.push(`Lưu ý: Màu tên (${nHex}) có độ tương phản khá thấp (${cr.toFixed(1)}:1) trên nền ${headerBg}.`);
+            }
+            if (nHex !== String(curTheme.nameColor || '').toLowerCase()) {
+              cleanTheme.nameColor = nHex;
+            }
           }
         }
       }
@@ -453,7 +515,8 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
         } else {
           const sHex = sanitizeHexColor(sv);
           if (sHex) {
-            if (contrastRatio(sHex, effectiveBg) < 2.1) {
+            const cr = contrastRatio(sHex, effectiveBg);
+            if (cr < 1.35) {
               warningsOut.push(`Không thể đổi màu mục ${sk} sang ${sHex} vì trùng màu nền (${effectiveBg}).`);
             } else if (nextSecColors[sk] !== sHex) {
               nextSecColors[sk] = sHex;
@@ -480,9 +543,42 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
       if (ALLOWED_FONT_SIZES.has(fs) && fs !== curTheme.fontSize) cleanTheme.fontSize = fs;
     }
 
+    if (rawUpdates.theme.fontSizePx !== undefined) {
+      if (rawUpdates.theme.fontSizePx === 0 || rawUpdates.theme.fontSizePx === null || rawUpdates.theme.fontSizePx === '') {
+        if (curTheme.fontSizePx) cleanTheme.fontSizePx = 0;
+      } else {
+        const pxNum = Number(rawUpdates.theme.fontSizePx);
+        if (Number.isFinite(pxNum) && pxNum >= 8 && pxNum <= 24) {
+          const rounded = Math.round(pxNum * 10) / 10;
+          if (rounded !== curTheme.fontSizePx) cleanTheme.fontSizePx = rounded;
+        }
+      }
+    }
+
     if (typeof rawUpdates.theme.lineSpacing === 'string') {
       const ls = rawUpdates.theme.lineSpacing.trim().toLowerCase();
       if (ALLOWED_LINE_SPACINGS.has(ls) && ls !== curTheme.lineSpacing) cleanTheme.lineSpacing = ls;
+    }
+
+    if (rawUpdates.theme.lineSpacingNum !== undefined) {
+      if (rawUpdates.theme.lineSpacingNum === 0 || rawUpdates.theme.lineSpacingNum === null || rawUpdates.theme.lineSpacingNum === '') {
+        if (curTheme.lineSpacingNum) cleanTheme.lineSpacingNum = 0;
+      } else {
+        const lsVal = Number(rawUpdates.theme.lineSpacingNum);
+        if (Number.isFinite(lsVal) && lsVal >= 1.0 && lsVal <= 2.5) {
+          const rounded = Math.round(lsVal * 100) / 100;
+          if (rounded !== curTheme.lineSpacingNum) cleanTheme.lineSpacingNum = rounded;
+        }
+      }
+    }
+
+    for (const mKey of ['marginTop', 'marginRight', 'marginBottom', 'marginLeft']) {
+      if (rawUpdates.theme[mKey] !== undefined) {
+        const cleanM = sanitizeCssMargin(rawUpdates.theme[mKey]);
+        if (cleanM !== null && cleanM !== String(curTheme[mKey] || '')) {
+          cleanTheme[mKey] = cleanM;
+        }
+      }
     }
 
     if (Object.keys(cleanTheme).length > 0) clean.theme = cleanTheme;
@@ -911,9 +1007,18 @@ function buildGranularDiffAndOps(beforeCv = {}, sanitizedUpdates = {}) {
       bgColor: 'Màu nền CV',
       headingColor: 'Màu tiêu đề mục',
       companyColor: 'Màu tên công ty',
+      schoolColor: 'Màu tên trường',
+      projectColor: 'Màu tên dự án',
+      jobTitleColor: 'Màu chức danh',
       fontFamily: 'Font chữ',
       fontSize: 'Cỡ chữ',
-      lineSpacing: 'Giãn dòng'
+      fontSizePx: 'Cỡ chữ chi tiết (px)',
+      lineSpacing: 'Giãn dòng',
+      lineSpacingNum: 'Giãn dòng chi tiết',
+      marginTop: 'Lề trên',
+      marginRight: 'Lề phải',
+      marginBottom: 'Lề dưới',
+      marginLeft: 'Lề trái'
     };
     for (const [k, v] of Object.entries(sanitizedUpdates.theme)) {
       if (k === 'sectionColors' && isPlainObject(v)) {
@@ -1034,7 +1139,7 @@ function buildGranularDiffAndOps(beforeCv = {}, sanitizedUpdates = {}) {
   diffObjectArray('experience', 'Kinh nghiệm', e => `${e.position || ''} - ${e.company || ''}`, [
     ['company', 'Công ty'], ['position', 'Vị trí'], ['location', 'Địa điểm'], ['startDate', 'Bắt đầu'], ['endDate', 'Kết thúc'], ['current', 'Đang làm'], ['description', 'Mô tả']
   ]);
-  diffObjectArray('education', 'Học vấn', e => `${e.school || ''} (${e.endDate || ''})`, [
+  diffObjectArray('education', 'Học vấn', e => `${e.school || ''}${e.endDate ? ' (' + e.endDate + ')' : ''}`, [
     ['school', 'Trường'], ['degree', 'Bằng cấp'], ['fieldOfStudy', 'Chuyên ngành'], ['startDate', 'Bắt đầu'], ['endDate', 'Tốt nghiệp'], ['gpa', 'GPA'], ['description', 'Mô tả']
   ]);
   diffObjectArray('projects', 'Dự án', p => p.name || '', [
@@ -1046,10 +1151,10 @@ function buildGranularDiffAndOps(beforeCv = {}, sanitizedUpdates = {}) {
   diffObjectArray('awards', 'Giải thưởng', a => `${a.name}${a.year ? ' (' + a.year + ')' : ''}`, [
     ['name', 'Tên'], ['issuer', 'Đơn vị trao'], ['year', 'Năm']
   ]);
-  diffObjectArray('activities', 'Hoạt động', a => `${a.role} - ${a.organization}`, [
+  diffObjectArray('activities', 'Hoạt động', a => `${a.role}${a.organization ? ' - ' + a.organization : ''}`, [
     ['role', 'Vai trò'], ['organization', 'Tổ chức'], ['time', 'Thời gian'], ['description', 'Mô tả']
   ]);
-  diffObjectArray('references', 'Người tham chiếu', r => `${r.name} (${r.company})`, [
+  diffObjectArray('references', 'Người tham chiếu', r => `${r.name}${r.company ? ' (' + r.company + ')' : ''}`, [
     ['name', 'Họ tên'], ['position', 'Chức vụ'], ['company', 'Công ty'], ['email', 'Email'], ['phone', 'SĐT']
   ]);
   diffObjectArray('customSections', 'Mục tùy chỉnh', c => `${c.title}: ${(c.items || []).join(', ')}`, [
@@ -1173,7 +1278,7 @@ function extractAllColors(raw, norm) {
 }
 
 const STYLE_INTENT_RE = new RegExp(
-  `\\b(?:mau|color|rgb\\s*\\(|gradient|chuyen\\s*sac|ombre|dark\\s*mode|che\\s*do\\s*toi|light\\s*mode|che\\s*do\\s*sang|font|phong(?:\\s*chu)?|kieu\\s*chu|co\\s*chu|kich\\s*thuoc\\s*chu|gian\\s*dong|dan\\s*dong|cach\\s*dong|khoang\\s*cach\\s*dong|line\\s*spacing|line\\s*height|theme|nen\\s+cv|chu\\s+to|chu\\s+lon|chu\\s+nho|chu\\s+be|be\\s+lai|lon\\s+hon|nho\\s+lai|#[0-9a-f]{3,6}|${KNOWN_UNSUPPORTED_FONTS.map(f => f.replace(/\s+/g, '\\s+')).join('|')}|inter|roboto|montserrat|merriweather|nunito|lora|open\\s+sans|be\\s+vietnam\\s+pro)\\b`,
+  `(?:#[0-9a-f]{3,6}\\b|\\b(?:mau|color|rgb\\s*\\(|gradient|chuyen\\s*sac|ombre|dark\\s*mode|che\\s*do\\s*toi|light\\s*mode|che\\s*do\\s*sang|font|phong\\s+chu|kieu\\s*chu|co\\s*chu|kich\\s*thuoc\\s*chu|gian\\s*dong|dan\\s*dong|cach\\s*dong|khoang\\s*cach\\s*dong|line\\s*spacing|line\\s*height|theme|nen\\s+cv|chu\\s+to|chu\\s+lon|chu\\s+nho|chu\\s+be|be\\s+lai|lon\\s+hon|nho\\s+lai|${KNOWN_UNSUPPORTED_FONTS.map(f => f.replace(/\s+/g, '\\s+')).join('|')}|inter|roboto|montserrat|merriweather|nunito|lora|open\\s+sans|be\\s+vietnam\\s+pro)\\b)`,
   'i'
 );
 
@@ -1295,21 +1400,40 @@ function parseSkillTokens(str) {
       if (GENERIC_NEW_PLACEHOLDER_RE.test(trimmed)) {
         return { name: 'Kỹ năng chuyên môn', level: 4, _explicitLevel: false };
       }
-      const slashMatch = trimmed.match(/^(.+?)\s+(?:mức\s*|level\s*)?([1-5])\s*\/\s*5$/i);
-      if (slashMatch) {
-        return { name: sanitizeText(slashMatch[1], 70), level: parseInt(slashMatch[2], 10), _explicitLevel: true };
-      }
-      const lvl5Match = trimmed.match(/^(.+?)\s+(?:mức|level)\s*([1-5])$/i);
-      if (lvl5Match) {
-        return { name: sanitizeText(lvl5Match[1], 70), level: parseInt(lvl5Match[2], 10), _explicitLevel: true };
-      }
-      const pctMatch = trimmed.match(/^(.+?)\s*(?:mức\s*)?(\d{2,3})\s*%$/i);
+      const pctMatch = trimmed.match(/^(.+?)\s*(?:mức\s*|level\s*)?(\d{2,3})\s*%$/i);
       if (pctMatch) {
+        const pctVal = parseInt(pctMatch[2], 10);
+        if (pctVal < 1 || pctVal > 100) {
+          return { name: sanitizeText(pctMatch[1], 70), level: 4, _explicitLevel: true, invalidLevel: `${pctMatch[2]}%` };
+        }
         return {
           name: sanitizeText(pctMatch[1], 70),
-          level: normalizeSkillLevel(parseInt(pctMatch[2], 10), 4),
+          level: normalizeSkillLevel(pctVal, 4),
           _explicitLevel: true
         };
+      }
+      const slashAnyMatch = trimmed.match(/^(.+?)\s+(?:mức(?:\s+độ)?\s*|level\s*|cấp(?:\s+độ)?\s*)?(-?\d+(?:\.\d+)?)\s*\/\s*(\d+)$/i);
+      if (slashAnyMatch) {
+        const num = parseFloat(slashAnyMatch[2]);
+        const denom = parseInt(slashAnyMatch[3], 10);
+        if (denom === 5) {
+          if (!Number.isInteger(num) || num < 1 || num > 5) {
+            return { name: sanitizeText(slashAnyMatch[1], 70), level: 4, _explicitLevel: true, invalidLevel: `${slashAnyMatch[2]}/5` };
+          }
+          return { name: sanitizeText(slashAnyMatch[1], 70), level: num, _explicitLevel: true };
+        }
+        if (denom === 10 && num >= 1 && num <= 10) {
+          return { name: sanitizeText(slashAnyMatch[1], 70), level: Math.max(1, Math.min(5, Math.round(num / 2))), _explicitLevel: true };
+        }
+        return { name: sanitizeText(slashAnyMatch[1], 70), level: 4, _explicitLevel: true, invalidLevel: `${slashAnyMatch[2]}/${denom}` };
+      }
+      const lvlAnyMatch = trimmed.match(/^(.+?)\s+(?:mức(?:\s+độ)?|level|cấp(?:\s+độ)?)\s*(-?\d+(?:\.\d+)?)$/i);
+      if (lvlAnyMatch) {
+        const num = parseFloat(lvlAnyMatch[2]);
+        if (!Number.isInteger(num) || num < 1 || num > 5) {
+          return { name: sanitizeText(lvlAnyMatch[1], 70), level: 4, _explicitLevel: true, invalidLevel: lvlAnyMatch[2] };
+        }
+        return { name: sanitizeText(lvlAnyMatch[1], 70), level: num, _explicitLevel: true };
       }
       return { name: sanitizeText(trimmed, 70), level: 4, _explicitLevel: false };
     })
@@ -1386,20 +1510,56 @@ function applySingleClause(clauseRaw, state) {
   // Note: "sửa" and common tone typo "sữa" both normalize to "sua"!
   const isEditVerb = /^(?:hay\s+|vui\s+long\s+)?(?:sua|doi|cap\s+nhat|thay(?:\s+doi|\s+the)?|chinh(?:\s+sua)?|chuyen|dat(?:\s+lai)?)\b/i.test(norm);
 
-  // ─── 0. UNSUPPORTED RICH-TEXT / MARGIN CHECKS ───
-  if (/\b(?:canh\s+(?:trai|phai|giua|deu)|can\s+(?:trai|phai|giua|deu)|text\s*align|justify|in\s+dam|boi\s+dam|in\s+nghieng|chu\s+nghieng|gach\s+chan|underline|italic|bold|chinh\s+le|can\s+le|le\s+trang|margin|padding)\b/i.test(norm)) {
-    notices.push('Các mẫu CV chuẩn ATS tự động cố định căn lề, độ đậm/nghiêng và lề trang A4 (210×297mm) để tránh lỗi bố cục khi xuất PDF. Bạn có thể tùy chỉnh cỡ chữ (nhỏ/vừa/lớn), giãn dòng (hẹp/vừa/rộng), font chữ, sắp xếp thứ tự mục hoặc ẩn/hiện từng mục.');
+  // ─── 0. A4 PAGE MARGINS ("đổi lề trái 2cm", "lề trang 15mm") & UNSUPPORTED RICH-TEXT ALIGNMENT/BOLD CHECKS ───
+  const marginEditMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:doi|sua|chinh|dat|thay|tang|giam)?\s*(?:(le\s+(?:trai|phai|tren|duoi|trang)|margin(?:-(?:left|right|top|bottom))?|padding(?:-(?:left|right|top|bottom))?))\s*(?:thanh|sang|la|:)?\s*(-?\d+(?:\.\d+)?)\s*(cm|mm|px)?$/i);
+  if (marginEditMatch) {
+    const sideNorm = marginEditMatch[1].toLowerCase();
+    const rawNum = parseFloat(marginEditMatch[2]);
+    const unit = (marginEditMatch[3] || 'mm').toLowerCase();
+    const candidateCss = `${rawNum}${unit}`;
+    const validCss = sanitizeCssMargin(candidateCss);
+    if (!validCss) {
+      notices.push(`Giá trị lề "${rawNum}${unit}" nằm ngoài phạm vi an toàn của khổ giấy A4 (hỗ trợ từ 0cm đến 3.5cm / 0mm đến 35mm / 0px đến 130px).`);
+      return true;
+    }
+    const themeUpdates = { ...(updates.theme || {}) };
+    if (/trai|left/.test(sideNorm)) themeUpdates.marginLeft = validCss;
+    else if (/phai|right/.test(sideNorm)) themeUpdates.marginRight = validCss;
+    else if (/tren|top/.test(sideNorm)) themeUpdates.marginTop = validCss;
+    else if (/duoi|bottom/.test(sideNorm)) themeUpdates.marginBottom = validCss;
+    else {
+      themeUpdates.marginTop = validCss;
+      themeUpdates.marginRight = validCss;
+      themeUpdates.marginBottom = validCss;
+      themeUpdates.marginLeft = validCss;
+    }
+    updates.theme = themeUpdates;
+    workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
     return true;
   }
 
-  // ─── A. SECTION REORDERING ("đưa học vấn lên đầu", "đưa kỹ năng xuống cuối", "chuyển dự án lên trước kinh nghiệm") ───
-  const reorderTopBottom = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:dua|chuyen|day|keo|dat|sap\s+xep|xep)\s+(?:muc\s+|phan\s+)?(.+?)\s+(len\s+dau(?:\s+tien|\s+cv|\s+trang)?|len\s+tren\s+cung|xuong\s+cuoi(?:\s+cung|\s+cv|\s+trang)?|xuong\s+duoi\s+cung)$/i);
+  if (/\b(?:canh\s+(?:trai|phai|giua|deu)|can\s+(?:trai|phai|giua|deu)|text\s*align|justify|in\s+dam|boi\s+dam|in\s+nghieng|chu\s+nghieng|gach\s+chan|underline|italic|bold|chinh\s+le|can\s+le|le\s+trang|margin|padding)\b/i.test(norm)) {
+    notices.push('Các mẫu CV chuẩn ATS tự động cố định căn lề văn bản và độ đậm/nghiêng để tránh lỗi bố cục khi xuất PDF. Bạn có thể đổi lề trang A4 cụ thể (VD: "đổi lề trái 2cm"), cỡ chữ (VD: "đổi cỡ chữ 13"), giãn dòng, font chữ, sắp xếp thứ tự mục hoặc ẩn/hiện mục.');
+    return true;
+  }
+
+  // Helper to get full normalized section order containing all 11 sections
+  const getNormalizedOrder = () => {
+    const base = Array.isArray(workingCv.sectionOrder) && workingCv.sectionOrder.length > 0
+      ? [...workingCv.sectionOrder]
+      : [...DEFAULT_SECTION_ORDER];
+    for (const k of DEFAULT_SECTION_ORDER) {
+      if (!base.includes(k)) base.push(k);
+    }
+    return base;
+  };
+
+  // ─── A. SECTION REORDERING ("đưa học vấn lên đầu", "đưa mục tiêu xuống cuối", "chuyển dự án lên trước kinh nghiệm") ───
+  const reorderTopBottom = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:dua|chuyen|day|keo|dat|sap\s+xep|xep)\s+(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(.+?)\s+(len\s+dau(?:\s+tien|\s+cv|\s+trang)?|len\s+tren\s+cung|xuong\s+cuoi(?:\s+cung|\s+cv|\s+trang)?|xuong\s+duoi\s+cung)$/i);
   if (reorderTopBottom) {
     const secKey = findSectionKeyFromText(reorderTopBottom[1]);
     if (secKey && ALLOWED_ORDER_KEYS.has(secKey)) {
-      const curOrder = Array.isArray(workingCv.sectionOrder) && workingCv.sectionOrder.length > 0
-        ? [...workingCv.sectionOrder]
-        : [...DEFAULT_SECTION_ORDER];
+      const curOrder = getNormalizedOrder();
       const without = curOrder.filter(k => k !== secKey);
       const isTop = /^len/.test(reorderTopBottom[2]);
       const nextOrder = isTop ? [secKey, ...without] : [...without, secKey];
@@ -1409,14 +1569,12 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  const reorderRelative = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:dua|chuyen|day|keo|dat|doi\s+cho|sap\s+xep|xep)\s+(?:muc\s+|phan\s+)?(.+?)\s+(len\s+truoc|truoc|len\s+tren|xuong\s+sau|sau|xuong\s+duoi)\s+(?:muc\s+|phan\s+)?(.+)$/i);
+  const reorderRelative = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:dua|chuyen|day|keo|dat|doi\s+cho|sap\s+xep|xep)\s+(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(.+?)\s+(len\s+truoc|truoc|len\s+tren|xuong\s+sau|sau|xuong\s+duoi)\s+(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(.+)$/i);
   if (reorderRelative) {
     const srcKey = findSectionKeyFromText(reorderRelative[1]);
     const dstKey = findSectionKeyFromText(reorderRelative[3]);
     if (srcKey && dstKey && srcKey !== dstKey && ALLOWED_ORDER_KEYS.has(srcKey) && ALLOWED_ORDER_KEYS.has(dstKey)) {
-      const curOrder = Array.isArray(workingCv.sectionOrder) && workingCv.sectionOrder.length > 0
-        ? [...workingCv.sectionOrder]
-        : [...DEFAULT_SECTION_ORDER];
+      const curOrder = getNormalizedOrder();
       const without = curOrder.filter(k => k !== srcKey);
       const dstIdx = without.indexOf(dstKey);
       const before = /truoc|tren/.test(reorderRelative[2]);
@@ -1427,10 +1585,23 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // ─── B. SHOW / HIDE SECTIONS ("ẩn mục sở thích", "hiện chứng chỉ") ───
-  const toggleVisMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(an|tat|hien|bat|hien\s+thi)\s+(?:muc\s+|phan\s+|section\s+)?(.+)$/i);
+  // ─── B. SHOW / HIDE SECTIONS ("hiện tất cả mục", "ẩn tất cả mục", "ẩn mục sở thích", "ẩn mục tiêu") ───
+  const toggleAllVisMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(an|tat|hien|bat|hien\s+thi)\s+(?:tat\s+ca|toan\s+bo|het|moi)(?:\s+cac)?\s+(?:muc|phan|section)s?$/i);
+  if (toggleAllVisMatch) {
+    const visible = /^(?:hien|bat)/.test(toggleAllVisMatch[1]);
+    const curVis = { ...(workingCv.sectionsVisibility || {}), ...(updates.sectionsVisibility || {}) };
+    for (const k of ALLOWED_VISIBILITY_KEYS) {
+      curVis[k] = visible;
+    }
+    updates.sectionsVisibility = curVis;
+    workingCv.sectionsVisibility = curVis;
+    return true;
+  }
+
+  const toggleVisMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(an|tat|hien|bat|hien\s+thi)\s+(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(.+)$/i);
   if (toggleVisMatch && !/\b(?:anh\s+dai\s+dien|avatar)\b/i.test(norm)) {
-    const secKey = findSectionKeyFromText(toggleVisMatch[2]);
+    const targetLabelNorm = normalizeCheck(toggleVisMatch[2]);
+    const secKey = findSectionKeyFromText(targetLabelNorm);
     if (secKey) {
       const visible = /^(?:hien|bat)/.test(toggleVisMatch[1]);
       const curVis = { ...(workingCv.sectionsVisibility || {}), ...(updates.sectionsVisibility || {}) };
@@ -1441,7 +1612,26 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // ─── C. GENERIC "THÊM MỤC: <SectionName>" ("thêm mục: Giải thưởng", "thêm mục: Chứng chỉ", "thêm mục: Ngoại ngữ") ───
+  // Delete explicit section ("xóa mục CORE SKILLS & TECH STACK" -> checks customSections by title FIRST so built-in skills are preserved!)
+  const deleteExplicitSecMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:mục\s+(?!tiêu\b)|phần\s+|section\s+)([^\r\n!?]+)$/i);
+  if (deleteExplicitSecMatch && !isEditVerb) {
+    const secTargetRaw = sanitizeText(deleteExplicitSecMatch[1].replace(/[.!?]+$/, ''), 120);
+    const secTargetNorm = normalizeCheck(secTargetRaw);
+    const curCs = Array.isArray(workingCv.customSections) ? workingCv.customSections : [];
+    if (curCs.length > 0 && secTargetNorm) {
+      const remainingCs = curCs.filter(cs => {
+        const csNorm = normalizeCheck(cs.title || '');
+        return csNorm !== secTargetNorm && !(secTargetNorm.length >= 5 && csNorm.includes(secTargetNorm));
+      });
+      if (remainingCs.length < curCs.length) {
+        updates.customSections = remainingCs;
+        workingCv.customSections = remainingCs;
+        return true;
+      }
+    }
+  }
+
+  // ─── C. GENERIC "THÊM MỤC: <SectionName>" (NEVER fabricates fake awards/items — enables visibility & leaves empty / prompts user!) ───
   const genericAddSecMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|mở|tạo)\s+(?:mục|phần|section)\s*:\s*([^\r\n!?]+)$/i) ||
     raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|mở)\s+(?:mục|phần)\s+(giải thưởng|chứng chỉ|sở thích|hoạt động(?:\s+ngoại khóa)?|người tham chiếu|tham chiếu|dự án|học vấn|kinh nghiệm|kỹ năng)\s*[.!?]*$/i);
   if (genericAddSecMatch && !isEditVerb) {
@@ -1449,39 +1639,17 @@ function applySingleClause(clauseRaw, state) {
     const knownKey = findSectionKeyFromText(labelRaw);
     const curVis = { ...(workingCv.sectionsVisibility || {}), ...(updates.sectionsVisibility || {}) };
     if (knownKey && knownKey !== 'customSections') {
+      const secNameVi = SECTION_VI_NAMES[knownKey] || labelRaw;
       if (curVis[knownKey] === false) {
         curVis[knownKey] = true;
         updates.sectionsVisibility = curVis;
         workingCv.sectionsVisibility = curVis;
       }
-      // Ensure section has at least 1 visible item (or add a clean default item!)
-      if (knownKey === 'awards') {
-        const next = [...(workingCv.awards || []), { id: `aw_ai_${Date.now()}`, name: 'Nhân viên Xuất sắc của Năm', issuer: 'Ban Lãnh đạo Công ty', year: '2024' }];
-        updates.awards = next; workingCv.awards = next;
-      } else if (knownKey === 'certificates') {
-        const next = [...(workingCv.certificates || []), { id: `cert_ai_${Date.now()}`, name: 'Chứng chỉ Chuyên môn Quốc tế', issuer: 'Tổ chức cấp chứng chỉ', year: '2024' }];
-        updates.certificates = next; workingCv.certificates = next;
-      } else if (knownKey === 'interests') {
-        const next = dedupeStrings([...(workingCv.interests || []), 'Đọc sách chuyên ngành & Thể thao']);
-        updates.interests = next; workingCv.interests = next;
-      } else if (knownKey === 'activities') {
-        const next = [...(workingCv.activities || []), { id: `act_ai_${Date.now()}`, role: 'Thành viên Ban tổ chức', organization: 'Câu lạc bộ Chuyên môn', time: '2023 - 2024', description: 'Tham gia điều phối chương trình và hoạt động cộng đồng.' }];
-        updates.activities = next; workingCv.activities = next;
-      } else if (knownKey === 'references') {
-        const next = [...(workingCv.references || []), { id: `ref_ai_${Date.now()}`, name: 'Ông/Bà Nguyễn Minh Hoàng', position: 'Quản lý trực tiếp', company: 'Doanh nghiệp', email: 'contact@company.vn', phone: '0901 234 567' }];
-        updates.references = next; workingCv.references = next;
-      } else if (knownKey === 'projects') {
-        const next = [{ id: `proj_ai_${Date.now()}`, name: 'Dự án Tiêu biểu', role: workingCv?.profile?.jobTitle || 'Thành viên chính', time: '2024', technologies: 'Công nghệ chuyên môn', description: ['Triển khai và bàn giao dự án đúng tiến độ.'] }, ...(workingCv.projects || [])];
-        updates.projects = next; workingCv.projects = next;
-      } else if (knownKey === 'education') {
-        const next = [{ id: `edu_ai_${Date.now()}`, school: 'Tên Trường Đại Học', degree: 'Cử nhân', fieldOfStudy: 'Chuyên ngành đào tạo', startDate: '2020', endDate: '2024', gpa: '3.5 / 4.0', description: '' }, ...(workingCv.education || [])];
-        updates.education = next; workingCv.education = next;
-      } else if (knownKey === 'experience') {
-        const next = [{ id: `exp_ai_${Date.now()}`, position: workingCv?.profile?.jobTitle || 'Chuyên viên', company: 'Tên Công Ty', location: '', startDate: '01/2024', endDate: 'Hiện tại', current: true, description: ['Đảm nhiệm các nghiệp vụ chuyên môn trọng tâm.'] }, ...(workingCv.experience || [])];
-        updates.experience = next; workingCv.experience = next;
-      } else if (knownKey === 'skills') {
-        const next = [...(workingCv.skills || []), { id: `sk_ai_${Date.now()}`, name: 'Kỹ năng chuyên môn', level: 4 }];
-        updates.skills = next; workingCv.skills = next;
+      const existingCount = Array.isArray(workingCv[knownKey]) ? workingCv[knownKey].length : (workingCv[knownKey] ? 1 : 0);
+      if (existingCount === 0) {
+        notices.push(`Đã bật mục ${secNameVi} trên CV (hiện để trống để không tự ý bịa thông tin). Bạn hãy nhắn nội dung cụ thể muốn thêm vào mục ${secNameVi} nhé!`);
+      } else {
+        notices.push(`Đã hiển thị mục ${secNameVi} trên CV.`);
       }
       return true;
     } else if (labelRaw) {
@@ -1490,15 +1658,18 @@ function applySingleClause(clauseRaw, state) {
       workingCv.sectionsVisibility = curVis;
       const colonIdx = labelRaw.indexOf(':');
       const title = colonIdx !== -1 ? sanitizeText(labelRaw.slice(0, colonIdx), 80) : labelRaw;
-      const items = colonIdx !== -1 ? splitOutsideParens(labelRaw.slice(colonIdx + 1), true) : [`Nội dung chi tiết mục ${title}`];
+      const items = colonIdx !== -1 ? splitOutsideParens(labelRaw.slice(colonIdx + 1), true).map(x => sanitizeText(x, 300)).filter(Boolean) : [];
       const nextCs = [...(workingCv.customSections || []), { id: `cs_ai_${Date.now()}`, title, items }];
       updates.customSections = nextCs;
       workingCv.customSections = nextCs;
+      if (items.length === 0) {
+        notices.push(`Đã tạo mục "${title}" (đang để trống). Bạn muốn thêm những ý nào vào mục "${title}"?`);
+      }
       return true;
     }
   }
 
-  // ─── D. THEME: DARK MODE, SCOPED SECTION/COMPANY/HEADING COLORS, STRICT FONT WHITELIST, SIZE, SPACING ───
+  // ─── D. THEME: DARK MODE, SCOPED SECTION/COMPANY/SCHOOL/HEADING COLORS, STRICT FONT WHITELIST, EXACT PX SIZE, SPACING ───
   if (/\b(?:dark\s*mode|che\s+do\s+toi|giao\s+dien\s+toi|nen\s+toi)\b/i.test(norm) && !/\b(?:trang\s*web|website)\b/i.test(norm)) {
     const nextTheme = { ...(updates.theme || {}), bgColor: '#0f172a', textColor: '#f8fafc', nameColor: '#ffffff' };
     updates.theme = nextTheme;
@@ -1512,14 +1683,14 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // Unsupported non-CV-section color targets (footer / page border / skill bar)
-  if (/\b(?:chan\s+trang|footer|vien\s+trang)\b/i.test(norm) && /\b(?:mau|color|#[0-9a-f]{3,6}|rgb\s*\()\b/i.test(norm)) {
-    notices.push('Mẫu CV chuẩn A4 hiện không có vùng màu riêng cho chân trang (footer). Bạn có thể đổi màu chủ đạo CV, màu họ tên, màu tên công ty, màu tiêu đề mục hoặc màu riêng của từng mục (như mục Kinh nghiệm, Học vấn, Kỹ năng).');
+  // Unsupported non-CV-section color targets (footer / page border)
+  if (/\b(?:chan\s+trang|footer|vien\s+trang)\b/i.test(norm) && /\b(?:mau|color|rgb\s*\()\b|#[0-9a-f]{3,6}\b/i.test(norm)) {
+    notices.push('Mẫu CV chuẩn A4 hiện không có vùng màu riêng cho chân trang (footer). Bạn có thể đổi màu chủ đạo CV, màu họ tên, màu tên công ty, màu tên trường, màu tiêu đề mục hoặc màu riêng của từng mục.');
     return true;
   }
 
-  // Detect scoped color targets: company name, section headings, or a specific CV section!
-  const hasColorIntent = /\b(?:mau|color|tong\s+mau|rgb\s*\(|#[0-9a-f]{3,6})\b/i.test(norm) ||
+  // Detect scoped color targets: company name, school name, project name, jobTitle, all sections, headings, or a specific CV section!
+  const hasColorIntent = /\b(?:mau|color|tong\s+mau|rgb\s*\()\b|#[0-9a-f]{3,6}\b/i.test(norm) ||
     /(?:đổi|sửa|chỉnh|thay|chuyển|tô)\s+.+?\s+(?:thành|sang)\s+(?:màu\s+)?(?:đỏ|xanh|tím|vàng|cam|đen|trắng|hồng|xám|nâu)/i.test(raw);
 
   if (hasColorIntent) {
@@ -1533,7 +1704,7 @@ function applySingleClause(clauseRaw, state) {
         notices.push(`Mẫu CV chuẩn ATS chỉ hỗ trợ mã màu đơn sắc (không dùng gradient nhiều màu khi xuất PDF), nên hệ thống áp dụng màu đơn sắc ${chosen.label}.`);
       }
 
-      // 1) Company name color ("đổi màu tên công ty sang đỏ", "màu tên công ty đỏ") -> theme.companyColor (NEVER candidate nameColor!)
+      // 1) Company name color ("đổi màu tên công ty sang đỏ") -> theme.companyColor
       if (/\b(?:ten\s+cong\s+ty|mau\s+cong\s+ty)\b/i.test(norm)) {
         themeUpdates.companyColor = chosen.hex;
         updates.theme = themeUpdates;
@@ -1541,17 +1712,55 @@ function applySingleClause(clauseRaw, state) {
         return true;
       }
 
-      // 2) Section headings color ("đổi màu tiêu đề mục sang đỏ") -> theme.headingColor (not whole primaryColor!)
-      if (/\b(?:tieu\s+de\s+(?:cac\s+)?muc|mau\s+tieu\s+de)\b/i.test(norm)) {
+      // 2) School name color ("đổi màu tên trường thành đỏ", "màu trường sang xanh") -> theme.schoolColor
+      if (/\b(?:ten\s+truong|mau\s+truong|mau\s+ten\s+truong)\b/i.test(norm)) {
+        themeUpdates.schoolColor = chosen.hex;
+        updates.theme = themeUpdates;
+        workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+        return true;
+      }
+
+      // 3) Project name color ("đổi màu tên dự án thành đỏ") -> theme.projectColor
+      if (/\b(?:ten\s+du\s+an|mau\s+ten\s+du\s+an)\b/i.test(norm)) {
+        themeUpdates.projectColor = chosen.hex;
+        updates.theme = themeUpdates;
+        workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+        return true;
+      }
+
+      // 4) Candidate jobTitle color ("đổi màu chức danh sang đỏ") -> theme.jobTitleColor
+      if (/\b(?:mau\s+(?:chuc\s+danh|vi\s+tri(?:\s+ung\s+tuyen)?)|(?:chuc\s+danh|vi\s+tri\s+ung\s+tuyen)\s+(?:thanh\s+|sang\s+)?mau)\b/i.test(norm)) {
+        themeUpdates.jobTitleColor = chosen.hex;
+        updates.theme = themeUpdates;
+        workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+        return true;
+      }
+
+      // 5) Color ALL sections ("đổi màu tất cả mục sang xanh", "màu các mục sang đỏ") -> sets sectionColors for all sections + headingColor + primaryColor!
+      if (/\b(?:tat\s+ca|toan\s+bo|moi|cac)\s+(?:cac\s+)?(?:muc|phan|section)s?\b/i.test(norm) && !/\btieu\s+de\b/i.test(norm)) {
+        const allSecColors = { ...(workingCv.theme?.sectionColors || {}), ...(themeUpdates.sectionColors || {}) };
+        for (const sk of ALLOWED_SECTION_COLOR_KEYS) {
+          allSecColors[sk] = chosen.hex;
+        }
+        themeUpdates.primaryColor = chosen.hex;
+        themeUpdates.headingColor = chosen.hex;
+        themeUpdates.sectionColors = allSecColors;
+        updates.theme = themeUpdates;
+        workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+        return true;
+      }
+
+      // 6) Section headings color ("đổi màu tiêu đề mục sang đỏ") -> theme.headingColor
+      if (/\b(?:tieu\s+de\s+(?:cac\s+|tat\s+ca\s+)?muc|mau\s+tieu\s+de)\b/i.test(norm)) {
         themeUpdates.headingColor = chosen.hex;
         updates.theme = themeUpdates;
         workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
         return true;
       }
 
-      // 3) Per-section scoped color ("đổi màu kinh nghiệm làm việc sang màu đỏ", "màu mục học vấn sang xanh lá")
+      // 7) Per-section scoped color ("đổi màu kinh nghiệm làm việc sang màu đỏ", "đổi màu mục tiêu sang đỏ")
       const secColorTarget = findSectionKeyFromText(
-        norm.replace(/\b(?:doi|sua|chinh|thay|chuyen|to|mau|color|sang|thanh|la|cua|cho|o|trong|muc|phan)\b/g, ' ')
+        norm.replace(/\b(?:doi|sua|chinh|thay|chuyen|to|mau|color|sang|thanh|la|cua|cho|o|trong|phan)\b|\bmuc\s+(?!tieu\b)/g, ' ')
       );
       if (secColorTarget && !/\b(?:chu\s+dao|toan\s+bo\s+cv|tong\s+mau)\b/i.test(norm)) {
         const nextSecColors = { ...(workingCv.theme?.sectionColors || {}), ...(themeUpdates.sectionColors || {}), [secColorTarget]: chosen.hex };
@@ -1571,7 +1780,9 @@ function applySingleClause(clauseRaw, state) {
       /^(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi)?)\s+mau\s+/i.test(norm)
     );
 
-  if (STYLE_INTENT_RE.test(norm) || isNameColorPhrase) {
+  const hasAccentedPhongFont = /(?:^|[\s,:;(])phông(?=$|[\s,:;.!?)])/i.test(raw);
+
+  if (STYLE_INTENT_RE.test(norm) || isNameColorPhrase || hasAccentedPhongFont) {
     let matchedTheme = false;
     const themeUpdates = { ...(updates.theme || {}) };
     const colors = extractAllColors(raw, norm);
@@ -1596,9 +1807,10 @@ function applySingleClause(clauseRaw, state) {
       }
     }
 
-    // Strict Font Whitelist (catches "font", "phông", OR bare font names like "đổi sang Arial", "chuyển Times"!)
+    // Strict Font Whitelist (catches "font", accented "phông", "phong chu", OR bare font names like "đổi sang Arial", "phông Times" — NEVER matches "Trưởng phòng"!)
     const mentionsFont =
-      /\b(?:font|phong(?:\s+chu)?|kieu\s+chu)\b/i.test(norm) ||
+      /\b(?:font|phong\s+chu|kieu\s+chu)\b/i.test(norm) ||
+      hasAccentedPhongFont ||
       KNOWN_UNSUPPORTED_FONTS_RE.test(norm) ||
       (/\b(?:doi|chuyen|chon|dung)\s+(?:sang\s+)?(?:inter|roboto|montserrat|merriweather|nunito|lora|open\s+sans|be\s+vietnam\s+pro)\b/i.test(norm));
 
@@ -1617,16 +1829,25 @@ function applySingleClause(clauseRaw, state) {
     }
 
     if (/\b(?:co\s*chu|kich\s*thuoc\s*chu|font\s*size|chu\s+(?:to|lon|nho|be)|(?:tang|giam|phong\s+to|thu\s+nho)\s+(?:co\s+)?chu)\b/i.test(norm)) {
-      const pxMatch = norm.match(/\b(\d{1,2}(?:\.\d+)?)\s*(?:px|pt)?\b/);
+      const pxMatch = norm.match(/\b(-?\d{1,3}(?:\.\d+)?)\s*(?:px|pt)?\b/);
       const px = pxMatch ? parseFloat(pxMatch[1]) : null;
-      if (/\b(?:lon|to|bu|large|big|tang|phong\s+to)\b/i.test(norm) || (px !== null && px >= 14)) {
-        themeUpdates.fontSize = 'large'; matchedTheme = true;
-      } else if (/\b(?:nho|be|small|tiny|giam|thu\s+nho)\b/i.test(norm) || (px !== null && px > 0 && px <= 12)) {
-        themeUpdates.fontSize = 'small'; matchedTheme = true;
-      } else if (/\b(?:vua|trung\s+binh|mac\s+dinh|binh\s+thuong|medium|normal)\b/i.test(norm) || (px !== null && px > 12 && px < 14)) {
-        themeUpdates.fontSize = 'medium'; matchedTheme = true;
+      if (px !== null) {
+        if (px < 8 || px > 24) {
+          notices.push(`Cỡ chữ ${px}px nằm ngoài phạm vi chuẩn CV (8px – 24px). Vui lòng chọn cỡ chữ từ 8 đến 24.`);
+          matchedTheme = true;
+        } else {
+          themeUpdates.fontSizePx = px;
+          themeUpdates.fontSize = px >= 14 ? 'large' : (px <= 12 ? 'small' : 'medium');
+          matchedTheme = true;
+        }
+      } else if (/\b(?:lon|to|bu|large|big|tang|phong\s+to)\b/i.test(norm)) {
+        themeUpdates.fontSize = 'large'; themeUpdates.fontSizePx = 0; matchedTheme = true;
+      } else if (/\b(?:nho|be|small|tiny|giam|thu\s+nho)\b/i.test(norm)) {
+        themeUpdates.fontSize = 'small'; themeUpdates.fontSizePx = 0; matchedTheme = true;
+      } else if (/\b(?:vua|trung\s+binh|mac\s+dinh|binh\s+thuong|medium|normal)\b/i.test(norm)) {
+        themeUpdates.fontSize = 'medium'; themeUpdates.fontSizePx = 0; matchedTheme = true;
       } else {
-        notices.push('Bạn có thể chọn 1 trong 3 mức cỡ chữ CV: Nhỏ ("cỡ chữ nhỏ"), Vừa ("cỡ chữ vừa") hoặc Lớn ("cỡ chữ lớn").');
+        notices.push('Bạn có thể chọn cỡ chữ theo mức Nhỏ / Vừa / Lớn hoặc số px cụ thể từ 8 đến 24 (VD: "đổi cỡ chữ 13").');
         matchedTheme = true;
       }
     }
@@ -1648,9 +1869,12 @@ function applySingleClause(clauseRaw, state) {
 
     if (Object.keys(themeUpdates).length > 0) {
       const curTheme = workingCv.theme || {};
-      for (const [tk, tv] of Object.entries(themeUpdates)) {
-        if (tk !== 'sectionColors' && String(curTheme[tk] ?? '').toLowerCase() === String(tv ?? '').toLowerCase()) {
-          const tNames = { primaryColor: 'Màu chủ đạo', nameColor: 'Màu tên', textColor: 'Màu chữ', bgColor: 'Màu nền', fontFamily: 'Font chữ', fontSize: 'Cỡ chữ', lineSpacing: 'Giãn dòng' };
+      const allUnchanged = Object.entries(themeUpdates).every(([tk, tv]) =>
+        tk !== 'sectionColors' && String(curTheme[tk] ?? '').toLowerCase() === String(tv ?? '').toLowerCase()
+      );
+      if (allUnchanged) {
+        for (const [tk, tv] of Object.entries(themeUpdates)) {
+          const tNames = { primaryColor: 'Màu chủ đạo', nameColor: 'Màu tên', textColor: 'Màu chữ', bgColor: 'Màu nền', fontFamily: 'Font chữ', fontSize: 'Cỡ chữ', fontSizePx: 'Cỡ chữ (px)', lineSpacing: 'Giãn dòng' };
           state.alreadySetNotes.push(`${tNames[tk] || tk} hiện đã ở sẵn giá trị ${tv}`);
         }
       }
@@ -1658,22 +1882,26 @@ function applySingleClause(clauseRaw, state) {
       workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
     }
 
-    if (matchedTheme && !/\b(?:cong\s+ty|truong|du\s+an|kinh\s+nghiem|hoc\s+van|ky\s+nang|skill|chung\s+chi|giai\s+thuong|muc\s+tieu|email|sdt|dia\s+chi|website|avatar)\b/i.test(norm)) {
+    if (matchedTheme) {
       return true;
     }
   }
 
-  // ─── E. GENERIC N-FIRST / N-LAST SLICE DELETION ACROSS ALL ARRAY SECTIONS ("xóa 3 kỹ năng cuối", "xóa 2 kinh nghiệm đầu") ───
-  const sliceDelNorm = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loai\s+bo)\s+(\d{1,2}|mot|hai|ba|bon|tu|nam|sau)\s+(?:muc\s+)?(.+?)\s+(cuoi(?:\s+cung)?|dau(?:\s+tien)?)$/);
+  // ─── E. GENERIC N-FIRST / N-LAST SLICE DELETION ACROSS ALL ARRAY SECTIONS ("xóa 3 kỹ năng cuối", "xóa 100 kỹ năng cuối") ───
+  const sliceDelNorm = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loai\s+bo)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b))?(.+?)\s+(cuoi(?:\s+cung)?|dau(?:\s+tien)?)$/);
   if (sliceDelNorm) {
     const countN = parseSmallCount(sliceDelNorm[1]);
     const secKey = findSectionKeyFromText(sliceDelNorm[2]);
     const isLast = /^cuoi/.test(sliceDelNorm[3]);
     if (countN && countN >= 1 && secKey && Array.isArray(workingCv[secKey])) {
       const curArr = workingCv[secKey];
+      const secName = SECTION_VI_NAMES[secKey] || secKey;
       if (curArr.length === 0) {
-        notices.push(`Mục ${SECTION_VI_NAMES[secKey] || secKey} hiện đang trống.`);
+        notices.push(`Mục ${secName} hiện đang trống nên không có phần tử nào để xóa.`);
         return true;
+      }
+      if (countN > curArr.length) {
+        notices.push(`Mục ${secName} hiện chỉ có ${curArr.length} phần tử (nhỏ hơn ${countN}), nên hệ thống đã xóa toàn bộ ${curArr.length} phần tử.`);
       }
       const nextArr = isLast ? curArr.slice(0, Math.max(0, curArr.length - countN)) : curArr.slice(countN);
       updates[secKey] = nextArr;
@@ -1682,11 +1910,10 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // ─── F. SKILLS: TONE-TOLERANT KEEP-ONLY ("chỉ giử lại UX"), CLEAR, POSITIONAL 1-BASED DELETE, LEVEL EDIT, ADD ───
-  // F1. Tone-tolerant conditional keep-only (handles "giử" / "giữ" / "giu" AND any section label like "CORE SKILLS & TECH STACK"!)
+  // ─── F. SKILLS: TONE-TOLERANT KEEP-ONLY ("chỉ giử lại UX"), CLEAR, POSITIONAL 1-BASED DELETE, LEVEL VALIDATION & EDIT, ADD ───
+  // F1. Tone-tolerant conditional keep-only
   const keepConnectorRe = /\b(?:chi\s+(?:giu|de)(?:\s+lai)?|ngoai\s+tru|tru)\b/i;
   if (/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loc|chi\s+(?:giu|de))\b/i.test(norm) && keepConnectorRe.test(norm)) {
-    // Locate the keep-list tail directly in `raw` using tone-tolerant accented/unaccented regex!
     const rawKeepMatch =
       raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|lọc)\s+(?:tất\s+cả|toàn\s+bộ|hết|sạch|các)?\s*(.+?)\s+(?:chỉ\s+(?:giữ|giử|giư|giu|để|de)(?:\s+lại|\s+lai)?|ngoại\s+trừ|trừ)\s*:?\s*([^\r\n!?]+)$/i) ||
       raw.match(/^(?:hãy\s+|vui lòng\s+)?chỉ\s+(?:giữ|giử|giư|giu|để|de)(?:\s+lại|\s+lai)?\s+(?:các\s+|mục\s+)?(?:kỹ\s*năng|kĩ\s*năng|core\s+skills(?:\s*&\s*tech\s+stack)?|tech\s+stack|skills?|skill)\s*:?\s*([^\r\n!?]+)$/i);
@@ -1696,12 +1923,12 @@ function applySingleClause(clauseRaw, state) {
       const keepTailStr = rawKeepMatch.length === 3 ? rawKeepMatch[2] : rawKeepMatch[1];
       const detectedSec = findSectionKeyFromText(secHeaderStr) || 'skills';
       if (detectedSec === 'skills') {
-        const keepParsed = parseSkillTokens(keepTailStr);
+        const keepParsed = parseSkillTokens(keepTailStr).filter(kp => !kp.invalidLevel);
         if (keepParsed.length > 0) {
           const currentSkills = Array.isArray(workingCv.skills) ? workingCv.skills : [];
           const nextSkills = keepParsed.map((kp, idx) => {
             const existing = currentSkills.find(cs => String(cs?.name || '').trim().toLowerCase() === kp.name.toLowerCase());
-            if (existing) return { ...existing };
+            if (existing) return kp._explicitLevel ? { ...existing, level: kp.level, _explicitLevel: true } : { ...existing };
             return { id: `sk_ai_${Date.now()}_${idx}`, name: kp.name, level: kp.level, _explicitLevel: kp._explicitLevel };
           });
           updates.skills = nextSkills;
@@ -1712,14 +1939,31 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // F2. Skill level edit ("đổi level UX thành 3", "sửa mức kỹ năng thứ 2 sang 5", "chỉnh UX lên level 5")
+  // F2. Skill level edit ("đổi level UX thành 3", validates 1..5 strictly!)
   const skillLevelMatch =
-    raw.match(/(?:đổi|sửa|sữa|chỉnh|cập nhật|thay|đặt)\s+(?:level|mức(?:\s+độ)?|điểm|thang\s+điểm)\s+(?:của\s+)?(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)?(.+?)\s+(?:thành|sang|lên|xuống|là|:)\s*(\d{1,3}(?:\s*\/\s*5|\s*%)?)/i) ||
-    raw.match(/(?:đổi|sửa|sữa|chỉnh|cập nhật)\s+(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)(.+?)\s+(?:thành|sang|lên|xuống)\s+(?:level|mức)\s*(\d{1,3}(?:\s*\/\s*5|\s*%)?)/i);
+    raw.match(/(?:đổi|sửa|sữa|chỉnh|cập nhật|thay|đặt)\s+(?:level|mức(?:\s+độ)?|điểm|thang\s+điểm)\s+(?:của\s+)?(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)?(.+?)\s+(?:thành|sang|lên|xuống|là|:)\s*(-?\d{1,3}(?:\.\d+)?(?:\s*\/\s*\d+|\s*%)?)/i) ||
+    raw.match(/(?:đổi|sửa|sữa|chỉnh|cập nhật)\s+(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)(.+?)\s+(?:thành|sang|lên|xuống)\s+(?:level|mức)\s*(-?\d{1,3}(?:\.\d+)?(?:\s*\/\s*\d+|\s*%)?)/i);
 
   if (skillLevelMatch && Array.isArray(workingCv.skills) && workingCv.skills.length > 0) {
     const selector = sanitizeText(skillLevelMatch[1], 80);
-    const newLvl = normalizeSkillLevel(skillLevelMatch[2], 4);
+    const rawLvlStr = skillLevelMatch[2].trim();
+    const isPct = rawLvlStr.endsWith('%');
+    const slashParts = rawLvlStr.match(/^(-?\d+(?:\.\d+)?)\s*\/\s*(\d+)$/);
+    if (!isPct && !slashParts) {
+      const bareVal = parseFloat(rawLvlStr);
+      if (!Number.isInteger(bareVal) || bareVal < 1 || bareVal > 5) {
+        notices.push(`Mức độ kỹ năng (level) chỉ nhận giá trị nguyên từ 1 đến 5 (bạn đang nhập "${rawLvlStr}"). Vui lòng chọn mức từ 1 đến 5.`);
+        return true;
+      }
+    } else if (slashParts) {
+      const nVal = parseFloat(slashParts[1]);
+      const dVal = parseInt(slashParts[2], 10);
+      if ((dVal === 5 && (!Number.isInteger(nVal) || nVal < 1 || nVal > 5)) || (dVal !== 5 && dVal !== 10)) {
+        notices.push(`Mức độ kỹ năng "${rawLvlStr}" không hợp lệ (thang chuẩn trên CV là từ 1/5 đến 5/5).`);
+        return true;
+      }
+    }
+    const newLvl = normalizeSkillLevel(rawLvlStr, 4);
     const curSkills = workingCv.skills;
     let idx = -1;
     if (isPurePositionalSelector(selector)) {
@@ -1759,16 +2003,22 @@ function applySingleClause(clauseRaw, state) {
   // F4. Replace all skills
   const replaceSkillsMatch = raw.match(new RegExp(`(?:xóa hết|thay(?:\\s+toàn bộ)?|đặt lại|đổi(?:\\s+toàn bộ)?)\\s+(?:các\\s+)?${SKILL_NOUN_RE}[^:\\n]*?(?:chỉ để|thành|sang|là|:)\\s*([^\\r\\n!?]+)`, 'i'));
   if (replaceSkillsMatch) {
-    const parsed = parseSkillTokens(replaceSkillsMatch[1]);
-    if (parsed.length > 0) {
-      const nextSkills = parsed.map((s, idx) => ({ id: `sk_ai_${Date.now()}_${idx}`, name: s.name, level: s.level, _explicitLevel: s._explicitLevel }));
+    const allParsed = parseSkillTokens(replaceSkillsMatch[1]);
+    const invalid = allParsed.filter(s => s.invalidLevel !== undefined);
+    const valid = allParsed.filter(s => s.invalidLevel === undefined);
+    for (const inv of invalid) {
+      notices.push(`Mức độ kỹ năng "${inv.name}" không hợp lệ (level ${inv.invalidLevel} nằm ngoài thang 1–5).`);
+    }
+    if (valid.length > 0) {
+      const nextSkills = valid.map((s, idx) => ({ id: `sk_ai_${Date.now()}_${idx}`, name: s.name, level: s.level, _explicitLevel: s._explicitLevel }));
       updates.skills = nextSkills;
       workingCv.skills = nextSkills;
       return true;
     }
+    if (invalid.length > 0) return true;
   }
 
-  // F5. Remove skill by 1-BASED INDEX ("xóa kỹ năng thứ 2 / thứ hai / số 2 / 2 / đầu tiên / cuối cùng") OR by name(s)
+  // F5. Remove skill by 1-BASED INDEX OR by name(s)
   const removeSkillMatch = raw.match(new RegExp(`^(?:hãy\\s+|vui lòng\\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ|remove)\\s+(?:các\\s+|mục\\s+)?${SKILL_NOUN_RE}\\s*(?::|\\s)\\s*([^\\r\\n;!?]{1,150})$`, 'i'));
   if (removeSkillMatch) {
     const cleanedTail = removeSkillMatch[1].replace(/\s+(?:khỏi\s+(?:cv|hồ sơ)|giúp\s+tôi|nhé)+$/i, '').replace(/[.!?]+$/, '').trim();
@@ -1777,7 +2027,6 @@ function applySingleClause(clauseRaw, state) {
       notices.push('Hiện tại CV chưa có kỹ năng nào để xóa.');
       return true;
     }
-    // Check 1-based positional selector FIRST!
     if (isPurePositionalSelector(cleanedTail)) {
       const pos = resolveOneBasedIndex(cleanedTail, currentSkills.length);
       if (pos.outOfRange || pos.index0 === null) {
@@ -1803,30 +2052,50 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // F6. Add skills
+  // F6. Add skills (validates level 1..5 AND updates level if existing skill is re-added with a new explicit level!)
   const addSkillMatch = raw.match(new RegExp(`(?:(?:thêm|bổ sung|add)\\s+(?:vào\\s+)?(?:\\d+\\s+|các\\s+|một\\s+số\\s+|vài\\s+|những\\s+)?${SKILL_NOUN_RE}|^(?:${SKILL_NOUN_RE}|thành thạo))\\s*(?::|\\s)\\s*([^\\r\\n!?]+)`, 'i'));
   if (addSkillMatch && !STYLE_INTENT_RE.test(normalizeCheck(addSkillMatch[1]))) {
-    const parsed = parseSkillTokens(addSkillMatch[1]);
+    const allParsed = parseSkillTokens(addSkillMatch[1]);
+    const invalid = allParsed.filter(s => s.invalidLevel !== undefined);
+    const parsed = allParsed.filter(s => s.invalidLevel === undefined);
+    for (const inv of invalid) {
+      notices.push(`Mức độ kỹ năng "${inv.name}" không hợp lệ (level ${inv.invalidLevel} nằm ngoài thang chuẩn từ 1 đến 5) nên chưa thêm vào CV. Vui lòng chọn level từ 1 đến 5.`);
+    }
     if (parsed.length > 0) {
       const currentSkills = Array.isArray(workingCv.skills) ? workingCv.skills : [];
-      const existingNames = new Set(currentSkills.map(s => String(s?.name || '').trim().toLowerCase()));
-      const alreadyPresent = parsed.filter(s => existingNames.has(s.name.toLowerCase())).map(s => s.name);
-      const additions = parsed
-        .filter(s => !existingNames.has(s.name.toLowerCase()))
-        .map((s, idx) => ({ id: `sk_ai_${Date.now()}_${idx}`, name: s.name, level: s.level, _explicitLevel: s._explicitLevel }));
-      if (alreadyPresent.length > 0) {
-        state.alreadySetNotes.push(`Kỹ năng "${alreadyPresent.join(', ')}" đã có sẵn trong CV`);
+      const nextSkills = currentSkills.map(cs => ({ ...cs }));
+      let mutatedExisting = false;
+      const alreadySame = [];
+      const additions = [];
+
+      parsed.forEach((s, idx) => {
+        const existIdx = nextSkills.findIndex(cs => String(cs?.name || '').trim().toLowerCase() === s.name.toLowerCase());
+        if (existIdx !== -1) {
+          if (s._explicitLevel && nextSkills[existIdx].level !== s.level) {
+            nextSkills[existIdx] = { ...nextSkills[existIdx], level: s.level, _explicitLevel: true };
+            mutatedExisting = true;
+          } else {
+            alreadySame.push(s.name);
+          }
+        } else {
+          additions.push({ id: `sk_ai_${Date.now()}_${idx}`, name: s.name, level: s.level, _explicitLevel: s._explicitLevel });
+        }
+      });
+
+      if (alreadySame.length > 0) {
+        state.alreadySetNotes.push(`Kỹ năng "${alreadySame.join(', ')}" đã có sẵn trong CV`);
       }
-      if (additions.length > 0) {
-        const nextSkills = [...currentSkills.map(cs => ({ ...cs })), ...additions];
-        updates.skills = nextSkills;
-        workingCv.skills = nextSkills;
+      if (mutatedExisting || additions.length > 0) {
+        const finalSkills = [...nextSkills, ...additions];
+        updates.skills = finalSkills;
+        workingCv.skills = finalSkills;
       }
       return true;
     }
+    if (invalid.length > 0) return true;
   }
 
-  // ─── G. EXPERIENCE (CLEAR, 1-BASED DELETE, FULL SUB-FIELD EDITS, ADD WITH "đến nay" & NO FAKE LOCATION) ───
+  // ─── G. EXPERIENCE (CLEAR, 1-BASED DELETE, FULL SUB-FIELD EDITS INCLUDING "TẤT CẢ", ADD WITH "đến nay" & NO FAKE LOCATION) ───
   if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:(?:tất cả|toàn bộ|hết|sạch)\s+(?:các\s+|mục\s+)?kinh nghiệm(?:\s+làm\s+việc)?|(?:các\s+)?kinh nghiệm\s+còn\s+lại)\s*[.!?]*$/i.test(raw)) {
     updates.experience = [];
     workingCv.experience = [];
@@ -1860,16 +2129,22 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // G1. Experience sub-fields: position, company, description, startDate, endDate, time range, location
+  // G1. Experience sub-fields: position, company (including "tất cả công ty"), description, startDate, endDate, time range, location
   if (isEditVerb && Array.isArray(workingCv.experience) && workingCv.experience.length > 0) {
     const curExp = workingCv.experience;
 
-    // Position in experience ("đổi vị trí công việc thứ 2 thành ...", "sửa chức vụ kinh nghiệm 1 sang ...")
-    const expPosMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(?:vị trí\s+(?:công việc|làm việc|kinh nghiệm)|chức vụ(?:\s+công việc|\s+kinh nghiệm)?)(?:\s+(.+?))?|(?:vị trí|chức vụ)\s+((?:thứ|số|mục|#)\s*\S+|\d+|đầu tiên|cuối(?:\s+cùng)?|(?:ở|tại|trong)\s+kinh nghiệm\s*\S*))\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    // Position in experience ("đổi vị trí công việc thứ 2 thành ...", "đổi tất cả vị trí công việc thành ...")
+    const expPosMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:(?:vị trí\s+(?:công việc|làm việc|kinh nghiệm)|chức vụ(?:\s+công việc|\s+kinh nghiệm)?)(?:\s+(.+?))?|(?:vị trí|chức vụ)\s+((?:thứ|số|mục|#)\s*\S+|\d+|đầu tiên|cuối(?:\s+cùng)?|tất cả|toàn bộ|(?:ở|tại|trong)\s+kinh nghiệm\s*\S*))\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
     if (expPosMatch) {
-      const selStr = expPosMatch[1] || expPosMatch[2] || '';
-      const newPos = sanitizeText(expPosMatch[3].replace(/[.!?]+$/, ''), 150);
-      const pos = resolveOneBasedIndex(selStr || raw.slice(0, raw.indexOf(expPosMatch[3])), curExp.length);
+      const selStr = expPosMatch[2] || expPosMatch[3] || '';
+      const newPos = sanitizeText(expPosMatch[4].replace(/[.!?]+$/, ''), 150);
+      const isAll = Boolean(expPosMatch[1]) || /\b(?:tat\s+ca|toan\s+bo|moi)\b/i.test(normalizeCheck(selStr));
+      if (isAll) {
+        const nextExp = curExp.map(item => ({ ...item, position: newPos }));
+        updates.experience = nextExp; workingCv.experience = nextExp;
+        return true;
+      }
+      const pos = resolveOneBasedIndex(selStr || raw.slice(0, raw.indexOf(expPosMatch[4])), curExp.length);
       if (pos.outOfRange || pos.index0 === null) {
         notices.push(`CV hiện chỉ có ${curExp.length} mục kinh nghiệm nên không thể sửa vị trí #${pos.requested1}.`);
         return true;
@@ -1879,16 +2154,23 @@ function applySingleClause(clauseRaw, state) {
       return true;
     }
 
-    // Company name
-    const companyEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên\s+)?công ty(?:\s+(?:đầu tiên|cuối(?:\s+cùng)?|(?:thứ|số|mục)?\s*\S+))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    // Company name ("đổi tên công ty đầu tiên thành ...", "đổi tên tất cả công ty thành ABC")
+    const companyEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|mọi|các)\s+)?công ty(?:\s+(?:của\s+)?(?:tất cả\s+kinh nghiệm|đầu tiên|cuối(?:\s+cùng)?|(?:thứ|số|mục)?\s*\S+))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
     if (companyEditMatch) {
-      const pos = resolveOneBasedIndex(raw.slice(0, companyEditMatch.index + companyEditMatch[0].indexOf(companyEditMatch[1])), curExp.length);
-      if (pos.outOfRange || pos.index0 === null) {
-        notices.push(`CV hiện chỉ có ${curExp.length} mục kinh nghiệm nên không thể sửa công ty #${pos.requested1}.`);
-        return true;
-      }
-      const newCompany = sanitizeText(companyEditMatch[1].replace(/[.!?]+$/, ''), 150);
+      const prefixBeforeVal = raw.slice(0, companyEditMatch.index + companyEditMatch[0].lastIndexOf(companyEditMatch[3]));
+      const isAll = Boolean(companyEditMatch[1] || companyEditMatch[2]) || /\b(?:tat\s+ca|toan\s+bo|moi)\b/i.test(normalizeCheck(prefixBeforeVal));
+      const newCompany = sanitizeText(companyEditMatch[3].replace(/[.!?]+$/, ''), 150);
       if (newCompany) {
+        if (isAll) {
+          const nextExp = curExp.map(item => ({ ...item, company: newCompany }));
+          updates.experience = nextExp; workingCv.experience = nextExp;
+          return true;
+        }
+        const pos = resolveOneBasedIndex(prefixBeforeVal, curExp.length);
+        if (pos.outOfRange || pos.index0 === null) {
+          notices.push(`CV hiện chỉ có ${curExp.length} mục kinh nghiệm nên không thể sửa công ty #${pos.requested1}.`);
+          return true;
+        }
         const nextExp = curExp.map((item, i) => (i === pos.index0 ? { ...item, company: newCompany } : { ...item }));
         updates.experience = nextExp; workingCv.experience = nextExp;
         return true;
@@ -2092,12 +2374,14 @@ function applySingleClause(clauseRaw, state) {
       return true;
     }
 
-    const schoolEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên\s+)?trường(?:\s+(?:đại học|cao đẳng))?(?:\s+(?:đầu tiên|cuối(?:\s+cùng)?|(?:thứ|số|mục)?\s*\S+))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    const schoolEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|mọi|các)\s+)?trường(?:\s+(?:đại học|cao đẳng))?(?:\s+(?:đầu tiên|cuối(?:\s+cùng)?|(?:thứ|số|mục)?\s*\S+))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
     if (schoolEditMatch) {
-      const idx = resolveOneBasedIndex(raw.slice(0, schoolEditMatch.index + schoolEditMatch[0].indexOf(schoolEditMatch[1])), curEdu.length).index0 ?? 0;
-      const newSchool = sanitizeText(schoolEditMatch[1].replace(/[.!?]+$/, ''), 150);
+      const prefixBeforeVal = raw.slice(0, schoolEditMatch.index + schoolEditMatch[0].lastIndexOf(schoolEditMatch[3]));
+      const isAll = Boolean(schoolEditMatch[1] || schoolEditMatch[2]) || /\b(?:tat\s+ca|toan\s+bo|moi)\b/i.test(normalizeCheck(prefixBeforeVal));
+      const newSchool = sanitizeText(schoolEditMatch[3].replace(/[.!?]+$/, ''), 150);
       if (newSchool) {
-        const nextEdu = curEdu.map((item, i) => (i === idx ? { ...item, school: newSchool } : { ...item }));
+        const idx = resolveOneBasedIndex(prefixBeforeVal, curEdu.length).index0 ?? 0;
+        const nextEdu = curEdu.map((item, i) => ((isAll || i === idx) ? { ...item, school: newSchool } : { ...item }));
         updates.education = nextEdu; workingCv.education = nextEdu;
         return true;
       }
@@ -2114,18 +2398,22 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?học vấn|tốt nghiệp\s+trường|tốt nghiệp\s+đại học)(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?học vấn|tốt nghiệp)\s*:?\s*/i, '').trim();
+  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|mục)\s+)?học vấn|tốt nghiệp\s+trường|tốt nghiệp\s+đại học)(?=$|[\s,:;.!?)])/i.test(raw)) {
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|mục)\s+)?học vấn|tốt nghiệp)\s*:?\s*/i, '').trim();
     const nextEdu = Array.isArray(workingCv.education) ? workingCv.education.map(e => ({ ...e })) : [];
-    if (isGenericPlaceholder(tail)) {
+    if (!tail) {
+      notices.push('Bạn muốn thêm học vấn tại trường nào, chuyên ngành và niên khóa nào? (VD: "thêm học vấn ĐH Bách Khoa Hà Nội, chuyên ngành CNTT 2020 - 2024").');
+      return true;
+    }
+    if (GENERIC_NEW_PLACEHOLDER_RE.test(tail)) {
       nextEdu.unshift({
         id: `edu_ai_${Date.now()}`,
         school: 'Tên Trường Đại Học / Học Viện',
         degree: 'Cử nhân',
         fieldOfStudy: 'Chuyên ngành đào tạo',
-        startDate: '2020',
-        endDate: '2024',
-        gpa: '3.5 / 4.0',
+        startDate: '',
+        endDate: '',
+        gpa: '',
         description: ''
       });
     } else {
@@ -2139,9 +2427,9 @@ function applySingleClause(clauseRaw, state) {
         id: `edu_ai_${Date.now()}`,
         school,
         degree: major ? `Cử nhân ${major.replace(/^cử nhân\s+/i, '')}` : 'Cử nhân',
-        fieldOfStudy: major || 'Chuyên ngành đào tạo',
-        startDate: yearsMatch ? yearsMatch[1] : '2020',
-        endDate: yearsMatch ? (/^nay$/i.test(yearsMatch[2]) ? 'Hiện tại' : yearsMatch[2]) : '2024',
+        fieldOfStudy: major || '',
+        startDate: yearsMatch ? yearsMatch[1] : '',
+        endDate: yearsMatch ? (/^nay$/i.test(yearsMatch[2]) ? 'Hiện tại' : yearsMatch[2]) : '',
         gpa: inlineGpa,
         description: ''
       });
@@ -2150,7 +2438,7 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // ─── I. PROJECTS (CLEAR, 1-BASED DELETE, ROLE / TECHNOLOGIES / TIME / DESC / LINK / NAME EDITS, ADD) ───
+  // ─── I. PROJECTS (CLEAR, 1-BASED DELETE, ROLE / TECHNOLOGIES / TIME / DESC / NAME EDITS, ADD) ───
   if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:(?:tất cả|toàn bộ|hết|sạch)\s+(?:các\s+|mục\s+)?dự án|(?:các\s+)?dự án\s+còn\s+lại)\s*[.!?]*$/i.test(raw)) {
     updates.projects = []; workingCv.projects = []; return true;
   }
@@ -2173,17 +2461,18 @@ function applySingleClause(clauseRaw, state) {
   if (isEditVerb && Array.isArray(workingCv.projects) && workingCv.projects.length > 0 && /\bdự án|project\b/i.test(raw)) {
     const curProj = workingCv.projects;
 
-    // Project role ("đổi vai trò dự án thành Tech Lead", "sửa vai trò trong dự án 2 sang ...")
-    const projRoleMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+vai trò(?:\s+(?:trong\s+|của\s+)?dự án(?:\s+(.+?))?)?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    // Project role ("đổi vai trò dự án thành Tech Lead", "đổi vai trò tất cả dự án thành ...")
+    const projRoleMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ)\s+)?vai trò(?:\s+(?:trong\s+|của\s+)?(?:(tất cả|toàn bộ|các)\s+)?dự án(?:\s+(.+?))?)?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
     if (projRoleMatch) {
-      const idx = resolveOneBasedIndex(projRoleMatch[1] || '', curProj.length).index0 ?? 0;
-      const val = sanitizeText(projRoleMatch[2].replace(/[.!?]+$/, ''), 150);
-      const nextProj = curProj.map((item, i) => (i === idx ? { ...item, role: val } : { ...item }));
+      const isAll = Boolean(projRoleMatch[1] || projRoleMatch[2]) || /\b(?:tat\s+ca|toan\s+bo)\b/i.test(normalizeCheck(projRoleMatch[3] || ''));
+      const idx = resolveOneBasedIndex(projRoleMatch[3] || '', curProj.length).index0 ?? 0;
+      const val = sanitizeText(projRoleMatch[4].replace(/[.!?]+$/, ''), 150);
+      const nextProj = curProj.map((item, i) => ((isAll || i === idx) ? { ...item, role: val } : { ...item }));
       updates.projects = nextProj; workingCv.projects = nextProj;
       return true;
     }
 
-    // Project technologies ("đổi công nghệ dự án thành React, Node.js", "sửa tech stack dự án thành ...")
+    // Project technologies ("đổi công nghệ dự án thành React, Node.js")
     const projTechMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:công nghệ(?:\s+sử dụng)?|tech\s*stack)(?:\s+(?:trong\s+|của\s+)?dự án(?:\s+(.+?))?)?\s*(?:thành|sang|là|:)\s*([^\n!?]+)/i);
     if (projTechMatch) {
       const idx = resolveOneBasedIndex(projTechMatch[1] || '', curProj.length).index0 ?? 0;
@@ -2213,44 +2502,50 @@ function applySingleClause(clauseRaw, state) {
       return true;
     }
 
-    // Project name
-    const projEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên\s+)?dự án(?:\s+(?:đầu tiên|cuối(?:\s+cùng)?|(?:thứ|số|mục)?\s*\S+))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    // Project name ("đổi tên dự án thành ...", "đổi tên tất cả dự án thành ...")
+    const projEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|các)\s+)?dự án(?:\s+(?:đầu tiên|cuối(?:\s+cùng)?|(?:thứ|số|mục)?\s*\S+))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
     if (projEditMatch) {
-      const idx = resolveOneBasedIndex(raw.slice(0, projEditMatch.index + projEditMatch[0].indexOf(projEditMatch[1])), curProj.length).index0 ?? 0;
-      const newProjName = sanitizeText(projEditMatch[1].replace(/[.!?]+$/, ''), 150);
+      const prefixBeforeVal = raw.slice(0, projEditMatch.index + projEditMatch[0].lastIndexOf(projEditMatch[3]));
+      const isAll = Boolean(projEditMatch[1] || projEditMatch[2]) || /\b(?:tat\s+ca|toan\s+bo)\b/i.test(normalizeCheck(prefixBeforeVal));
+      const idx = resolveOneBasedIndex(prefixBeforeVal, curProj.length).index0 ?? 0;
+      const newProjName = sanitizeText(projEditMatch[3].replace(/[.!?]+$/, ''), 150);
       if (newProjName) {
-        const nextProj = curProj.map((item, i) => (i === idx ? { ...item, name: newProjName } : { ...item }));
+        const nextProj = curProj.map((item, i) => ((isAll || i === idx) ? { ...item, name: newProjName } : { ...item }));
         updates.projects = nextProj; workingCv.projects = nextProj;
         return true;
       }
     }
   }
 
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?dự án(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?dự án\s*:?\s*/i, '').trim();
+  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|các|mục)\s+)?dự án(?=$|[\s,:;.!?)])/i.test(raw)) {
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|các|mục)\s+)?dự án\s*:?\s*/i, '').trim();
     const nextProj = Array.isArray(workingCv.projects) ? workingCv.projects.map(p => ({ ...p })) : [];
-    if (isGenericPlaceholder(tail)) {
+    if (!tail) {
+      notices.push('Bạn muốn thêm dự án tên gì, vai trò và công nghệ sử dụng là gì? (VD: "thêm dự án Hệ thống CRM - vai trò Trưởng nhóm").');
+      return true;
+    }
+    if (GENERIC_NEW_PLACEHOLDER_RE.test(tail)) {
       nextProj.unshift({
         id: `proj_ai_${Date.now()}`,
         name: 'Dự án Tiêu biểu',
         role: workingCv?.profile?.jobTitle || 'Thành viên chính',
-        time: '01/2024 - 06/2024',
-        technologies: 'Công nghệ & Công cụ chuyên môn',
-        description: ['Xây dựng kế hoạch, trực tiếp triển khai các hạng mục cốt lõi và bàn giao dự án đúng chất lượng cam kết.']
+        time: '',
+        technologies: '',
+        description: []
       });
     } else {
       const roleSplit = tail.split(/\s+(?:vai trò|vị trí)\s+/i);
       const dashSplit = roleSplit[0].split(/\s*[-–:]\s*/);
       const pName = sanitizeText(dashSplit[0].replace(/[.!?]+$/, ''), 150) || 'Dự án mới';
-      const pRole = sanitizeText(roleSplit[1] || workingCv?.profile?.jobTitle || 'Thành viên phát triển', 120);
+      const pRole = sanitizeText(roleSplit[1] || '', 120);
       const pDesc = sanitizeText((dashSplit[1] || '').replace(/[.!?]+$/, ''), 500);
       nextProj.unshift({
         id: `proj_ai_${Date.now()}`,
         name: pName,
         role: pRole,
-        time: '2024',
+        time: '',
         technologies: '',
-        description: [pDesc || `Xây dựng và triển khai dự án ${pName}, đảm bảo chất lượng kỹ thuật và hiệu quả thực tế.`]
+        description: pDesc ? [pDesc] : []
       });
     }
     updates.projects = nextProj; workingCv.projects = nextProj;
@@ -2258,7 +2553,7 @@ function applySingleClause(clauseRaw, state) {
   }
 
   // ─── J. CERTIFICATES, AWARDS, ACTIVITIES, INTERESTS, REFERENCES, CUSTOM SECTIONS ───
-  // J1. Certificates (handles bare "xóa chứng chỉ" -> clear [], short-name "đổi năm 2022 của chứng chỉ HubSpot thành 2027"!)
+  // J1. Certificates (supports multi-add "thêm 2 chứng chỉ: IELTS 8.0, TOEIC 900", zero fake issuer/year!)
   if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+|toàn bộ\s+|hết\s+|sạch\s+)?(?:các\s+|mục\s+|phần\s+)?chứng chỉ\s*[.!?]*$/i.test(raw)) {
     updates.certificates = []; workingCv.certificates = []; return true;
   }
@@ -2288,7 +2583,6 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // Flexible Certificate Edit ("đổi năm 2022 của chứng chỉ HubSpot thành 2027", "sửa Chứng chỉ ... thành 2027", "đổi đơn vị cấp chứng chỉ TOEIC thành IIG")
   if (isEditVerb && /\bchứng chỉ|certificate/i.test(raw) && Array.isArray(workingCv.certificates) && workingCv.certificates.length > 0) {
     const curCerts = workingCv.certificates;
     const flexCertMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay)\s+(?:(năm|tên|đơn vị cấp|nơi cấp)(?:\s+\d{4})?\s+(?:của\s+|trong\s+|ở\s+)?)?(?:chứng chỉ|certificate)(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
@@ -2326,28 +2620,38 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?chứng chỉ(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?chứng chỉ\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|năm|các|nhiều|vài|mục)\s+)?chứng chỉ(?=$|[\s,:;.!?)])/i.test(raw)) {
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|năm|các|nhiều|vài|mục)\s+)?chứng chỉ\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+    if (!tail) {
+      notices.push('Bạn muốn thêm chứng chỉ nào (tên chứng chỉ, tổ chức cấp, năm cấp)? Ví dụ: "thêm chứng chỉ IELTS 8.0 của IDP năm 2024" hoặc "thêm 2 chứng chỉ: IELTS 8.0, TOEIC 900".');
+      return true;
+    }
     const nextCerts = Array.isArray(workingCv.certificates) ? workingCv.certificates.map(c => ({ ...c })) : [];
-    if (isGenericPlaceholder(tail)) {
-      nextCerts.push({ id: `cert_ai_${Date.now()}`, name: 'Chứng chỉ Chuyên môn Quốc tế', issuer: 'Tổ chức cấp chứng chỉ', year: '2024' });
+    if (GENERIC_NEW_PLACEHOLDER_RE.test(tail)) {
+      nextCerts.push({ id: `cert_ai_${Date.now()}`, name: 'Chứng chỉ chuyên môn', issuer: '', year: '' });
     } else {
-      const yearMatch = tail.match(/\b(19\d{2}|20\d{2})\b/);
-      const year = yearMatch ? yearMatch[1] : new Date().getFullYear().toString();
-      const withoutYear = tail.replace(/\s*\(?(?:năm\s*)?(?:19\d{2}|20\d{2})\)?/gi, '').trim();
-      const issuerSplit = withoutYear.split(/\s+(?:của|do|tại|-|–)\s+/i);
-      nextCerts.push({
-        id: `cert_ai_${Date.now()}`,
-        name: sanitizeText(issuerSplit[0] || tail, 150),
-        issuer: sanitizeText(issuerSplit[1] || 'Tổ chức cấp chứng chỉ', 150),
-        year
+      const items = splitOutsideParens(tail, true);
+      items.forEach((entry, idx) => {
+        const yearMatch = entry.match(/\b(19\d{2}|20\d{2})\b/);
+        const year = yearMatch ? yearMatch[1] : '';
+        const withoutYear = entry.replace(/\s*\(?(?:năm\s*)?(?:19\d{2}|20\d{2})\)?/gi, '').trim();
+        const issuerSplit = withoutYear.split(/\s+(?:của|do|tại|-|–)\s+/i);
+        const cName = sanitizeText(issuerSplit[0] || entry, 150);
+        if (cName) {
+          nextCerts.push({
+            id: `cert_ai_${Date.now()}_${idx}`,
+            name: cName,
+            issuer: sanitizeText(issuerSplit[1] || '', 150),
+            year
+          });
+        }
       });
     }
     updates.certificates = nextCerts; workingCv.certificates = nextCerts;
     return true;
   }
 
-  // J2. Awards (giải thưởng — bare "xóa giải thưởng" clears all, short-name edit supported)
+  // J2. Awards (supports multi-add "thêm 2 giải thưởng: ...", zero fake issuer/year!)
   if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+|toàn bộ\s+|hết\s+|sạch\s+)?(?:các\s+|mục\s+|phần\s+)?giải thưởng\s*[.!?]*$/i.test(raw)) {
     updates.awards = []; workingCv.awards = []; return true;
   }
@@ -2394,51 +2698,68 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?giải thưởng(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?giải thưởng\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|năm|các|nhiều|mục)\s+)?giải thưởng(?=$|[\s,:;.!?)])/i.test(raw)) {
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|năm|các|nhiều|mục)\s+)?giải thưởng\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+    if (!tail) {
+      notices.push('Bạn muốn thêm giải thưởng nào (tên giải thưởng, đơn vị trao, năm)? Ví dụ: "thêm giải thưởng Nhân viên xuất sắc quý 4 của FPT năm 2024".');
+      return true;
+    }
     const nextAwards = Array.isArray(workingCv.awards) ? workingCv.awards.map(a => ({ ...a })) : [];
-    if (isGenericPlaceholder(tail)) {
-      nextAwards.push({ id: `aw_ai_${Date.now()}`, name: 'Nhân viên Xuất sắc của Năm', issuer: 'Ban Lãnh đạo Công ty', year: '2024' });
+    if (GENERIC_NEW_PLACEHOLDER_RE.test(tail)) {
+      nextAwards.push({ id: `aw_ai_${Date.now()}`, name: 'Giải thưởng chuyên môn', issuer: '', year: '' });
     } else {
-      const yearMatch = tail.match(/\b(19\d{2}|20\d{2})\b/);
-      const year = yearMatch ? yearMatch[1] : new Date().getFullYear().toString();
-      const withoutYear = tail.replace(/\s*\(?(?:năm\s*)?(?:19\d{2}|20\d{2})\)?/gi, '').trim();
-      const issuerSplit = withoutYear.split(/\s+(?:của|tại|-|–)\s+/i);
-      nextAwards.push({
-        id: `aw_ai_${Date.now()}`,
-        name: sanitizeText(issuerSplit[0] || tail, 150),
-        issuer: sanitizeText(issuerSplit[1] || 'Đơn vị trao giải', 150),
-        year
+      const items = splitOutsideParens(tail, true);
+      items.forEach((entry, idx) => {
+        const yearMatch = entry.match(/\b(19\d{2}|20\d{2})\b/);
+        const year = yearMatch ? yearMatch[1] : '';
+        const withoutYear = entry.replace(/\s*\(?(?:năm\s*)?(?:19\d{2}|20\d{2})\)?/gi, '').trim();
+        const issuerSplit = withoutYear.split(/\s+(?:của|tại|-|–)\s+/i);
+        const awName = sanitizeText(issuerSplit[0] || entry, 150);
+        if (awName) {
+          nextAwards.push({
+            id: `aw_ai_${Date.now()}_${idx}`,
+            name: awName,
+            issuer: sanitizeText(issuerSplit[1] || '', 150),
+            year
+          });
+        }
       });
     }
     updates.awards = nextAwards; workingCv.awards = nextAwards;
     return true;
   }
 
-  // J3. Activities
+  // J3. Activities (NEVER fabricates "Tổ chức / Câu lạc bộ" or "2023 - 2024"!)
   if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+|toàn bộ\s+|hết\s+|sạch\s+)?(?:các\s+|mục\s+)?hoạt động(?:\s+ngoại khóa)?\s*[.!?]*$/i.test(raw)) {
     updates.activities = []; workingCv.activities = []; return true;
   }
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?hoạt động(?:\s+ngoại khóa)?(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?hoạt động(?:\s+ngoại khóa)?\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|các|mục)\s+)?hoạt động(?:\s+ngoại khóa)?(?=$|[\s,:;.!?)])/i.test(raw)) {
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|các|mục)\s+)?hoạt động(?:\s+ngoại khóa)?\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+    if (!tail) {
+      notices.push('Bạn muốn thêm hoạt động ngoại khóa gì (vai trò, tên câu lạc bộ/tổ chức, thời gian)? Ví dụ: "thêm hoạt động Trưởng ban Đối ngoại tại CLB Sinh viên (2022 - 2023)".');
+      return true;
+    }
     const nextActs = Array.isArray(workingCv.activities) ? workingCv.activities.map(a => ({ ...a })) : [];
-    if (isGenericPlaceholder(tail)) {
-      nextActs.push({ id: `act_ai_${Date.now()}`, role: 'Tình nguyện viên / Thành viên Ban tổ chức', organization: 'Câu lạc bộ & Cộng đồng Chuyên môn', time: '2023 - 2024', description: 'Tham gia điều phối sự kiện cộng đồng và hỗ trợ truyền thông chương trình.' });
+    if (GENERIC_NEW_PLACEHOLDER_RE.test(tail)) {
+      nextActs.push({ id: `act_ai_${Date.now()}`, role: 'Hoạt động ngoại khóa', organization: '', time: '', description: '' });
     } else {
-      const orgSplit = tail.split(/\s+(?:tại|ở|-|–)\s+/i);
+      const timeMatch = tail.match(/\(?\b((?:19|20)\d{2}(?:\s*-\s*(?:(?:19|20)\d{2}|Hiện tại|nay))?)\b\)?/i);
+      const timeVal = timeMatch ? sanitizeText(timeMatch[1], 40) : '';
+      const cleaned = timeMatch ? tail.replace(timeMatch[0], '').trim() : tail;
+      const orgSplit = cleaned.split(/\s+(?:tại|ở|-|–)\s+/i);
       nextActs.push({
         id: `act_ai_${Date.now()}`,
-        role: sanitizeText(orgSplit[0] || 'Thành viên', 150),
-        organization: sanitizeText(orgSplit[1] || 'Tổ chức / Câu lạc bộ', 150),
-        time: '2023 - 2024',
-        description: sanitizeText(tail, 400)
+        role: sanitizeText(orgSplit[0] || cleaned, 150),
+        organization: sanitizeText(orgSplit[1] || '', 150),
+        time: timeVal,
+        description: ''
       });
     }
     updates.activities = nextActs; workingCv.activities = nextActs;
     return true;
   }
 
-  // J4. Interests (supports "đổi sở thích thành Đọc sách, Du lịch" + clear + remove + add!)
+  // J4. Interests
   const replaceInterestsMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt(?:\s+lại)?)\s+(?:các\s+|mục\s+|phần\s+)?sở thích\s*(?:thành|sang|là|:)\s*([^\n!?]+)/i);
   if (replaceInterestsMatch) {
     const items = splitOutsideParens(replaceInterestsMatch[1].replace(/[.!?]+$/, ''), true)
@@ -2474,11 +2795,15 @@ function applySingleClause(clauseRaw, state) {
     notices.push(`Không tìm thấy sở thích "${tail}" để xóa.`);
     return true;
   }
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:các\s+)?sở thích(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:các\s+)?sở thích\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|các|nhiều)\s+)?sở thích(?=$|[\s,:;.!?)])/i.test(raw)) {
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|các|nhiều)\s+)?sở thích\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+    if (!tail) {
+      notices.push('Bạn muốn thêm sở thích nào? Ví dụ: "thêm sở thích Đọc sách, Chạy bộ".');
+      return true;
+    }
     const curInts = Array.isArray(workingCv.interests) ? [...workingCv.interests] : [];
-    const items = isGenericPlaceholder(tail)
-      ? ['Đọc sách chuyên ngành & Rèn luyện thể thao']
+    const items = GENERIC_NEW_PLACEHOLDER_RE.test(tail)
+      ? ['Đọc sách']
       : splitOutsideParens(tail, true).map(x => sanitizeText(x, 120)).filter(Boolean);
     const nextInts = dedupeStrings([...curInts, ...items]);
     updates.interests = nextInts; workingCv.interests = nextInts;
@@ -2503,11 +2828,15 @@ function applySingleClause(clauseRaw, state) {
     notices.push('Không tìm thấy người tham chiếu phù hợp để xóa.');
     return true;
   }
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+)?(?:người\s+)?tham chiếu(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+)?(?:người\s+)?tham chiếu\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|các)\s+)?(?:người\s+)?tham chiếu(?=$|[\s,:;.!?)])/i.test(raw)) {
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|các)\s+)?(?:người\s+)?tham chiếu\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+    if (!tail) {
+      notices.push('Bạn muốn thêm người tham chiếu nào (họ tên, chức vụ, công ty, email/SĐT)?');
+      return true;
+    }
     const nextRefs = Array.isArray(workingCv.references) ? workingCv.references.map(r => ({ ...r })) : [];
-    if (isGenericPlaceholder(tail)) {
-      nextRefs.push({ id: `ref_ai_${Date.now()}`, name: 'Ông/Bà Nguyễn Minh Hoàng', position: 'Trưởng phòng Chuyên môn', company: 'Công ty Cổ phần Công nghệ', email: 'hoang.nm@company.vn', phone: '0901 234 567' });
+    if (GENERIC_NEW_PLACEHOLDER_RE.test(tail)) {
+      nextRefs.push({ id: `ref_ai_${Date.now()}`, name: 'Người tham chiếu', position: '', company: '', email: '', phone: '' });
     } else {
       const email = (tail.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) || [])[0] || '';
       const phone = (tail.match(/(?:\+84|0)(?:[\s.-]*\d){8,9}/) || [])[0] || '';
@@ -2516,8 +2845,8 @@ function applySingleClause(clauseRaw, state) {
       nextRefs.push({
         id: `ref_ai_${Date.now()}`,
         name: parts[0] || sanitizeText(tail, 120),
-        position: parts[1] || 'Quản lý trực tiếp',
-        company: parts[2] || 'Doanh nghiệp',
+        position: parts[1] || '',
+        company: parts[2] || '',
         email,
         phone
       });
@@ -2532,20 +2861,79 @@ function applySingleClause(clauseRaw, state) {
   }
   if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|tạo)\s+(?:1\s+|một\s+)?(?:custom\s+section|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo)(?=$|[\s,:;.!?)])/i.test(raw)) {
     const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|tạo)\s+(?:1\s+|một\s+)?(?:custom\s+section|mục\s+tùy\s+chỉnh|mục\s+tự\s+tạo)\s*:?\s*/i, '').trim();
-    const nextCs = Array.isArray(workingCv.customSections) ? workingCv.customSections.map(c => ({ ...c })) : [];
-    if (isGenericPlaceholder(tail)) {
-      nextCs.push({ id: `cs_ai_${Date.now()}`, title: 'Ngoại ngữ & Kỹ năng bổ trợ', items: ['Tiếng Anh giao tiếp & đọc hiểu tài liệu chuyên ngành'] });
-    } else {
-      const colonIdx = tail.indexOf(':');
-      const title = colonIdx !== -1 ? sanitizeText(tail.slice(0, colonIdx), 100) : sanitizeText(tail, 100);
-      const itemsRaw = colonIdx !== -1 ? splitOutsideParens(tail.slice(colonIdx + 1), true) : ['Nội dung chi tiết trong mục ' + title];
-      nextCs.push({
-        id: `cs_ai_${Date.now()}`,
-        title: title || 'Mục bổ sung',
-        items: itemsRaw.map(x => sanitizeText(x, 300)).filter(Boolean)
-      });
+    if (!tail) {
+      notices.push('Bạn muốn đặt tiêu đề gì và thêm nội dung gì cho mục tùy chỉnh? (VD: "thêm custom section Ngoại ngữ: Tiếng Anh, Tiếng Nhật").');
+      return true;
     }
+    const nextCs = Array.isArray(workingCv.customSections) ? workingCv.customSections.map(c => ({ ...c })) : [];
+    const colonIdx = tail.indexOf(':');
+    const title = colonIdx !== -1 ? sanitizeText(tail.slice(0, colonIdx), 100) : sanitizeText(tail, 100);
+    const itemsRaw = colonIdx !== -1 ? splitOutsideParens(tail.slice(colonIdx + 1), true) : [];
+    nextCs.push({
+      id: `cs_ai_${Date.now()}`,
+      title: title || 'Mục bổ sung',
+      items: itemsRaw.map(x => sanitizeText(x, 300)).filter(Boolean)
+    });
     updates.customSections = nextCs; workingCv.customSections = nextCs;
+    return true;
+  }
+
+  // ─── K0. SPELLCHECK / TYPO PROOFREADER ("sửa lỗi chính tả trong mục tiêu", "kiểm tra chính tả kinh nghiệm / toàn bộ CV") ───
+  if (/\b(?:(?:sua|chinh|kiem\s+tra|soat|ra\s+soat)\s+(?:loi\s+)?chinh\s+ta|loi\s+chinh\s+ta|fix\s+(?:typo|spelling))\b/i.test(norm)) {
+    const targetSec = findSectionKeyFromText(norm);
+    let fixedAnything = false;
+
+    if (!targetSec || targetSec === 'objective') {
+      const curObj = String(workingCv.objective || '');
+      const nextObj = fixVietnameseTextTypos(curObj);
+      if (nextObj !== curObj) {
+        updates.objective = nextObj;
+        workingCv.objective = nextObj;
+        fixedAnything = true;
+      }
+    }
+    if (!targetSec || targetSec === 'experience') {
+      const curExp = Array.isArray(workingCv.experience) ? workingCv.experience : [];
+      const nextExp = curExp.map(e => ({
+        ...e,
+        position: fixVietnameseTextTypos(e.position || ''),
+        description: Array.isArray(e.description) ? e.description.map(fixVietnameseTextTypos) : e.description
+      }));
+      if (JSON.stringify(nextExp) !== JSON.stringify(curExp)) {
+        updates.experience = nextExp;
+        workingCv.experience = nextExp;
+        fixedAnything = true;
+      }
+    }
+    if (!targetSec || targetSec === 'education') {
+      const curEdu = Array.isArray(workingCv.education) ? workingCv.education : [];
+      const nextEdu = curEdu.map(e => ({
+        ...e,
+        description: fixVietnameseTextTypos(e.description || '')
+      }));
+      if (JSON.stringify(nextEdu) !== JSON.stringify(curEdu)) {
+        updates.education = nextEdu;
+        workingCv.education = nextEdu;
+        fixedAnything = true;
+      }
+    }
+    if (!targetSec || targetSec === 'projects') {
+      const curProj = Array.isArray(workingCv.projects) ? workingCv.projects : [];
+      const nextProj = curProj.map(p => ({
+        ...p,
+        description: Array.isArray(p.description) ? p.description.map(fixVietnameseTextTypos) : p.description
+      }));
+      if (JSON.stringify(nextProj) !== JSON.stringify(curProj)) {
+        updates.projects = nextProj;
+        workingCv.projects = nextProj;
+        fixedAnything = true;
+      }
+    }
+
+    if (!fixedAnything) {
+      const label = targetSec ? `mục ${SECTION_VI_NAMES[targetSec] || targetSec}` : 'toàn bộ CV';
+      notices.push(`Đã kiểm tra chính tả và dấu câu trong ${label}: nội dung hiện tại viết đúng chính tả chuẩn tiếng Việt, không phát hiện lỗi chính tả cần sửa. Nếu bạn muốn sửa một từ cụ thể hoặc viết lại câu chữ trau chuốt hơn, hãy chỉ rõ từ cần đổi hoặc nhắn "viết lại mục tiêu nghề nghiệp"!`);
+    }
     return true;
   }
 
@@ -2570,41 +2958,81 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // ─── L. PROFILE FIELDS ───
+  // ─── L. PROFILE FIELDS (WITH STRICT FORMAT VALIDATION SO INVALID EMAIL/PHONE/URL NEVER LEAKS TO REPLACE!) ───
   let matchedProfile = false;
   const profileUpdates = { ...(updates.profile || {}) };
 
   const hideAvatarMatch = /\b(?:an|tat|xoa|bo)\s+(?:anh\s*(?:dai\s*dien|ho\s*so|cv|ca\s*nhan)|hinh\s*dai\s*dien|avatar)\b/i.test(norm);
   const showAvatarMatch = /\b(?:hien|bat|hien\s+thi)\s+(?:anh\s*(?:dai\s*dien|ho\s*so|cv|ca\s*nhan)|hinh\s*dai\s*dien|avatar)\b/i.test(norm);
+  const explicitAvatarCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt|gắn)\s+(?:ảnh\s*(?:đại diện|hồ sơ|cv|cá nhân)|hình\s*(?:đại diện|hồ sơ)|avatar)\s*(?:thành|sang|là|:)\s*([^\s,;\n!?]+)/i);
   const avatarUrlMatch = raw.match(/(?:đổi|sửa|cập nhật|thay|đặt|gắn)?\s*(?:ảnh\s*(?:đại diện|hồ sơ|cv|cá nhân)|hình\s*(?:đại diện|hồ sơ)|avatar)\s*(?:thành|sang|là|:)?\s*(https?:\/\/[^\s"'<>);]+)/i);
 
   if (avatarUrlMatch) {
     const cleanAv = sanitizeAvatarUrl(avatarUrlMatch[1]);
     if (cleanAv) { profileUpdates.avatar = cleanAv; profileUpdates.showAvatar = true; matchedProfile = true; }
     else { notices.push('URL ảnh đại diện không hợp lệ (cần bắt đầu bằng http:// hoặc https://).'); matchedProfile = true; }
+  } else if (explicitAvatarCmd) {
+    notices.push(`Đường dẫn ảnh đại diện "${sanitizeText(explicitAvatarCmd[1], 80)}" không hợp lệ (cần là URL đầy đủ bắt đầu bằng https://...).`);
+    matchedProfile = true;
   } else if (hideAvatarMatch) { profileUpdates.showAvatar = false; matchedProfile = true; }
   else if (showAvatarMatch) { profileUpdates.showAvatar = true; matchedProfile = true; }
 
-  if (!avatarUrlMatch && !/\b(?:avatar|anh\s*dai\s*dien|anh\s*ho\s*so|hinh\s*dai\s*dien|background)\b/i.test(norm)) {
+  if (!avatarUrlMatch && !explicitAvatarCmd && !/\b(?:avatar|anh\s*dai\s*dien|anh\s*ho\s*so|hinh\s*dai\s*dien|background)\b/i.test(norm)) {
+    const explicitWebCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|thêm|đặt)\s+(?:link\s+)?(?:website|trang\s*web(?:\s*cá\s*nhân)?|portfolio|linkedin|github|gitlab|behance)\s*(?:cá\s*nhân|của\s*tôi)?\s*(?:thành|sang|là|:)\s*([^\s,;\n!?]+)/i);
     const webIntentMatch = raw.match(/(?:(?:đổi|sửa|cập nhật|thay|thêm|đặt)\s+)?(?:link\s+)?(?:website|trang\s*web\s*cá\s*nhân|portfolio|linkedin|github|gitlab|behance)\s*(?:cá\s*nhân|của\s*tôi)?\s*(?:thành|sang|là|:|\s)\s*((?:https?:\/\/|(?:www\.|linkedin\.com\/|github\.com\/|gitlab\.com\/|behance\.net\/))[^\s,;'"<>);]+|[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+(?:\/[^\s,;'"<>);]*)?)/i);
     if (webIntentMatch) {
       const cleanWeb = sanitizeUrl(webIntentMatch[1], 200);
       if (cleanWeb) { profileUpdates.website = cleanWeb; matchedProfile = true; }
+      else { notices.push(`Địa chỉ website "${sanitizeText(webIntentMatch[1], 80)}" không đúng định dạng URL hợp lệ.`); matchedProfile = true; }
+    } else if (explicitWebCmd) {
+      const cleanWeb = sanitizeUrl(explicitWebCmd[1], 200);
+      if (cleanWeb) { profileUpdates.website = cleanWeb; matchedProfile = true; }
+      else { notices.push(`Địa chỉ website "${sanitizeText(explicitWebCmd[1], 80)}" không đúng định dạng tên miền/URL hợp lệ (ví dụ: https://portfolio.vn hoặc linkedin.com/in/ten-ban).`); matchedProfile = true; }
     }
   }
 
+  // Explicit email validation ("đổi email thành không-phải-email" -> clear validation message, NEVER genericReplaceMatch!)
+  const explicitEmailCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt)\s+(?:địa\s+chỉ\s+)?(?:email|e-mail|thư\s+điện\s+tử)(?:\s+của\s+tôi|\s+liên\s+hệ)?\s*(?:thành|sang|là|:)\s*([^\s,;\n!?]+)/i);
   const emailMatch = raw.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-  if (emailMatch) { profileUpdates.email = emailMatch[0]; matchedProfile = true; }
+  if (emailMatch) {
+    profileUpdates.email = emailMatch[0];
+    matchedProfile = true;
+  } else if (explicitEmailCmd) {
+    notices.push(`Địa chỉ email "${sanitizeText(explicitEmailCmd[1], 80)}" không đúng định dạng hợp lệ (cần có dạng ten@domain.com) nên chưa cập nhật vào CV.`);
+    matchedProfile = true;
+  }
 
   const rawWithoutUrls = raw
     .replace(/https?:\/\/\S+/gi, ' ')
     .replace(/(?:www\.|linkedin\.com\/|github\.com\/|gitlab\.com\/|behance\.net\/)\S+/gi, ' ')
     .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, ' ');
+  const explicitPhoneCmd = rawWithoutUrls.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt)\s+(?:số\s+điện\s+thoại|sđt|sdt|điện\s+thoại|phone)\s*(?:thành|sang|là|:)\s*([^,;\n!?]+)/i);
   const phoneMatch = rawWithoutUrls.match(/(?:^|[\s,:;(])((?:\+84|0[1-9])(?:[\s.-]*\d){8,9})(?=$|[^\d])/);
-  if (phoneMatch) { profileUpdates.phone = sanitizeText(phoneMatch[1], 30); matchedProfile = true; }
+  if (phoneMatch) {
+    profileUpdates.phone = sanitizeText(phoneMatch[1], 30);
+    matchedProfile = true;
+  } else if (explicitPhoneCmd) {
+    notices.push(`Số điện thoại "${sanitizeText(explicitPhoneCmd[1], 40)}" không đúng định dạng hợp lệ (cần gồm 10–11 chữ số bắt đầu bằng 0 hoặc +84).`);
+    matchedProfile = true;
+  }
 
-  const dobMatch = raw.match(/(?:ngày sinh|sinh ngày|dob|date of birth)\s*(?:thành|sang|là|:)?\s*(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{4})/i);
-  if (dobMatch) { profileUpdates.dateOfBirth = dobMatch[1]; matchedProfile = true; }
+  const explicitDobCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt)\s+(?:ngày\s+sinh|sinh\s+ngày|dob|date\s+of\s+birth)\s*(?:thành|sang|là|:)\s*([^,;\n!?]+)/i);
+  const dobMatch = raw.match(/(?:ngày sinh|sinh ngày|dob|date of birth)\s*(?:thành|sang|là|:)?\s*(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/i);
+  if (dobMatch) {
+    const dd = parseInt(dobMatch[1], 10);
+    const mm = parseInt(dobMatch[2], 10);
+    const yyyy = parseInt(dobMatch[3], 10);
+    if (dd >= 1 && dd <= 31 && mm >= 1 && mm <= 12 && yyyy >= 1940 && yyyy <= 2025) {
+      profileUpdates.dateOfBirth = `${String(dd).padStart(2, '0')}/${String(mm).padStart(2, '0')}/${yyyy}`;
+      matchedProfile = true;
+    } else {
+      notices.push(`Ngày sinh "${dobMatch[1]}/${dobMatch[2]}/${dobMatch[3]}" không hợp lệ (cần đúng định dạng DD/MM/YYYY).`);
+      matchedProfile = true;
+    }
+  } else if (explicitDobCmd) {
+    notices.push(`Ngày sinh "${sanitizeText(explicitDobCmd[1], 40)}" không đúng định dạng hợp lệ (ví dụ: 15/08/1997).`);
+    matchedProfile = true;
+  }
 
   const genderMatch = raw.match(/(?:giới tính|gender)\s*(?:thành|sang|là|:)?\s*(nam|nữ|khác|male|female|other)(?=$|[\s,;.!?])/i);
   if (genderMatch) {

@@ -890,10 +890,11 @@ test('Round 3 Audit (All 27 Cases): giử typo, strange section headers, skill i
   assert.ok(bundleV6.includes('ve.sectionOrder'), 'Frontend applyUpdatesToCv must apply sectionOrder');
   assert.ok(bundleV6.includes('th.sectionColors'), 'Frontend sQ must render scoped sectionColors');
 
-  // Row 13: Generic add section ("thêm mục: Giải thưởng")
+  // Row 13: Generic add section ("thêm mục: Giải thưởng" -> enables visibility WITHOUT fabricating sample awards!)
   const addAwardSec = await editorAgent.processCvEditorAgent({ message: 'thêm mục: Giải thưởng', cvData: cv });
   assert.equal(addAwardSec.body.updates.sectionsVisibility?.awards, true);
-  assert.equal(addAwardSec.body.updates.awards?.length, 1);
+  assert.equal(addAwardSec.body.updates.awards, undefined, 'Must NOT fabricate sample award items when enabling section');
+  assert.match(addAwardSec.body.reply, /để trống|không tự ý bịa/i);
 
   // Row 14: Strict Font Guard across ALL phrasings (even without "font chữ")
   for (const badPrompt of ['đổi sang Arial', 'phông Times', 'chuyển sang Times New Roman', 'đổi qua Calibri', 'dùng Tahoma']) {
@@ -925,4 +926,165 @@ test('Round 3 Audit (All 27 Cases): giử typo, strange section headers, skill i
   assert.equal(addedJob.endDate, 'Hiện tại');
   assert.equal(addedJob.current, true);
   assert.equal(addedJob.location, '', 'Must NEVER copy candidate home address "Cầu Giấy, Hà Nội" into company location!');
+});
+
+// ─────────────────────────────────────────────────────────
+// ROUND 4 AUDIT: ALL 8 FAIL + 10 PARTIAL EDGE CASES
+// ─────────────────────────────────────────────────────────
+
+test('Round 4 Audit (All 18 Fail + Partial Cases): schoolColor, show/hide all sections, đưa mục tiêu xuống cuối, multi-cert add, đổi tên tất cả công ty, spellcheck, UX level 6 validation, A4 margin 2cm, true-bottom sectionOrder, zero sample fabrication, #abc contrast, cỡ chữ 13px, existing skill level update, xóa 100 kỹ năng cuối, đổi màu tất cả mục, xóa mục customSection vs skills, and invalid email validation', async () => {
+  const cv = {
+    ...makeRealisticSampleCv({ templateId: 'topcv-modern' }),
+    skills: [
+      { id: 's1', name: 'UX', level: 5 },
+      { id: 's2', name: 'Figma', level: 4 },
+      { id: 's3', name: 'Python', level: 3 }
+    ],
+    certificates: [
+      { id: 'c1', name: 'HubSpot Inbound Sales Certified', issuer: 'HubSpot', year: '2022' }
+    ],
+    awards: [],
+    activities: [],
+    customSections: [
+      { id: 'cs-1', title: 'CORE SKILLS & TECH STACK', items: ['Architecture', 'System Design'] }
+    ],
+    sectionsVisibility: {
+      objective: true, experience: true, education: true, skills: true, projects: true,
+      certificates: true, awards: false, activities: true, interests: true, references: true, customSections: true
+    }
+  };
+
+  // Fail #1: "đổi màu tên trường thành đỏ" -> theme.schoolColor (NEVER primaryColor!)
+  const f1 = await editorAgent.processCvEditorAgent({ message: 'đổi màu tên trường thành đỏ', cvData: cv });
+  assert.deepEqual(f1.body.updates, { theme: { schoolColor: '#dc2626' } });
+  assert.equal(f1.body.updates.theme.primaryColor, undefined);
+  assert.equal(/Không tìm thấy/i.test(f1.body.reply), false);
+
+  // Fail #2: "ẩn tất cả mục" / "hiện tất cả mục"
+  const hideAll = await editorAgent.processCvEditorAgent({ message: 'ẩn tất cả mục', cvData: cv });
+  assert.equal(Object.values(hideAll.body.updates.sectionsVisibility).every(v => v === false), true);
+  assert.equal(Object.keys(hideAll.body.updates.sectionsVisibility).length, 11);
+
+  const showAll = await editorAgent.processCvEditorAgent({
+    message: 'hiện tất cả mục',
+    cvData: { ...cv, sectionsVisibility: hideAll.body.updates.sectionsVisibility }
+  });
+  assert.equal(Object.values(showAll.body.updates.sectionsVisibility).every(v => v === true), true);
+
+  // Fail #3: "đưa mục tiêu xuống cuối"
+  const objBottom = await editorAgent.processCvEditorAgent({ message: 'đưa mục tiêu xuống cuối', cvData: cv });
+  const ordObj = objBottom.body.updates.sectionOrder;
+  assert.equal(ordObj[ordObj.length - 1], 'objective');
+  assert.ok(ordObj.indexOf('objective') > ordObj.indexOf('references'));
+  assert.ok(ordObj.indexOf('objective') > ordObj.indexOf('awards'));
+
+  // Fail #4: "thêm 2 chứng chỉ: IELTS 8.0, TOEIC 900"
+  const multiCert = await editorAgent.processCvEditorAgent({ message: 'thêm 2 chứng chỉ: IELTS 8.0, TOEIC 900', cvData: cv });
+  assert.equal(multiCert.body.updates.certificates.length, 3);
+  assert.equal(multiCert.body.updates.certificates[1].name, 'IELTS 8.0');
+  assert.equal(multiCert.body.updates.certificates[1].issuer, '');
+  assert.equal(multiCert.body.updates.certificates[1].year, '');
+  assert.equal(multiCert.body.updates.certificates[2].name, 'TOEIC 900');
+
+  // Fail #5: "đổi tên tất cả công ty thành ABC"
+  const allComp = await editorAgent.processCvEditorAgent({ message: 'đổi tên tất cả công ty thành ABC', cvData: cv });
+  assert.equal(allComp.body.updates.experience.length, 2);
+  assert.equal(allComp.body.updates.experience.every(e => e.company === 'ABC'), true);
+
+  // Fail #6: "sửa lỗi chính tả trong mục tiêu" (both clean objective AND typo objective!)
+  const spellClean = await editorAgent.processCvEditorAgent({ message: 'sửa lỗi chính tả trong mục tiêu', cvData: cv });
+  assert.deepEqual(spellClean.body.updates, {});
+  assert.match(spellClean.body.reply, /kiểm tra chính tả.*không phát hiện lỗi/i);
+
+  const spellDirty = await editorAgent.processCvEditorAgent({
+    message: 'sửa lỗi chính tả trong mục tiêu',
+    cvData: { ...cv, objective: 'với hơn 4 năm kinh ngiệm  quản lí và kĩ năng thuyết trinh , phát triễn thị trường.' }
+  });
+  assert.equal(
+    spellDirty.body.updates.objective,
+    'Với hơn 4 năm kinh nghiệm quản lý và kỹ năng thuyết trình, phát triển thị trường.'
+  );
+
+  // Fail #7: "thêm kỹ năng UX level 6" -> rejects level 6, NEVER creates { name: "UX level 6", level: 4 }!
+  const badLvl6 = await editorAgent.processCvEditorAgent({ message: 'thêm kỹ năng UX level 6', cvData: cv });
+  assert.deepEqual(badLvl6.body.updates, {});
+  assert.match(badLvl6.body.reply, /level 6.*1 đến 5/i);
+
+  const badEditLvl0 = await editorAgent.processCvEditorAgent({ message: 'đổi level UX thành 0', cvData: cv });
+  assert.deepEqual(badEditLvl0.body.updates, {});
+  assert.match(badEditLvl0.body.reply, /1 đến 5/i);
+
+  // Fail #8: "đổi lề trái 2cm" -> theme.marginLeft = "20mm"
+  const margin2cm = await editorAgent.processCvEditorAgent({ message: 'đổi lề trái 2cm', cvData: cv });
+  assert.deepEqual(margin2cm.body.updates, { theme: { marginLeft: '20mm' } });
+
+  // Partial #1: "xuống cuối" puts section AFTER awards/activities/interests/references/customSections + Frontend injects siblings in mainCol
+  for (const [cmd, expectedLast] of [
+    ['đưa kỹ năng xuống cuối', 'skills'],
+    ['đưa chứng chỉ xuống cuối', 'certificates'],
+    ['đưa học vấn xuống cuối', 'education']
+  ]) {
+    const r = await editorAgent.processCvEditorAgent({ message: cmd, cvData: cv });
+    const o = r.body.updates.sectionOrder;
+    assert.equal(o[o.length - 1], expectedLast);
+    for (const other of ['awards', 'activities', 'interests', 'references', 'customSections']) {
+      assert.ok(o.indexOf(expectedLast) > o.indexOf(other), `${expectedLast} must come after ${other}`);
+    }
+  }
+  const bundleV7 = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-CdIHi6cf.js'), 'utf8');
+  assert.ok(bundleV7.includes('data-cv-injected'), 'Frontend v7 must inject supplemental sections directly into mainCol for unified sectionOrder');
+  assert.ok(bundleV7.includes('data-cv-school'), 'Frontend v7 must tag school elements with data-cv-school');
+  assert.ok(bundleV7.includes('padding-left:'), 'Frontend v7 must render A4 margin padding');
+
+  // Partial #2 & #3: "thêm mục: Giải thưởng" & "thêm hoạt động" NEVER fabricate fake sample awards/clubs/years!
+  const addSecNoFake = await editorAgent.processCvEditorAgent({ message: 'thêm mục: Giải thưởng', cvData: cv });
+  assert.equal(addSecNoFake.body.updates.sectionsVisibility?.awards, true);
+  assert.equal(addSecNoFake.body.updates.awards, undefined);
+
+  const bareAct = await editorAgent.processCvEditorAgent({ message: 'thêm hoạt động', cvData: cv });
+  assert.deepEqual(bareAct.body.updates, {});
+  assert.match(bareAct.body.reply, /thêm hoạt động ngoại khóa gì/i);
+
+  const actWithRoleOnly = await editorAgent.processCvEditorAgent({ message: 'thêm hoạt động Tình nguyện viên Mùa hè xanh', cvData: cv });
+  assert.equal(actWithRoleOnly.body.updates.activities[0].role, 'Tình nguyện viên Mùa hè xanh');
+  assert.equal(actWithRoleOnly.body.updates.activities[0].organization, '');
+  assert.equal(actWithRoleOnly.body.updates.activities[0].time, '');
+
+  // Partial #4: "#abc" expands to "#aabbcc" and APPLIES cleanly (not falsely rejected as "trùng nền")!
+  const hexAbc = await editorAgent.processCvEditorAgent({ message: 'đổi màu tên sang #abc', cvData: cv });
+  assert.equal(hexAbc.body.updates.theme?.nameColor, '#aabbcc');
+  assert.equal(/trùng màu nền/i.test(hexAbc.body.reply), false);
+
+  // Partial #5: "đổi cỡ chữ 13" applies exact fontSizePx: 13 even when fontSize is already "medium"
+  const px13 = await editorAgent.processCvEditorAgent({ message: 'đổi cỡ chữ 13', cvData: cv });
+  assert.equal(px13.body.updates.theme?.fontSizePx, 13);
+
+  // Partial #6: "thêm kỹ năng UX level 3" (when UX is already level 5) updates UX level to 3!
+  const updExistingSkill = await editorAgent.processCvEditorAgent({ message: 'thêm kỹ năng UX level 3', cvData: cv });
+  assert.equal(updExistingSkill.body.updates.skills.find(s => s.name === 'UX').level, 3);
+
+  // Partial #7: "xóa 100 kỹ năng cuối" clears all skills and explains count
+  const del100 = await editorAgent.processCvEditorAgent({ message: 'xóa 100 kỹ năng cuối', cvData: cv });
+  assert.deepEqual(del100.body.updates.skills, []);
+  assert.match(del100.body.reply, /nhỏ hơn 100/);
+
+  // Partial #8: "đổi màu tất cả mục sang xanh" sets sectionColors + headingColor even when primaryColor is already #0284c7!
+  const allSecBlue = await editorAgent.processCvEditorAgent({
+    message: 'đổi màu tất cả mục sang xanh',
+    cvData: { ...cv, theme: { ...cv.theme, primaryColor: '#0284c7', sectionColors: { experience: '#dc2626' } } }
+  });
+  assert.equal(allSecBlue.body.updates.theme?.headingColor, '#0284c7');
+  assert.equal(allSecBlue.body.updates.theme?.sectionColors?.experience, '#0284c7');
+  assert.equal(allSecBlue.body.updates.theme?.sectionColors?.education, '#0284c7');
+
+  // Partial #9: "xóa mục CORE SKILLS & TECH STACK" removes the matching customSection while preserving built-in skills!
+  const delCs = await editorAgent.processCvEditorAgent({ message: 'xóa mục CORE SKILLS & TECH STACK', cvData: cv });
+  assert.deepEqual(delCs.body.updates.customSections, []);
+  assert.equal(delCs.body.updates.skills, undefined, 'Must preserve built-in skills when deleting matching customSection!');
+
+  // Partial #10: "đổi email thành không-phải-email" returns accurate email validation error (NOT "Không tìm thấy nội dung email"!)
+  const badEmail = await editorAgent.processCvEditorAgent({ message: 'đổi email thành không-phải-email', cvData: cv });
+  assert.deepEqual(badEmail.body.updates, {});
+  assert.match(badEmail.body.reply, /không đúng định dạng hợp lệ/i);
+  assert.equal(/Không tìm thấy nội dung/i.test(badEmail.body.reply), false);
 });
