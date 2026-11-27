@@ -170,7 +170,9 @@ if (fs.existsSync(topcvDistPath)) {
   app.use('/cv-assets', express.static(topcvDistPath, {
     setHeaders: (res, p) => {
       if (p.endsWith('.js') || p.endsWith('.css') || p.endsWith('.html')) {
-        res.set('Cache-Control', 'no-cache, must-revalidate');
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+        res.set('CDN-Cache-Control', 'no-store');
+        res.set('Cloudflare-CDN-Cache-Control', 'no-store');
       }
     }
   }));

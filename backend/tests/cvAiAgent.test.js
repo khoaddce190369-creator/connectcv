@@ -888,7 +888,7 @@ test('Round 3 Audit (All 27 Cases): giử typo, strange section headers, skill i
   assert.ok(bundleV6.includes('data-cv-section'), 'Frontend bundle must tag sections with data-cv-section');
   assert.ok(bundleV6.includes('data-cv-company'), 'Frontend bundle must tag company elements with data-cv-company');
   assert.ok(bundleV6.includes('ve.sectionOrder'), 'Frontend applyUpdatesToCv must apply sectionOrder');
-  assert.ok(bundleV6.includes('th.sectionColors'), 'Frontend sQ must render scoped sectionColors');
+  assert.ok(bundleV6.includes('theme.sectionColors'), 'Frontend sQ must render scoped sectionColors');
 
   // Row 13: Generic add section ("thêm mục: Giải thưởng" -> enables visibility WITHOUT fabricating sample awards!)
   const addAwardSec = await editorAgent.processCvEditorAgent({ message: 'thêm mục: Giải thưởng', cvData: cv });
@@ -1087,4 +1087,95 @@ test('Round 4 Audit (All 18 Fail + Partial Cases): schoolColor, show/hide all se
   assert.deepEqual(badEmail.body.updates, {});
   assert.match(badEmail.body.reply, /không đúng định dạng hợp lệ/i);
   assert.equal(/Không tìm thấy nội dung/i.test(badEmail.body.reply), false);
+});
+
+// ─────────────────────────────────────────────────────────
+// ROUND 5 AUDIT: ALL 7 FAIL + 5 PARTIAL MULTI-TARGET & CDN BUNDLE CASES
+// ─────────────────────────────────────────────────────────
+
+test('Round 5 Audit (All 12 Fail + Partial Cases): schoolColor variants, hiện tất cả mục on fresh CV, đổi màu nền sang đen, multi-target colors, compound sectionOrder, multi-section clear/hide, elliptical indexed edits, multi-activity add, 20pt fontSizePx, and cache-proof v8 bundle', async () => {
+  const freshDefaultCv = {
+    ...makeRealisticSampleCv({ templateId: 'topcv-modern' }),
+    certificates: [{ id: 'c1', name: 'TOEIC 850', issuer: 'IIG', year: '2022' }],
+    interests: ['Đọc sách', 'Chạy bộ'],
+    activities: [],
+    sectionsVisibility: {
+      objective: true, experience: true, education: true, skills: true, projects: true,
+      certificates: true, awards: true, activities: true, interests: true, references: true, customSections: true
+    }
+  };
+
+  // Fail #1: "đổi màu tên trường thành đỏ" (and variants) -> theme.schoolColor, NEVER primaryColor
+  for (const cmd of ['đổi màu tên trường thành đỏ', 'đổi màu của trường thành đỏ', 'màu tên các trường sang đỏ']) {
+    const r = await editorAgent.processCvEditorAgent({ message: cmd, cvData: freshDefaultCv });
+    assert.deepEqual(r.body.updates, { theme: { schoolColor: '#dc2626' } }, `Failed schoolColor for: ${cmd}`);
+  }
+
+  // Fail #2: "hiện tất cả mục" EVEN WHEN all 11 sections are ALREADY true on fresh default CV -> emits full 11-key visibility (not No-op!)
+  const showAllFresh = await editorAgent.processCvEditorAgent({ message: 'hiện tất cả mục', cvData: freshDefaultCv });
+  assert.ok(showAllFresh.body.updates.sectionsVisibility, 'Must return sectionsVisibility even on fresh default CV');
+  assert.equal(Object.values(showAllFresh.body.updates.sectionsVisibility).every(v => v === true), true);
+
+  // Fail #3: "đổi màu nền sang đen" -> MUST NOT falsely match "nền sáng" (light mode)! Sets bgColor:#111827 + readable light text
+  const blackBg = await editorAgent.processCvEditorAgent({ message: 'đổi màu nền sang đen', cvData: freshDefaultCv });
+  assert.equal(blackBg.body.updates.theme?.bgColor, '#111827');
+  assert.equal(blackBg.body.updates.theme?.textColor, '#f8fafc');
+  assert.equal(/đã ở sẵn/i.test(blackBg.body.reply), false);
+
+  // Fail #4: "đổi màu tiêu đề và tên công ty cùng lúc" (prompts for color) & "đổi màu tiêu đề và tên công ty sang đỏ" (sets BOTH!)
+  const multiColorNoVal = await editorAgent.processCvEditorAgent({ message: 'đổi màu tiêu đề và tên công ty cùng lúc', cvData: freshDefaultCv });
+  assert.deepEqual(multiColorNoVal.body.updates, {});
+  assert.match(multiColorNoVal.body.reply, /sang màu nào/i);
+
+  const multiColorRed = await editorAgent.processCvEditorAgent({ message: 'đổi màu tiêu đề và tên công ty sang đỏ', cvData: freshDefaultCv });
+  assert.deepEqual(multiColorRed.body.updates, { theme: { headingColor: '#dc2626', companyColor: '#dc2626' } });
+
+  // Fail #5 & Partial #5: Compound elliptical sectionOrder ("đưa học vấn lên đầu và kỹ năng xuống cuối" & "đưa học vấn xuống cuối và mục tiêu lên đầu")
+  const ord1 = await editorAgent.processCvEditorAgent({ message: 'đưa học vấn lên đầu và kỹ năng xuống cuối', cvData: freshDefaultCv });
+  assert.equal(ord1.body.updates.sectionOrder[0], 'education');
+  assert.equal(ord1.body.updates.sectionOrder[ord1.body.updates.sectionOrder.length - 1], 'skills');
+
+  const ord2 = await editorAgent.processCvEditorAgent({ message: 'đưa học vấn xuống cuối và mục tiêu lên đầu', cvData: freshDefaultCv });
+  assert.equal(ord2.body.updates.sectionOrder[0], 'objective');
+  assert.equal(ord2.body.updates.sectionOrder[ord2.body.updates.sectionOrder.length - 1], 'education');
+
+  // Fail #6: "xóa sở thích và chứng chỉ" -> clears BOTH interests AND certificates!
+  const clearTwo = await editorAgent.processCvEditorAgent({ message: 'xóa sở thích và chứng chỉ', cvData: freshDefaultCv });
+  assert.deepEqual(clearTwo.body.updates.interests, []);
+  assert.deepEqual(clearTwo.body.updates.certificates, []);
+
+  // Fail #7: Elliptical indexed edit ("đổi tên công ty thứ 1 thành A, thứ 2 thành B")
+  const ellipComp = await editorAgent.processCvEditorAgent({
+    message: 'đổi tên công ty thứ 1 thành A, thứ 2 thành B',
+    cvData: freshDefaultCv
+  });
+  assert.equal(ellipComp.body.updates.experience[0].company, 'A');
+  assert.equal(ellipComp.body.updates.experience[1].company, 'B');
+
+  // Partial #1: "thêm 2 hoạt động: Tình nguyện, Mentor" -> creates 2 distinct activities!
+  const twoActs = await editorAgent.processCvEditorAgent({
+    message: 'thêm 2 hoạt động: Tình nguyện, Mentor',
+    cvData: freshDefaultCv
+  });
+  assert.equal(twoActs.body.updates.activities.length, 2);
+  assert.equal(twoActs.body.updates.activities[0].role, 'Tình nguyện');
+  assert.equal(twoActs.body.updates.activities[1].role, 'Mentor');
+
+  // Partial #2 & #3: "đổi cỡ chữ 20pt" -> sets fontSize:"large" AND fontSizePx:20, AND v8 bundle explicitly references theme.margin* + theme.fontSizePx
+  const pt20 = await editorAgent.processCvEditorAgent({ message: 'đổi cỡ chữ 20pt', cvData: freshDefaultCv });
+  assert.equal(pt20.body.updates.theme?.fontSize, 'large');
+  assert.equal(pt20.body.updates.theme?.fontSizePx, 20);
+
+  const indexHtml = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
+  assert.ok(indexHtml.includes('index-20261127-v8.js'), 'index.html must reference cache-proof index-20261127-v8.js');
+  const v8Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v8.js'), 'utf8');
+  assert.ok(v8Bundle.includes('theme.marginLeft'), 'v8 bundle must reference theme.marginLeft');
+  assert.ok(v8Bundle.includes('theme.fontSizePx'), 'v8 bundle must reference theme.fontSizePx');
+  assert.ok(v8Bundle.includes('theme.schoolColor'), 'v8 bundle must reference theme.schoolColor');
+
+  // Partial #4: "ẩn mục tiêu và chứng chỉ" -> hides BOTH objective AND certificates!
+  const hideTwo = await editorAgent.processCvEditorAgent({ message: 'ẩn mục tiêu và chứng chỉ', cvData: freshDefaultCv });
+  assert.equal(hideTwo.body.updates.sectionsVisibility?.objective, false);
+  assert.equal(hideTwo.body.updates.sectionsVisibility?.certificates, false);
+  assert.equal(hideTwo.body.updates.sectionsVisibility?.skills, true);
 });
