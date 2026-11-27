@@ -1261,7 +1261,7 @@ test('Round 6 Audit (All 7 Fail + Partial Cases): multi-references add, cert yea
   });
   assert.equal(fpx25.body.updates.theme?.fontSizePx, 25);
   const indexHtml = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
-  assert.ok(/index-20261127-v(?:9|10)\.js/.test(indexHtml), 'index.html must load cache-busted bundle');
+  assert.ok(/index-20261127-v\d+\.js/.test(indexHtml), 'index.html must load cache-busted bundle');
   const v9Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v9.js'), 'utf8');
   assert.ok(v9Bundle.includes('theme.fontSizePx>=8&&theme.fontSizePx<=36'), 'v9 bundle must render fontSizePx up to 36');
   assert.ok(!v9Bundle.includes('fontSizePx<=24'), 'v9 bundle must NOT cap fontSizePx at 24');
@@ -1384,4 +1384,169 @@ test('Round 7 Audit (All 10 Fail + Partial Cases): NFD two-ref add, compound cer
   });
   assert.equal(hexBgAndText.body.updates.theme?.bgColor, '#f8fafc');
   assert.equal(hexBgAndText.body.updates.theme?.textColor, '#111827');
+});
+
+test('Round 8 Audit (Groups A Bulk/Multi-Target, B 23+ Synonyms/Aliases, C Validation & Clause Splitting, and v11 Bundle)', async () => {
+  const cv8 = {
+    theme: { primaryColor: '#0284c7', bgColor: '#ffffff', textColor: '#1f2937', fontSize: 'medium', fontSizePx: 0, lineSpacing: 'normal', lineSpacingNum: 0, borderRadius: '', hideBorders: false },
+    profile: { fullName: 'Nguyễn Văn An', jobTitle: 'Sales Executive', email: 'an@old.com', phone: '0987654321', dateOfBirth: '15/08/1997' },
+    objective: 'Mục tiêu ban đầu.',
+    experience: [
+      { id: 'exp-1', position: 'Sales B2B', company: 'NEXTTECH', location: 'Hà Nội', startDate: '03/2022', endDate: 'Hiện tại', current: true, description: ['Chốt 20 hợp đồng'] },
+      { id: 'exp-2', position: 'Sales Intern', company: 'GREEN', location: 'Hải Phòng', startDate: '2020', endDate: '2022', current: false, description: ['Hỗ trợ bán hàng'] }
+    ],
+    education: [
+      { id: 'edu-1', school: 'NEU', degree: 'Cử nhân', fieldOfStudy: 'QTKD', startDate: '2016', endDate: '2020', gpa: '3.4', description: '' }
+    ],
+    skills: [
+      { id: 'sk-1', name: 'UX', level: 3 },
+      { id: 'sk-2', name: 'FIGMA', level: 4 },
+      { id: 'sk-3', name: 'React', level: 4 },
+      { id: 'sk-4', name: 'Node.js', level: 3 },
+      { id: 'sk-5', name: 'Docker', level: 3 }
+    ],
+    projects: [{ id: 'proj-1', name: 'CRM B2B', role: 'Lead', time: '2023', technologies: 'HubSpot', description: ['Mô tả cũ'] }],
+    certificates: [
+      { id: 'cert-1', name: 'Cert Old 1', issuer: 'HubSpot', year: '2022' },
+      { id: 'cert-2', name: 'Cert Old 2', issuer: 'IIG', year: '2021' },
+      { id: 'cert-3', name: 'Cert Old 3', issuer: 'IDP', year: '2020' }
+    ],
+    awards: [{ id: 'aw-1', name: 'Top Sales', issuer: 'NextTech', year: '2023' }],
+    activities: [],
+    interests: ['Đọc sách', 'Chạy bộ'],
+    references: [{ id: 'ref-1', name: 'Ông Minh', position: 'Director', company: 'NextTech', email: '', phone: '' }],
+    customSections: [{ id: 'cs-1', title: 'CORE SKILLS', items: ['A'] }]
+  };
+
+  // ── A. Bulk / multi-target (6) ──
+  // A1: "đổi tên 2 chứng chỉ đầu: Sales Pro, Hubspot Pro" & "đổi tên 2 chứng chỉ đầu: A, B"
+  const bulkCert = await editorAgent.processCvEditorAgent({ message: 'đổi tên 2 chứng chỉ đầu: Sales Pro, Hubspot Pro', cvData: cv8 });
+  assert.equal(bulkCert.body.updates.certificates[0].name, 'Sales Pro');
+  assert.equal(bulkCert.body.updates.certificates[1].name, 'Hubspot Pro');
+  assert.equal(bulkCert.body.updates.certificates[2].name, 'Cert Old 3');
+
+  // A2: "xóa 2 kỹ năng đầu và 2 kỹ năng cuối"
+  const compoundSlice = await editorAgent.processCvEditorAgent({ message: 'xóa 2 kỹ năng đầu và 2 kỹ năng cuối', cvData: cv8 });
+  assert.deepEqual(compoundSlice.body.updates.skills.map(s => s.name), ['React']);
+
+  // A3: "thêm kỹ năng Python, SQL, Figma, Go" (must NOT drop "Go" after duplicate "Figma"!)
+  const addGoAfterDup = await editorAgent.processCvEditorAgent({ message: 'thêm kỹ năng Python, SQL, Figma, Go', cvData: cv8 });
+  assert.deepEqual(addGoAfterDup.body.updates.skills.map(s => s.name), ['UX', 'FIGMA', 'React', 'Node.js', 'Docker', 'Python', 'SQL', 'Go']);
+
+  // A4: "xóa skill UX và skill FIGMA" (repeated "skill" noun!)
+  const delRepeatedNoun = await editorAgent.processCvEditorAgent({ message: 'xóa skill UX và skill FIGMA', cvData: cv8 });
+  assert.deepEqual(delRepeatedNoun.body.updates.skills.map(s => s.name), ['React', 'Node.js', 'Docker']);
+
+  // A5: "thêm 2 học vấn: ĐH A, ĐH B" (2 separate education entries, NEVER degree:"Cử nhân ĐH B"!)
+  const add2Edu = await editorAgent.processCvEditorAgent({ message: 'thêm 2 học vấn: ĐH A, ĐH B', cvData: cv8 });
+  assert.equal(add2Edu.body.updates.education.length, 3);
+  assert.equal(add2Edu.body.updates.education[1].school, 'ĐH A');
+  assert.equal(add2Edu.body.updates.education[1].degree, 'Cử nhân');
+  assert.equal(add2Edu.body.updates.education[2].school, 'ĐH B');
+
+  // A6: "change name to A and set primary color to red" (English multi-clause!)
+  const enMulti = await editorAgent.processCvEditorAgent({ message: 'change name to A and set primary color to red', cvData: cv8 });
+  assert.equal(enMulti.body.updates.profile?.fullName, 'A');
+  assert.equal(enMulti.body.updates.theme?.primaryColor, '#dc2626');
+
+  // ── B. Alias / từ đồng nghĩa (23+) ──
+  const penult = await editorAgent.processCvEditorAgent({ message: 'xóa kỹ năng áp chót', cvData: cv8 });
+  assert.deepEqual(penult.body.updates.skills.map(s => s.name), ['UX', 'FIGMA', 'React', 'Docker']);
+
+  const keepOnlyBare = await editorAgent.processCvEditorAgent({ message: 'chỉ giữ lại UX', cvData: cv8 });
+  assert.deepEqual(keepOnlyBare.body.updates.skills.map(s => s.name), ['UX']);
+
+  const clearEvery = await editorAgent.processCvEditorAgent({ message: 'xóa mọi kỹ năng', cvData: cv8 });
+  assert.deepEqual(clearEvery.body.updates.skills, []);
+
+  const expTitle1 = await editorAgent.processCvEditorAgent({ message: 'đổi chức danh công việc thứ 1 thành Giám đốc Kinh doanh', cvData: cv8 });
+  assert.equal(expTitle1.body.updates.experience[0].position, 'Giám đốc Kinh doanh');
+
+  const incLvl = await editorAgent.processCvEditorAgent({ message: 'tăng level UX lên 1', cvData: cv8 });
+  assert.equal(incLvl.body.updates.skills[0].level, 4);
+
+  const gpa1 = await editorAgent.processCvEditorAgent({ message: 'đổi GPA học vấn 1 thành 3.85', cvData: cv8 });
+  assert.equal(gpa1.body.updates.education[0].gpa, '3.85');
+
+  const birthYr = await editorAgent.processCvEditorAgent({ message: 'đổi năm sinh thành 2000', cvData: cv8 });
+  assert.equal(birthYr.body.updates.profile?.dateOfBirth, '15/08/2000');
+
+  const jobT = await editorAgent.processCvEditorAgent({ message: 'đổi job title thành Product Manager', cvData: cv8 });
+  assert.equal(jobT.body.updates.profile?.jobTitle, 'Product Manager');
+
+  const dispName = await editorAgent.processCvEditorAgent({ message: 'đổi tên hiển thị thành Trần B', cvData: cv8 });
+  assert.equal(dispName.body.updates.profile?.fullName, 'Trần B');
+
+  const callMe = await editorAgent.processCvEditorAgent({ message: 'gọi tôi là Minh', cvData: cv8 });
+  assert.equal(callMe.body.updates.profile?.fullName, 'Minh');
+
+  const fpt14 = await editorAgent.processCvEditorAgent({ message: 'đổi font chữ 14pt', cvData: cv8 });
+  assert.equal(fpt14.body.updates.theme?.fontSizePx, 14);
+  assert.equal(fpt14.body.updates.theme?.fontFamily, undefined);
+
+  const fsz14 = await editorAgent.processCvEditorAgent({ message: 'đổi font-size 14', cvData: cv8 });
+  assert.equal(fsz14.body.updates.theme?.fontSizePx, 14);
+  assert.equal(fsz14.body.updates.theme?.fontFamily, undefined);
+
+  const upName = await editorAgent.processCvEditorAgent({ message: 'in hoa tên', cvData: cv8 });
+  assert.equal(upName.body.updates.profile?.fullName, 'NGUYỄN VĂN AN');
+
+  const lowName = await editorAgent.processCvEditorAgent({ message: 'viết thường tên', cvData: { ...cv8, profile: { ...cv8.profile, fullName: 'NGUYỄN VĂN AN' } } });
+  assert.equal(lowName.body.updates.profile?.fullName, 'nguyễn văn an');
+
+  const roundCorner = await editorAgent.processCvEditorAgent({ message: 'bo góc', cvData: cv8 });
+  assert.equal(roundCorner.body.updates.theme?.borderRadius, '12px');
+
+  const noBorder = await editorAgent.processCvEditorAgent({ message: 'xóa đường kẻ', cvData: cv8 });
+  assert.equal(noBorder.body.updates.theme?.hideBorders, true);
+
+  const onlyShowEdu = await editorAgent.processCvEditorAgent({ message: 'chỉ hiện mục học vấn', cvData: cv8 });
+  assert.equal(onlyShowEdu.body.updates.sectionsVisibility?.education, true);
+  assert.equal(onlyShowEdu.body.updates.sectionsVisibility?.skills, false);
+
+  const stepUp = await editorAgent.processCvEditorAgent({ message: 'đưa học vấn lên trên', cvData: cv8 });
+  assert.equal(stepUp.body.updates.sectionOrder?.indexOf('education'), 1);
+
+  const stepDown = await editorAgent.processCvEditorAgent({ message: 'đưa kinh nghiệm xuống dưới', cvData: cv8 });
+  assert.equal(stepDown.body.updates.sectionOrder?.indexOf('experience'), 2);
+
+  const swapSecs = await editorAgent.processCvEditorAgent({ message: 'hoán đổi học vấn và kỹ năng', cvData: cv8 });
+  assert.equal(swapSecs.body.updates.sectionOrder?.indexOf('skills'), 2);
+  assert.equal(swapSecs.body.updates.sectionOrder?.indexOf('education'), 3);
+
+  const seqOrd = await editorAgent.processCvEditorAgent({ message: 'sắp xếp theo thứ tự: kỹ năng, dự án, học vấn', cvData: cv8 });
+  assert.deepEqual(seqOrd.body.updates.sectionOrder?.slice(0, 3), ['skills', 'projects', 'education']);
+
+  // ── C. Validation & tách câu (7) ──
+  for (const badPayload of ["' OR 1=1 --", '${alert(1)}', '\\u003cscript\\u003ealert(1)\\u003c/script\\u003e']) {
+    const badRes = await editorAgent.processCvEditorAgent({ message: `Đổi tên thành ${badPayload}`, cvData: cv8 });
+    assert.equal(badRes.body.updates.profile?.fullName, undefined, `Must block unsafe fullName: ${badPayload}`);
+    const directSan = editorAgent.sanitizeEditorUpdates({ profile: { fullName: badPayload } }, cv8);
+    assert.equal(directSan.profile?.fullName, undefined, `sanitizeEditorUpdates must also reject unsafe fullName: ${badPayload}`);
+  }
+
+  const skill100 = await editorAgent.processCvEditorAgent({ message: 'thêm kỹ năng ' + 'A'.repeat(100), cvData: cv8 });
+  assert.equal(skill100.body.updates.skills, undefined, 'Must reject 100-char skill name');
+
+  const delZero = await editorAgent.processCvEditorAgent({ message: 'xóa kỹ năng thứ 0', cvData: cv8 });
+  assert.equal(delZero.body.updates.skills, undefined, 'Must reject index 0 instead of deleting #1');
+
+  const tabSplit = await editorAgent.processCvEditorAgent({ message: 'xóa kỹ năng 1\tđổi màu chủ đạo đỏ\tthêm sở thích Bơi lội', cvData: cv8 });
+  assert.equal(tabSplit.body.updates.theme?.sectionColors, undefined);
+  assert.equal(tabSplit.body.updates.theme?.primaryColor, '#dc2626');
+  assert.equal(tabSplit.body.updates.skills?.length, 4);
+  assert.ok(tabSplit.body.updates.interests?.includes('Bơi lội'));
+
+  const dotSplit = await editorAgent.processCvEditorAgent({ message: 'Xóa kỹ năng 1. Đổi màu đỏ. Thêm sở thích Bơi lội', cvData: cv8 });
+  assert.equal(dotSplit.body.updates.theme?.sectionColors, undefined);
+  assert.equal(dotSplit.body.updates.theme?.primaryColor, '#dc2626');
+  assert.equal(dotSplit.body.updates.skills?.length, 4);
+  assert.ok(dotSplit.body.updates.interests?.includes('Bơi lội'));
+
+  // Verify v11 bundle exists and renders borderRadius + hideBorders
+  const v11Html = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
+  assert.ok(v11Html.includes('index-20261127-v11.js'));
+  const v11Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v11.js'), 'utf8');
+  assert.ok(v11Bundle.includes('theme.borderRadius'));
+  assert.ok(v11Bundle.includes('theme.hideBorders===!0'));
 });

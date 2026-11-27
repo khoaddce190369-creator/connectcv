@@ -27,11 +27,27 @@ try {
 
 const MAX_CV_DATA_CHARS = 75000;
 const MAX_FULLNAME_LEN = 50;
+const MAX_SKILL_NAME_LEN = 60;
 
 const DEFAULT_SECTION_ORDER = [
   'objective', 'experience', 'education', 'skills', 'projects',
   'certificates', 'awards', 'activities', 'interests', 'references', 'customSections'
 ];
+
+function sanitizeCssBorderRadius(val) {
+  if (val === '' || val === null) return '';
+  if (typeof val !== 'string' && typeof val !== 'number') return null;
+  const raw = String(val).trim().toLowerCase();
+  if (raw === '0') return '0px';
+  const m = raw.match(/^(-?\d+(?:\.\d+)?)\s*(px|mm|rem)?$/);
+  if (!m) return null;
+  const num = parseFloat(m[1]);
+  const unit = m[2] || 'px';
+  if (!Number.isFinite(num) || num < 0) return null;
+  const pxEquiv = unit === 'rem' ? num * 16 : (unit === 'mm' ? num * 3.7795 : num);
+  if (pxEquiv > 36) return null;
+  return `${Math.round(pxEquiv)}px`;
+}
 
 function sanitizeCssMargin(val) {
   if (val === '' || val === null) return '';
@@ -88,9 +104,22 @@ function isPlainObject(v) {
   return Boolean(v) && typeof v === 'object' && !Array.isArray(v);
 }
 
+function decodeEscapedPayloads(str) {
+  return String(str || '')
+    .replace(/\\u00([0-9a-fA-F]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/\\x([0-9a-fA-F]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&(lt|gt|quot|apos|#x0*3c|#x0*3e|#0*60|#0*62);/gi, m => {
+      const low = m.toLowerCase();
+      if (low === '&lt;' || low.includes('3c') || low.includes('60')) return '<';
+      if (low === '&gt;' || low.includes('3e') || low.includes('62')) return '>';
+      if (low === '&quot;') return '"';
+      return "'";
+    });
+}
+
 function stripUnsafeChars(val) {
   if (val === null || val === undefined) return '';
-  return String(val)
+  return decodeEscapedPayloads(String(val))
     .normalize('NFC')
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
     .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u206F\uFEFF]/g, '');
@@ -100,11 +129,24 @@ function sanitizeText(val, maxLen = 2000) {
   if (val === null || val === undefined) return '';
   let str = stripUnsafeChars(val);
   str = str.replace(/<!--[\s\S]*?-->/g, '');
+  str = str.replace(/<\s*(script|style|iframe|object|embed|svg|math)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '');
   str = str.replace(/<\s*\/?\s*[a-zA-Z][a-zA-Z0-9:-]*(?:\s+[^<>]*)?\/?\s*>/g, '');
   str = str.replace(/<\s*\/?\s*(?:script|iframe|object|embed|svg|math|img|style|link|meta|form|input|body|html)\b[^<>]*$/gi, '');
+  str = str.replace(/\$\{[^}]*\}|\{\{[^}]*\}\}/g, '');
   str = str.replace(/(?:javascript|vbscript)\s*:/gi, '');
   str = str.replace(/data\s*:\s*text\/html/gi, '');
   return str.trim().slice(0, maxLen);
+}
+
+function isUnsafePersonName(val) {
+  const raw = String(val || '').trim();
+  if (!raw) return true;
+  if (/[<>\\${}[\];=|*`~^]/.test(raw)) return true;
+  if (/(?:'|"|\b)\s*(?:or|and)\s+(?:['"]?\d+['"]?\s*=\s*['"]?\d+|true\b)|--\s*$|\/\*|\*\/|\b(?:union\s+select|drop\s+table|insert\s+into|delete\s+from|alert\s*\(|eval\s*\(|script\b|onerror\b|onload\b)\b/i.test(raw)) {
+    return true;
+  }
+  if (!/\p{L}/u.test(raw)) return true;
+  return false;
 }
 
 function cleanPlainReply(val, maxLen = 4000) {
@@ -179,13 +221,16 @@ function detectSecurityProbe(message) {
   const norm = normalizeCheck(raw);
 
   const hasXssProbe =
-    /<\s*(?:script|iframe|object|embed|img|svg|style|link|meta|body|form)\b|on(?:error|load|click|mouseover|focus)\s*=|(?:javascript|vbscript)\s*:|data\s*:\s*text\/html/i.test(raw);
+    /<\s*\/?\s*(?:script|iframe|object|embed|img|svg|style|link|meta|body|form)\b|on(?:error|load|click|mouseover|focus)\s*=|(?:javascript|vbscript)\s*:|data\s*:\s*text\/html|\$\{[^}]{1,120}\}|\{\{[^}]{1,120}\}\}/i.test(raw);
+
+  const hasSqlInjection =
+    /(?:'|"|\b)\s*(?:or|and)\s+['"]?\d+['"]?\s*=\s*['"]?\d+|'\s*(?:or|and)\s+['"]?[a-z0-9_]+['"]?\s*=\s*['"]?[a-z0-9_]+|'\s*;\s*(?:drop|delete|insert|update|alter|truncate)\b|\bunion\s+(?:all\s+)?select\b|(?:'|")\s*or\s+true\b|(?:'|"|\d\s*=\s*\d)\s*--/i.test(raw);
 
   const hasCssInjection =
     /(?:background(?:-image|-color)?|border-image|list-style-image|-moz-binding|behavior)\s*:\s*[^;\n]*url\s*\(|;\s*[a-z-]{3,25}\s*:\s*[^;\n]*url\s*\(|expression\s*\(|@import\s+(?:url|['"])/i.test(raw);
 
   const hasSecretProbe =
-    /(?:^|[\s"'`])(?:file\s+\.env|\.env\b|[a-z0-9_]*api[_ -]?key|[a-z0-9_]*secret(?:[_ -]?key)?|[a-z0-9_]*auth[_ -]?token|system\s*prompt|prompt\s*he\s*thong|database\s*(?:url|uri|credential|password)|dump\s*(?:db|database)|document\.cookie|document\.domain|localstorage|sessionstorage|window\.location|eval\s*\(|alert\s*\()/i.test(norm);
+    /(?:^|[\s"'`${({])(?:file\s+\.env|\.env\b|[a-z0-9_]*api[_ -]?key|[a-z0-9_]*secret(?:[_ -]?key)?|[a-z0-9_]*auth[_ -]?token|system\s*prompt|prompt\s*he\s*thong|database\s*(?:url|uri|credential|password)|dump\s*(?:db|database)|document\.cookie|document\.domain|localstorage|sessionstorage|window\.location|eval\s*\(|alert\s*\(|confirm\s*\(|prompt\s*\()/i.test(norm);
 
   const hasPromptInjection =
     /\b(?:system\s*override|admin\s*override|security\s*override|override\s+(?:all\s+)?(?:system|safety|previous|instructions|rules)|developer\s*mode|god\s*mode|dan\s*mode|jailbreak)\b/i.test(norm) ||
@@ -202,7 +247,7 @@ function detectSecurityProbe(message) {
     /(?:cong|tang|nang\s*cap|mo\s*khoa|kich\s*hoat|hack)\s+(?:them\s+)?(?:\d*\s*credits?|goi\s*pro|tai\s*khoan\s*pro|pro\s+mien\s+phi|vip\s+mien\s+phi)\b/i.test(norm)
   );
 
-  if (hasXssProbe || hasCssInjection || hasSecretProbe || hasPromptInjection || hasHostWebTampering) {
+  if (hasXssProbe || hasSqlInjection || hasCssInjection || hasSecretProbe || hasPromptInjection || hasHostWebTampering) {
     return {
       success: true,
       mode: 'security-guard',
@@ -356,8 +401,8 @@ const ALLOWED_ORDER_KEYS = new Set(DEFAULT_SECTION_ORDER);
 
 function resolveStrictFont(rawClause) {
   const norm = normalizeCheck(rawClause)
-    .replace(/^.*?(?:font(?:\s+chu)?|phong(?:\s+chu)?|kieu\s+chu|(?:doi|chuyen|chon|dung)\s+(?:sang\s+)?)\s*(?:thanh|sang|la|qua|:)?\s*/i, '')
-    .replace(/\s+(?:nhe|nha|di|giup\s+toi|cho\s+cv)$/i, '')
+    .replace(/^.*?(?:font(?:\s+chu)?|phong(?:\s+chu)?|kieu\s+chu|(?:doi|chuyen|chon|dung|set|change)\s+(?:sang\s+|to\s+)?)\s*(?:thanh|sang|la|qua|to|as|:)?\s*/i, '')
+    .replace(/\s+(?:nhe|nha|di|giup\s+toi|cho\s+cv|please)$/i, '')
     .trim();
 
   // Check unsupported fonts FIRST so "Times New Roman" / "Times" / "Arial" / "Calibri" are ALWAYS rejected!
@@ -583,6 +628,19 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
       }
     }
 
+    if (rawUpdates.theme.borderRadius !== undefined) {
+      const cleanBr = sanitizeCssBorderRadius(rawUpdates.theme.borderRadius);
+      if (cleanBr !== null && cleanBr !== String(curTheme.borderRadius || '')) {
+        cleanTheme.borderRadius = cleanBr;
+      }
+    }
+
+    if (typeof rawUpdates.theme.hideBorders === 'boolean') {
+      if (rawUpdates.theme.hideBorders !== Boolean(curTheme.hideBorders)) {
+        cleanTheme.hideBorders = rawUpdates.theme.hideBorders;
+      }
+    }
+
     if (Object.keys(cleanTheme).length > 0) clean.theme = cleanTheme;
   }
 
@@ -597,8 +655,16 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
     for (const key of ALLOWED_PROFILE_STRING_KEYS) {
       if (rawProf[key] === undefined || rawProf[key] === null) continue;
       if (key === 'fullName') {
-        const candidateName = sanitizeText(rawProf.fullName, 300);
-        if (!candidateName) continue;
+        const rawCandidate = String(rawProf.fullName || '');
+        if (isUnsafePersonName(rawCandidate)) {
+          warningsOut.push('Họ và tên chứa ký tự hoặc cú pháp không hợp lệ nên đã bị từ chối bảo mật.');
+          continue;
+        }
+        const candidateName = sanitizeText(rawCandidate, 300);
+        if (!candidateName || isUnsafePersonName(candidateName)) {
+          warningsOut.push('Họ và tên không hợp lệ nên chưa áp dụng.');
+          continue;
+        }
         if (candidateName.length > MAX_FULLNAME_LEN) {
           warningsOut.push(`Họ và tên vượt quá giới hạn ${MAX_FULLNAME_LEN} ký tự chuẩn CV (${candidateName.length} ký tự) nên không tự động cắt chữ. Vui lòng rút gọn họ tên.`);
           continue;
@@ -726,8 +792,13 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
       const skills = [];
       for (let idx = 0; idx < Math.min(rawUpdates.skills.length, 60); idx++) {
         const s = rawUpdates.skills[idx];
-        const name = sanitizeText(typeof s === 'string' ? s : (s?.name || ''), 80);
-        if (!name) continue;
+        const rawSkillStr = sanitizeText(typeof s === 'string' ? s : (s?.name || ''), 300);
+        if (!rawSkillStr) continue;
+        if (rawSkillStr.length > MAX_SKILL_NAME_LEN) {
+          warningsOut.push(`Tên kỹ năng "${rawSkillStr.slice(0, 28)}..." vượt quá giới hạn ${MAX_SKILL_NAME_LEN} ký tự (${rawSkillStr.length} ký tự) nên không lưu vào CV.`);
+          continue;
+        }
+        const name = rawSkillStr;
         const key = name.toLowerCase();
         if (seen.has(key)) continue;
         seen.add(key);
@@ -1022,7 +1093,9 @@ function buildGranularDiffAndOps(beforeCv = {}, sanitizedUpdates = {}) {
       marginTop: 'Lề trên',
       marginRight: 'Lề phải',
       marginBottom: 'Lề dưới',
-      marginLeft: 'Lề trái'
+      marginLeft: 'Lề trái',
+      borderRadius: 'Bo góc khung CV',
+      hideBorders: 'Ẩn đường kẻ phân cách'
     };
     for (const [k, v] of Object.entries(sanitizedUpdates.theme)) {
       if (k === 'sectionColors' && isPlainObject(v)) {
@@ -1296,32 +1369,55 @@ function extractAllColors(raw, norm) {
 }
 
 const STYLE_INTENT_RE = new RegExp(
-  `(?:#[0-9a-f]{3,6}\\b|\\b(?:mau|color|rgb\\s*\\(|gradient|chuyen\\s*sac|ombre|dark\\s*mode|che\\s*do\\s*toi|light\\s*mode|che\\s*do\\s*sang|font|phong\\s+chu|kieu\\s*chu|co\\s*chu|kich\\s*thuoc\\s*chu|gian\\s*dong|dan\\s*dong|cach\\s*dong|khoang\\s*cach\\s*dong|line\\s*spacing|line\\s*height|theme|nen\\s+cv|chu\\s+to|chu\\s+lon|chu\\s+nho|chu\\s+be|be\\s+lai|lon\\s+hon|nho\\s+lai|${KNOWN_UNSUPPORTED_FONTS.map(f => f.replace(/\s+/g, '\\s+')).join('|')}|inter|roboto|montserrat|merriweather|nunito|lora|open\\s+sans|be\\s+vietnam\\s+pro)\\b)`,
+  `(?:#[0-9a-f]{3,6}\\b|\\b(?:mau|color|rgb\\s*\\(|gradient|chuyen\\s*sac|ombre|dark\\s*mode|che\\s*do\\s*toi|light\\s*mode|che\\s*do\\s*sang|font|font[\\s-]*size|fontsize|size\\s*(?:chu|font)|phong\\s+chu|kieu\\s*chu|co\\s*(?:chu|font)|kich\\s*(?:thuoc|co)\\s*(?:chu|font)|gian\\s*(?:dong|hang)|dan\\s*(?:dong|hang)|cach\\s*(?:dong|hang)|khoang\\s*cach\\s*(?:dong|hang)|do\\s+cao\\s+dong|line\\s*spacing|line\\s*height|bo\\s*goc|bo\\s*tron|goc\\s*vuong|vuong\\s*goc|border\\s*radius|rounded\\s*corners?|duong\\s*ke|vach\\s*ngan|duong\\s*phan\\s*cach|gach\\s*ngang|hide\\s*borders?|remove\\s*borders?|show\\s*borders?|theme|nen\\s+cv|chu\\s+to|chu\\s+lon|chu\\s+nho|chu\\s+be|be\\s+lai|lon\\s+hon|nho\\s+lai|${KNOWN_UNSUPPORTED_FONTS.map(f => f.replace(/\s+/g, '\\s+')).join('|')}|inter|roboto|montserrat|merriweather|nunito|lora|open\\s+sans|be\\s+vietnam\\s+pro)\\b)`,
   'i'
 );
 
 function parseSmallCount(wordOrNum) {
   const n = normalizeCheck(wordOrNum || '');
   if (/^\d+$/.test(n)) return parseInt(n, 10);
-  const map = { mot: 1, nhat: 1, hai: 2, ba: 3, bon: 4, tu: 4, nam: 5, sau: 6, bay: 7, tam: 8, chin: 9, muoi: 10 };
+  const map = {
+    mot: 1, nhat: 1, one: 1,
+    hai: 2, two: 2,
+    ba: 3, three: 3,
+    bon: 4, tu: 4, four: 4,
+    nam: 5, five: 5,
+    sau: 6, six: 6,
+    bay: 7, seven: 7,
+    tam: 8, eight: 8,
+    chin: 9, nine: 9,
+    muoi: 10, ten: 10
+  };
   return map[n] || null;
 }
 
 function resolveOneBasedIndex(rawClause, totalLength) {
   const n = normalizeCheck(rawClause);
-  if (/\b(?:cuoi\s+cung|cuoi)\b/.test(n)) {
+  // Explicit zero or negative index check FIRST ("thứ 0", "số 0", "#0", "kỹ năng 0", "thứ -1") -> MUST REJECT!
+  const zeroOrNegMatch = n.match(/(?:\b(?:thu|so|muc|phan|vi\s+tri)\s*(?:khong|0|-\d+)\b|#(?:0|-\d+)\b|(?:kinh\s+nghiem(?:\s+lam\s+viec)?|cong\s+viec|hoc\s+van|truong|cong\s+ty|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|certificates?|giai\s+thuong|awards?|hoat\s+dong|so\s+thich|tham\s+chieu|tuy\s+chinh)\s+(?:0|-\d+)\b|^#?(?:0|-\d+)$)/i);
+  if (zeroOrNegMatch) {
+    const negDigits = zeroOrNegMatch[0].match(/-\d+/);
+    const reqNum = negDigits ? parseInt(negDigits[0], 10) : 0;
+    return { index0: null, specified: true, outOfRange: true, invalidZeroOrNeg: true, requested1: reqNum };
+  }
+  // Penultimate ("áp chót", "kế cuối", "gần cuối", "sát cuối", "thứ 2 từ cuối", "second to last", "penultimate")
+  if (/\b(?:ap\s+chot|ke\s+cuoi|gan\s+cuoi|sat\s+cuoi|thu\s+(?:2|hai)\s+tu\s+(?:cuoi|duoi)|second\s+to\s+last|penultimate)\b/.test(n)) {
+    if (totalLength < 2) return { index0: null, specified: true, outOfRange: true, requested1: Math.max(1, totalLength) };
+    return { index0: totalLength - 2, specified: true, outOfRange: false, requested1: totalLength - 1 };
+  }
+  if (/\b(?:cuoi\s+cung|cuoi|last)\b/.test(n)) {
     if (totalLength <= 0) return { index0: null, specified: true, outOfRange: true, requested1: 1 };
     return { index0: totalLength - 1, specified: true, outOfRange: false, requested1: totalLength };
   }
-  if (/\b(?:dau\s+tien|dau|thu\s*(?:1|nhat|mot)|so\s*1|#1)\b/.test(n)) {
+  if (/\b(?:dau\s+tien|dau|thu\s*(?:1|nhat|mot)|so\s*1|#1|first|1st)\b/.test(n)) {
     return { index0: totalLength > 0 ? 0 : null, specified: true, outOfRange: totalLength <= 0, requested1: 1 };
   }
   const wordMap = [
-    [/\b(?:thu\s+|so\s+|muc\s+)?hai\b/, 2],
-    [/\b(?:thu\s+|so\s+|muc\s+)?ba\b/, 3],
-    [/\b(?:thu\s+|so\s+|muc\s+)?(?:bon|tu)\b/, 4],
-    [/\b(?:thu\s+|so\s+|muc\s+)nam\b/, 5],
-    [/\b(?:thu\s+|so\s+|muc\s+)?sau\b/, 6]
+    [/\b(?:(?:thu|so|muc)\s+)?(?:hai|second|2nd)\b/, 2],
+    [/\b(?:(?:thu|so|muc)\s+)?(?:ba|third|3rd)\b/, 3],
+    [/\b(?:(?:thu|so|muc)\s+)?(?:bon|tu|fourth|4th)\b/, 4],
+    [/\b(?:(?:thu|so|muc)\s+nam|fifth|5th)\b/, 5],
+    [/\b(?:(?:thu|so|muc)\s+)?(?:sau|sixth|6th)\b/, 6]
   ];
   for (const [re, pos1] of wordMap) {
     if (re.test(n)) {
@@ -1333,37 +1429,52 @@ function resolveOneBasedIndex(rawClause, totalLength) {
       };
     }
   }
-  const numMatch = n.match(/(?:\b(?:thu|so|muc|phan|vi\s+tri)\s*|#|(?:kinh\s+nghiem(?:\s+lam\s+viec)?|cong\s+viec|hoc\s+van|truong|cong\s+ty|ky\s+nang|skill|du\s+an|chung\s+chi|giai\s+thuong|hoat\s+dong|so\s+thich|tham\s+chieu)\s+)(\d{1,2})\b/);
+  const numMatch = n.match(/(?:\b(?:thu|so|muc|phan|vi\s+tri|item)\s*|#|(?:kinh\s+nghiem(?:\s+lam\s+viec)?|cong\s+viec|hoc\s+van|truong|cong\s+ty|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|certificates?|giai\s+thuong|awards?|hoat\s+dong|so\s+thich|tham\s+chieu|tuy\s+chinh)\s+)(-?\d{1,3})\b/);
   if (numMatch) {
     const pos1 = parseInt(numMatch[1], 10);
-    if (pos1 >= 1) {
-      return {
-        index0: pos1 <= totalLength ? pos1 - 1 : null,
-        specified: true,
-        outOfRange: pos1 > totalLength,
-        requested1: pos1
-      };
+    if (pos1 <= 0) {
+      return { index0: null, specified: true, outOfRange: true, invalidZeroOrNeg: true, requested1: pos1 };
     }
+    return {
+      index0: pos1 <= totalLength ? pos1 - 1 : null,
+      specified: true,
+      outOfRange: pos1 > totalLength,
+      requested1: pos1
+    };
   }
-  // Pure bare number when rawClause IS just the selector (e.g. "2")
-  const bareNum = n.match(/^#?(\d{1,2})$/);
+  // Pure bare number when rawClause IS just the selector (e.g. "2", "0", "-1")
+  const bareNum = n.match(/^#?(-?\d{1,3})$/);
   if (bareNum) {
     const pos1 = parseInt(bareNum[1], 10);
-    if (pos1 >= 1) {
-      return {
-        index0: pos1 <= totalLength ? pos1 - 1 : null,
-        specified: true,
-        outOfRange: pos1 > totalLength,
-        requested1: pos1
-      };
+    if (pos1 <= 0) {
+      return { index0: null, specified: true, outOfRange: true, invalidZeroOrNeg: true, requested1: pos1 };
     }
+    return {
+      index0: pos1 <= totalLength ? pos1 - 1 : null,
+      specified: true,
+      outOfRange: pos1 > totalLength,
+      requested1: pos1
+    };
   }
   return { index0: totalLength > 0 ? 0 : null, specified: false, outOfRange: totalLength <= 0, requested1: 1 };
 }
 
+function resolveCheckedIndex(selClause, totalLength, sectionLabelVi, notices) {
+  const pos = resolveOneBasedIndex(selClause || '', totalLength);
+  if (pos.invalidZeroOrNeg) {
+    notices.push(`Số thứ tự ${sectionLabelVi} bắt đầu từ 1 (không có mục #${pos.requested1}). Vui lòng chọn số thứ tự từ 1 đến ${totalLength}.`);
+    return -1;
+  }
+  if (pos.outOfRange || pos.index0 === null) {
+    notices.push(`CV hiện chỉ có ${totalLength} ${sectionLabelVi} nên không thể thao tác mục #${pos.requested1}.`);
+    return -1;
+  }
+  return pos.index0;
+}
+
 function isPurePositionalSelector(tailStr) {
   const n = normalizeCheck(tailStr || '').replace(/[.!?]+$/, '').trim();
-  return /^(?:thu\s*(?:\d+|mot|nhat|hai|ba|bon|tu|nam|sau)|so\s*\d+|#\d+|\d{1,2}|mot|hai|ba|bon|tu|dau(?:\s+tien)?|cuoi(?:\s+cung)?)$/i.test(n);
+  return /^(?:thu\s*(?:-?\d+|khong|mot|nhat|hai|ba|bon|tu|nam|sau)|so\s*(?:-?\d+|khong)|#-?\d+|-?\d{1,3}|mot|hai|ba|bon|tu|dau(?:\s+tien)?|cuoi(?:\s+cung)?|ap\s+chot|ke\s+cuoi|gan\s+cuoi|sat\s+cuoi|thu\s+(?:2|hai)\s+tu\s+(?:cuoi|duoi)|first|last|second|third|penultimate|1st|2nd|3rd|4th|5th)$/i.test(n);
 }
 
 function splitOutsideParens(str, splitAndWord = true) {
@@ -1412,23 +1523,36 @@ function parseSkillTokens(str) {
   tail = tail.replace(/\s+(?:vào\s+(?:cv|hồ sơ|danh sách)|giúp\s+(?:tôi|mình)|cho\s+(?:tôi|mình)|nhé|nha|đi)+[.!?]*$/gi, '').trim();
   tail = tail.replace(/[?!]+$/, '').trim();
 
-  return splitOutsideParens(tail, true)
+  const rawParts = splitOutsideParens(tail, true).flatMap(p => {
+    // Support English "Python and Go" without breaking "Research and Development" (if repeated "skill " or short tech tokens)
+    if (/\s+and\s+(?:skills?\s+)/i.test(p)) {
+      return p.split(/\s+and\s+/i);
+    }
+    return [p];
+  });
+
+  return rawParts
     .map(part => {
-      const trimmed = part.trim().replace(/^[•*-]\s*/, '').replace(/[.,;]+$/, '').trim();
+      let trimmed = part.trim().replace(/^[•*-]\s*/, '').replace(/[.,;]+$/, '').trim();
+      // Strip repeated leading section noun ("xóa skill UX và skill FIGMA", "thêm kỹ năng A và kỹ năng B")
+      trimmed = trimmed.replace(/^(?:các\s+|mục\s+)?(?:kỹ\s*năng|kĩ\s*năng|skills?|skill)\s+(?=\S)/i, '').trim();
       if (GENERIC_NEW_PLACEHOLDER_RE.test(trimmed)) {
         return { name: 'Kỹ năng chuyên môn', level: 4, _explicitLevel: false };
       }
+      const checkLen = (rawNameStr, restObj) => {
+        const cleanFull = sanitizeText(rawNameStr, 300);
+        if (cleanFull.length > MAX_SKILL_NAME_LEN) {
+          return { name: cleanFull, level: 4, _explicitLevel: false, invalidLength: cleanFull.length };
+        }
+        return { name: cleanFull, ...restObj };
+      };
       const pctMatch = trimmed.match(/^(.+?)\s*(?:mức\s*|level\s*)?(\d{2,3})\s*%$/i);
       if (pctMatch) {
         const pctVal = parseInt(pctMatch[2], 10);
         if (pctVal < 1 || pctVal > 100) {
-          return { name: sanitizeText(pctMatch[1], 70), level: 4, _explicitLevel: true, invalidLevel: `${pctMatch[2]}%` };
+          return checkLen(pctMatch[1], { level: 4, _explicitLevel: true, invalidLevel: `${pctMatch[2]}%` });
         }
-        return {
-          name: sanitizeText(pctMatch[1], 70),
-          level: normalizeSkillLevel(pctVal, 4),
-          _explicitLevel: true
-        };
+        return checkLen(pctMatch[1], { level: normalizeSkillLevel(pctVal, 4), _explicitLevel: true });
       }
       const slashAnyMatch = trimmed.match(/^(.+?)\s+(?:mức(?:\s+độ)?\s*|level\s*|cấp(?:\s+độ)?\s*)?(-?\d+(?:\.\d+)?)\s*\/\s*(\d+)$/i);
       if (slashAnyMatch) {
@@ -1436,55 +1560,65 @@ function parseSkillTokens(str) {
         const denom = parseInt(slashAnyMatch[3], 10);
         if (denom === 5) {
           if (!Number.isInteger(num) || num < 1 || num > 5) {
-            return { name: sanitizeText(slashAnyMatch[1], 70), level: 4, _explicitLevel: true, invalidLevel: `${slashAnyMatch[2]}/5` };
+            return checkLen(slashAnyMatch[1], { level: 4, _explicitLevel: true, invalidLevel: `${slashAnyMatch[2]}/5` });
           }
-          return { name: sanitizeText(slashAnyMatch[1], 70), level: num, _explicitLevel: true };
+          return checkLen(slashAnyMatch[1], { level: num, _explicitLevel: true });
         }
         if (denom === 10 && num >= 1 && num <= 10) {
-          return { name: sanitizeText(slashAnyMatch[1], 70), level: Math.max(1, Math.min(5, Math.round(num / 2))), _explicitLevel: true };
+          return checkLen(slashAnyMatch[1], { level: Math.max(1, Math.min(5, Math.round(num / 2))), _explicitLevel: true });
         }
-        return { name: sanitizeText(slashAnyMatch[1], 70), level: 4, _explicitLevel: true, invalidLevel: `${slashAnyMatch[2]}/${denom}` };
+        return checkLen(slashAnyMatch[1], { level: 4, _explicitLevel: true, invalidLevel: `${slashAnyMatch[2]}/${denom}` });
       }
       const lvlAnyMatch = trimmed.match(/^(.+?)\s+(?:mức(?:\s+độ)?|level|cấp(?:\s+độ)?)\s*(-?\d+(?:\.\d+)?)$/i);
       if (lvlAnyMatch) {
         const num = parseFloat(lvlAnyMatch[2]);
         if (!Number.isInteger(num) || num < 1 || num > 5) {
-          return { name: sanitizeText(lvlAnyMatch[1], 70), level: 4, _explicitLevel: true, invalidLevel: lvlAnyMatch[2] };
+          return checkLen(lvlAnyMatch[1], { level: 4, _explicitLevel: true, invalidLevel: lvlAnyMatch[2] });
         }
-        return { name: sanitizeText(lvlAnyMatch[1], 70), level: num, _explicitLevel: true };
+        return checkLen(lvlAnyMatch[1], { level: num, _explicitLevel: true });
       }
-      return { name: sanitizeText(trimmed, 70), level: 4, _explicitLevel: false };
+      return checkLen(trimmed, { level: 4, _explicitLevel: false });
     })
-    .filter(s => s.name && s.name.length <= 70 && s.name.split(/\s+/).length <= 10);
+    .filter(s => s.name && (s.invalidLength || s.name.split(/\s+/).length <= 10));
 }
 
 const COLOR_VALUE_NORM_PART = '(?:#[0-9a-f]{3,6}\\b|rgb\\s*\\(|\\b(?:do|xanh|tim|vang|cam|den|trang|hong|xam|nau|kem|red|blue|green|purple|violet|indigo|amber|gold|orange|pink|rose|teal|cyan|navy|gray|grey|slate|black|white|crimson|burgundy)\\b)';
 
-const NEW_CLAUSE_START_NORM_RE = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+)?(?:doi|sua|cap\s+nhat|thay(?:\s+doi|\s+the)?|them|bo\s+sung|xoa|bo|go|loai\s+bo|viet(?:\s+lai)?|(?:toi\s+uu|nang\s+cap)\s+(?:muc\s+tieu|phan|cv|mo\s+ta|kinh\s+nghiem)|chinh|dat\s+(?:lai|mau|ten|level|muc|font|phong|co\s+chu)|(?:tang|giam)\s+(?:co\s+chu|chu|gian\s+dong|dan\s+dong|khoang\s+cach|level|muc)|thu\s+nho|phong\s+to|(?:an|hien|bat|tat)\s+(?:tat\s+ca|toan\s+bo|het|moi|muc|phan|section|anh|hinh|avatar|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|tuy\s+chinh|custom\s+sections?)|sap\s+xep|(?:dua|chuyen|day|keo)\s+(?:muc|phan|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|tuy\s+chinh|custom\s+sections?|sang|thanh|font|phong|mau)|(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|giai\s+thuong|hoat\s+dong(?:\s+ngoai\s+khoa)?|so\s+thich|(?:nguoi\s+)?tham\s+chieu|muc\s+tuy\s+chinh|tuy\s+chinh|custom\s+sections?)\s+(?:len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau))|canh\s+(?:trai|phai|giua|deu)|in\s+(?:dam|nghieng)|gach\s+chan|lam\s+cho|cho\s+(?:chu|ten|mau|co\s+chu|gian\s+dong)|toi\s+ten|ten\s+(?:toi\s+|cua\s+toi\s+)?(?:la|mau)|ho\s+(?:va\s+)?ten\s*(?:la|thanh|sang|:)|font(?:\s+chu)?|phong(?:\s+chu)?|co\s+chu|gian\s+dong|dan\s+dong|cach\s+dong|khoang\s+cach\s+dong|email\s*(?:la|thanh|sang|:)|e-mail\s*(?:la|thanh|sang|:)|sdt\s*(?:la|thanh|sang|:)|so\s+dien\s+thoai\s*(?:la|thanh|sang|:)|dien\s+thoai\s*(?:la|thanh|sang|:)|dia\s+chi\s*(?:la|thanh|sang|:)|website\s*(?:la|thanh|sang|:)|linkedin\s*(?:la|thanh|sang|:)|github\s*(?:la|thanh|sang|:)|portfolio\s*(?:la|thanh|sang|:)|avatar\s*(?:la|thanh|sang|:)|anh\s+dai\s+dien\s*(?:la|thanh|sang|:)|ngay\s+sinh\s*(?:la|thanh|sang|:)|gioi\s+tinh\s*(?:la|thanh|sang|:))\b/i;
+const NEW_CLAUSE_START_NORM_RE = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+|please\s+)?(?:(?:doi|sua|cap\s+nhat|thay(?:\s+doi|\s+the)?|them|bo\s+sung|xoa|loai\s+bo|chinh|lam\s+trong|change|set|update|edit|modify|rename|replace|add|remove|delete|clear|swap|move|sort|uppercase|lowercase|increase|decrease)\s+\S+|(?:bo|go)\s+\S+|viet(?:\s+(?:lai|hoa|thuong))\s+\S+|(?:toi\s+uu|nang\s+cap)\s+(?:muc\s+tieu|phan|cv|mo\s+ta|kinh\s+nghiem)|dat\s+(?:lai|mau|ten|level|muc|font|phong|co\s+chu|thu\s+tu)|(?:tang|nang|giam|ha)\s+(?:co\s+chu|chu|gian\s+dong|dan\s+dong|khoang\s+cach|level|muc)|thu\s+nho|phong\s+to|(?:chi\s+(?:hien|hien\s+thi|bat|giu|de)|only\s+show|keep\s+only)\s+\S+|(?:an|hien|bat|tat|show|hide)\s+(?:tat\s+ca|toan\s+bo|het|moi|all|muc|phan|section|anh|hinh|avatar|duong\s+ke|vien|bo\s+goc|hoc\s+van|kinh\s+nghiem|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|certificates?|giai\s+thuong|awards?|so\s+thich|interests?|hoat\s+dong|activities|tham\s+chieu|references?|nguoi\s+gioi\s+thieu|tuy\s+chinh|custom\s+sections?)|(?:sap\s+xep|hoan\s+doi|doi\s+cho|dao\s+vi\s+tri)\s+\S+|(?:dua|chuyen|day|keo|dich)\s+(?:muc|phan|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|tuy\s+chinh|custom\s+sections?|sang|thanh|font|phong|mau)|(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|giai\s+thuong|hoat\s+dong(?:\s+ngoai\s+khoa)?|so\s+thich|(?:nguoi\s+)?(?:tham\s+chieu|gioi\s+thieu)|muc\s+tuy\s+chinh|tuy\s+chinh|custom\s+sections?)\s+(?:len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau))|canh\s+(?:trai|phai|giua|deu)|in\s+(?:hoa|thuong|dam|nghieng)\b|bo\s+(?:goc|tron)\b|vuong\s+goc\b|khong\s+bo\s+goc\b|gach\s+chan|lam\s+cho|cho\s+(?:chu|ten|mau|co\s+chu|gian\s+dong|muc)|(?:goi\s+(?:toi|minh|em)\s+la|call\s+me|my\s+name\s+is)\s+\S+|(?:toi|minh|em)\s+ten|ten\s+(?:toi\s+|cua\s+toi\s+|hien\s+thi\s+)?(?:la|mau)|ho\s+(?:va\s+)?ten\s*(?:la|thanh|sang|:)|job\s*title\s*(?:la|thanh|sang|to|:)|font(?:[\s-]*size|\s+chu)?\s+\S+|phong(?:\s+chu)?\s+\S+|co\s+(?:chu|font)\s+\S+|(?:gian|dan|cach)\s+dong\s+\S+|khoang\s+cach\s+dong\s+\S+|dark\s*mode|light\s*mode|che\s*do\s*(?:toi|sang)|(?:email|e-mail|mail|sdt|so\s+dien\s+thoai|dien\s+thoai|di\s+dong|phone|dia\s+chi|address|website|linkedin|github|portfolio|avatar|anh\s+dai\s+dien|ngay\s+sinh|nam\s+sinh|sinh\s+nam|dob|gioi\s+tinh|gender)\s*(?:la|thanh|sang|to|:))/i;
+
+function isSafeExplicitClauseStart(afterSep, afterNorm) {
+  if (!afterSep || !NEW_CLAUSE_START_NORM_RE.test(afterNorm)) return false;
+  const trimmedRaw = afterSep.trim();
+  // Prevent ASCII skill/person names ("Go", "Go Microservices", "An", "Bo") from matching Vietnamese accented verbs ("gỡ", "ẩn", "bỏ")!
+  if (/^go\b/i.test(afterNorm) && !/^(?:gỡ|go\s+bo\b|gọi\s+)/i.test(trimmedRaw)) return false;
+  if (/^bo\b/i.test(afterNorm) && !/^(?:bỏ|bổ\s+sung|bo\s+góc|bo\s+tròn|bo\s+(?:goc|tron)\b)/i.test(trimmedRaw)) return false;
+  if (/^an\b/i.test(afterNorm) && !/^ẩn\b/i.test(trimmedRaw) && !/^an\s+(?:tat\s+ca|toan\s+bo|het|moi|muc|anh|avatar|duong\s+ke)\b/i.test(afterNorm)) return false;
+  return true;
+}
 
 // Matches elliptical (verbless) 2nd+ clauses ONLY when the preceding clause already has its own predicate (thành/sang/là/:/lên/xuống/color/number),
 // so multi-target clauses like "đổi màu tiêu đề và tên công ty sang đỏ" or "đổi email và điện thoại cùng lúc" are NEVER split prematurely!
 const ELLIPTICAL_ASSIGNMENT_CLAUSE_NORM_RE = new RegExp(
   `^(?:` +
-    `(?:ho\\s+(?:va\\s+)?ten|ten(?:\\s+toi|\\s+cua\\s+toi|\\s+ung\\s+vien)?|email|e-mail|thu\\s+dien\\s+tu|sdt|so\\s+dien\\s+thoai|dien\\s+thoai|phone|dia\\s+chi|noi\\s+o|cho\\s+o|que\\s+quan|ngay\\s+sinh|sinh\\s+ngay|dob|gioi\\s+tinh|gender|website|trang\\s+web|portfolio|linkedin|github|gitlab|behance|avatar|anh\\s+dai\\s+dien|vi\\s+tri(?:\\s+ung\\s+tuyen|\\s+cong\\s+viec|\\s+lam\\s+viec|\\s+kinh\\s+nghiem)?|chuc\\s+danh|chuc\\s+vu|muc\\s+tieu(?:\\s+nghe\\s+nghiep)?)\\s+(?:thanh|sang|la|:)\\s*\\S+|` +
-    `mau\\s+(?:[a-z0-9#]+\\s+){0,6}?(?:(?:sang|thanh|la|:)\\s*\\S+|${COLOR_VALUE_NORM_PART})|` +
-    `(?:(?:mau\\s+)?(?:chu|van\\s+ban|nen(?:\\s+cv)?)|text\\s*color|background)\\s+(?:(?:sang|thanh|la|mau|:)\\s*)?${COLOR_VALUE_NORM_PART}|` +
-    `(?:le\\s+(?:trai|phai|tren|duoi|trang)|margin(?:-(?:left|right|top|bottom))?)\\s*(?:thanh|sang|la|:)?\\s*\\d+|` +
-    `(?:ten\\s+(?:cong\\s+ty|truong|du\\s+an|muc\\s+tuy\\s+chinh)|cong\\s+ty|truong(?:\\s+dai\\s+hoc)?|bang\\s+cap|chuyen\\s+nganh|gpa|nam\\s+(?:tot\\s+nghiep|chung\\s+chi|giai\\s+thuong)|vai\\s+tro(?:\\s+du\\s+an)?|cong\\s+nghe(?:\\s+du\\s+an)?|so\\s+thich|level\\s+\\S+)(?:\\s+.+?)?\\s+(?:thanh|sang|la|:)\\s*\\S+` +
+    `(?:ho\\s+(?:va\\s+)?ten|ten(?:\\s+toi|\\s+cua\\s+toi|\\s+ung\\s+vien|\\s+hien\\s+thi)?|full\\s*name|display\\s*name|email|e-mail|mail|thu\\s+dien\\s+tu|sdt|so\\s+dien\\s+thoai|dien\\s+thoai|di\\s+dong|phone|dia\\s+chi|address|noi\\s+o|cho\\s+o|que\\s+quan|ngay\\s+sinh|nam\\s+sinh|sinh\\s+(?:ngay|nam)|dob|gioi\\s+tinh|gender|website|trang\\s+web|portfolio|linkedin|github|gitlab|behance|avatar|anh\\s+dai\\s+dien|vi\\s+tri(?:\\s+ung\\s+tuyen|\\s+cong\\s+viec|\\s+lam\\s+viec|\\s+kinh\\s+nghiem)?|chuc\\s+danh|chuc\\s+vu|job\\s*title|muc\\s+tieu(?:\\s+nghe\\s+nghiep)?)\\s+(?:thanh|sang|la|to|:)\\s*\\S+|` +
+    `mau\\s+(?:[a-z0-9#]+\\s+){0,6}?(?:(?:sang|thanh|la|to|:)\\s*\\S+|${COLOR_VALUE_NORM_PART})|` +
+    `(?:(?:mau\\s+)?(?:chu|van\\s+ban|nen(?:\\s+cv)?)|text\\s*color|background)\\s+(?:(?:sang|thanh|la|mau|to|:)\\s*)?${COLOR_VALUE_NORM_PART}|` +
+    `(?:le\\s+(?:trai|phai|tren|duoi|trang)|margin(?:-(?:left|right|top|bottom))?)\\s*(?:thanh|sang|la|to|:)?\\s*\\d+|` +
+    `(?:ten\\s+(?:cong\\s+ty|truong|du\\s+an|muc\\s+tuy\\s+chinh)|cong\\s+ty|truong(?:\\s+dai\\s+hoc)?|bang\\s+cap|chuyen\\s+nganh|gpa|nam\\s+(?:tot\\s+nghiep|chung\\s+chi|giai\\s+thuong)|vai\\s+tro(?:\\s+du\\s+an)?|cong\\s+nghe(?:\\s+du\\s+an)?|so\\s+thich|level\\s+\\S+)(?:\\s+.+?)?\\s+(?:thanh|sang|la|to|:)\\s*\\S+` +
   `)`,
   'i'
 );
 
 const PREV_CLAUSE_HAS_PREDICATE_NORM_RE = new RegExp(
-  `\\b(?:thanh|sang|la|len\\s+(?:dau|tren|truoc)|xuong\\s+(?:cuoi|duoi|sau)|xoa|them|bo\\s+sung|an|hien)\\b|:|${COLOR_VALUE_NORM_PART}|\\b\\d+(?:\\.\\d+)?(?:px|pt|cm|mm)\\b`,
+  `\\b(?:thanh|sang|la|to|as|len\\s+(?:dau|tren|truoc)|xuong\\s+(?:cuoi|duoi|sau)|xoa|them|bo\\s+sung|an|hien|add|remove|delete|clear|hide|show)\\b|:|${COLOR_VALUE_NORM_PART}|\\b\\d+(?:\\.\\d+)?(?:px|pt|cm|mm)\\b`,
   'i'
 );
 
 function expandEllipticalIndexedClauses(clauseList) {
   const expanded = [];
-  const prefixRe = /^((?:hãy\s+|vui lòng\s+)?(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên\s+công\s+ty|công\s+ty|vị\s+trí(?:\s+công\s+việc|\s+làm\s+việc|\s+kinh\s+nghiệm)?|chức\s+vụ(?:\s+công\s+việc|\s+kinh\s+nghiệm)?|tên\s+trường|trường(?:\s+đại\s+học)?|bằng\s+cấp|chuyên\s+ngành|tên\s+dự\s+án|vai\s+trò(?:\s+dự\s+án)?|công\s+nghệ(?:\s+dự\s+án)?|(?:năm\s+|tên\s+|đơn\s+vị(?:\s+cấp)?\s+|nơi\s+cấp\s+)?(?:chứng\s+chỉ|certificate|giải\s+thưởng|award)|(?:tên\s+|tiêu\s+đề\s+)?(?:mục\s+tùy\s+chỉnh|custom\s+sections?|mục\s+tự\s+tạo)|level(?:\s+kỹ\s+năng)?))\s+(.+)$/i;
-  const splitEllipticalRe = /(?:,\s*|\s+và\s+)(?=(?:(?:thứ\s+|số\s+|mục\s+|năm\s+|#)?(?:\d{1,4}|một|nhất|hai|ba|bốn|tư|năm|sáu|đầu(?:\s+tiên)?|cuối(?:\s+cùng)?)|[A-Za-zÀ-ỹ0-9+#./_-]{1,35}(?:\s+[A-Za-zÀ-ỹ0-9+#./_-]{1,35}){0,2})\s+(?:thành|sang|là|:)\s+\S+)/i;
-  const leadingActionRe = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+)?(?:doi|sua|cap\s+nhat|thay|them|bo\s+sung|xoa|bo|go|loai\s+bo|viet|toi\s+uu|nang\s+cap|chinh|dat|tang|giam|thu\s+nho|phong\s+to|an|hien|bat|tat|sap\s+xep|dua|chuyen|day|keo|canh|in|gach|lam|cho|toi\s+ten|ten\s+(?:toi\s+)?la|ho\s+(?:va\s+)?ten\s*(?:la|:))\b/i;
+  const prefixRe = /^((?:hãy\s+|vui lòng\s+)?(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên\s+công\s+ty|công\s+ty|vị\s+trí(?:\s+công\s+việc|\s+làm\s+việc|\s+kinh\s+nghiệm)?|(?:chức\s+vụ|chức\s+danh)(?:\s+công\s+việc|\s+kinh\s+nghiệm)?|tên\s+trường|trường(?:\s+đại\s+học)?|bằng\s+cấp|chuyên\s+ngành|gpa(?:\s+học\s+vấn)?|tên\s+dự\s+án|vai\s+trò(?:\s+dự\s+án)?|công\s+nghệ(?:\s+dự\s+án)?|(?:năm\s+|tên\s+|đơn\s+vị(?:\s+cấp)?\s+|nơi\s+cấp\s+)?(?:chứng\s+chỉ|certificate|giải\s+thưởng|award)|(?:tên\s+|tiêu\s+đề\s+)?(?:mục\s+tùy\s+chỉnh|custom\s+sections?|mục\s+tự\s+tạo)|level(?:\s+kỹ\s+năng)?))\s+(.+)$/i;
+  const splitEllipticalRe = /(?:,\s*|\s+và\s+)(?=(?:(?:thứ\s+|số\s+|mục\s+|năm\s+|#)?(?:\d{1,4}|một|nhất|hai|ba|bốn|tư|năm|sáu|đầu(?:\s+tiên)?|cuối(?:\s+cùng)?|áp\s+chót|kế\s+cuối)|[A-Za-zÀ-ỹ0-9+#./_-]{1,35}(?:\s+[A-Za-zÀ-ỹ0-9+#./_-]{1,35}){0,2})\s+(?:thành|sang|là|:)\s+\S+)/i;
+  const leadingActionRe = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+|please\s+)?(?:doi|sua|cap\s+nhat|thay|them|bo\s+sung|xoa|bo|go|loai\s+bo|viet|toi\s+uu|nang\s+cap|chinh|dat|tang|nang|giam|ha|thu\s+nho|phong\s+to|an|hien|chi|bat|tat|sap\s+xep|hoan\s+doi|doi\s+cho|dao|dua|chuyen|day|keo|dich|canh|in|gach|lam|cho|goi|toi\s+ten|minh\s+ten|ten\s+(?:toi\s+|hien\s+thi\s+)?la|ho\s+(?:va\s+)?ten\s*(?:la|:)|change|set|update|edit|modify|rename|replace|add|remove|delete|clear|swap|move|sort|show|hide|keep|only|call|my\s+name|uppercase|lowercase|increase|decrease)\b/i;
 
   for (const c of clauseList) {
     const m = c.match(prefixRe);
@@ -1510,6 +1644,8 @@ function expandEllipticalIndexedClauses(clauseList) {
   return expanded;
 }
 
+const ABBREV_BEFORE_DOT_RE = /\b(?:tp|mr|ms|mrs|dr|ts|ths|pgs|gs|q|p|tx|tt|st|jr|sr|vs|no|prof)$/i;
+
 function splitIntoClauses(rawText) {
   const s = String(rawText || '').trim();
   if (!s) return [];
@@ -1524,12 +1660,58 @@ function splitIntoClauses(rawText) {
     if (ch === ')' || ch === ']' || ch === '}') { depth = Math.max(0, depth - 1); i++; continue; }
     if (depth === 0) {
       const rest = s.slice(i);
-      const sepMatch = rest.match(/^(?:[;\n]+|,\s+|\s+(?:và|rồi|đồng thời|kèm theo|sau đó|tiếp theo|cùng với)\s+)/i);
+      // Hard delimiter: tab, newline, or semicolon ALWAYS separates independent commands when non-empty!
+      const hardSepMatch = rest.match(/^[;\n\t]+/);
+      if (hardSepMatch) {
+        const prevClause = s.slice(start, i).trim();
+        const afterSep = rest.slice(hardSepMatch[0].length).trim();
+        const afterNorm = normalizeCheck(afterSep);
+        // For `;` inside customSections/certificates ("thêm 2 mục tùy chỉnh: A: 1; B: 2"), only split `;` if afterSep starts a clause; for `\t` or `\n`, split whenever afterSep starts a clause (or tab always if command-like)!
+        const isTabOrNewline = /[\t\n]/.test(hardSepMatch[0]);
+        const isExplicitStart = isSafeExplicitClauseStart(afterSep, afterNorm);
+        const isEllipticalStart = Boolean(
+          afterSep &&
+          prevClause &&
+          PREV_CLAUSE_HAS_PREDICATE_NORM_RE.test(normalizeCheck(prevClause)) &&
+          ELLIPTICAL_ASSIGNMENT_CLAUSE_NORM_RE.test(afterNorm)
+        );
+        if (isExplicitStart || isEllipticalStart || (isTabOrNewline && afterSep && !/^(?:[-*•]\s+)/.test(afterSep) && /\s/.test(afterSep) && !/:\s*$/.test(prevClause))) {
+          if (prevClause) clauses.push(prevClause);
+          i += hardSepMatch[0].length;
+          start = i;
+          continue;
+        }
+      }
+
+      // Period sentence boundary ("Xóa kỹ năng 1. Đổi màu đỏ. Thêm sở thích Đọc sách" or "A.Đổi màu đỏ") — safe against decimals, URLs, emails, ellipsis, and abbreviations ("TP. HCM", "Mr. A")
+      const dotSepMatch = rest.match(/^\.(?!\.)\s*/);
+      if (dotSepMatch) {
+        const prevClause = s.slice(start, i).trim();
+        const afterSep = rest.slice(dotSepMatch[0].length).trim();
+        const afterNorm = normalizeCheck(afterSep);
+        const hasSpaceAfterDot = dotSepMatch[0].length > 1;
+        const isUrlOrDecimal = !hasSpaceAfterDot && (/https?:\/\/\S+$|@\S+$|\d$/i.test(prevClause) || /^\d/.test(afterSep));
+        const isAbbrev = ABBREV_BEFORE_DOT_RE.test(normalizeCheck(prevClause));
+        if (!isAbbrev && !isUrlOrDecimal && (isSafeExplicitClauseStart(afterSep, afterNorm) || (
+          hasSpaceAfterDot &&
+          afterSep &&
+          prevClause &&
+          PREV_CLAUSE_HAS_PREDICATE_NORM_RE.test(normalizeCheck(prevClause)) &&
+          ELLIPTICAL_ASSIGNMENT_CLAUSE_NORM_RE.test(afterNorm)
+        ))) {
+          if (prevClause) clauses.push(prevClause);
+          i += dotSepMatch[0].length;
+          start = i;
+          continue;
+        }
+      }
+
+      const sepMatch = rest.match(/^(?:,\s+|\s+(?:và|rồi|đồng thời|kèm theo|sau đó|tiếp theo|cùng với|and|then|also)\s+)/i);
       if (sepMatch) {
         const afterSep = rest.slice(sepMatch[0].length).trim();
         const prevClause = s.slice(start, i).trim();
         const afterNorm = normalizeCheck(afterSep);
-        const isExplicitStart = Boolean(afterSep && NEW_CLAUSE_START_NORM_RE.test(afterNorm));
+        const isExplicitStart = isSafeExplicitClauseStart(afterSep, afterNorm);
         const isEllipticalStart = Boolean(
           afterSep &&
           prevClause &&
@@ -1552,17 +1734,17 @@ function splitIntoClauses(rawText) {
 }
 
 const SECTION_LOOKUP = [
-  { key: 'objective', label: 'Mục tiêu nghề nghiệp', re: /\b(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|gioi\s+thieu|tom\s+tat|objective|summary)\b/i },
-  { key: 'experience', label: 'Kinh nghiệm làm việc', re: /\b(?:kinh\s+nghiem(?:\s+lam\s+viec)?|work\s+experience|experience)\b/i },
-  { key: 'education', label: 'Học vấn', re: /\b(?:hoc\s+van|giao\s+duc|education)\b/i },
-  { key: 'skills', label: 'Kỹ năng', re: /\b(?:ky\s+nang|kĩ\s+năng|core\s+skills|tech\s+stack|chuyen\s+mon|skills?|skill)\b/i },
-  { key: 'projects', label: 'Dự án', re: /\b(?:du\s+an|projects?|project)\b/i },
-  { key: 'certificates', label: 'Chứng chỉ', re: /\b(?:chung\s+chi|certificates?|certifications?)\b/i },
-  { key: 'awards', label: 'Giải thưởng', re: /\b(?:giai\s+thuong|thanh\s+tuu|danh\s+hieu|awards?)\b/i },
-  { key: 'activities', label: 'Hoạt động ngoại khóa', re: /\b(?:hoat\s+dong(?:\s+ngoai\s+khoa)?|tinh\s+nguyen|activities)\b/i },
-  { key: 'interests', label: 'Sở thích', re: /\b(?:so\s+thich|interests?|hobbies)\b/i },
-  { key: 'references', label: 'Người tham chiếu', re: /\b(?:nguoi\s+tham\s+chieu|tham\s+chieu|references?)\b/i },
-  { key: 'customSections', label: 'Mục tùy chỉnh', re: /\b(?:custom\s+sections?|muc\s+tuy\s+chinh|tuy\s+chinh|muc\s+tu\s+tao|tu\s+tao|muc\s+rieng)\b/i }
+  { key: 'objective', label: 'Mục tiêu nghề nghiệp', re: /\b(?:muc\s+tieu(?:\s+nghe\s+nghiep|\s+cong\s+viec)?|dinh\s+huong(?:\s+nghe\s+nghiep)?|loi\s+gioi\s+thieu|gioi\s+thieu(?:\s+ban\s+than)?|tom\s+tat|objective|summary|career\s+goal|about\s+me|bio)\b/i },
+  { key: 'experience', label: 'Kinh nghiệm làm việc', re: /\b(?:kinh\s+nghiem(?:\s+lam\s+viec)?|qua\s+trinh\s+(?:lam\s+viec|cong\s+tac)|lich\s+su\s+lam\s+viec|work\s+experience|experience|employment)\b/i },
+  { key: 'education', label: 'Học vấn', re: /\b(?:trinh\s+do\s+hoc\s+van|hoc\s+van|qua\s+trinh\s+hoc\s+tap|giao\s+duc|dao\s+tao|education|academic)\b/i },
+  { key: 'skills', label: 'Kỹ năng', re: /\b(?:ky\s+nang|kĩ\s+năng|core\s+skills|tech\s+stack|chuyen\s+mon|nang\s+luc|so\s+truong|the\s+manh|skills?|skill|competencies|expertise)\b/i },
+  { key: 'projects', label: 'Dự án', re: /\b(?:du\s+an(?:\s+noi\s+bat|\s+tieu\s+bieu)?|projects?|project)\b/i },
+  { key: 'certificates', label: 'Chứng chỉ', re: /\b(?:chung\s+chi|chung\s+nhan|certificates?|certifications?|certs?)\b/i },
+  { key: 'awards', label: 'Giải thưởng', re: /\b(?:giai\s+thuong|khen\s+thuong|thanh\s+tuu|thanh\s+tich|danh\s+hieu|awards?|honors?|achievements?)\b/i },
+  { key: 'activities', label: 'Hoạt động ngoại khóa', re: /\b(?:hoat\s+dong(?:\s+ngoai\s+khoa|\s+xa\s+hoi)?|tinh\s+nguyen|cau\s+lac\s+bo|activities|volunteering|extracurricular)\b/i },
+  { key: 'interests', label: 'Sở thích', re: /\b(?:so\s+thich|dam\s+me|thu\s+vui|interests?|hobbies|passions?)\b/i },
+  { key: 'references', label: 'Người tham chiếu', re: /\b(?:nguoi\s+tham\s+chieu|tham\s+chieu|nguoi\s+gioi\s+thieu|references?|referees?)\b/i },
+  { key: 'customSections', label: 'Mục tùy chỉnh', re: /\b(?:custom\s+sections?|muc\s+tuy\s+chinh|tuy\s+chinh|muc\s+tu\s+tao|tu\s+tao|muc\s+rieng|muc\s+bo\s+sung|muc\s+khac)\b/i }
 ];
 
 function findSectionKeyFromText(text) {
@@ -1574,20 +1756,51 @@ function findSectionKeyFromText(text) {
 }
 
 // ─────────────────────────────────────────────────────────
-// 7. CLAUSE EXECUTOR (HANDLES ALL 27 ROUND-3 CASES + ALL PRIOR CASES)
+// 7. CLAUSE EXECUTOR (v10.0 — ROUND 8 FULL COVERAGE)
 // ─────────────────────────────────────────────────────────
 
 function applySingleClause(clauseRaw, state) {
-  const raw = sanitizeText(clauseRaw, 2000);
+  const raw = sanitizeText(clauseRaw, 2000).replace(/\.+$/, m => (m === '...' ? '...' : ''));
   const norm = normalizeCheck(raw);
   if (!raw) return false;
 
   const { workingCv, updates, notices } = state;
-  // Note: "sửa" and common tone typo "sữa" both normalize to "sua"!
-  const isEditVerb = /^(?:hay\s+|vui\s+long\s+)?(?:sua|doi|cap\s+nhat|thay(?:\s+doi|\s+the)?|chinh(?:\s+sua)?|chuyen|dat(?:\s+lai)?)\b/i.test(norm);
+  // Note: "sửa" and common tone typo "sữa" both normalize to "sua"; also support English edit verbs!
+  const isEditVerb = /^(?:hay\s+|vui\s+long\s+|please\s+)?(?:sua|doi|cap\s+nhat|thay(?:\s+doi|\s+the)?|chinh(?:\s+sua)?|chuyen|dat(?:\s+lai)?|change|set|update|edit|modify|rename|replace)\b/i.test(norm);
 
-  // ─── 0. A4 PAGE MARGINS ("đổi lề trái 2cm", "lề trang 15mm") & UNSUPPORTED RICH-TEXT ALIGNMENT/BOLD CHECKS ───
-  const marginEditMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:doi|sua|chinh|dat|thay|tang|giam)?\s*(?:(le\s+(?:trai|phai|tren|duoi|trang)|margin(?:-(?:left|right|top|bottom))?|padding(?:-(?:left|right|top|bottom))?))\s*(?:thanh|sang|la|:)?\s*(-?\d+(?:\.\d+)?)\s*(cm|mm|px)?$/i);
+  // ─── 0. A4 PAGE MARGINS, BORDER RADIUS ("bo góc"), DIVIDER BORDERS ("xóa đường kẻ") & UNSUPPORTED RICH-TEXT CHECKS ───
+  const borderRadiusMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:doi|sua|chinh|dat|bat|them|lam|tao|set|make)\s+)?(?:bo\s+goc|bo\s+tron(?:\s+goc)?|border[\s-]*radius|rounded(?:\s+corners?)?)(?:\s+(?:cv|khung|the|anh|cac\s+muc))?\s*(?:thanh|sang|la|to|:)?\s*(-?\d+(?:\.\d+)?)?\s*(px|mm|rem)?$/i);
+  const removeBorderRadiusMatch = /\b(?:khong\s+bo\s+goc|(?:bo|xoa|tat|huy)\s+bo\s+(?:goc|tron)|vuong\s+goc|goc\s+vuong|sharp\s+corners?|border[\s-]*radius\s*(?::|to|thanh|la)?\s*0(?:px)?)\b/i.test(norm);
+  if (removeBorderRadiusMatch) {
+    const themeUpdates = { ...(updates.theme || {}), borderRadius: '0px' };
+    updates.theme = themeUpdates;
+    workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+    return true;
+  }
+  if (borderRadiusMatch) {
+    const rawNum = borderRadiusMatch[1] !== undefined ? parseFloat(borderRadiusMatch[1]) : 12;
+    const unit = (borderRadiusMatch[2] || 'px').toLowerCase();
+    const validBr = sanitizeCssBorderRadius(`${rawNum}${unit}`);
+    if (!validBr) {
+      notices.push(`Độ bo góc "${rawNum}${unit}" nằm ngoài phạm vi hợp lệ (0px – 36px).`);
+      return true;
+    }
+    const themeUpdates = { ...(updates.theme || {}), borderRadius: validBr };
+    updates.theme = themeUpdates;
+    workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+    return true;
+  }
+
+  const hideDividerMatch = /^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|an|tat|khong\s+dung|remove|hide|delete)\s+(?:tat\s+ca\s+|moi\s+|cac\s+)?(?:duong\s+ke(?:\s+ngang|\s+phan\s+cach)?|vach\s+ngan|duong\s+phan\s+cach|duong\s+gach\s+ngang|gach\s+ngang|vien(?:\s+khung|\s+muc)?|borders?|dividers?|lines?)$/i.test(norm);
+  const showDividerMatch = /^(?:hay\s+|vui\s+long\s+)?(?:hien|hien\s+thi|bat|them|khoi\s+phuc|show|add|enable)\s+(?:lai\s+)?(?:cac\s+)?(?:duong\s+ke(?:\s+ngang|\s+phan\s+cach)?|vach\s+ngan|duong\s+phan\s+cach|vien|borders?|dividers?)$/i.test(norm);
+  if (hideDividerMatch || showDividerMatch) {
+    const themeUpdates = { ...(updates.theme || {}), hideBorders: hideDividerMatch };
+    updates.theme = themeUpdates;
+    workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+    return true;
+  }
+
+  const marginEditMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:doi|sua|chinh|dat|thay|tang|giam|set|change)?\s*(?:(le\s+(?:trai|phai|tren|duoi|trang)|margin(?:-(?:left|right|top|bottom))?|padding(?:-(?:left|right|top|bottom))?))\s*(?:thanh|sang|la|to|:)?\s*(-?\d+(?:\.\d+)?)\s*(cm|mm|px)?$/i);
   if (marginEditMatch) {
     const sideNorm = marginEditMatch[1].toLowerCase();
     const rawNum = parseFloat(marginEditMatch[2]);
@@ -1630,14 +1843,69 @@ function applySingleClause(clauseRaw, state) {
     return base;
   };
 
-  // ─── A. SECTION REORDERING ("đưa học vấn lên đầu và kỹ năng xuống cuối", "đưa mục tùy chỉnh lên đầu / xuống cuối") ───
-  const reorderTopBottom = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:dua|chuyen|day|keo|dat|sap\s+xep|xep)\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+?)\s+(len\s+dau(?:\s+tien|\s+cv|\s+trang)?|len\s+tren\s+cung|xuong\s+cuoi(?:\s+cung|\s+cv|\s+trang)?|xuong\s+duoi\s+cung)$/i);
+  // ─── A. SECTION REORDERING: EXPLICIT ORDER LIST, SWAP ("hoán đổi"), TOP/BOTTOM, RELATIVE, AND STEP UP/DOWN ("lên trên" / "xuống dưới") ───
+  const explicitSeqOrderMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:sắp\s+xếp(?:\s+lại)?(?:\s+các\s+mục|\s+bố\s+cục)?(?:\s+theo\s+thứ\s+tự)?|(?:đặt|chỉnh|đổi)\s+thứ\s+tự(?:\s+các)?\s+mục|thứ\s+tự(?:\s+các)?\s+mục|sort\s+sections?(?:\s+in\s+order)?|section\s+order)\s*(?::|là|thành|sang)?\s*(.+)$/i);
+  if (explicitSeqOrderMatch && /(?:,|;|->|→|>|\s+và\s+|\s+-\s+)/i.test(explicitSeqOrderMatch[1])) {
+    const seqParts = explicitSeqOrderMatch[1]
+      .split(/\s*(?:,|;|->|→|>|\s+-\s+|\s+và\s+|\s+and\s+)\s*/i)
+      .map(p => findSectionKeyFromText(p.replace(/^(?:mục\s+(?!tiêu\b|tùy\s+chỉnh\b|tự\s+tạo\b|riêng\b)|phần\s+|section\s+)/i, '')))
+      .filter(Boolean);
+    const uniqueSeq = dedupeStrings(seqParts);
+    if (uniqueSeq.length >= 2) {
+      const curOrder = getNormalizedOrder();
+      const nextOrder = [...uniqueSeq, ...curOrder.filter(k => !uniqueSeq.includes(k))];
+      updates.sectionOrder = nextOrder;
+      updates._forceSectionOrder = true;
+      workingCv.sectionOrder = nextOrder;
+      return true;
+    }
+  }
+
+  const swapMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:hoan\s+doi|doi\s+cho|dao\s+vi\s+tri|trao\s+doi|swap)\s+(?:vi\s+tri\s+)?(?:giua\s+)?(.+?)\s+(?:va|voi|cung|and|with)\s+(.+)$/i);
+  if (swapMatch) {
+    const leftClean = swapMatch[1].replace(/^(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)/i, '').trim();
+    const rightClean = swapMatch[2].replace(/^(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)/i, '').trim();
+    // Item swap inside an array section if indices are specified ("hoán đổi kỹ năng 1 và 2")
+    const sharedSec = findSectionKeyFromText(leftClean);
+    if (sharedSec && Array.isArray(workingCv[sharedSec]) && (/\d|dau|cuoi|ap\s+chot|hai|ba/.test(leftClean) && isPurePositionalSelector(rightClean.replace(new RegExp(sharedSec, 'i'), '').trim() || rightClean))) {
+      const arr = [...workingCv[sharedSec]];
+      const idxA = resolveCheckedIndex(leftClean, arr.length, SECTION_VI_NAMES[sharedSec] || sharedSec, notices);
+      if (idxA === -1) return true;
+      const idxB = resolveCheckedIndex(rightClean, arr.length, SECTION_VI_NAMES[sharedSec] || sharedSec, notices);
+      if (idxB === -1) return true;
+      if (idxA !== idxB) {
+        const tmp = arr[idxA];
+        arr[idxA] = arr[idxB];
+        arr[idxB] = tmp;
+        updates[sharedSec] = arr;
+        workingCv[sharedSec] = arr;
+      }
+      return true;
+    }
+    const secA = findSectionKeyFromText(leftClean);
+    const secB = findSectionKeyFromText(rightClean);
+    if (secA && secB && secA !== secB && ALLOWED_ORDER_KEYS.has(secA) && ALLOWED_ORDER_KEYS.has(secB)) {
+      const nextOrder = getNormalizedOrder();
+      const idxA = nextOrder.indexOf(secA);
+      const idxB = nextOrder.indexOf(secB);
+      if (idxA !== -1 && idxB !== -1) {
+        nextOrder[idxA] = secB;
+        nextOrder[idxB] = secA;
+        updates.sectionOrder = nextOrder;
+        updates._forceSectionOrder = true;
+        workingCv.sectionOrder = nextOrder;
+        return true;
+      }
+    }
+  }
+
+  const reorderTopBottom = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:dua|chuyen|day|keo|dat|sap\s+xep|xep|cho|move|put)\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+?)\s+(len\s+dau(?:\s+tien|\s+cv|\s+trang)?|len\s+tren\s+cung|to\s+(?:the\s+)?top|first|xuong\s+cuoi(?:\s+cung|\s+cv|\s+trang)?|xuong\s+duoi\s+cung|to\s+(?:the\s+)?bottom|last)$/i);
   if (reorderTopBottom) {
     const secKey = findSectionKeyFromText(reorderTopBottom[1]);
     if (secKey && ALLOWED_ORDER_KEYS.has(secKey)) {
       const curOrder = getNormalizedOrder();
       const without = curOrder.filter(k => k !== secKey);
-      const isTop = /^len/.test(reorderTopBottom[2]);
+      const isTop = /^(?:len|to\s+(?:the\s+)?top|first)/.test(reorderTopBottom[2]);
       const nextOrder = isTop ? [secKey, ...without] : [...without, secKey];
       updates.sectionOrder = nextOrder;
       updates._forceSectionOrder = true;
@@ -1646,7 +1914,7 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  const reorderRelative = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:dua|chuyen|day|keo|dat|doi\s+cho|sap\s+xep|xep)\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+?)\s+(len\s+truoc|truoc|len\s+tren|xuong\s+sau|sau|xuong\s+duoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+)$/i);
+  const reorderRelative = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:dua|chuyen|day|keo|dat|doi\s+cho|sap\s+xep|xep|cho|move|put)\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+?)\s+(len\s+truoc|truoc|len\s+tren|before|above|xuong\s+sau|sau|xuong\s+duoi|after|below)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+)$/i);
   if (reorderRelative) {
     const srcKey = findSectionKeyFromText(reorderRelative[1]);
     const dstKey = findSectionKeyFromText(reorderRelative[3]);
@@ -1654,7 +1922,7 @@ function applySingleClause(clauseRaw, state) {
       const curOrder = getNormalizedOrder();
       const without = curOrder.filter(k => k !== srcKey);
       const dstIdx = without.indexOf(dstKey);
-      const before = /truoc|tren/.test(reorderRelative[2]);
+      const before = /truoc|tren|before|above/.test(reorderRelative[2]);
       without.splice(before ? dstIdx : dstIdx + 1, 0, srcKey);
       updates.sectionOrder = without;
       updates._forceSectionOrder = true;
@@ -1663,10 +1931,47 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // ─── B. SHOW / HIDE SECTIONS ("hiện tất cả mục", "ẩn tất cả mục", "ẩn mục tiêu và chứng chỉ") ───
-  const toggleAllVisMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(an|tat|hien(?:\s+lai|\s+thi)?|bat(?:\s+lai)?|mo)\s+(?:tat\s+ca|toan\s+bo|het|moi)(?:\s+cac)?\s+(?:muc|phan|section)s?$/i);
+  // Standalone step up / step down ("đưa học vấn lên trên", "chuyển kỹ năng xuống dưới", "mục dự án lên trên", "move education up")
+  const reorderStepUpDown = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:dua|chuyen|day|keo|dich|di\s+chuyen|cho|dat|move)\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+?)\s+(len\s+tren|dich\s+len|len\s+(?:\d+|mot)\s*(?:bac|buoc|vi\s+tri)|up|xuong\s+duoi|dich\s+xuong|xuong\s+(?:\d+|mot)\s*(?:bac|buoc|vi\s+tri)|down)$/i);
+  if (reorderStepUpDown) {
+    const secKey = findSectionKeyFromText(reorderStepUpDown[1]);
+    if (secKey && ALLOWED_ORDER_KEYS.has(secKey)) {
+      const nextOrder = getNormalizedOrder();
+      const curIdx = nextOrder.indexOf(secKey);
+      const isUp = /^(?:len|dich\s+len|up)/.test(reorderStepUpDown[2]);
+      const stepDigits = reorderStepUpDown[2].match(/\d+/);
+      const step = stepDigits ? Math.max(1, parseInt(stepDigits[0], 10)) : 1;
+      const targetIdx = isUp ? Math.max(0, curIdx - step) : Math.min(nextOrder.length - 1, curIdx + step);
+      nextOrder.splice(curIdx, 1);
+      nextOrder.splice(targetIdx, 0, secKey);
+      updates.sectionOrder = nextOrder;
+      updates._forceSectionOrder = true;
+      workingCv.sectionOrder = nextOrder;
+      return true;
+    }
+  }
+
+  // ─── B. SHOW / HIDE SECTIONS ("chỉ hiện mục X", "hiện tất cả mục", "ẩn mọi mục", "ẩn mục tiêu và chứng chỉ") ───
+  const onlyShowSecMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:an\s+(?:tat\s+ca|toan\s+bo|het|moi)\s+(?:muc\s+)?)?chi\s+(?:hien(?:\s+thi)?|bat|de\s+hien)|only\s+show)\s+(?:cac\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+)$/i);
+  if (onlyShowSecMatch && !/\b(?:anh\s+dai\s+dien|avatar)\b/i.test(norm)) {
+    const parts = onlyShowSecMatch[1].split(/\s*(?:,|;|\s+(?:va|hoac|cung|and)\s+)\s*/i).filter(Boolean);
+    const matchedKeys = parts.map(p => findSectionKeyFromText(p.replace(/^(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)/i, '')));
+    if (matchedKeys.length > 0 && matchedKeys.every(Boolean)) {
+      const keepSet = new Set(matchedKeys);
+      const curVis = { ...(workingCv.sectionsVisibility || {}), ...(updates.sectionsVisibility || {}) };
+      for (const k of ALLOWED_VISIBILITY_KEYS) {
+        curVis[k] = keepSet.has(k);
+      }
+      updates.sectionsVisibility = curVis;
+      updates._forceSectionsVisibility = true;
+      workingCv.sectionsVisibility = curVis;
+      return true;
+    }
+  }
+
+  const toggleAllVisMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(an|tat|hide|hien(?:\s+lai|\s+thi)?|bat(?:\s+lai)?|mo|show)\s+(?:tat\s+ca|toan\s+bo|toan\s+the|het|moi|all|every)(?:\s+cac)?\s+(?:muc|phan|sections?)$/i);
   if (toggleAllVisMatch) {
-    const visible = /^(?:hien|bat|mo)/.test(toggleAllVisMatch[1]);
+    const visible = /^(?:hien|bat|mo|show)/.test(toggleAllVisMatch[1]);
     const curVis = { ...(workingCv.sectionsVisibility || {}), ...(updates.sectionsVisibility || {}) };
     for (const k of ALLOWED_VISIBILITY_KEYS) {
       curVis[k] = visible;
@@ -1677,12 +1982,12 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  const toggleVisMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(an|tat|hien|bat|hien\s+thi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+)$/i);
-  if (toggleVisMatch && !/\b(?:anh\s+dai\s+dien|avatar)\b/i.test(norm)) {
-    const parts = toggleVisMatch[2].split(/\s*(?:,|;|\s+(?:va|hoac|cung)\s+)\s*/i).filter(Boolean);
+  const toggleVisMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(an|tat|hide|hien|bat|hien\s+thi|show)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+)$/i);
+  if (toggleVisMatch && !/\b(?:anh\s+dai\s+dien|avatar|duong\s+ke|vien|borders?)\b/i.test(norm)) {
+    const parts = toggleVisMatch[2].split(/\s*(?:,|;|\s+(?:va|hoac|cung|and)\s+)\s*/i).filter(Boolean);
     const matchedKeys = parts.map(p => findSectionKeyFromText(p.replace(/^(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)/i, '')));
     if (matchedKeys.length > 0 && matchedKeys.every(Boolean)) {
-      const visible = /^(?:hien|bat)/.test(toggleVisMatch[1]);
+      const visible = /^(?:hien|bat|show)/.test(toggleVisMatch[1]);
       const curVis = { ...(workingCv.sectionsVisibility || {}), ...(updates.sectionsVisibility || {}) };
       for (const sk of matchedKeys) {
         curVis[sk] = visible;
@@ -1693,17 +1998,26 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // Multi-section clear ("xóa sở thích và chứng chỉ", "xóa chứng chỉ, giải thưởng và hoạt động")
-  const multiSecClearMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+|toàn bộ\s+|hết\s+|sạch\s+|các\s+)?(.+)$/i);
-  if (multiSecClearMatch && !isEditVerb && /(?:,|\s+và\s+)/i.test(multiSecClearMatch[1])) {
-    const parts = splitOutsideParens(multiSecClearMatch[1].replace(/[.!?]+$/, ''), true);
-    if (parts.length >= 2) {
+  // Universal clear for single or multiple sections ("xóa mọi kỹ năng", "xóa mọi chứng chỉ", "xóa sở thích và chứng chỉ", "clear all skills")
+  const anySecClearMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống|clear|delete|remove)\s+(?:(tất cả|toàn bộ|toàn thể|mọi|hết(?:\s+sạch|\s+tất cả|\s+mọi)?|sạch(?:\s+trơn)?|trắng|all|every)\s+)?(?:các\s+)?(.+)$/i);
+  if (anySecClearMatch && !isEditVerb) {
+    const hasAllQuantifier = Boolean(anySecClearMatch[1]);
+    const rawSecBody = anySecClearMatch[2].replace(/[.!?]+$/, '').trim();
+    if (hasAllQuantifier && /^(?:mục|phần|sections?)$/i.test(rawSecBody)) {
+      for (const sk of DEFAULT_SECTION_ORDER) {
+        if (sk === 'objective') { updates.objective = ''; workingCv.objective = ''; }
+        else { updates[sk] = []; workingCv[sk] = []; }
+      }
+      return true;
+    }
+    const parts = /(?:,|\s+và\s+|\s+and\s+)/i.test(rawSecBody) ? splitOutsideParens(rawSecBody, true) : (hasAllQuantifier ? [rawSecBody] : []);
+    if (parts.length >= 1) {
       const isPureSecPart = partStr => {
-        const pNorm = normalizeCheck(partStr).replace(/^(?:tat\s+ca|toan\s+bo|het|cac|muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan)\s+/g, '').trim();
+        const pNorm = normalizeCheck(partStr).replace(/^(?:tat\s+ca|toan\s+bo|toan\s+the|moi|het|sach|trang|all|every|cac|muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan|section)\s+/g, '').trim();
         const sk = findSectionKeyFromText(pNorm);
         if (!sk) return null;
         const leftover = pNorm
-          .replace(/\b(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|gioi\s+thieu|tom\s+tat|objective|summary|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|skill|du\s+an|projects?|project|chung\s+chi|certificates?|giai\s+thuong|thanh\s+tuu|awards?|hoat\s+dong(?:\s+ngoai\s+khoa)?|activities|so\s+thich|interests?|hobbies|nguoi\s+tham\s+chieu|tham\s+chieu|references?|custom\s+sections?|muc\s+tuy\s+chinh|tuy\s+chinh|muc\s+tu\s+tao)\b/gi, '')
+          .replace(/\b(?:muc\s+tieu(?:\s+nghe\s+nghiep|\s+cong\s+viec)?|dinh\s+huong(?:\s+nghe\s+nghiep)?|gioi\s+thieu(?:\s+ban\s+than)?|tom\s+tat|objective|summary|kinh\s+nghiem(?:\s+lam\s+viec)?|qua\s+trinh\s+lam\s+viec|work\s+experience|experience|trinh\s+do\s+hoc\s+van|hoc\s+van|giao\s+duc|dao\s+tao|education|ky\s+nang|nang\s+luc|so\s+truong|the\s+manh|skills?|skill|du\s+an(?:\s+noi\s+bat|\s+tieu\s+bieu)?|projects?|project|chung\s+chi|chung\s+nhan|certificates?|certs?|giai\s+thuong|khen\s+thuong|thanh\s+tuu|thanh\s+tich|danh\s+hieu|awards?|hoat\s+dong(?:\s+ngoai\s+khoa|\s+xa\s+hoi)?|tinh\s+nguyen|activities|so\s+thich|dam\s+me|interests?|hobbies|nguoi\s+tham\s+chieu|tham\s+chieu|nguoi\s+gioi\s+thieu|references?|referees?|custom\s+sections?|muc\s+tuy\s+chinh|tuy\s+chinh|muc\s+tu\s+tao|muc\s+rieng|muc\s+bo\s+sung)\b/gi, '')
           .trim();
         return leftover.length === 0 ? sk : null;
       };
@@ -2009,27 +2323,27 @@ function applySingleClause(clauseRaw, state) {
       // Accumulate ALL explicitly mentioned sub-targets in the clause (so "đổi màu tiêu đề và tên công ty sang đỏ" sets BOTH!)
       let matchedMultiSubTarget = false;
 
-      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+cong\s+ty|cong\s+ty\s+(?:sang\s+|thanh\s+)?mau)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+cong\s+ty|cong\s+ty\s+(?:sang\s+|thanh\s+)?mau|company\s+color)\b/i.test(colorSafeNorm)) {
         themeUpdates.companyColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+truong|truong(?:\s+dai\s+hoc|\s+hoc)?\s+(?:sang\s+|thanh\s+)?mau)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+truong|truong(?:\s+dai\s+hoc|\s+hoc)?\s+(?:sang\s+|thanh\s+)?mau|school\s+color)\b/i.test(colorSafeNorm)) {
         themeUpdates.schoolColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:ten\s+du\s+an|mau\s+(?:ten\s+)?du\s+an)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:ten\s+du\s+an|mau\s+(?:ten\s+)?du\s+an|project\s+color)\b/i.test(colorSafeNorm)) {
         themeUpdates.projectColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:mau\s+(?:chuc\s+danh|vi\s+tri(?:\s+ung\s+tuyen)?)|(?:chuc\s+danh|vi\s+tri\s+ung\s+tuyen)\s+(?:thanh\s+|sang\s+)?mau)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:mau\s+(?:chuc\s+danh|vi\s+tri(?:\s+ung\s+tuyen)?)|(?:chuc\s+danh|vi\s+tri\s+ung\s+tuyen)\s+(?:thanh\s+|sang\s+)?mau|job\s*title\s+color)\b/i.test(colorSafeNorm)) {
         themeUpdates.jobTitleColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:tieu\s+de(?:\s+(?:cac\s+|tat\s+ca\s+)?muc)?|mau\s+tieu\s+de)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:tieu\s+de(?:\s+(?:cac\s+|tat\s+ca\s+)?muc)?|mau\s+tieu\s+de|heading\s+color)\b/i.test(colorSafeNorm)) {
         themeUpdates.headingColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:ho\s+(?:va\s+)?ten|ten\s+(?:toi|ung\s+vien))\b/i.test(colorSafeNorm)) {
+      if (/\b(?:ho\s+(?:va\s+)?ten|ten\s+(?:toi|ung\s+vien)|name\s+color)\b/i.test(colorSafeNorm)) {
         themeUpdates.nameColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
@@ -2110,12 +2424,21 @@ function applySingleClause(clauseRaw, state) {
       }
     }
 
-    // Strict Font Whitelist (catches "font", accented "phông", "phong chu", OR bare font names like "đổi sang Arial", "phông Times" — NEVER matches "Trưởng phòng"!)
-    const mentionsFont =
-      /\b(?:font|phong\s+chu|kieu\s+chu)\b/i.test(norm) ||
-      hasAccentedPhongFont ||
+    // Distinguish font-size ("đổi font chữ 14pt", "đổi font-size 14", "cỡ font 16px") from font-family ("đổi font sang Inter", "đổi font Arial")!
+    const hasExplicitFontFamilyName =
       KNOWN_UNSUPPORTED_FONTS_RE.test(norm) ||
-      (/\b(?:doi|chuyen|chon|dung)\s+(?:sang\s+)?(?:inter|roboto|montserrat|merriweather|nunito|lora|open\s+sans|be\s+vietnam\s+pro)\b/i.test(norm));
+      /\b(?:inter|roboto|montserrat|merriweather|nunito|lora|open\s*sans|be\s+vietnam\s+pro)\b/i.test(norm);
+
+    const isFontSizeDirective =
+      /\b(?:co\s*(?:chu|font)|kich\s*(?:thuoc|co)\s*(?:chu|font)|font[\s-]*size|fontsize|size\s*(?:chu|font)|chu\s+(?:to|lon|nho|be)|(?:tang|giam|phong\s+to|thu\s+nho)\s+(?:co\s+)?(?:chu|font))\b/i.test(norm) ||
+      (!hasExplicitFontFamilyName && /\b(?:font|phong)(?:\s+chu)?\s*(?:thanh|sang|la|to|:)?\s*-?\d{1,3}(?:\.\d+)?\s*(?:px|pt)?(?=$|\s)/i.test(norm));
+
+    const mentionsFont =
+      hasExplicitFontFamilyName ||
+      (!isFontSizeDirective && (
+        /\b(?:font|phong\s+chu|kieu\s+chu)\b/i.test(norm) ||
+        hasAccentedPhongFont
+      ));
 
     if (mentionsFont) {
       const { matched, rejected } = resolveStrictFont(raw);
@@ -2131,16 +2454,19 @@ function applySingleClause(clauseRaw, state) {
       }
     }
 
-    if (/\b(?:co\s*chu|kich\s*thuoc\s*chu|font\s*size|chu\s+(?:to|lon|nho|be)|(?:tang|giam|phong\s+to|thu\s+nho)\s+(?:co\s+)?chu)\b/i.test(norm)) {
+    if (isFontSizeDirective) {
       const pxMatch = norm.match(/\b(-?\d{1,3}(?:\.\d+)?)\s*(?:px|pt)?\b/);
       const px = pxMatch ? parseFloat(pxMatch[1]) : null;
       if (px !== null) {
-        if (px < 8 || px > 36) {
-          notices.push(`Cỡ chữ ${px} nằm ngoài phạm vi chuẩn CV (8 – 36). Vui lòng chọn cỡ chữ từ 8 đến 36.`);
+        const isDeltaSize = /\b(?:tang|giam)\b/i.test(norm) && px > 0 && px <= 6 && !/\b(?:thanh|sang|la|len|xuong|to)\b/i.test(norm);
+        const curPxBase = Number(workingCv?.theme?.fontSizePx) || 13;
+        const finalPx = isDeltaSize ? (/\bgiam\b/i.test(norm) ? curPxBase - px : curPxBase + px) : px;
+        if (finalPx < 8 || finalPx > 36) {
+          notices.push(`Cỡ chữ ${finalPx} nằm ngoài phạm vi chuẩn CV (8 – 36). Vui lòng chọn cỡ chữ từ 8 đến 36.`);
           matchedTheme = true;
         } else {
-          themeUpdates.fontSizePx = px;
-          themeUpdates.fontSize = px >= 14 ? 'large' : (px <= 12 ? 'small' : 'medium');
+          themeUpdates.fontSizePx = finalPx;
+          themeUpdates.fontSize = finalPx >= 14 ? 'large' : (finalPx <= 12 ? 'small' : 'medium');
           matchedTheme = true;
         }
       } else if (/\b(?:lon|to|bu|large|big|tang|phong\s+to)\b/i.test(norm)) {
@@ -2155,7 +2481,7 @@ function applySingleClause(clauseRaw, state) {
       }
     }
 
-    if (/\b(?:(?:gian|dan|cach)\s*dong|khoang\s*cach\s*dong|line\s*spacing|line\s*height)\b/i.test(norm)) {
+    if (/\b(?:(?:gian|dan|cach)\s*(?:dong|hang)|khoang\s*cach\s*(?:dong|hang)|do\s+cao\s+dong|line\s*spacing|line\s*height)\b/i.test(norm)) {
       const numMatch = norm.match(/\b(-?\d+(?:\.\d+)?)\b/);
       const lsNum = numMatch ? parseFloat(numMatch[1]) : null;
       if (lsNum !== null) {
@@ -2199,12 +2525,116 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // ─── E. GENERIC N-FIRST / N-LAST SLICE DELETION ACROSS ALL ARRAY SECTIONS ("xóa 3 kỹ năng cuối", "xóa 100 kỹ năng cuối") ───
-  const sliceDelNorm = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loai\s+bo)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(.+?)\s+(cuoi(?:\s+cung)?|dau(?:\s+tien)?)$/);
+  // ─── E0. BULK N-FIRST / N-LAST RENAME OR EDIT ACROSS ALL ARRAY SECTIONS ("đổi tên 2 chứng chỉ đầu: Sales Pro, Hubspot Pro", "đổi tên 2 chứng chỉ đầu: A, B") ───
+  const bulkSliceEditMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:đổi|sửa|sữa|cập nhật|thay|đặt|change|update|rename|set)\s+(?:(tên|tiêu\s+đề|năm|đơn\s+vị(?:\s+cấp)?|nơi\s+cấp|vị\s+trí|chức\s+danh|chức\s+vụ|công\s+ty|trường|bằng\s+cấp|chuyên\s+ngành|gpa|vai\s+trò|công\s+nghệ|mô\s+tả|level|mức(?:\s+độ)?)\s+)?(?:của\s+)?(\d{1,3}|một|hai|ba|bốn|tư|năm|sáu|bảy|tám|chín|mười)\s+(?:mục\s+(?!tiêu\b|tùy\s+chỉnh\b|tự\s+tạo\b|riêng\b))?(.+?)\s+(đầu(?:\s+tiên)?|cuối(?:\s+cùng)?|first|last)\s*(?:thành|sang|là|to|:)\s*([^\r\n!?]+)$/i);
+  if (bulkSliceEditMatch) {
+    const subNorm = normalizeCheck(bulkSliceEditMatch[1] || '');
+    const countN = parseSmallCount(bulkSliceEditMatch[2]);
+    let targetPhrase = bulkSliceEditMatch[3].trim();
+    let secKey = findSectionKeyFromText(targetPhrase);
+    if (!secKey && /\bcong\s+ty\b/i.test(normalizeCheck(targetPhrase))) secKey = 'experience';
+    if (!secKey && /\btruong\b/i.test(normalizeCheck(targetPhrase))) secKey = 'education';
+    const isLast = /^(?:cuoi|last)/i.test(normalizeCheck(bulkSliceEditMatch[4]));
+    const vals = splitOutsideParens(bulkSliceEditMatch[5].replace(/[.!?]+$/, ''), true).map(v => sanitizeText(v, 200)).filter(Boolean);
+
+    if (countN && countN >= 1 && secKey && Array.isArray(workingCv[secKey]) && vals.length > 0) {
+      const curArr = workingCv[secKey];
+      const secName = SECTION_VI_NAMES[secKey] || secKey;
+      if (curArr.length === 0) {
+        notices.push(`Mục ${secName} hiện đang trống nên không có phần tử nào để cập nhật.`);
+        return true;
+      }
+      const indices = [];
+      const actualCount = Math.min(countN, curArr.length);
+      for (let k = 0; k < actualCount; k++) {
+        indices.push(isLast ? curArr.length - actualCount + k : k);
+      }
+      const resolveFieldForSec = () => {
+        if (secKey === 'certificates' || secKey === 'awards') {
+          if (subNorm === 'nam') return 'year';
+          if (/don\s+vi|noi\s+cap/.test(subNorm)) return 'issuer';
+          return 'name';
+        }
+        if (secKey === 'skills') return /level|muc/.test(subNorm) ? 'level' : 'name';
+        if (secKey === 'projects') {
+          if (/vai\s+tro/.test(subNorm)) return 'role';
+          if (/cong\s+nghe/.test(subNorm)) return 'technologies';
+          if (/mo\s+ta/.test(subNorm)) return 'description';
+          return 'name';
+        }
+        if (secKey === 'experience') {
+          if (/vi\s+tri|chuc\s+danh|chuc\s+vu|vai\s+tro/.test(subNorm)) return 'position';
+          return 'company';
+        }
+        if (secKey === 'education') {
+          if (/bang/.test(subNorm)) return 'degree';
+          if (/nganh/.test(subNorm)) return 'fieldOfStudy';
+          if (/gpa/.test(subNorm)) return 'gpa';
+          return 'school';
+        }
+        if (secKey === 'activities') return 'role';
+        if (secKey === 'references') return 'name';
+        if (secKey === 'customSections') return 'title';
+        return null;
+      };
+      const fieldKey = resolveFieldForSec();
+      const nextArr = curArr.map((it, idx) => {
+        const posInSlice = indices.indexOf(idx);
+        if (posInSlice === -1) return typeof it === 'object' && it !== null ? { ...it } : it;
+        const chosenVal = vals.length === 1 ? vals[0] : vals[posInSlice];
+        if (chosenVal === undefined) return typeof it === 'object' && it !== null ? { ...it } : it;
+        if (secKey === 'interests') return chosenVal;
+        if (fieldKey === 'level') {
+          return { ...it, level: normalizeSkillLevel(chosenVal, it.level || 4), _explicitLevel: true };
+        }
+        if (fieldKey === 'description') {
+          return { ...it, description: [chosenVal] };
+        }
+        return { ...it, [fieldKey]: chosenVal };
+      });
+      updates[secKey] = nextArr;
+      workingCv[secKey] = nextArr;
+      return true;
+    }
+  }
+
+  // ─── E. COMPOUND & SINGLE N-FIRST / N-LAST SLICE DELETION ACROSS ALL ARRAY SECTIONS ("xóa 2 kỹ năng đầu và 2 kỹ năng cuối", "xóa 3 kỹ năng cuối") ───
+  const compoundSliceDelNorm = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loai\s+bo|delete|remove)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?([a-z\s]+?)\s+(dau(?:\s+tien)?|cuoi(?:\s+cung)?|first|last)\s+(?:va|cung|and|,)\s*(?:(?:xoa|bo|go|loai\s+bo|delete|remove)\s+)?(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(?:([a-z\s]+?)\s+)?(dau(?:\s+tien)?|cuoi(?:\s+cung)?|first|last)$/);
+  if (compoundSliceDelNorm) {
+    const count1 = parseSmallCount(compoundSliceDelNorm[1]);
+    const sec1 = findSectionKeyFromText(compoundSliceDelNorm[2]);
+    const isLast1 = /^(?:cuoi|last)/.test(compoundSliceDelNorm[3]);
+    const count2 = parseSmallCount(compoundSliceDelNorm[4]);
+    const sec2 = (compoundSliceDelNorm[5] && findSectionKeyFromText(compoundSliceDelNorm[5])) || sec1;
+    const isLast2 = /^(?:cuoi|last)/.test(compoundSliceDelNorm[6]);
+
+    if (count1 && count2 && sec1 && sec2 && Array.isArray(workingCv[sec1]) && Array.isArray(workingCv[sec2])) {
+      if (sec1 === sec2) {
+        const curArr = workingCv[sec1];
+        const firstDrop = (!isLast1 ? count1 : 0) + (!isLast2 ? count2 : 0);
+        const lastDrop = (isLast1 ? count1 : 0) + (isLast2 ? count2 : 0);
+        const endBound = Math.max(0, curArr.length - lastDrop);
+        const nextArr = firstDrop >= endBound ? [] : curArr.slice(firstDrop, endBound);
+        updates[sec1] = nextArr;
+        workingCv[sec1] = nextArr;
+        return true;
+      } else {
+        const arr1 = workingCv[sec1];
+        const arr2 = workingCv[sec2];
+        const next1 = isLast1 ? arr1.slice(0, Math.max(0, arr1.length - count1)) : arr1.slice(count1);
+        const next2 = isLast2 ? arr2.slice(0, Math.max(0, arr2.length - count2)) : arr2.slice(count2);
+        updates[sec1] = next1; workingCv[sec1] = next1;
+        updates[sec2] = next2; workingCv[sec2] = next2;
+        return true;
+      }
+    }
+  }
+
+  const sliceDelNorm = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loai\s+bo|delete|remove)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(.+?)\s+(cuoi(?:\s+cung)?|dau(?:\s+tien)?|last|first)$/);
   if (sliceDelNorm) {
     const countN = parseSmallCount(sliceDelNorm[1]);
     const secKey = findSectionKeyFromText(sliceDelNorm[2]);
-    const isLast = /^cuoi/.test(sliceDelNorm[3]);
+    const isLast = /^(?:cuoi|last)/.test(sliceDelNorm[3]);
     if (countN && countN >= 1 && secKey && Array.isArray(workingCv[secKey])) {
       const curArr = workingCv[secKey];
       const secName = SECTION_VI_NAMES[secKey] || secKey;
@@ -2222,20 +2652,20 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // ─── F. SKILLS: TONE-TOLERANT KEEP-ONLY ("chỉ giử lại UX"), CLEAR, POSITIONAL 1-BASED DELETE, LEVEL VALIDATION & EDIT, ADD ───
-  // F1. Tone-tolerant conditional keep-only
-  const keepConnectorRe = /\b(?:chi\s+(?:giu|de)(?:\s+lai)?|ngoai\s+tru|tru)\b/i;
-  if (/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loc|chi\s+(?:giu|de))\b/i.test(norm) && keepConnectorRe.test(norm)) {
+  // ─── F. SKILLS: TONE-TOLERANT KEEP-ONLY ("chỉ giử lại UX", bare "chỉ giữ lại UX"), CLEAR, POSITIONAL 1-BASED DELETE, RELATIVE & ABSOLUTE LEVEL EDIT, ADD ───
+  // F1. Tone-tolerant conditional keep-only (supports BOTH "xóa hết kỹ năng chỉ giữ lại UX" AND bare "chỉ giữ lại UX" / "keep only UX"!)
+  const keepConnectorRe = /\b(?:chi\s+(?:giu|de|chua)(?:\s+lai)?|giu\s+lai\s+duy\s+nhat|ngoai\s+tru|tru|keep\s+only)\b/i;
+  if (/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loc|chi\s+(?:giu|de|chua)|giu\s+lai\s+duy\s+nhat|keep\s+only)\b/i.test(norm) && keepConnectorRe.test(norm) && !/\b(?:chi\s+hien|only\s+show)\b/i.test(norm)) {
     const rawKeepMatch =
-      raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|lọc)\s+(?:tất\s+cả|toàn\s+bộ|hết|sạch|các)?\s*(.+?)\s+(?:chỉ\s+(?:giữ|giử|giư|giu|để|de)(?:\s+lại|\s+lai)?|ngoại\s+trừ|trừ)\s*:?\s*([^\r\n!?]+)$/i) ||
-      raw.match(/^(?:hãy\s+|vui lòng\s+)?chỉ\s+(?:giữ|giử|giư|giu|để|de)(?:\s+lại|\s+lai)?\s+(?:các\s+|mục\s+)?(?:kỹ\s*năng|kĩ\s*năng|core\s+skills(?:\s*&\s*tech\s+stack)?|tech\s+stack|skills?|skill)\s*:?\s*([^\r\n!?]+)$/i);
+      raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|lọc)\s+(?:tất\s+cả|toàn\s+bộ|mọi|hết|sạch|các)?\s*(.+?)\s+(?:chỉ\s+(?:giữ|giử|giư|giu|để|de|chừa)(?:\s+lại|\s+lai)?|ngoại\s+trừ|trừ)\s*:?\s*([^\r\n!?]+)$/i) ||
+      raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:chỉ\s+(?:giữ|giử|giư|giu|để|de|chừa)(?:\s+lại|\s+lai)?|giữ\s+lại\s+duy\s+nhất|keep\s+only)\s+(?:(?:các\s+|mục\s+)?(kỹ\s*năng|kĩ\s*năng|core\s+skills(?:\s*&\s*tech\s+stack)?|tech\s+stack|skills?|skill|chứng\s+chỉ|sở\s+thích|dự\s+án|giải\s+thưởng)\s*)?:?\s*([^\r\n!?]+)$/i);
 
     if (rawKeepMatch) {
-      const secHeaderStr = rawKeepMatch.length === 3 ? rawKeepMatch[1] : 'skills';
-      const keepTailStr = rawKeepMatch.length === 3 ? rawKeepMatch[2] : rawKeepMatch[1];
+      const secHeaderStr = rawKeepMatch[1] || 'skills';
+      const keepTailStr = rawKeepMatch[2];
       const detectedSec = findSectionKeyFromText(secHeaderStr) || 'skills';
       if (detectedSec === 'skills') {
-        const keepParsed = parseSkillTokens(keepTailStr).filter(kp => !kp.invalidLevel);
+        const keepParsed = parseSkillTokens(keepTailStr).filter(kp => !kp.invalidLevel && !kp.invalidLength);
         if (keepParsed.length > 0) {
           const currentSkills = Array.isArray(workingCv.skills) ? workingCv.skills : [];
           const nextSkills = keepParsed.map((kp, idx) => {
@@ -2247,14 +2677,80 @@ function applySingleClause(clauseRaw, state) {
           workingCv.skills = nextSkills;
           return true;
         }
+      } else if (Array.isArray(workingCv[detectedSec])) {
+        const keepNames = splitOutsideParens(keepTailStr, true).map(x => normalizeCheck(x)).filter(Boolean);
+        if (keepNames.length > 0) {
+          const curArr = workingCv[detectedSec];
+          const filtered = curArr.filter(it => {
+            const label = normalizeCheck(typeof it === 'string' ? it : (it?.name || it?.title || it?.company || it?.school || ''));
+            return keepNames.some(kn => label.includes(kn) || kn.includes(label));
+          });
+          updates[detectedSec] = filtered;
+          workingCv[detectedSec] = filtered;
+          return true;
+        }
       }
     }
   }
 
-  // F2. Skill level edit ("đổi level UX thành 3", validates 1..5 strictly!)
+  // F2a. Relative skill level increment/decrement ("tăng level UX lên 1", "giảm level UX đi 1", "nâng mức UX", "hạ level UX", "increase UX level by 1")
+  const relSkillLevelMatch =
+    raw.match(/^(?:hãy\s+|vui lòng\s+)?(tăng|nâng|cộng|giảm|hạ|trừ|bớt|increase|raise|decrease|lower)\s+(?:level|mức(?:\s+độ)?|điểm)\s+(?:của\s+)?(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)?(.+?)(?:\s+(?:(thêm|đi|bớt|by)|lên|xuống|to)\s*(-?\d+(?:\.\d+)?)(?:\s*(?:bậc|điểm|nấc|level|đơn\s+vị))?|\s+(-?\d+(?:\.\d+)?)(?:\s*(?:bậc|điểm|nấc|level|đơn\s+vị))?)?\s*[.!?]*$/i) ||
+    raw.match(/^(?:hãy\s+|vui lòng\s+)?(tăng|nâng|giảm|hạ|increase|decrease)\s+(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)?(.+?)\s+level(?:\s+(?:(by)|to)\s*(-?\d+(?:\.\d+)?))?\s*[.!?]*$/i);
+
+  if (relSkillLevelMatch && Array.isArray(workingCv.skills) && workingCv.skills.length > 0 && !/\b(?:cỡ\s+chữ|chữ|font|giãn\s+dòng|lề)\b/i.test(raw)) {
+    const isInc = /^(?:tang|nang|cong|increase|raise)/i.test(normalizeCheck(relSkillLevelMatch[1]));
+    const selector = sanitizeText(relSkillLevelMatch[2], 80);
+    const explicitDeltaPrep = Boolean(relSkillLevelMatch[3]);
+    const rawNumStr = relSkillLevelMatch[4] ?? relSkillLevelMatch[5];
+    const hasStepUnit = /\b(?:bậc|điểm|nấc|đơn\s+vị)\b/i.test(raw);
+    const curSkills = workingCv.skills;
+
+    let idx = -1;
+    if (isPurePositionalSelector(selector)) {
+      idx = resolveCheckedIndex(selector, curSkills.length, 'kỹ năng', notices);
+      if (idx === -1) return true;
+    } else {
+      const selLower = selector.toLowerCase();
+      idx = curSkills.findIndex(s => String(s?.name || '').trim().toLowerCase() === selLower);
+      if (idx === -1) idx = curSkills.findIndex(s => String(s?.name || '').trim().toLowerCase().includes(selLower));
+    }
+
+    if (idx !== -1) {
+      const curLvl = normalizeSkillLevel(curSkills[idx].level, 4);
+      let newLvl;
+      if (rawNumStr === undefined) {
+        newLvl = isInc ? Math.min(5, curLvl + 1) : Math.max(1, curLvl - 1);
+      } else {
+        const parsedN = parseFloat(rawNumStr);
+        if (!Number.isInteger(parsedN) || parsedN < 1 || parsedN > 5) {
+          notices.push(`Mức độ kỹ năng (level) chỉ nhận giá trị nguyên trong thang 1 – 5 (bạn đang nhập "${rawNumStr}").`);
+          return true;
+        }
+        if (explicitDeltaPrep || hasStepUnit || relSkillLevelMatch[5] !== undefined) {
+          newLvl = isInc ? Math.min(5, curLvl + parsedN) : Math.max(1, curLvl - parsedN);
+        } else if (isInc) {
+          // For "tăng level UX lên N": if N <= curLvl (e.g. "lên 1" when curLvl >= 1!), it means +N; if N > curLvl (e.g. "lên 5"), set to N!
+          newLvl = parsedN <= curLvl ? Math.min(5, curLvl + parsedN) : Math.min(5, parsedN);
+        } else {
+          // For "giảm level UX xuống N": if N >= curLvl, subtract 1; otherwise set to N!
+          newLvl = parsedN >= curLvl ? Math.max(1, curLvl - 1) : Math.max(1, parsedN);
+        }
+      }
+      const nextSkills = curSkills.map((s, i) => (i === idx ? { ...s, level: newLvl, _explicitLevel: true } : { ...s }));
+      if (newLvl === curLvl) {
+        state.alreadySetNotes.push(`Kỹ năng "${curSkills[idx].name}" đã ở mức ${curLvl}/5`);
+      }
+      updates.skills = nextSkills;
+      workingCv.skills = nextSkills;
+      return true;
+    }
+  }
+
+  // F2b. Skill level edit ("đổi level UX thành 3", validates 1..5 strictly!)
   const skillLevelMatch =
-    raw.match(/(?:đổi|sửa|sữa|chỉnh|cập nhật|thay|đặt)\s+(?:level|mức(?:\s+độ)?|điểm|thang\s+điểm)\s+(?:của\s+)?(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)?(.+?)\s+(?:thành|sang|lên|xuống|là|:)\s*(-?\d{1,3}(?:\.\d+)?(?:\s*\/\s*\d+|\s*%)?)/i) ||
-    raw.match(/(?:đổi|sửa|sữa|chỉnh|cập nhật)\s+(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)(.+?)\s+(?:thành|sang|lên|xuống)\s+(?:level|mức)\s*(-?\d{1,3}(?:\.\d+)?(?:\s*\/\s*\d+|\s*%)?)/i);
+    raw.match(/(?:đổi|sửa|sữa|chỉnh|cập nhật|thay|đặt|set|change|update)\s+(?:level|mức(?:\s+độ)?|điểm|thang\s+điểm)\s+(?:của\s+)?(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)?(.+?)\s+(?:thành|sang|lên|xuống|là|to|:)\s*(-?\d{1,3}(?:\.\d+)?(?:\s*\/\s*\d+|\s*%)?)/i) ||
+    raw.match(/(?:đổi|sửa|sữa|chỉnh|cập nhật|set|change|update)\s+(?:kỹ\s*năng\s+|kĩ\s*năng\s+|skill\s+)(.+?)\s+(?:thành|sang|lên|xuống|to)\s+(?:level|mức)\s*(-?\d{1,3}(?:\.\d+)?(?:\s*\/\s*\d+|\s*%)?)/i);
 
   if (skillLevelMatch && Array.isArray(workingCv.skills) && workingCv.skills.length > 0) {
     const selector = sanitizeText(skillLevelMatch[1], 80);
@@ -2279,12 +2775,8 @@ function applySingleClause(clauseRaw, state) {
     const curSkills = workingCv.skills;
     let idx = -1;
     if (isPurePositionalSelector(selector)) {
-      const pos = resolveOneBasedIndex(selector, curSkills.length);
-      if (pos.outOfRange || pos.index0 === null) {
-        notices.push(`CV hiện chỉ có ${curSkills.length} kỹ năng nên không thể đổi mức kỹ năng #${pos.requested1}.`);
-        return true;
-      }
-      idx = pos.index0;
+      idx = resolveCheckedIndex(selector, curSkills.length, 'kỹ năng', notices);
+      if (idx === -1) return true;
     } else {
       const selLower = selector.toLowerCase();
       idx = curSkills.findIndex(s => String(s?.name || '').trim().toLowerCase() === selLower);
@@ -2302,10 +2794,10 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  const SKILL_NOUN_RE = '(?:kỹ\\s*năng|kĩ\\s*năng|core\\s+skills(?:\\s*&\\s*tech\\s+stack)?|tech\\s+stack|technical\\s+skills|chuyên\\s+môn\\s*&\\s*kỹ\\s*năng|skills?|skill)';
+  const SKILL_NOUN_RE = '(?:kỹ\\s*năng|kĩ\\s*năng|core\\s+skills(?:\\s*&\\s*tech\\s+stack)?|tech\\s+stack|technical\\s+skills|chuyên\\s+môn\\s*&\\s*kỹ\\s*năng|năng\\s+lực|sở\\s+trường|thế\\s+mạnh|skills?|skill)';
 
   // F3. Clear all skills
-  const clearAllSkillsRe = new RegExp(`^(?:hãy\\s+|vui lòng\\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\\s+(?:(?:tất cả|toàn bộ|hết|sạch)\\s+(?:các\\s+)?${SKILL_NOUN_RE}|(?:các\\s+)?${SKILL_NOUN_RE}\\s+còn\\s+lại|(?:mục\\s+)?${SKILL_NOUN_RE})\\s*[.!?]*$`, 'i');
+  const clearAllSkillsRe = new RegExp(`^(?:hãy\\s+|vui lòng\\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống|clear|delete|remove)\\s+(?:(?:tất cả|toàn bộ|toàn thể|mọi|hết|sạch|all|every)\\s+(?:các\\s+)?${SKILL_NOUN_RE}|(?:các\\s+)?${SKILL_NOUN_RE}\\s+còn\\s+lại|(?:mục\\s+)?${SKILL_NOUN_RE})\\s*[.!?]*$`, 'i');
   if (clearAllSkillsRe.test(raw)) {
     updates.skills = [];
     workingCv.skills = [];
@@ -2316,8 +2808,12 @@ function applySingleClause(clauseRaw, state) {
   const replaceSkillsMatch = raw.match(new RegExp(`(?:xóa hết|thay(?:\\s+toàn bộ)?|đặt lại|đổi(?:\\s+toàn bộ)?)\\s+(?:các\\s+)?${SKILL_NOUN_RE}[^:\\n]*?(?:chỉ để|thành|sang|là|:)\\s*([^\\r\\n!?]+)`, 'i'));
   if (replaceSkillsMatch) {
     const allParsed = parseSkillTokens(replaceSkillsMatch[1]);
+    const invalidLen = allParsed.filter(s => s.invalidLength !== undefined);
     const invalid = allParsed.filter(s => s.invalidLevel !== undefined);
-    const valid = allParsed.filter(s => s.invalidLevel === undefined);
+    const valid = allParsed.filter(s => s.invalidLevel === undefined && s.invalidLength === undefined);
+    for (const invL of invalidLen) {
+      notices.push(`Tên kỹ năng "${invL.name.slice(0, 28)}..." dài ${invL.invalidLength} ký tự (vượt giới hạn ${MAX_SKILL_NAME_LEN} ký tự) nên không lưu vào CV.`);
+    }
     for (const inv of invalid) {
       notices.push(`Mức độ kỹ năng "${inv.name}" không hợp lệ (level ${inv.invalidLevel} nằm ngoài thang 1–5).`);
     }
@@ -2327,11 +2823,11 @@ function applySingleClause(clauseRaw, state) {
       workingCv.skills = nextSkills;
       return true;
     }
-    if (invalid.length > 0) return true;
+    if (invalid.length > 0 || invalidLen.length > 0) return true;
   }
 
-  // F5. Remove skill by 1-BASED INDEX OR by name(s)
-  const removeSkillMatch = raw.match(new RegExp(`^(?:hãy\\s+|vui lòng\\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ|remove)\\s+(?:các\\s+|mục\\s+)?${SKILL_NOUN_RE}\\s*(?::|\\s)\\s*([^\\r\\n;!?]{1,150})$`, 'i'));
+  // F5. Remove skill by 1-BASED INDEX (strictly rejects #0 / negative!) OR by name(s) ("xóa skill UX và skill FIGMA")
+  const removeSkillMatch = raw.match(new RegExp(`^(?:hãy\\s+|vui lòng\\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ|remove|delete)\\s+(?:các\\s+|mục\\s+)?${SKILL_NOUN_RE}\\s*(?::|\\s)\\s*([^\\r\\n;!?]{1,150})$`, 'i'));
   if (removeSkillMatch) {
     const cleanedTail = removeSkillMatch[1].replace(/\s+(?:khỏi\s+(?:cv|hồ sơ)|giúp\s+tôi|nhé)+$/i, '').replace(/[.!?]+$/, '').trim();
     const currentSkills = Array.isArray(workingCv.skills) ? workingCv.skills : [];
@@ -2340,12 +2836,9 @@ function applySingleClause(clauseRaw, state) {
       return true;
     }
     if (isPurePositionalSelector(cleanedTail)) {
-      const pos = resolveOneBasedIndex(cleanedTail, currentSkills.length);
-      if (pos.outOfRange || pos.index0 === null) {
-        notices.push(`CV hiện chỉ có ${currentSkills.length} kỹ năng nên không thể xóa kỹ năng #${pos.requested1}.`);
-        return true;
-      }
-      const nextSkills = currentSkills.filter((_, i) => i !== pos.index0);
+      const idx0 = resolveCheckedIndex(cleanedTail, currentSkills.length, 'kỹ năng', notices);
+      if (idx0 === -1) return true;
+      const nextSkills = currentSkills.filter((_, i) => i !== idx0);
       updates.skills = nextSkills;
       workingCv.skills = nextSkills;
       return true;
@@ -2364,12 +2857,16 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // F6. Add skills (validates level 1..5 AND updates level if existing skill is re-added with a new explicit level!)
+  // F6. Add skills (validates max length 60, level 1..5, preserves all non-duplicate skills even after duplicates like Figma -> Go!)
   const addSkillMatch = raw.match(new RegExp(`(?:(?:thêm|bổ sung|add)\\s+(?:vào\\s+)?(?:\\d+\\s+|các\\s+|một\\s+số\\s+|vài\\s+|những\\s+)?${SKILL_NOUN_RE}|^(?:${SKILL_NOUN_RE}|thành thạo))\\s*(?::|\\s)\\s*([^\\r\\n!?]+)`, 'i'));
   if (addSkillMatch && !STYLE_INTENT_RE.test(normalizeCheck(addSkillMatch[1].replace(/(?:^|[\s,:;(])(?:mẫu|máu|mậu|mâu)(?=$|[\s,:;.!?)])/gi, ' ')))) {
     const allParsed = parseSkillTokens(addSkillMatch[1]);
+    const invalidLen = allParsed.filter(s => s.invalidLength !== undefined);
     const invalid = allParsed.filter(s => s.invalidLevel !== undefined);
-    const parsed = allParsed.filter(s => s.invalidLevel === undefined);
+    const parsed = allParsed.filter(s => s.invalidLevel === undefined && s.invalidLength === undefined);
+    for (const invL of invalidLen) {
+      notices.push(`Tên kỹ năng "${invL.name.slice(0, 28)}..." dài ${invL.invalidLength} ký tự (vượt giới hạn ${MAX_SKILL_NAME_LEN} ký tự chuẩn CV) nên không lưu vào CV.`);
+    }
     for (const inv of invalid) {
       notices.push(`Mức độ kỹ năng "${inv.name}" không hợp lệ (level ${inv.invalidLevel} nằm ngoài thang chuẩn từ 1 đến 5) nên chưa thêm vào CV. Vui lòng chọn level từ 1 đến 5.`);
     }
@@ -2404,7 +2901,7 @@ function applySingleClause(clauseRaw, state) {
       }
       return true;
     }
-    if (invalid.length > 0) return true;
+    if (invalid.length > 0 || invalidLen.length > 0) return true;
   }
 
   // ─── G. EXPERIENCE (CLEAR, 1-BASED DELETE, FULL SUB-FIELD EDITS INCLUDING "TẤT CẢ", ADD WITH "đến nay" & NO FAKE LOCATION) ───
@@ -2431,37 +2928,31 @@ function applySingleClause(clauseRaw, state) {
     if (!removeExpMatch[2]) {
       updates.experience = []; workingCv.experience = []; return true;
     }
-    const pos = resolveOneBasedIndex(raw, curExp.length);
-    if (pos.outOfRange || pos.index0 === null) {
-      notices.push(`CV hiện chỉ có ${curExp.length} mục kinh nghiệm nên không thể xóa mục #${pos.requested1}.`);
-      return true;
-    }
-    const nextExp = curExp.filter((_, i) => i !== pos.index0);
+    const idx0ExpDel = resolveCheckedIndex(raw, curExp.length, 'mục kinh nghiệm', notices);
+    if (idx0ExpDel === -1) return true;
+    const nextExp = curExp.filter((_, i) => i !== idx0ExpDel);
     updates.experience = nextExp; workingCv.experience = nextExp;
     return true;
   }
 
-  // G1. Experience sub-fields: position, company (including "tất cả công ty"), description, startDate, endDate, time range, location
+  // G1. Experience sub-fields: position (including "chức danh công việc thứ 1"), company (including "tất cả công ty"), description, startDate, endDate, time range, location
   if (isEditVerb && Array.isArray(workingCv.experience) && workingCv.experience.length > 0) {
     const curExp = workingCv.experience;
 
-    // Position in experience ("đổi vị trí công việc thứ 2 thành ...", "đổi tất cả vị trí công việc thành ...")
-    const expPosMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:(?:vị trí\s+(?:công việc|làm việc|kinh nghiệm)|chức vụ(?:\s+công việc|\s+kinh nghiệm)?)(?:\s+(.+?))?|(?:vị trí|chức vụ)\s+((?:thứ|số|mục|#)\s*\S+|\d+|đầu tiên|cuối(?:\s+cùng)?|tất cả|toàn bộ|(?:ở|tại|trong)\s+kinh nghiệm\s*\S*))\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    // Position in experience ("đổi chức danh công việc thứ 1 thành ...", "đổi vị trí công việc thứ 2 thành ...", "đổi tất cả vị trí công việc thành ...")
+    const expPosMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt|set|change|update)\s+(?:(tất cả|toàn bộ|mọi|all)\s+)?(?:(?:(?:vị\s+trí|chức\s+vụ|chức\s+danh|vai\s+trò|role|job\s*title|title)\s+(?:của\s+)?(?:công\s+việc|làm\s+việc|kinh\s+nghiệm|công\s+ty))(?:\s+(.+?))?|(?:vị\s+trí|chức\s+vụ|chức\s+danh)\s+((?:thứ|số|mục|#)\s*\S+|-?\d+|đầu(?:\s+tiên)?|cuối(?:\s+cùng)?|áp\s+chót|kế\s+cuối|tất\s+cả|toàn\s+bộ|mọi|(?:ở|tại|trong)\s+(?:kinh\s+nghiệm|công\s+việc|công\s+ty)\s*\S*))\s*(?:thành|sang|là|to|:)\s*([^\n;!?]+)/i);
     if (expPosMatch) {
       const selStr = expPosMatch[2] || expPosMatch[3] || '';
       const newPos = sanitizeText(expPosMatch[4].replace(/[.!?]+$/, ''), 150);
-      const isAll = Boolean(expPosMatch[1]) || /\b(?:tat\s+ca|toan\s+bo|moi)\b/i.test(normalizeCheck(selStr));
+      const isAll = Boolean(expPosMatch[1]) || /\b(?:tat\s+ca|toan\s+bo|moi|all)\b/i.test(normalizeCheck(selStr));
       if (isAll) {
         const nextExp = curExp.map(item => ({ ...item, position: newPos }));
         updates.experience = nextExp; workingCv.experience = nextExp;
         return true;
       }
-      const pos = resolveOneBasedIndex(selStr || raw.slice(0, raw.indexOf(expPosMatch[4])), curExp.length);
-      if (pos.outOfRange || pos.index0 === null) {
-        notices.push(`CV hiện chỉ có ${curExp.length} mục kinh nghiệm nên không thể sửa vị trí #${pos.requested1}.`);
-        return true;
-      }
-      const nextExp = curExp.map((item, i) => (i === pos.index0 ? { ...item, position: newPos } : { ...item }));
+      const idx0 = resolveCheckedIndex(selStr || raw.slice(0, raw.indexOf(expPosMatch[4])), curExp.length, 'mục kinh nghiệm', notices);
+      if (idx0 === -1) return true;
+      const nextExp = curExp.map((item, i) => (i === idx0 ? { ...item, position: newPos } : { ...item }));
       updates.experience = nextExp; workingCv.experience = nextExp;
       return true;
     }
@@ -2637,17 +3128,14 @@ function applySingleClause(clauseRaw, state) {
     updates.education = []; workingCv.education = []; return true;
   }
 
-  const removeEduMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:mục\s+)?(?:học vấn|trường(?:\s+đại học)?)(?:\s+(.+))?$/i);
+  const removeEduMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ|delete|remove)\s+(?:mục\s+)?(?:trình\s+độ\s+học\s+vấn|học\s+vấn|trường(?:\s+đại\s+học)?|education)(?:\s+(.+))?$/i);
   if (removeEduMatch && !isEditVerb && !/\b(?:thêm|bổ sung)\b/i.test(raw)) {
     const curEdu = Array.isArray(workingCv.education) ? workingCv.education : [];
     if (curEdu.length === 0) { notices.push('Hiện tại CV chưa có mục học vấn nào để xóa.'); return true; }
     if (!removeEduMatch[1]) { updates.education = []; workingCv.education = []; return true; }
-    const pos = resolveOneBasedIndex(raw, curEdu.length);
-    if (pos.outOfRange || pos.index0 === null) {
-      notices.push(`CV hiện chỉ có ${curEdu.length} mục học vấn nên không thể xóa mục #${pos.requested1}.`);
-      return true;
-    }
-    const nextEdu = curEdu.filter((_, i) => i !== pos.index0);
+    const idx0Edu = resolveCheckedIndex(raw, curEdu.length, 'mục học vấn', notices);
+    if (idx0Edu === -1) return true;
+    const nextEdu = curEdu.filter((_, i) => i !== idx0Edu);
     updates.education = nextEdu; workingCv.education = nextEdu;
     return true;
   }
@@ -2655,26 +3143,29 @@ function applySingleClause(clauseRaw, state) {
   if (isEditVerb && Array.isArray(workingCv.education) && workingCv.education.length > 0) {
     const curEdu = workingCv.education;
 
-    const gradYearEditMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay|chỉnh)\s+(?:năm\s+|ngày\s+)?(?:tốt nghiệp|ra trường|kết thúc\s+học)(?:\s+học vấn)?(?:\s+(.+?))?\s*(?:thành|sang|là|:)\s*(\d{4}|\d{1,2}\/\d{4})/i);
+    const gradYearEditMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay|chỉnh|set|change|update)\s+(?:năm\s+|ngày\s+)?(?:tốt nghiệp|ra trường|kết thúc\s+học)(?:\s+học vấn)?(?:\s+(.+?))?\s*(?:thành|sang|là|to|:)\s*(\d{4}|\d{1,2}\/\d{4})/i);
     if (gradYearEditMatch) {
-      const idx = resolveOneBasedIndex(gradYearEditMatch[1] || '', curEdu.length).index0 ?? 0;
+      const idx = resolveCheckedIndex(gradYearEditMatch[1] || '', curEdu.length, 'mục học vấn', notices);
+      if (idx === -1) return true;
       const nextEdu = curEdu.map((item, i) => (i === idx ? { ...item, endDate: gradYearEditMatch[2] } : { ...item }));
       updates.education = nextEdu; workingCv.education = nextEdu;
       return true;
     }
 
-    const startEduYearMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay|chỉnh)\s+(?:năm\s+|ngày\s+)?(?:nhập học|bắt đầu\s+học)(?:\s+(.+?))?\s*(?:thành|sang|là|:)\s*(\d{4}|\d{1,2}\/\d{4})/i);
+    const startEduYearMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay|chỉnh|set|change|update)\s+(?:năm\s+|ngày\s+)?(?:nhập học|bắt đầu\s+học)(?:\s+(.+?))?\s*(?:thành|sang|là|to|:)\s*(\d{4}|\d{1,2}\/\d{4})/i);
     if (startEduYearMatch) {
-      const idx = resolveOneBasedIndex(startEduYearMatch[1] || '', curEdu.length).index0 ?? 0;
+      const idx = resolveCheckedIndex(startEduYearMatch[1] || '', curEdu.length, 'mục học vấn', notices);
+      if (idx === -1) return true;
       const nextEdu = curEdu.map((item, i) => (i === idx ? { ...item, startDate: startEduYearMatch[2] } : { ...item }));
       updates.education = nextEdu; workingCv.education = nextEdu;
       return true;
     }
 
     // Degree ("đổi bằng cấp thành Thạc sĩ QTKD", "sửa học vị thành Kỹ sư")
-    const degreeEditMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay)\s+(?:bằng cấp|học vị|loại bằng|hệ đào tạo|bằng)(?:\s+(?:học vấn|đại học))?(?:\s+(.+?))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    const degreeEditMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay|set|change|update)\s+(?:bằng cấp|học vị|loại bằng|hệ đào tạo|bằng|degree)(?:\s+(?:học vấn|đại học))?(?:\s+(.+?))?\s*(?:thành|sang|là|to|:)\s*([^\n;!?]+)/i);
     if (degreeEditMatch) {
-      const idx = resolveOneBasedIndex(degreeEditMatch[1] || '', curEdu.length).index0 ?? 0;
+      const idx = resolveCheckedIndex(degreeEditMatch[1] || '', curEdu.length, 'mục học vấn', notices);
+      if (idx === -1) return true;
       const val = sanitizeText(degreeEditMatch[2].replace(/[.!?]+$/, ''), 150);
       const nextEdu = curEdu.map((item, i) => (i === idx ? { ...item, degree: val } : { ...item }));
       updates.education = nextEdu; workingCv.education = nextEdu;
@@ -2682,9 +3173,10 @@ function applySingleClause(clauseRaw, state) {
     }
 
     // Major / fieldOfStudy
-    const majorEditMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay)\s+(?:chuyên ngành|ngành học)(?:\s+(.+?))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    const majorEditMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay|set|change|update)\s+(?:chuyên ngành|ngành học|major)(?:\s+(.+?))?\s*(?:thành|sang|là|to|:)\s*([^\n;!?]+)/i);
     if (majorEditMatch) {
-      const idx = resolveOneBasedIndex(majorEditMatch[1] || '', curEdu.length).index0 ?? 0;
+      const idx = resolveCheckedIndex(majorEditMatch[1] || '', curEdu.length, 'mục học vấn', notices);
+      if (idx === -1) return true;
       const val = sanitizeText(majorEditMatch[2].replace(/[.!?]+$/, ''), 150);
       const nextEdu = curEdu.map((item, i) => (i === idx ? { ...item, fieldOfStudy: val } : { ...item }));
       updates.education = nextEdu; workingCv.education = nextEdu;
@@ -2694,7 +3186,8 @@ function applySingleClause(clauseRaw, state) {
     // Education description
     const eduDescMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay)\s+(?:mô tả\s+học vấn|thành tích\s+học tập)(?:\s+(.+?))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
     if (eduDescMatch) {
-      const idx = resolveOneBasedIndex(eduDescMatch[1] || '', curEdu.length).index0 ?? 0;
+      const idx = resolveCheckedIndex(eduDescMatch[1] || '', curEdu.length, 'mục học vấn', notices);
+      if (idx === -1) return true;
       const val = sanitizeText(eduDescMatch[2].replace(/[.!?]+$/, ''), 800);
       const nextEdu = curEdu.map((item, i) => (i === idx ? { ...item, description: val } : { ...item }));
       updates.education = nextEdu; workingCv.education = nextEdu;
@@ -2727,29 +3220,40 @@ function applySingleClause(clauseRaw, state) {
           updates.education = nextEdu; workingCv.education = nextEdu;
           return true;
         }
-        const idx = resolveOneBasedIndex(selRaw || raw.slice(0, schoolEditMatch.index + schoolEditMatch[0].lastIndexOf(schoolEditMatch[4])), curEdu.length).index0 ?? 0;
+        const idx = resolveCheckedIndex(selRaw || raw.slice(0, schoolEditMatch.index + schoolEditMatch[0].lastIndexOf(schoolEditMatch[4])), curEdu.length, 'mục học vấn', notices);
+        if (idx === -1) return true;
         const nextEdu = curEdu.map((item, i) => (i === idx ? { ...item, school: newSchool } : { ...item }));
         updates.education = nextEdu; workingCv.education = nextEdu;
         return true;
       }
     }
 
-    const gpaMatch = raw.match(/\bGPA\s*(?:thành|sang|là|:)?\s*([0-9][0-9.,\/\sA-Za-zÀ-ỹ()]{0,30})/i);
+    // GPA / average grade ("đổi GPA học vấn 1 thành 3.8", "đổi điểm trung bình thành 8.5/10", "sửa GPA trường thứ 2 sang 3.9")
+    const gpaMatch =
+      raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|chỉnh|đặt|set|change|update)?\s*(?:điểm\s+)?(?:GPA|điểm\s+trung\s+bình|điểm\s+tích\s+lũy|điểm\s+tổng\s+kết)(?:\s+(.+?))?\s+(?:thành|sang|là|to|:)\s*([0-9][0-9.,\/\sA-Za-zÀ-ỹ()]{0,40})/i) ||
+      raw.match(/\b(?:GPA|điểm\s+trung\s+bình)(?:\s+(.+?))?\s*:\s*([0-9][0-9.,\/\sA-Za-zÀ-ỹ()]{0,40})/i) ||
+      raw.match(/\bGPA\s+([0-9][0-9.,\/\sA-Za-zÀ-ỹ()]{0,30})$/i);
     if (gpaMatch) {
-      const newGpa = sanitizeText(gpaMatch[1].replace(/[.!?]+$/, ''), 60);
+      const selText = gpaMatch.length === 3 ? (gpaMatch[1] || '') : '';
+      const rawGpaVal = gpaMatch.length === 3 ? gpaMatch[2] : gpaMatch[1];
+      const newGpa = sanitizeText(rawGpaVal.replace(/[.!?]+$/, ''), 60);
       if (newGpa) {
-        const nextEdu = curEdu.map((item, i) => (i === 0 ? { ...item, gpa: newGpa } : { ...item }));
+        const idx = selText ? resolveCheckedIndex(selText, curEdu.length, 'mục học vấn', notices) : 0;
+        if (idx === -1) return true;
+        const nextEdu = curEdu.map((item, i) => (i === idx ? { ...item, gpa: newGpa } : { ...item }));
         updates.education = nextEdu; workingCv.education = nextEdu;
         return true;
       }
     }
   }
 
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|mục)\s+)?học vấn|tốt nghiệp\s+trường|tốt nghiệp\s+đại học)(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|mục)\s+)?học vấn|tốt nghiệp)\s*:?\s*/i, '').trim();
+  const addEduCmdMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:(?:thêm|bổ sung|add)\s+(?:(\d+|một|hai|ba|bốn|năm|các|nhiều|mục)\s+)?(?:trình\s+độ\s+)?(?:học\s+vấn|education)|tốt nghiệp\s+trường|tốt nghiệp\s+đại học)(?=$|[\s,:;.!?)])/i);
+  if (addEduCmdMatch) {
+    const reqEduCount = parseSmallCount(addEduCmdMatch[1]) || (addEduCmdMatch[1] && /cac|nhieu/i.test(normalizeCheck(addEduCmdMatch[1])) ? 2 : 1);
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:(?:thêm|bổ sung|add)\s+(?:(?:\d+|một|hai|ba|bốn|năm|các|nhiều|mục)\s+)?(?:trình\s+độ\s+)?(?:học\s+vấn|education)|tốt nghiệp)\s*:?\s*/i, '').trim();
     const nextEdu = Array.isArray(workingCv.education) ? workingCv.education.map(e => ({ ...e })) : [];
     if (!tail) {
-      notices.push('Bạn muốn thêm học vấn tại trường nào, chuyên ngành và niên khóa nào? (VD: "thêm học vấn ĐH Bách Khoa Hà Nội, chuyên ngành CNTT 2020 - 2024").');
+      notices.push('Bạn muốn thêm học vấn tại trường nào, chuyên ngành và niên khóa nào? (VD: "thêm học vấn ĐH Bách Khoa Hà Nội, chuyên ngành CNTT 2020 - 2024" hoặc "thêm 2 học vấn: ĐH A, ĐH B").');
       return true;
     }
     if (GENERIC_NEW_PLACEHOLDER_RE.test(tail)) {
@@ -2764,22 +3268,42 @@ function applySingleClause(clauseRaw, state) {
         description: ''
       });
     } else {
-      const inlineGpa = (tail.match(/GPA\s*([0-9.,\/]+)/i) || [])[1] || '';
-      const yearsMatch = tail.match(/(\d{4})\s*-\s*(\d{4}|Hiện tại|nay)/i);
-      const cleanedTail = tail.replace(/GPA\s*[0-9.,\/]+/gi, '').replace(/\d{4}\s*-\s*(?:\d{4}|Hiện tại|nay)/gi, '').replace(/[.!?]+$/, '').trim();
-      const majorSplit = cleanedTail.split(/\s*(?:,|chuyên ngành|ngành)\s*/i);
-      const school = sanitizeText(majorSplit[0] || 'Trường Đại học', 150);
-      const major = sanitizeText(majorSplit[1] || '', 150);
-      nextEdu.unshift({
-        id: `edu_ai_${Date.now()}`,
-        school,
-        degree: major ? `Cử nhân ${major.replace(/^cử nhân\s+/i, '')}` : 'Cử nhân',
-        fieldOfStudy: major || '',
-        startDate: yearsMatch ? yearsMatch[1] : '',
-        endDate: yearsMatch ? (/^nay$/i.test(yearsMatch[2]) ? 'Hiện tại' : yearsMatch[2]) : '',
-        gpa: inlineGpa,
-        description: ''
+      const parseSingleEduEntry = (entryStr, idx, allowCommaMajor) => {
+        const inlineGpa = (entryStr.match(/GPA\s*([0-9.,\/]+)/i) || [])[1] || '';
+        const yearsMatch = entryStr.match(/(\d{4})\s*-\s*(\d{4}|Hiện tại|nay)/i);
+        const cleaned = entryStr.replace(/GPA\s*[0-9.,\/]+/gi, '').replace(/\d{4}\s*-\s*(?:\d{4}|Hiện tại|nay)/gi, '').replace(/[.!?]+$/, '').trim();
+        const majorSplit = allowCommaMajor
+          ? cleaned.split(/\s*(?:,|chuyên ngành|ngành)\s*/i)
+          : cleaned.split(/\s+(?:chuyên ngành|ngành|-|–)\s+/i);
+        const school = sanitizeText(majorSplit[0] || 'Trường Đại học', 150);
+        const major = sanitizeText(majorSplit[1] || '', 150);
+        return school ? {
+          id: `edu_ai_${Date.now()}_${idx}`,
+          school,
+          degree: major ? `Cử nhân ${major.replace(/^cử nhân\s+/i, '')}` : 'Cử nhân',
+          fieldOfStudy: major || '',
+          startDate: yearsMatch ? yearsMatch[1] : '',
+          endDate: yearsMatch ? (/^nay$/i.test(yearsMatch[2]) ? 'Hiện tại' : yearsMatch[2]) : '',
+          gpa: inlineGpa,
+          description: ''
+        } : null;
+      };
+
+      const schoolLookalikeRe = /^(?:dh|đh|dai\s+hoc|truong|hoc\s+vien|cao\s+dang|thpt|university|college|institute|academy|neu|ftu|hust|fpt|uet|uit|rmit)\b/i;
+      const commaParts = splitOutsideParens(tail.replace(/[.!?]+$/, ''), true);
+      const secondLooksLikeSchool = commaParts.length >= 2 && commaParts.slice(1).every(p => {
+        const pn = normalizeCheck(p);
+        return schoolLookalikeRe.test(pn) && !/^(?:chuyen\s+nganh|nganh|cu\s+nhan|thac\s+si|ky\s+su|gpa)\b/i.test(pn);
       });
+      if ((reqEduCount >= 2 || /[;\n]|\s+và\s+/i.test(tail) || secondLooksLikeSchool) && commaParts.length >= 2) {
+        commaParts.forEach((entry, idx) => {
+          const eduObj = parseSingleEduEntry(entry, idx, false);
+          if (eduObj) nextEdu.push(eduObj);
+        });
+      } else {
+        const eduObj = parseSingleEduEntry(tail, 0, true);
+        if (eduObj) nextEdu.unshift(eduObj);
+      }
     }
     updates.education = nextEdu; workingCv.education = nextEdu;
     return true;
@@ -2790,17 +3314,14 @@ function applySingleClause(clauseRaw, state) {
     updates.projects = []; workingCv.projects = []; return true;
   }
 
-  const removeProjMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:mục\s+)?dự án(?:\s+(.+))?$/i);
+  const removeProjMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ|delete|remove)\s+(?:mục\s+)?(?:dự án|projects?)(?:\s+(.+))?$/i);
   if (removeProjMatch && !isEditVerb && !/\b(?:thêm|bổ sung)\b/i.test(raw)) {
     const curProj = Array.isArray(workingCv.projects) ? workingCv.projects : [];
     if (curProj.length === 0) { notices.push('Hiện tại CV chưa có dự án nào để xóa.'); return true; }
     if (!removeProjMatch[1]) { updates.projects = []; workingCv.projects = []; return true; }
-    const pos = resolveOneBasedIndex(raw, curProj.length);
-    if (pos.outOfRange || pos.index0 === null) {
-      notices.push(`CV hiện chỉ có ${curProj.length} dự án nên không thể xóa dự án #${pos.requested1}.`);
-      return true;
-    }
-    const nextProj = curProj.filter((_, i) => i !== pos.index0);
+    const idx0Proj = resolveCheckedIndex(raw, curProj.length, 'dự án', notices);
+    if (idx0Proj === -1) return true;
+    const nextProj = curProj.filter((_, i) => i !== idx0Proj);
     updates.projects = nextProj; workingCv.projects = nextProj;
     return true;
   }
@@ -2943,26 +3464,28 @@ function applySingleClause(clauseRaw, state) {
   if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+|toàn bộ\s+|hết\s+|sạch\s+)?(?:các\s+|mục\s+|phần\s+)?chứng chỉ\s*[.!?]*$/i.test(raw)) {
     updates.certificates = []; workingCv.certificates = []; return true;
   }
-  if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:mục\s+)?chứng chỉ(?=$|[\s,:;.!?)])/i.test(raw) && !isEditVerb) {
+  if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ|delete|remove)\s+(?:mục\s+)?(?:chứng chỉ|chứng nhận|certificates?)(?=$|[\s,:;.!?)])/i.test(raw) && !isEditVerb) {
     const curCerts = Array.isArray(workingCv.certificates) ? workingCv.certificates : [];
     if (curCerts.length === 0) { notices.push('Hiện tại CV chưa có chứng chỉ nào để xóa.'); return true; }
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:mục\s+)?chứng chỉ\s*/i, '').replace(/[.!?]+$/, '').trim();
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ|delete|remove)\s+(?:mục\s+)?(?:chứng chỉ|chứng nhận|certificates?)\s*/i, '').replace(/[.!?]+$/, '').trim();
     if (!tail) { updates.certificates = []; workingCv.certificates = []; return true; }
     if (isPurePositionalSelector(tail)) {
-      const pos = resolveOneBasedIndex(tail, curCerts.length);
-      if (pos.outOfRange || pos.index0 === null) {
-        notices.push(`CV hiện chỉ có ${curCerts.length} chứng chỉ nên không thể xóa chứng chỉ #${pos.requested1}.`);
-        return true;
-      }
-      const nextCerts = curCerts.filter((_, i) => i !== pos.index0);
+      const idx0Cert = resolveCheckedIndex(tail, curCerts.length, 'chứng chỉ', notices);
+      if (idx0Cert === -1) return true;
+      const nextCerts = curCerts.filter((_, i) => i !== idx0Cert);
       updates.certificates = nextCerts; workingCv.certificates = nextCerts;
       return true;
     }
-    const tNorm = normalizeCheck(tail);
-    const byNameIdx = curCerts.findIndex(c => normalizeCheck(c.name || '').includes(tNorm) || normalizeCheck(c.issuer || '').includes(tNorm));
-    if (byNameIdx !== -1) {
-      const nextCerts = curCerts.filter((_, i) => i !== byNameIdx);
-      updates.certificates = nextCerts; workingCv.certificates = nextCerts;
+    const targetCertNorms = splitOutsideParens(tail, true)
+      .map(t => normalizeCheck(t.replace(/^(?:chứng\s+chỉ|chứng\s+nhận|certificates?)\s+/i, '')))
+      .filter(Boolean);
+    const filteredCerts = curCerts.filter(c => {
+      const cn = normalizeCheck(c.name || '');
+      const ci = normalizeCheck(c.issuer || '');
+      return !targetCertNorms.some(tn => cn.includes(tn) || ci.includes(tn));
+    });
+    if (filteredCerts.length < curCerts.length) {
+      updates.certificates = filteredCerts; workingCv.certificates = filteredCerts;
       return true;
     }
     notices.push(`Không tìm thấy chứng chỉ "${tail}" trong CV để xóa.`);
@@ -3250,21 +3773,20 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // J5. References (supports multi-add "thêm 2 người tham chiếu: Anh A, Chị B", honorifics, semicolons, AND single-ref comma details)
-  if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+|toàn bộ\s+|hết\s+|sạch\s+)?(?:các\s+|mục\s+)?(?:người\s+)?tham chiếu\s*[.!?]*$/i.test(raw)) {
+  // J5. References (supports "người tham chiếu" & "người giới thiệu", multi-add "thêm 2 người tham chiếu: Anh A, Chị B", honorifics, semicolons, AND single-ref comma details)
+  if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+|toàn bộ\s+|mọi\s+|hết\s+|sạch\s+)?(?:các\s+|mục\s+)?(?:(?:người\s+)?tham\s+chiếu|người\s+giới\s+thiệu|references?|referees?)\s*[.!?]*$/i.test(raw)) {
     updates.references = []; workingCv.references = []; return true;
   }
-  if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:người\s+)?tham chiếu(?=$|[\s,:;.!?)])/i.test(raw) && !isEditVerb) {
+  if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ|delete|remove)\s+(?:(?:người\s+)?tham\s+chiếu|người\s+giới\s+thiệu|references?|referees?)(?=$|[\s,:;.!?)])/i.test(raw) && !isEditVerb) {
     const curRefs = Array.isArray(workingCv.references) ? workingCv.references : [];
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:người\s+)?tham chiếu\s*/i, '').replace(/[.!?]+$/, '').trim();
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ|delete|remove)\s+(?:(?:người\s+)?tham\s+chiếu|người\s+giới\s+thiệu|references?|referees?)\s*/i, '').replace(/[.!?]+$/, '').trim();
     if (!tail) { updates.references = []; workingCv.references = []; return true; }
     if (curRefs.length > 0) {
       if (isPurePositionalSelector(tail)) {
-        const pos = resolveOneBasedIndex(tail, curRefs.length);
-        if (pos.index0 !== null && !pos.outOfRange) {
-          const nextRefs = curRefs.filter((_, i) => i !== pos.index0);
-          updates.references = nextRefs; workingCv.references = nextRefs; return true;
-        }
+        const idx0Ref = resolveCheckedIndex(tail, curRefs.length, 'người tham chiếu', notices);
+        if (idx0Ref === -1) return true;
+        const nextRefs = curRefs.filter((_, i) => i !== idx0Ref);
+        updates.references = nextRefs; workingCv.references = nextRefs; return true;
       } else {
         const selNorm = normalizeCheck(tail);
         const byNameIdx = curRefs.findIndex(r => normalizeCheck(r.name || '').includes(selNorm) || normalizeCheck(r.company || '').includes(selNorm));
@@ -3277,10 +3799,10 @@ function applySingleClause(clauseRaw, state) {
     notices.push('Không tìm thấy người tham chiếu phù hợp để xóa.');
     return true;
   }
-  const addRefCmdMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:mục\s+)?(?:người\s+)?tham chiếu(?=$|[\s,:;.!?)])/i);
+  const addRefCmdMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|add)\s+(?:(\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:mục\s+)?(?:(?:người\s+)?tham\s+chiếu|người\s+giới\s+thiệu|references?|referees?)(?=$|[\s,:;.!?)])/i);
   if (addRefCmdMatch) {
     const reqCount = parseSmallCount(addRefCmdMatch[1]) || (addRefCmdMatch[1] && /cac|nhieu/i.test(normalizeCheck(addRefCmdMatch[1])) ? 2 : 1);
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:mục\s+)?(?:người\s+)?tham chiếu\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung|add)\s+(?:(?:\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:mục\s+)?(?:(?:người\s+)?tham\s+chiếu|người\s+giới\s+thiệu|references?|referees?)\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
     if (!tail) {
       notices.push('Bạn muốn thêm người tham chiếu nào (họ tên, chức vụ, công ty, email/SĐT)?');
       return true;
@@ -3395,13 +3917,13 @@ function applySingleClause(clauseRaw, state) {
     updates.objective = ''; workingCv.objective = ''; return true;
   }
 
-  const directSetObjMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt)\s+(?:mục tiêu(?:\s+nghề nghiệp)?|giới thiệu|tóm tắt|objective|summary)\s*(?:thành|sang|là|:)\s*([^\r\n]{4,1500})/i);
+  const directSetObjMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt|set|change|update)\s+(?:mục tiêu(?:\s+nghề nghiệp|\s+công việc)?|định hướng(?:\s+nghề nghiệp)?|lời giới thiệu|giới thiệu(?:\s+bản thân)?|tóm tắt|objective|summary|career\s+goal|about\s+me|bio)\s*(?:thành|sang|là|to|:)\s*([^\r\n]{4,1500})/i);
   if (directSetObjMatch) {
     const newObj = sanitizeText(directSetObjMatch[1], 2000);
     updates.objective = newObj; workingCv.objective = newObj; return true;
   }
 
-  if (/(?:viết(?:\s+lại)?|cập nhật|sửa|sữa|tối ưu|nâng cấp|làm mới)\s+(?:lại\s+)?(?:phần\s+)?(?:mục tiêu|giới thiệu|tóm tắt|objective|summary)/i.test(raw) && !STYLE_INTENT_RE.test(colorSafeNorm)) {
+  if (/(?:viết(?:\s+lại)?|cập nhật|sửa|sữa|tối ưu|nâng cấp|làm mới|rewrite|improve)\s+(?:lại\s+)?(?:phần\s+)?(?:mục tiêu|định hướng|giới thiệu|tóm tắt|objective|summary|bio)/i.test(raw) && !STYLE_INTENT_RE.test(colorSafeNorm)) {
     const roleForObj = workingCv?.profile?.jobTitle || 'Chuyên viên';
     const curObj = String(workingCv?.objective || '').trim();
     const yearMatch = curObj.match(/(\d+\+?\s*năm)/i);
@@ -3411,14 +3933,34 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // ─── L. PROFILE FIELDS (WITH STRICT FORMAT VALIDATION SO INVALID EMAIL/PHONE/URL NEVER LEAKS TO REPLACE!) ───
+  // ─── L. PROFILE FIELDS (CASE TRANSFORMS, ALIASES, BILINGUAL VI/EN & STRICT VALIDATION) ───
   let matchedProfile = false;
   const profileUpdates = { ...(updates.profile || {}) };
 
-  const hideAvatarMatch = /\b(?:an|tat|xoa|bo)\s+(?:anh\s*(?:dai\s*dien|ho\s*so|cv|ca\s*nhan)|hinh\s*dai\s*dien|avatar)\b/i.test(norm);
-  const showAvatarMatch = /\b(?:hien|bat|hien\s+thi)\s+(?:anh\s*(?:dai\s*dien|ho\s*so|cv|ca\s*nhan)|hinh\s*dai\s*dien|avatar)\b/i.test(norm);
-  const explicitAvatarCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt|gắn)\s+(?:ảnh\s*(?:đại diện|hồ sơ|cv|cá nhân)|hình\s*(?:đại diện|hồ sơ)|avatar)\s*(?:thành|sang|là|:)\s*([^\s,;\n!?]+)/i);
-  const avatarUrlMatch = raw.match(/(?:đổi|sửa|cập nhật|thay|đặt|gắn)?\s*(?:ảnh\s*(?:đại diện|hồ sơ|cv|cá nhân)|hình\s*(?:đại diện|hồ sơ)|avatar)\s*(?:thành|sang|là|:)?\s*(https?:\/\/[^\s"'<>);]+)/i);
+  // L0. Case transforms on fullName / jobTitle ("in hoa tên", "viết thường tên", "viết hoa chữ cái đầu tên", "uppercase name", "lowercase name")
+  const upperNameMatch = /\b(?:(?:in\s+hoa|viet\s+hoa(?:\s+toan\s+bo)?|uppercase)\s+(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+hien\s+thi|\s+ung\s+vien)?|full\s*name|name)|(?:doi|chuyen|sua)\s+(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+hien\s+thi)?)\s+(?:sang|thanh)\s+(?:chu\s+)?(?:in\s+hoa|viet\s+hoa|hoa))\b/i.test(norm) && !/\bchu\s+cai\s+dau\b/i.test(norm);
+  const lowerNameMatch = /\b(?:(?:viet\s+thuong|in\s+thuong|chu\s+thuong|lowercase)\s+(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+hien\s+thi|\s+ung\s+vien)?|full\s*name|name)|(?:doi|chuyen|sua)\s+(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+hien\s+thi)?)\s+(?:sang|thanh)\s+(?:chu\s+)?(?:viet\s+thuong|in\s+thuong|thuong))\b/i.test(norm);
+  const titleCaseNameMatch = /\b(?:viet\s+hoa\s+chu\s+cai\s+dau|title\s*case|chuan\s+hoa\s+chu\s+hoa)\s+(?:cua\s+)?(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+hien\s+thi)?|full\s*name|name)\b/i.test(norm);
+
+  if (upperNameMatch || lowerNameMatch || titleCaseNameMatch) {
+    const curName = String(workingCv?.profile?.fullName || '').trim();
+    if (curName) {
+      if (upperNameMatch) profileUpdates.fullName = curName.toLocaleUpperCase('vi-VN');
+      else if (lowerNameMatch) profileUpdates.fullName = curName.toLocaleLowerCase('vi-VN');
+      else {
+        profileUpdates.fullName = curName
+          .split(/\s+/)
+          .map(w => (w ? w.charAt(0).toLocaleUpperCase('vi-VN') + w.slice(1).toLocaleLowerCase('vi-VN') : ''))
+          .join(' ');
+      }
+      matchedProfile = true;
+    }
+  }
+
+  const hideAvatarMatch = /\b(?:an|tat|xoa|bo|hide|remove)\s+(?:anh\s*(?:dai\s*dien|ho\s*so|the|chan\s*dung|cv|ca\s*nhan)|hinh\s*(?:dai\s*dien|the)|avatar|photo)\b/i.test(norm);
+  const showAvatarMatch = /\b(?:hien|bat|hien\s+thi|show)\s+(?:anh\s*(?:dai\s*dien|ho\s*so|the|chan\s*dung|cv|ca\s*nhan)|hinh\s*(?:dai\s*dien|the)|avatar|photo)\b/i.test(norm);
+  const explicitAvatarCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt|gắn|set|change|update)\s+(?:ảnh\s*(?:đại diện|hồ sơ|thẻ|chân dung|cv|cá nhân)|hình\s*(?:đại diện|hồ sơ|thẻ)|avatar|photo)\s*(?:thành|sang|là|to|:)\s*([^\s,;\n!?]+)/i);
+  const avatarUrlMatch = raw.match(/(?:đổi|sửa|cập nhật|thay|đặt|gắn|set|change|update)?\s*(?:ảnh\s*(?:đại diện|hồ sơ|thẻ|chân dung|cv|cá nhân)|hình\s*(?:đại diện|hồ sơ|thẻ)|avatar|photo)\s*(?:thành|sang|là|to|:)?\s*(https?:\/\/[^\s"'<>);]+)/i);
 
   if (avatarUrlMatch) {
     const cleanAv = sanitizeAvatarUrl(avatarUrlMatch[1]);
@@ -3430,9 +3972,9 @@ function applySingleClause(clauseRaw, state) {
   } else if (hideAvatarMatch) { profileUpdates.showAvatar = false; matchedProfile = true; }
   else if (showAvatarMatch) { profileUpdates.showAvatar = true; matchedProfile = true; }
 
-  if (!avatarUrlMatch && !explicitAvatarCmd && !/\b(?:avatar|anh\s*dai\s*dien|anh\s*ho\s*so|hinh\s*dai\s*dien|background)\b/i.test(norm)) {
-    const explicitWebCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|thêm|đặt)\s+(?:link\s+)?(?:website|trang\s*web(?:\s*cá\s*nhân)?|portfolio|linkedin|github|gitlab|behance)\s*(?:cá\s*nhân|của\s*tôi)?\s*(?:thành|sang|là|:)\s*([^\s,;\n!?]+)/i);
-    const webIntentMatch = raw.match(/(?:(?:đổi|sửa|cập nhật|thay|thêm|đặt)\s+)?(?:link\s+)?(?:website|trang\s*web\s*cá\s*nhân|portfolio|linkedin|github|gitlab|behance)\s*(?:cá\s*nhân|của\s*tôi)?\s*(?:thành|sang|là|:|\s)\s*((?:https?:\/\/|(?:www\.|linkedin\.com\/|github\.com\/|gitlab\.com\/|behance\.net\/))[^\s,;'"<>);]+|[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+(?:\/[^\s,;'"<>);]*)?)/i);
+  if (!avatarUrlMatch && !explicitAvatarCmd && !/\b(?:avatar|photo|anh\s*(?:dai\s*dien|ho\s*so|the|chan\s*dung)|hinh\s*dai\s*dien|background)\b/i.test(norm)) {
+    const explicitWebCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|thêm|đặt|set|change|update)\s+(?:link\s+)?(?:website|trang\s*web(?:\s*cá\s*nhân)?|trang\s*cá\s*nhân|portfolio|linkedin|github|gitlab|behance)\s*(?:cá\s*nhân|của\s*tôi)?\s*(?:thành|sang|là|to|:)\s*([^\s,;\n!?]+)/i);
+    const webIntentMatch = raw.match(/(?:(?:đổi|sửa|cập nhật|thay|thêm|đặt|set|change|update)\s+)?(?:link\s+)?(?:website|trang\s*web\s*cá\s*nhân|trang\s*cá\s*nhân|portfolio|linkedin|github|gitlab|behance)\s*(?:cá\s*nhân|của\s*tôi)?\s*(?:thành|sang|là|to|:|\s)\s*((?:https?:\/\/|(?:www\.|linkedin\.com\/|github\.com\/|gitlab\.com\/|behance\.net\/))[^\s,;'"<>);]+|[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+(?:\/[^\s,;'"<>);]*)?)/i);
     if (webIntentMatch) {
       const cleanWeb = sanitizeUrl(webIntentMatch[1], 200);
       if (cleanWeb) { profileUpdates.website = cleanWeb; matchedProfile = true; }
@@ -3444,8 +3986,8 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // Explicit email validation ("đổi email thành không-phải-email" -> clear validation message, NEVER genericReplaceMatch!)
-  const explicitEmailCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt)\s+(?:địa\s+chỉ\s+)?(?:email|e-mail|thư\s+điện\s+tử)(?:\s+của\s+tôi|\s+liên\s+hệ)?\s*(?:thành|sang|là|:)\s*([^\s,;\n!?]+)/i);
+  // Explicit email validation ("đổi email/mail thành không-phải-email" -> clear validation message!)
+  const explicitEmailCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt|set|change|update)\s+(?:địa\s+chỉ\s+)?(?:email|e-mail|mail|hòm\s+thư|hộp\s+thư|thư\s+điện\s+tử)(?:\s+của\s+tôi|\s+liên\s+hệ)?\s*(?:thành|sang|là|to|:)\s*([^\s,;\n!?]+)/i);
   const emailMatch = raw.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
   if (emailMatch) {
     profileUpdates.email = emailMatch[0];
@@ -3459,7 +4001,7 @@ function applySingleClause(clauseRaw, state) {
     .replace(/https?:\/\/\S+/gi, ' ')
     .replace(/(?:www\.|linkedin\.com\/|github\.com\/|gitlab\.com\/|behance\.net\/)\S+/gi, ' ')
     .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, ' ');
-  const explicitPhoneCmd = rawWithoutUrls.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt)\s+(?:số\s+điện\s+thoại|sđt|sdt|điện\s+thoại|phone)\s*(?:thành|sang|là|:)\s*([^,;\n!?]+)/i);
+  const explicitPhoneCmd = rawWithoutUrls.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt|set|change|update)\s+(?:số\s+điện\s+thoại|số\s+di\s+động|di\s+động|sđt|sdt|điện\s+thoại|phone|mobile|hotline|tel)\s*(?:thành|sang|là|to|:)\s*([^,;\n!?]+)/i);
   const phoneMatch = rawWithoutUrls.match(/(?:^|[\s,:;(])((?:\+84|0[1-9])(?:[\s.-]*\d){8,9})(?=$|[^\d])/);
   if (phoneMatch) {
     profileUpdates.phone = sanitizeText(phoneMatch[1], 30);
@@ -3469,39 +4011,57 @@ function applySingleClause(clauseRaw, state) {
     matchedProfile = true;
   }
 
-  const explicitDobCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt)\s+(?:ngày\s+sinh|sinh\s+ngày|dob|date\s+of\s+birth)\s*(?:thành|sang|là|:)\s*([^,;\n!?]+)/i);
-  const dobMatch = raw.match(/(?:ngày sinh|sinh ngày|dob|date of birth)\s*(?:thành|sang|là|:)?\s*(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/i);
-  if (dobMatch) {
-    const dd = parseInt(dobMatch[1], 10);
-    const mm = parseInt(dobMatch[2], 10);
-    const yyyy = parseInt(dobMatch[3], 10);
+  // Date of birth & Birth year ("ngày sinh", "năm sinh", "sinh năm 2000", "dob", "birth year")
+  const explicitDobCmd = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt|set|change|update)\s+(?:ngày(?:\s+tháng\s+năm)?\s+sinh|sinh\s+ngày|năm\s+sinh|sinh\s+năm|sinh\s+nhật|dob|date\s+of\s+birth|birth\s*year|birthday)\s*(?:thành|sang|là|to|:)\s*([^,;\n!?]+)/i);
+  const dobFullMatch = raw.match(/(?:ngày(?:\s+tháng\s+năm)?\s+sinh|sinh\s+ngày|năm\s+sinh|sinh\s+nhật|dob|date\s+of\s+birth|birthday)\s*(?:thành|sang|là|to|:)?\s*(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/i);
+  const dobIsoMatch = !dobFullMatch && raw.match(/(?:ngày(?:\s+tháng\s+năm)?\s+sinh|sinh\s+ngày|năm\s+sinh|dob|date\s+of\s+birth|birthday)\s*(?:thành|sang|là|to|:)?\s*(\d{4})-(\d{1,2})-(\d{1,2})\b/i);
+  const birthYearMatch = !dobFullMatch && !dobIsoMatch && raw.match(/(?:(?:đổi|sửa|sữa|cập nhật|thay|đặt|set|change|update)\s+)?(?:năm\s+sinh|sinh\s+năm|ngày\s+sinh|dob|birth\s*year)\s*(?:thành|sang|là|to|:)?\s*(19[4-9]\d|20[01]\d|202[0-5])\b/i);
+
+  if (dobFullMatch) {
+    const dd = parseInt(dobFullMatch[1], 10);
+    const mm = parseInt(dobFullMatch[2], 10);
+    const yyyy = parseInt(dobFullMatch[3], 10);
     if (dd >= 1 && dd <= 31 && mm >= 1 && mm <= 12 && yyyy >= 1940 && yyyy <= 2025) {
       profileUpdates.dateOfBirth = `${String(dd).padStart(2, '0')}/${String(mm).padStart(2, '0')}/${yyyy}`;
       matchedProfile = true;
     } else {
-      notices.push(`Ngày sinh "${dobMatch[1]}/${dobMatch[2]}/${dobMatch[3]}" không hợp lệ (cần đúng định dạng DD/MM/YYYY).`);
+      notices.push(`Ngày sinh "${dobFullMatch[1]}/${dobFullMatch[2]}/${dobFullMatch[3]}" không hợp lệ (cần đúng định dạng DD/MM/YYYY).`);
       matchedProfile = true;
     }
+  } else if (dobIsoMatch) {
+    const yyyy = parseInt(dobIsoMatch[1], 10);
+    const mm = parseInt(dobIsoMatch[2], 10);
+    const dd = parseInt(dobIsoMatch[3], 10);
+    if (dd >= 1 && dd <= 31 && mm >= 1 && mm <= 12 && yyyy >= 1940 && yyyy <= 2025) {
+      profileUpdates.dateOfBirth = `${String(dd).padStart(2, '0')}/${String(mm).padStart(2, '0')}/${yyyy}`;
+      matchedProfile = true;
+    }
+  } else if (birthYearMatch) {
+    const yr = birthYearMatch[1];
+    const curDob = String(workingCv?.profile?.dateOfBirth || '').trim();
+    const dmPrefix = curDob.match(/^(\d{1,2}[\/.-]\d{1,2})[\/.-]\d{4}$/);
+    profileUpdates.dateOfBirth = dmPrefix ? `${dmPrefix[1].replace(/[.-]/g, '/')}/${yr}` : yr;
+    matchedProfile = true;
   } else if (explicitDobCmd) {
-    notices.push(`Ngày sinh "${sanitizeText(explicitDobCmd[1], 40)}" không đúng định dạng hợp lệ (ví dụ: 15/08/1997).`);
+    notices.push(`Ngày/năm sinh "${sanitizeText(explicitDobCmd[1], 40)}" không đúng định dạng hợp lệ (ví dụ: 15/08/1997 hoặc 1997).`);
     matchedProfile = true;
   }
 
-  const genderMatch = raw.match(/(?:giới tính|gender)\s*(?:thành|sang|là|:)?\s*(nam|nữ|khác|male|female|other)(?=$|[\s,;.!?])/i);
+  const genderMatch = raw.match(/(?:giới tính|phái|gender|sex)\s*(?:thành|sang|là|to|:)?\s*(nam|nữ|khác|male|female|other)(?=$|[\s,;.!?])/i);
   if (genderMatch) {
     const gRaw = genderMatch[1].toLowerCase();
     profileUpdates.gender = gRaw === 'nam' ? 'Nam' : (gRaw === 'nữ' ? 'Nữ' : (gRaw === 'khác' ? 'Khác' : genderMatch[1]));
     matchedProfile = true;
   }
 
-  const addrMatch = raw.match(/(?:(?:địa chỉ|nơi ở|chỗ ở|quê quán|thành phố)\s*(?:thành|sang|là|:)|(?:sống tại|ở tại))\s*([^;\n!?]{2,120})/i);
+  const addrMatch = raw.match(/(?:(?:địa chỉ|nơi ở|nơi sinh sống|chỗ ở|hộ khẩu|thường trú|quê quán|thành phố|tỉnh thành|address|location|city)\s*(?:thành|sang|là|to|:)|(?:(?:đang\s+)?sống\s+(?:tại|ở)|ở\s+tại|live\s+in))\s*([^;\n!?]{2,120})/i);
   if (addrMatch && !/\b(?:kinh nghiệm|làm việc|tốt nghiệp|học tại)\b/i.test(raw)) {
     const addr = sanitizeText(addrMatch[1].replace(/[.!?]+$/, ''), 150);
     if (addr) { profileUpdates.address = addr; matchedProfile = true; }
   }
 
-  // Profile Job Title (only when NOT referring to experience index!)
-  const roleMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)?\s*(?:tên\s+)?(?:vị trí(?:\s+ứng tuyển|\s+mục tiêu)?|chức danh|tiêu đề nghề nghiệp)\s*(?:thành|sang|là|:)\s*([^,;\n!?]{1,90})/i);
+  // Profile Job Title ("job title", "chức danh", "vị trí ứng tuyển", "tiêu đề nghề nghiệp", "headline", "nghề nghiệp")
+  const roleMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay|đặt|set|change|update)?\s*(?:tên\s+|my\s+)?(?:vị\s+trí(?:\s+ứng\s+tuyển|\s+mục\s+tiêu|\s+mong\s+muốn)?|chức\s+danh(?:\s+ứng\s+tuyển|\s+nghề\s+nghiệp)?|chức\s+vụ\s+ứng\s+tuyển|tiêu\s+đề\s+nghề\s+nghiệp|nghề\s+nghiệp|job\s*title|headline|position\s+title|current\s+role)\s*(?:thành|sang|là|to|as|:)\s*([^,;\n!?]{1,90})/i);
   if (roleMatch && roleMatch[1] && !STYLE_INTENT_RE.test(normalizeCheck(roleMatch[1].replace(/(?:^|[\s,:;(])(?:mẫu|máu|mậu|mâu)(?=$|[\s,:;.!?)])/gi, ' ')))) {
     const role = sanitizeText(roleMatch[1].replace(/[.!?]+$/, ''), 90);
     if (role && !/\b(?:cong ty|tai |email|sdt)\b/i.test(normalizeCheck(role))) {
@@ -3509,20 +4069,29 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  if (!/\b(?:cong\s+ty|du\s+an|truong|chung\s+chi|giai\s+thuong|chuc\s+danh|vi\s+tri|ky\s+nang)\b/i.test(norm) && !isNameColorPhrase) {
-    const nameMatch = raw.match(/(?:(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:họ và tên|họ tên|tên tôi|tên của tôi|tên)\s*(?:thành|sang|là|:)|(?:tôi tên(?:\s+là)?|tên(?:\s+tôi)?\s+là|họ tên\s*(?:là|:)))\s*([^,;\n.!?]{1,300})/i);
+  if (!upperNameMatch && !lowerNameMatch && !titleCaseNameMatch && !/\b(?:cong\s+ty|du\s+an|truong|chung\s+chi|giai\s+thuong|chuc\s+danh|job\s*title|vi\s+tri|ky\s+nang|muc\s+tuy\s+chinh|custom\s+section)\b/i.test(norm) && !isNameColorPhrase) {
+    const nameMatch = raw.match(/(?:(?:đổi|sửa|sữa|cập nhật|thay|đặt|change|set|update|edit)\s+(?:my\s+)?(?:họ\s+và\s+tên|họ\s+tên(?:\s+đầy\s+đủ)?|tên\s+hiển\s+thị|tên\s+đầy\s+đủ|tên\s+ứng\s+viên|tên\s+trên\s+cv|tên\s+cá\s+nhân|tên\s+tôi|tên\s+của\s+tôi|tên|full\s*name|display\s*name|name)\s*(?:thành|sang|là|to|as|:)|(?:(?:hãy\s+|cứ\s+)?gọi\s+(?:tôi|mình|em)\s+là|xưng\s+(?:tên|danh)\s+là|(?:tôi|mình|em)\s+tên(?:\s+là)?|tên(?:\s+(?:của\s+)?(?:tôi|mình|em|\s*hiển\s+thị))?\s+là|họ\s+tên\s*(?:là|:)|call\s+me|my\s+name\s+is))\s*([^,;\n.!?]{1,300})/i);
     if (nameMatch && nameMatch[1]) {
-      const candidate = sanitizeText(nameMatch[1], 300);
-      const candNorm = normalizeCheck(candidate);
-      const isPureColorOrStyle =
-        /^(?:màu|color|font|phông\s+chữ|cỡ\s+chữ)\b/i.test(candidate) ||
-        /^(?:đỏ(?:\s+đậm)?|xanh(?:\s+lá|\s+dương|\s+navy|\s+ngọc)?|vàng|tím|cam|đen|trắng|hồng|nâu|xám|kem|red|blue|green|purple|yellow|pink|orange|black|white|#[0-9a-f]{3,6})$/i.test(candidate);
-      if (!isPureColorOrStyle && !/\b(?:email|sdt|so dien thoai|website|avatar)\b/i.test(candNorm)) {
-        if (candidate.length > MAX_FULLNAME_LEN) {
-          notices.push(`Họ và tên "${candidate.slice(0, 28)}..." dài ${candidate.length} ký tự (vượt giới hạn ${MAX_FULLNAME_LEN} ký tự chuẩn CV) nên chưa áp dụng để tránh cắt chữ. Vui lòng viết gọn lại.`);
-          matchedProfile = true;
-        } else if (candidate.split(/\s+/).length <= 10) {
-          profileUpdates.fullName = candidate; matchedProfile = true;
+      const rawNameInput = String(nameMatch[1] || '').trim();
+      if (isUnsafePersonName(rawNameInput)) {
+        notices.push('Họ và tên chứa ký tự hoặc cú pháp không hợp lệ nên đã bị từ chối.');
+        matchedProfile = true;
+      } else {
+        const candidate = sanitizeText(rawNameInput, 300);
+        const candNorm = normalizeCheck(candidate);
+        const isPureColorOrStyle =
+          /^(?:màu|color|font|phông\s+chữ|cỡ\s+chữ)\b/i.test(candidate) ||
+          /^(?:đỏ(?:\s+đậm)?|xanh(?:\s+lá|\s+dương|\s+navy|\s+ngọc)?|vàng|tím|cam|đen|trắng|hồng|nâu|xám|kem|red|blue|green|purple|yellow|pink|orange|black|white|#[0-9a-f]{3,6})$/i.test(candidate);
+        if (!isPureColorOrStyle && !/\b(?:email|sdt|so dien thoai|website|avatar)\b/i.test(candNorm)) {
+          if (isUnsafePersonName(candidate)) {
+            notices.push('Họ và tên không hợp lệ nên chưa áp dụng.');
+            matchedProfile = true;
+          } else if (candidate.length > MAX_FULLNAME_LEN) {
+            notices.push(`Họ và tên "${candidate.slice(0, 28)}..." dài ${candidate.length} ký tự (vượt giới hạn ${MAX_FULLNAME_LEN} ký tự chuẩn CV) nên chưa áp dụng để tránh cắt chữ. Vui lòng viết gọn lại.`);
+            matchedProfile = true;
+          } else if (candidate.split(/\s+/).length <= 10) {
+            profileUpdates.fullName = candidate; matchedProfile = true;
+          }
         }
       }
     }
