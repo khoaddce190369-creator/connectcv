@@ -168,11 +168,16 @@ const topcvIndex = path.join(topcvDistPath, 'index.html');
 if (fs.existsSync(topcvDistPath)) {
   console.log(`[ConnectCV] Serving CV Editor SPA directly from: ${topcvDistPath}`);
   app.use('/cv-assets', express.static(topcvDistPath, {
+    etag: false,
+    lastModified: false,
+    cacheControl: false,
     setHeaders: (res, p) => {
       if (p.endsWith('.js') || p.endsWith('.css') || p.endsWith('.html')) {
         res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
         res.set('CDN-Cache-Control', 'no-store');
         res.set('Cloudflare-CDN-Cache-Control', 'no-store');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
       }
     }
   }));
@@ -185,8 +190,12 @@ if (fs.existsSync(topcvDistPath)) {
     '/editor/*',
     '/new'
   ], (req, res) => {
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.sendFile(topcvIndex);
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.set('CDN-Cache-Control', 'no-store');
+    res.set('Cloudflare-CDN-Cache-Control', 'no-store');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    res.sendFile(topcvIndex, { cacheControl: false, etag: false, lastModified: false });
   });
 }
 

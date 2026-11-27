@@ -1167,7 +1167,7 @@ test('Round 5 Audit (All 12 Fail + Partial Cases): schoolColor variants, hiện 
   assert.equal(pt20.body.updates.theme?.fontSizePx, 20);
 
   const indexHtml = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
-  assert.ok(indexHtml.includes('index-20261127-v8.js'), 'index.html must reference cache-proof index-20261127-v8.js');
+  assert.ok(/index-20261127-v[89]\.js/.test(indexHtml), 'index.html must reference cache-proof versioned bundle');
   const v8Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v8.js'), 'utf8');
   assert.ok(v8Bundle.includes('theme.marginLeft'), 'v8 bundle must reference theme.marginLeft');
   assert.ok(v8Bundle.includes('theme.fontSizePx'), 'v8 bundle must reference theme.fontSizePx');
@@ -1178,4 +1178,108 @@ test('Round 5 Audit (All 12 Fail + Partial Cases): schoolColor variants, hiện 
   assert.equal(hideTwo.body.updates.sectionsVisibility?.objective, false);
   assert.equal(hideTwo.body.updates.sectionsVisibility?.certificates, false);
   assert.equal(hideTwo.body.updates.sectionsVisibility?.skills, true);
+});
+
+test('Round 6 Audit (All 7 Fail + Partial Cases): multi-references add, cert year by year, 3-clause elliptical profile+skill, company rename + companyColor, fontSizePx:25, lineSpacingNum:2.2, and missing-value prompt', async () => {
+  const sampleCv = {
+    theme: { primaryColor: '#0284c7', bgColor: '#ffffff', textColor: '#1f2937', fontSize: 'medium', fontSizePx: 0, lineSpacing: 'normal', lineSpacingNum: 0 },
+    profile: { fullName: 'NGUYỄN VĂN AN', jobTitle: 'Sales Executive', email: 'an@old.com', phone: '0987654321', address: 'Hà Nội' },
+    objective: 'Mục tiêu nghề nghiệp ban đầu.',
+    experience: [
+      { id: 'exp-1', position: 'Sales B2B', company: 'CÔNG TY CP TẬP ĐOÀN CÔNG NGHỆ NEXTTECH', startDate: '03/2022', endDate: 'Hiện tại', current: true, description: ['Chốt 20 hợp đồng'] },
+      { id: 'exp-2', position: 'Sales Rep', company: 'GREEN VIỆT NAM', startDate: '08/2020', endDate: '02/2022', current: false, description: ['Mở rộng đại lý'] }
+    ],
+    education: [{ id: 'edu-1', school: 'Đại Học Kinh Tế Quốc Dân (NEU)', degree: 'Cử nhân QTKD', startDate: '2016', endDate: '2020', gpa: '3.5' }],
+    skills: [
+      { id: 'sk-1', name: 'UX', level: 5 },
+      { id: 'sk-2', name: 'Figma', level: 4 }
+    ],
+    projects: [{ id: 'proj-1', name: 'CRM B2B', role: 'Lead', time: '2023', technologies: 'HubSpot', description: [] }],
+    certificates: [
+      { id: 'cert-1', name: 'Chứng chỉ B2B PACE', issuer: 'PACE', year: '2023' },
+      { id: 'cert-2', name: 'HubSpot Inbound Sales Certified', issuer: 'HubSpot Academy', year: '2022' }
+    ],
+    awards: [{ id: 'aw-1', name: 'Top Performer', issuer: 'NextTech', year: '2022' }],
+    activities: [],
+    interests: ['Đọc sách'],
+    references: [],
+    customSections: []
+  };
+
+  // Fail #1: "thêm 2 người tham chiếu: Anh A, Chị B" -> creates 2 separate reference items!
+  const twoRefs = await editorAgent.processCvEditorAgent({
+    message: 'thêm 2 người tham chiếu: Anh A, Chị B',
+    cvData: sampleCv
+  });
+  assert.equal(twoRefs.body.updates.references.length, 2);
+  assert.equal(twoRefs.body.updates.references[0].name, 'Anh A');
+  assert.equal(twoRefs.body.updates.references[0].position, '');
+  assert.equal(twoRefs.body.updates.references[1].name, 'Chị B');
+  assert.equal(twoRefs.body.updates.references[1].position, '');
+
+  // Single reference with comma details MUST still work as 1 reference!
+  const singleRef = await editorAgent.processCvEditorAgent({
+    message: 'thêm người tham chiếu: Ông Trần Minh, Giám đốc Kinh doanh, Công ty FPT, 0912345678',
+    cvData: sampleCv
+  });
+  assert.equal(singleRef.body.updates.references.length, 1);
+  assert.equal(singleRef.body.updates.references[0].name, 'Ông Trần Minh');
+  assert.equal(singleRef.body.updates.references[0].position, 'Giám đốc Kinh doanh');
+
+  // Fail #2: "đổi năm chứng chỉ 2022 thành 2023" -> finds cert with year==="2022" and updates year to "2023"!
+  const certYear = await editorAgent.processCvEditorAgent({
+    message: 'đổi năm chứng chỉ 2022 thành 2023',
+    cvData: sampleCv
+  });
+  assert.ok(Array.isArray(certYear.body.updates.certificates));
+  assert.equal(certYear.body.updates.certificates[1].name, 'HubSpot Inbound Sales Certified');
+  assert.equal(certYear.body.updates.certificates[1].year, '2023');
+
+  // Partial #1: "đổi tên thành A và email thành a@b.com và xóa skill UX" -> applies ALL 3 clauses!
+  const tripleClause = await editorAgent.processCvEditorAgent({
+    message: 'đổi tên thành A và email thành a@b.com và xóa skill UX',
+    cvData: sampleCv
+  });
+  assert.equal(tripleClause.body.updates.profile?.fullName, 'A');
+  assert.equal(tripleClause.body.updates.profile?.email, 'a@b.com');
+  assert.equal(tripleClause.body.updates.skills?.length, 1);
+  assert.equal(tripleClause.body.updates.skills[0].name, 'Figma');
+
+  // Partial #2: "đổi tên công ty NEXTTECH thành NextTech và màu công ty sang xanh" -> renames company AND sets companyColor!
+  const compAndColor = await editorAgent.processCvEditorAgent({
+    message: 'đổi tên công ty NEXTTECH thành NextTech và màu công ty sang xanh',
+    cvData: sampleCv
+  });
+  assert.equal(compAndColor.body.updates.experience?.[0]?.company, 'NextTech');
+  assert.equal(compAndColor.body.updates.experience?.[1]?.company, 'GREEN VIỆT NAM');
+  assert.equal(compAndColor.body.updates.theme?.companyColor, '#0284c7');
+
+  // Partial #3: fontSizePx: 25 -> backend returns 25 AND frontend v9 bundle allows <=36 (never capped at 24)!
+  const fpx25 = await editorAgent.processCvEditorAgent({
+    message: 'đổi cỡ chữ 25',
+    cvData: sampleCv
+  });
+  assert.equal(fpx25.body.updates.theme?.fontSizePx, 25);
+  const indexHtml = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
+  assert.ok(indexHtml.includes('index-20261127-v9.js'), 'index.html must load cache-busted index-20261127-v9.js');
+  const v9Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v9.js'), 'utf8');
+  assert.ok(v9Bundle.includes('theme.fontSizePx>=8&&theme.fontSizePx<=36'), 'v9 bundle must render fontSizePx up to 36');
+  assert.ok(!v9Bundle.includes('fontSizePx<=24'), 'v9 bundle must NOT cap fontSizePx at 24');
+
+  // Partial #4: "giãn dòng 2.2" -> sets BOTH lineSpacing: "relaxed" AND lineSpacingNum: 2.2, and v9 bundle renders lineSpacingNum!
+  const ls22 = await editorAgent.processCvEditorAgent({
+    message: 'giãn dòng 2.2',
+    cvData: sampleCv
+  });
+  assert.equal(ls22.body.updates.theme?.lineSpacing, 'relaxed');
+  assert.equal(ls22.body.updates.theme?.lineSpacingNum, 2.2);
+  assert.ok(v9Bundle.includes('theme.lineSpacingNum>=0.8&&theme.lineSpacingNum<=3'), 'v9 bundle must render lineSpacingNum 0.8..3.0');
+
+  // Partial #5: "đổi email và điện thoại cùng lúc" -> asks user for Email and Số điện thoại values instead of generic fallback!
+  const askBoth = await editorAgent.processCvEditorAgent({
+    message: 'đổi email và điện thoại cùng lúc',
+    cvData: sampleCv
+  });
+  assert.deepEqual(askBoth.body.updates, {});
+  assert.ok(/Email/i.test(askBoth.body.reply) && /Số điện thoại/i.test(askBoth.body.reply), `Expected prompt for Email & Số điện thoại, got: ${askBoth.body.reply}`);
 });

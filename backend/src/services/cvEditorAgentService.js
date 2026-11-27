@@ -565,7 +565,7 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
         if (curTheme.lineSpacingNum) cleanTheme.lineSpacingNum = 0;
       } else {
         const lsVal = Number(rawUpdates.theme.lineSpacingNum);
-        if (Number.isFinite(lsVal) && lsVal >= 1.0 && lsVal <= 2.5) {
+        if (Number.isFinite(lsVal) && lsVal >= 0.8 && lsVal <= 3.0) {
           const rounded = Math.round(lsVal * 100) / 100;
           if (rounded !== curTheme.lineSpacingNum) cleanTheme.lineSpacingNum = rounded;
         }
@@ -1455,12 +1455,19 @@ function parseSkillTokens(str) {
     .filter(s => s.name && s.name.length <= 70 && s.name.split(/\s+/).length <= 10);
 }
 
-const NEW_CLAUSE_START_NORM_RE = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+)?(?:doi|sua|cap\s+nhat|thay(?:\s+doi|\s+the)?|them|bo\s+sung|xoa|bo|go|loai\s+bo|viet(?:\s+lai)?|(?:toi\s+uu|nang\s+cap)\s+(?:muc\s+tieu|phan|cv|mo\s+ta|kinh\s+nghiem)|chinh|dat\s+(?:lai|mau|ten|level|muc|font|phong|co\s+chu)|(?:tang|giam)\s+(?:co\s+chu|chu|gian\s+dong|dan\s+dong|khoang\s+cach|level|muc)|thu\s+nho|phong\s+to|(?:an|hien|bat|tat)\s+(?:tat\s+ca|toan\s+bo|het|moi|muc|phan|section|anh|hinh|avatar|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu)|sap\s+xep|(?:dua|chuyen|day|keo)\s+(?:muc|phan|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|sang|thanh|font|phong|mau)|(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|giai\s+thuong|hoat\s+dong(?:\s+ngoai\s+khoa)?|so\s+thich|(?:nguoi\s+)?tham\s+chieu)\s+(?:len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau))|canh\s+(?:trai|phai|giua|deu)|in\s+(?:dam|nghieng)|gach\s+chan|lam\s+cho|cho\s+(?:chu|ten|mau|co\s+chu|gian\s+dong)|toi\s+ten|ten\s+(?:toi\s+|cua\s+toi\s+)?(?:la|mau)|ho\s+(?:va\s+)?ten|mau\s+(?:chu\s+dao|chinh|ten|ho\s+ten|chu|nen|cv|kinh\s+nghiem|hoc\s+van|ky\s+nang|du\s+an|tieu\s+de)|font(?:\s+chu)?|phong(?:\s+chu)?|co\s+chu|gian\s+dong|dan\s+dong|cach\s+dong|khoang\s+cach\s+dong|email\s*(?:la|:)|sdt\s*(?:la|:)|so\s+dien\s+thoai|dia\s+chi|website\s*(?:la|:)|avatar\s*(?:la|:)|anh\s+dai\s+dien|ngay\s+sinh|gioi\s+tinh)\b/i;
+const NEW_CLAUSE_START_NORM_RE = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+)?(?:doi|sua|cap\s+nhat|thay(?:\s+doi|\s+the)?|them|bo\s+sung|xoa|bo|go|loai\s+bo|viet(?:\s+lai)?|(?:toi\s+uu|nang\s+cap)\s+(?:muc\s+tieu|phan|cv|mo\s+ta|kinh\s+nghiem)|chinh|dat\s+(?:lai|mau|ten|level|muc|font|phong|co\s+chu)|(?:tang|giam)\s+(?:co\s+chu|chu|gian\s+dong|dan\s+dong|khoang\s+cach|level|muc)|thu\s+nho|phong\s+to|(?:an|hien|bat|tat)\s+(?:tat\s+ca|toan\s+bo|het|moi|muc|phan|section|anh|hinh|avatar|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu)|sap\s+xep|(?:dua|chuyen|day|keo)\s+(?:muc|phan|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|sang|thanh|font|phong|mau)|(?:muc\s+(?!tieu\b)|phan\s+|section\s+)?(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|giai\s+thuong|hoat\s+dong(?:\s+ngoai\s+khoa)?|so\s+thich|(?:nguoi\s+)?tham\s+chieu)\s+(?:len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau))|canh\s+(?:trai|phai|giua|deu)|in\s+(?:dam|nghieng)|gach\s+chan|lam\s+cho|cho\s+(?:chu|ten|mau|co\s+chu|gian\s+dong)|toi\s+ten|ten\s+(?:toi\s+|cua\s+toi\s+)?(?:la|mau)|ho\s+(?:va\s+)?ten\s*(?:la|thanh|sang|:)|font(?:\s+chu)?|phong(?:\s+chu)?|co\s+chu|gian\s+dong|dan\s+dong|cach\s+dong|khoang\s+cach\s+dong|email\s*(?:la|thanh|sang|:)|e-mail\s*(?:la|thanh|sang|:)|sdt\s*(?:la|thanh|sang|:)|so\s+dien\s+thoai\s*(?:la|thanh|sang|:)|dien\s+thoai\s*(?:la|thanh|sang|:)|dia\s+chi\s*(?:la|thanh|sang|:)|website\s*(?:la|thanh|sang|:)|linkedin\s*(?:la|thanh|sang|:)|github\s*(?:la|thanh|sang|:)|portfolio\s*(?:la|thanh|sang|:)|avatar\s*(?:la|thanh|sang|:)|anh\s+dai\s+dien\s*(?:la|thanh|sang|:)|ngay\s+sinh\s*(?:la|thanh|sang|:)|gioi\s+tinh\s*(?:la|thanh|sang|:))\b/i;
+
+// Matches elliptical (verbless) 2nd+ clauses ONLY when the preceding clause already has its own predicate (thành/sang/là/:/lên/xuống),
+// so multi-target clauses like "đổi màu tiêu đề và tên công ty sang đỏ" or "đổi email và điện thoại cùng lúc" are NEVER split prematurely!
+const ELLIPTICAL_ASSIGNMENT_CLAUSE_NORM_RE = /^(?:(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+cua\s+toi|\s+ung\s+vien)?|email|e-mail|thu\s+dien\s+tu|sdt|so\s+dien\s+thoai|dien\s+thoai|phone|dia\s+chi|noi\s+o|cho\s+o|que\s+quan|ngay\s+sinh|sinh\s+ngay|dob|gioi\s+tinh|gender|website|trang\s+web|portfolio|linkedin|github|gitlab|behance|avatar|anh\s+dai\s+dien|vi\s+tri(?:\s+ung\s+tuyen|\s+cong\s+viec|\s+lam\s+viec|\s+kinh\s+nghiem)?|chuc\s+danh|chuc\s+vu|muc\s+tieu(?:\s+nghe\s+nghiep)?)\s+(?:thanh|sang|la|:)\s*\S+|mau\s+(?:[a-z0-9#]+\s+){0,6}?(?:sang|thanh|la|:)\s*\S+|(?:le\s+(?:trai|phai|tren|duoi|trang)|margin(?:-(?:left|right|top|bottom))?)\s*(?:thanh|sang|la|:)?\s*\d+|(?:ten\s+(?:cong\s+ty|truong|du\s+an)|cong\s+ty|truong(?:\s+dai\s+hoc)?|bang\s+cap|chuyen\s+nganh|gpa|nam\s+(?:tot\s+nghiep|chung\s+chi|giai\s+thuong)|vai\s+tro(?:\s+du\s+an)?|cong\s+nghe(?:\s+du\s+an)?|so\s+thich|level\s+\S+)(?:\s+.+?)?\s+(?:thanh|sang|la|:)\s*\S+)/i;
+
+const PREV_CLAUSE_HAS_PREDICATE_NORM_RE = /\b(?:thanh|sang|la|len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau)|xoa|them|bo\s+sung|an|hien)\b|:/i;
 
 function expandEllipticalIndexedClauses(clauseList) {
   const expanded = [];
   const prefixRe = /^((?:hãy\s+|vui lòng\s+)?(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:tên\s+công\s+ty|công\s+ty|vị\s+trí(?:\s+công\s+việc|\s+làm\s+việc|\s+kinh\s+nghiệm)?|chức\s+vụ(?:\s+công\s+việc|\s+kinh\s+nghiệm)?|tên\s+trường|trường(?:\s+đại\s+học)?|bằng\s+cấp|chuyên\s+ngành|tên\s+dự\s+án|vai\s+trò(?:\s+dự\s+án)?|công\s+nghệ(?:\s+dự\s+án)?|chứng\s+chỉ|giải\s+thưởng|level(?:\s+kỹ\s+năng)?))\s+(.+)$/i;
   const splitEllipticalRe = /(?:,\s*|\s+và\s+)(?=(?:thứ\s+|số\s+|mục\s+|#)?(?:\d{1,2}|một|nhất|hai|ba|bốn|tư|năm|sáu|đầu(?:\s+tiên)?|cuối(?:\s+cùng)?)\s+(?:thành|sang|là|:)\s+)/i;
+  const leadingActionRe = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+)?(?:doi|sua|cap\s+nhat|thay|them|bo\s+sung|xoa|bo|go|loai\s+bo|viet|toi\s+uu|nang\s+cap|chinh|dat|tang|giam|thu\s+nho|phong\s+to|an|hien|bat|tat|sap\s+xep|dua|chuyen|day|keo|canh|in|gach|lam|cho|toi\s+ten|ten\s+(?:toi\s+)?la|ho\s+(?:va\s+)?ten\s*(?:la|:))\b/i;
 
   for (const c of clauseList) {
     const m = c.match(prefixRe);
@@ -1472,7 +1479,12 @@ function expandEllipticalIndexedClauses(clauseList) {
         continue;
       }
     }
-    expanded.push(c);
+    const cNorm = normalizeCheck(c);
+    if (!leadingActionRe.test(cNorm) && ELLIPTICAL_ASSIGNMENT_CLAUSE_NORM_RE.test(cNorm)) {
+      expanded.push(`đổi ${c}`);
+    } else {
+      expanded.push(c);
+    }
   }
   return expanded;
 }
@@ -1494,8 +1506,16 @@ function splitIntoClauses(rawText) {
       const sepMatch = rest.match(/^(?:[;\n]+|,\s+|\s+(?:và|rồi|đồng thời|kèm theo|sau đó|tiếp theo|cùng với)\s+)/i);
       if (sepMatch) {
         const afterSep = rest.slice(sepMatch[0].length).trim();
-        if (afterSep && NEW_CLAUSE_START_NORM_RE.test(normalizeCheck(afterSep))) {
-          const prevClause = s.slice(start, i).trim();
+        const prevClause = s.slice(start, i).trim();
+        const afterNorm = normalizeCheck(afterSep);
+        const isExplicitStart = Boolean(afterSep && NEW_CLAUSE_START_NORM_RE.test(afterNorm));
+        const isEllipticalStart = Boolean(
+          afterSep &&
+          prevClause &&
+          PREV_CLAUSE_HAS_PREDICATE_NORM_RE.test(normalizeCheck(prevClause)) &&
+          ELLIPTICAL_ASSIGNMENT_CLAUSE_NORM_RE.test(afterNorm)
+        );
+        if (isExplicitStart || isEllipticalStart) {
           if (prevClause) clauses.push(prevClause);
           i += sepMatch[0].length;
           start = i;
@@ -1775,7 +1795,7 @@ function applySingleClause(clauseRaw, state) {
       // Accumulate ALL explicitly mentioned sub-targets in the clause (so "đổi màu tiêu đề và tên công ty sang đỏ" sets BOTH!)
       let matchedMultiSubTarget = false;
 
-      if (/\b(?:ten\s+(?:cac\s+)?cong\s+ty|mau\s+(?:ten\s+)?cong\s+ty)\b/i.test(norm)) {
+      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+cong\s+ty|cong\s+ty\s+(?:sang\s+|thanh\s+)?mau)\b/i.test(norm)) {
         themeUpdates.companyColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
@@ -1913,22 +1933,31 @@ function applySingleClause(clauseRaw, state) {
       } else if (/\b(?:vua|trung\s+binh|mac\s+dinh|binh\s+thuong|medium|normal)\b/i.test(norm)) {
         themeUpdates.fontSize = 'medium'; themeUpdates.fontSizePx = 0; matchedTheme = true;
       } else {
-        notices.push('Bạn có thể chọn cỡ chữ theo mức Nhỏ / Vừa / Lớn hoặc số px cụ thể từ 8 đến 24 (VD: "đổi cỡ chữ 13").');
+        notices.push('Bạn có thể chọn cỡ chữ theo mức Nhỏ / Vừa / Lớn hoặc số px/pt cụ thể từ 8 đến 36 (VD: "đổi cỡ chữ 13", "đổi cỡ chữ 25").');
         matchedTheme = true;
       }
     }
 
     if (/\b(?:(?:gian|dan|cach)\s*dong|khoang\s*cach\s*dong|line\s*spacing|line\s*height)\b/i.test(norm)) {
-      const numMatch = norm.match(/\b([12](?:\.\d+)?)\b/);
+      const numMatch = norm.match(/\b(-?\d+(?:\.\d+)?)\b/);
       const lsNum = numMatch ? parseFloat(numMatch[1]) : null;
-      if (/\b(?:rong|thoang|thua|relaxed|loose|tang|lon)\b/i.test(norm) || (lsNum !== null && lsNum >= 1.45)) {
-        themeUpdates.lineSpacing = 'relaxed'; matchedTheme = true;
-      } else if (/\b(?:hep|gon|khit|sat|chat|compact|tight|giam|nho)\b/i.test(norm) || (lsNum !== null && lsNum <= 1.15)) {
-        themeUpdates.lineSpacing = 'compact'; matchedTheme = true;
-      } else if (/\b(?:vua|trung\s+binh|mac\s+dinh|binh\s+thuong|normal)\b/i.test(norm) || (lsNum !== null && lsNum > 1.15 && lsNum < 1.45)) {
-        themeUpdates.lineSpacing = 'normal'; matchedTheme = true;
+      if (lsNum !== null) {
+        if (lsNum < 0.8 || lsNum > 3.0) {
+          notices.push(`Giãn dòng ${lsNum} nằm ngoài phạm vi chuẩn CV (0.8 – 3.0). Vui lòng chọn mức giãn dòng từ 0.8 đến 3.0 (VD: "giãn dòng 1.5" hoặc "giãn dòng 2.2").`);
+          matchedTheme = true;
+        } else {
+          themeUpdates.lineSpacingNum = Math.round(lsNum * 100) / 100;
+          themeUpdates.lineSpacing = lsNum >= 1.45 ? 'relaxed' : (lsNum <= 1.2 ? 'compact' : 'normal');
+          matchedTheme = true;
+        }
+      } else if (/\b(?:rong|thoang|thua|relaxed|loose|tang|lon)\b/i.test(norm)) {
+        themeUpdates.lineSpacing = 'relaxed'; themeUpdates.lineSpacingNum = 0; matchedTheme = true;
+      } else if (/\b(?:hep|gon|khit|sat|chat|compact|tight|giam|nho)\b/i.test(norm)) {
+        themeUpdates.lineSpacing = 'compact'; themeUpdates.lineSpacingNum = 0; matchedTheme = true;
+      } else if (/\b(?:vua|trung\s+binh|mac\s+dinh|binh\s+thuong|normal)\b/i.test(norm)) {
+        themeUpdates.lineSpacing = 'normal'; themeUpdates.lineSpacingNum = 0; matchedTheme = true;
       } else {
-        notices.push('Bạn có thể chọn mức giãn dòng CV: Hẹp ("giãn dòng hẹp"), Vừa ("giãn dòng vừa") hoặc Rộng ("giãn dòng rộng").');
+        notices.push('Bạn có thể chọn mức giãn dòng CV: Hẹp ("giãn dòng hẹp"), Vừa ("giãn dòng vừa"), Rộng ("giãn dòng rộng") hoặc số cụ thể từ 0.8 đến 3.0 (VD: "giãn dòng 2.2").');
         matchedTheme = true;
       }
     }
@@ -1940,7 +1969,7 @@ function applySingleClause(clauseRaw, state) {
       );
       if (allUnchanged) {
         for (const [tk, tv] of Object.entries(themeUpdates)) {
-          const tNames = { primaryColor: 'Màu chủ đạo', nameColor: 'Màu tên', textColor: 'Màu chữ', bgColor: 'Màu nền', fontFamily: 'Font chữ', fontSize: 'Cỡ chữ', fontSizePx: 'Cỡ chữ (px)', lineSpacing: 'Giãn dòng' };
+          const tNames = { primaryColor: 'Màu chủ đạo', nameColor: 'Màu tên', textColor: 'Màu chữ', bgColor: 'Màu nền', headingColor: 'Màu tiêu đề mục', companyColor: 'Màu tên công ty', schoolColor: 'Màu tên trường', fontFamily: 'Font chữ', fontSize: 'Cỡ chữ', fontSizePx: 'Cỡ chữ (px)', lineSpacing: 'Giãn dòng', lineSpacingNum: 'Giãn dòng chi tiết' };
           state.alreadySetNotes.push(`${tNames[tk] || tk} hiện đã ở sẵn giá trị ${tv}`);
         }
       }
@@ -2220,19 +2249,34 @@ function applySingleClause(clauseRaw, state) {
       return true;
     }
 
-    // Company name ("đổi tên công ty đầu tiên thành ...", "đổi tên tất cả công ty thành ABC")
-    const companyEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|mọi|các)\s+)?công ty(?:\s+(?:của\s+)?(?:tất cả\s+kinh nghiệm|đầu tiên|cuối(?:\s+cùng)?|(?:thứ|số|mục)?\s*\S+))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    // Company name ("đổi tên công ty đầu tiên thành ...", "đổi tên công ty NEXTTECH thành NextTech", "đổi tên tất cả công ty thành ABC")
+    const companyEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|mọi|các)\s+)?công ty(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i) ||
+      raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|mọi|các)\s+)?công ty()\s*(?::)\s*([^\n;!?]+)/i);
     if (companyEditMatch) {
-      const prefixBeforeVal = raw.slice(0, companyEditMatch.index + companyEditMatch[0].lastIndexOf(companyEditMatch[3]));
-      const isAll = Boolean(companyEditMatch[1] || companyEditMatch[2]) || /\b(?:tat\s+ca|toan\s+bo|moi)\b/i.test(normalizeCheck(prefixBeforeVal));
-      const newCompany = sanitizeText(companyEditMatch[3].replace(/[.!?]+$/, ''), 150);
+      const selRaw = (companyEditMatch[3] || '').replace(/^của\s+/i, '').trim();
+      const selNorm = normalizeCheck(selRaw);
+      const isAll = Boolean(companyEditMatch[1] || companyEditMatch[2]) || /\b(?:tat\s+ca|toan\s+bo|moi)\b/i.test(selNorm);
+      const newCompany = sanitizeText(companyEditMatch[4].replace(/[.!?]+$/, ''), 150);
       if (newCompany) {
         if (isAll) {
           const nextExp = curExp.map(item => ({ ...item, company: newCompany }));
           updates.experience = nextExp; workingCv.experience = nextExp;
           return true;
         }
-        const pos = resolveOneBasedIndex(prefixBeforeVal, curExp.length);
+        if (selRaw && !isPurePositionalSelector(selRaw) && !/\b(?:kinh\s+nghiem|cong\s+viec)\b/i.test(selNorm)) {
+          const matchedIndices = curExp
+            .map((item, i) => (normalizeCheck(item.company || '').includes(selNorm) || selNorm.includes(normalizeCheck(item.company || '')) ? i : -1))
+            .filter(i => i !== -1);
+          if (matchedIndices.length === 0) {
+            notices.push(`Không tìm thấy công ty "${sanitizeText(selRaw, 80)}" trong mục Kinh nghiệm để đổi tên.`);
+            return true;
+          }
+          const idxSet = new Set(matchedIndices);
+          const nextExp = curExp.map((item, i) => (idxSet.has(i) ? { ...item, company: newCompany } : { ...item }));
+          updates.experience = nextExp; workingCv.experience = nextExp;
+          return true;
+        }
+        const pos = resolveOneBasedIndex(selRaw || raw.slice(0, companyEditMatch.index + companyEditMatch[0].lastIndexOf(companyEditMatch[4])), curExp.length);
         if (pos.outOfRange || pos.index0 === null) {
           notices.push(`CV hiện chỉ có ${curExp.length} mục kinh nghiệm nên không thể sửa công ty #${pos.requested1}.`);
           return true;
@@ -2440,14 +2484,34 @@ function applySingleClause(clauseRaw, state) {
       return true;
     }
 
-    const schoolEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|mọi|các)\s+)?trường(?:\s+(?:đại học|cao đẳng))?(?:\s+(?:đầu tiên|cuối(?:\s+cùng)?|(?:thứ|số|mục)?\s*\S+))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    const schoolEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|mọi|các)\s+)?trường(?:\s+(?:đại học|cao đẳng))?(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i) ||
+      raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ|mọi)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|mọi|các)\s+)?trường(?:\s+(?:đại học|cao đẳng))?()\s*(?::)\s*([^\n;!?]+)/i);
     if (schoolEditMatch) {
-      const prefixBeforeVal = raw.slice(0, schoolEditMatch.index + schoolEditMatch[0].lastIndexOf(schoolEditMatch[3]));
-      const isAll = Boolean(schoolEditMatch[1] || schoolEditMatch[2]) || /\b(?:tat\s+ca|toan\s+bo|moi)\b/i.test(normalizeCheck(prefixBeforeVal));
-      const newSchool = sanitizeText(schoolEditMatch[3].replace(/[.!?]+$/, ''), 150);
+      const selRaw = (schoolEditMatch[3] || '').replace(/^của\s+/i, '').trim();
+      const selNorm = normalizeCheck(selRaw);
+      const isAll = Boolean(schoolEditMatch[1] || schoolEditMatch[2]) || /\b(?:tat\s+ca|toan\s+bo|moi)\b/i.test(selNorm);
+      const newSchool = sanitizeText(schoolEditMatch[4].replace(/[.!?]+$/, ''), 150);
       if (newSchool) {
-        const idx = resolveOneBasedIndex(prefixBeforeVal, curEdu.length).index0 ?? 0;
-        const nextEdu = curEdu.map((item, i) => ((isAll || i === idx) ? { ...item, school: newSchool } : { ...item }));
+        if (isAll) {
+          const nextEdu = curEdu.map(item => ({ ...item, school: newSchool }));
+          updates.education = nextEdu; workingCv.education = nextEdu;
+          return true;
+        }
+        if (selRaw && !isPurePositionalSelector(selRaw) && !/\b(?:hoc\s+van|giao\s+duc)\b/i.test(selNorm)) {
+          const matchedIndices = curEdu
+            .map((item, i) => (normalizeCheck(item.school || '').includes(selNorm) || selNorm.includes(normalizeCheck(item.school || '')) ? i : -1))
+            .filter(i => i !== -1);
+          if (matchedIndices.length === 0) {
+            notices.push(`Không tìm thấy trường "${sanitizeText(selRaw, 80)}" trong mục Học vấn để đổi tên.`);
+            return true;
+          }
+          const idxSet = new Set(matchedIndices);
+          const nextEdu = curEdu.map((item, i) => (idxSet.has(i) ? { ...item, school: newSchool } : { ...item }));
+          updates.education = nextEdu; workingCv.education = nextEdu;
+          return true;
+        }
+        const idx = resolveOneBasedIndex(selRaw || raw.slice(0, schoolEditMatch.index + schoolEditMatch[0].lastIndexOf(schoolEditMatch[4])), curEdu.length).index0 ?? 0;
+        const nextEdu = curEdu.map((item, i) => (i === idx ? { ...item, school: newSchool } : { ...item }));
         updates.education = nextEdu; workingCv.education = nextEdu;
         return true;
       }
@@ -2568,23 +2632,45 @@ function applySingleClause(clauseRaw, state) {
       return true;
     }
 
-    // Project name ("đổi tên dự án thành ...", "đổi tên tất cả dự án thành ...")
-    const projEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|các)\s+)?dự án(?:\s+(?:đầu tiên|cuối(?:\s+cùng)?|(?:thứ|số|mục)?\s*\S+))?\s*(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    // Project name ("đổi tên dự án thành ...", "đổi tên dự án Chiến dịch Mở rộng thành ...", "đổi tên tất cả dự án thành ...")
+    const projEditMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|các)\s+)?dự án(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i) ||
+      raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:(tất cả|toàn bộ)\s+)?(?:tên\s+)?(?:(tất cả|toàn bộ|các)\s+)?dự án()\s*(?::)\s*([^\n;!?]+)/i);
     if (projEditMatch) {
-      const prefixBeforeVal = raw.slice(0, projEditMatch.index + projEditMatch[0].lastIndexOf(projEditMatch[3]));
-      const isAll = Boolean(projEditMatch[1] || projEditMatch[2]) || /\b(?:tat\s+ca|toan\s+bo)\b/i.test(normalizeCheck(prefixBeforeVal));
-      const idx = resolveOneBasedIndex(prefixBeforeVal, curProj.length).index0 ?? 0;
-      const newProjName = sanitizeText(projEditMatch[3].replace(/[.!?]+$/, ''), 150);
+      const selRaw = (projEditMatch[3] || '').replace(/^của\s+/i, '').trim();
+      const selNorm = normalizeCheck(selRaw);
+      const isAll = Boolean(projEditMatch[1] || projEditMatch[2]) || /\b(?:tat\s+ca|toan\s+bo)\b/i.test(selNorm);
+      const newProjName = sanitizeText(projEditMatch[4].replace(/[.!?]+$/, ''), 150);
       if (newProjName) {
-        const nextProj = curProj.map((item, i) => ((isAll || i === idx) ? { ...item, name: newProjName } : { ...item }));
+        if (isAll) {
+          const nextProj = curProj.map(item => ({ ...item, name: newProjName }));
+          updates.projects = nextProj; workingCv.projects = nextProj;
+          return true;
+        }
+        if (selRaw && !isPurePositionalSelector(selRaw)) {
+          const matchedIndices = curProj
+            .map((item, i) => (normalizeCheck(item.name || '').includes(selNorm) || selNorm.includes(normalizeCheck(item.name || '')) ? i : -1))
+            .filter(i => i !== -1);
+          if (matchedIndices.length === 0) {
+            notices.push(`Không tìm thấy dự án "${sanitizeText(selRaw, 80)}" trong CV để đổi tên.`);
+            return true;
+          }
+          const idxSet = new Set(matchedIndices);
+          const nextProj = curProj.map((item, i) => (idxSet.has(i) ? { ...item, name: newProjName } : { ...item }));
+          updates.projects = nextProj; workingCv.projects = nextProj;
+          return true;
+        }
+        const idx = resolveOneBasedIndex(selRaw || raw.slice(0, projEditMatch.index + projEditMatch[0].lastIndexOf(projEditMatch[4])), curProj.length).index0 ?? 0;
+        const nextProj = curProj.map((item, i) => (i === idx ? { ...item, name: newProjName } : { ...item }));
         updates.projects = nextProj; workingCv.projects = nextProj;
         return true;
       }
     }
   }
 
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|các|mục)\s+)?dự án(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|các|mục)\s+)?dự án\s*:?\s*/i, '').trim();
+  const addProjCmdMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(\d+|một|hai|ba|bốn|năm|các|nhiều|mục)\s+)?dự án(?=$|[\s,:;.!?)])/i);
+  if (addProjCmdMatch) {
+    const reqCount = parseSmallCount(addProjCmdMatch[1]) || (addProjCmdMatch[1] && /cac|nhieu/i.test(normalizeCheck(addProjCmdMatch[1])) ? 2 : 1);
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|năm|các|nhiều|mục)\s+)?dự án\s*:?\s*/i, '').trim();
     const nextProj = Array.isArray(workingCv.projects) ? workingCv.projects.map(p => ({ ...p })) : [];
     if (!tail) {
       notices.push('Bạn muốn thêm dự án tên gì, vai trò và công nghệ sử dụng là gì? (VD: "thêm dự án Hệ thống CRM - vai trò Trưởng nhóm").');
@@ -2598,6 +2684,23 @@ function applySingleClause(clauseRaw, state) {
         time: '',
         technologies: '',
         description: []
+      });
+    } else if (reqCount >= 2 || /;/.test(tail)) {
+      const items = splitOutsideParens(tail.replace(/[.!?]+$/, ''), true);
+      items.reverse().forEach((entry, idx) => {
+        const roleSplit = entry.split(/\s+(?:vai trò|vị trí)\s+/i);
+        const dashSplit = roleSplit[0].split(/\s*[-–:]\s*/);
+        const pName = sanitizeText(dashSplit[0], 150);
+        if (pName) {
+          nextProj.unshift({
+            id: `proj_ai_${Date.now()}_${idx}`,
+            name: pName,
+            role: sanitizeText(roleSplit[1] || '', 120),
+            time: '',
+            technologies: '',
+            description: dashSplit[1] ? [sanitizeText(dashSplit[1], 500)] : []
+          });
+        }
       });
     } else {
       const roleSplit = tail.split(/\s+(?:vai trò|vị trí)\s+/i);
@@ -2651,25 +2754,45 @@ function applySingleClause(clauseRaw, state) {
 
   if (isEditVerb && /\bchứng chỉ|certificate/i.test(raw) && Array.isArray(workingCv.certificates) && workingCv.certificates.length > 0) {
     const curCerts = workingCv.certificates;
-    const flexCertMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay)\s+(?:(năm|tên|đơn vị cấp|nơi cấp)(?:\s+\d{4})?\s+(?:của\s+|trong\s+|ở\s+)?)?(?:chứng chỉ|certificate)(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    const flexCertMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay)\s+(?:(năm|tên|đơn vị cấp|nơi cấp)(?:\s+(\d{4}))?\s+(?:của\s+|trong\s+|ở\s+)?)?(?:chứng chỉ|certificate)(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
     if (flexCertMatch) {
       const explicitSubfield = normalizeCheck(flexCertMatch[1] || '');
-      const selectorText = (flexCertMatch[2] || '').replace(/\s+năm\s+\d{4}$/i, '').trim();
-      const newVal = sanitizeText(flexCertMatch[3].replace(/[.!?]+$/, ''), 150);
+      const preYear = (flexCertMatch[2] || '').trim();
+      const rawSel = (flexCertMatch[3] || '').replace(/\s+năm\s+\d{4}$/i, '').replace(/^năm\s+/i, '').trim();
+      const newVal = sanitizeText(flexCertMatch[4].replace(/[.!?]+$/, ''), 150);
+      const isYearValue = /^\d{4}$/.test(newVal) || explicitSubfield === 'nam';
+      const fieldToUpdate = isYearValue ? 'year' : (/don vi|noi cap/.test(explicitSubfield) ? 'issuer' : 'name');
+      const selectorYear = preYear || (/^\d{4}$/.test(rawSel) ? rawSel : '');
+
+      if (selectorYear && newVal) {
+        const matchedIndices = curCerts
+          .map((c, i) => (String(c.year || '').trim() === selectorYear || normalizeCheck(c.name || '').includes(selectorYear) ? i : -1))
+          .filter(i => i !== -1);
+        if (matchedIndices.length === 0) {
+          notices.push(`Không tìm thấy chứng chỉ năm ${selectorYear} trong CV hiện tại.`);
+          return true;
+        }
+        const idxSet = new Set(matchedIndices);
+        const nextCerts = curCerts.map((c, i) => (idxSet.has(i) ? { ...c, [fieldToUpdate]: newVal } : { ...c }));
+        updates.certificates = nextCerts; workingCv.certificates = nextCerts;
+        return true;
+      }
+
       let targetIdx = -1;
-      if (selectorText && !isPurePositionalSelector(selectorText)) {
-        const selNorm = normalizeCheck(selectorText);
+      if (rawSel && !isPurePositionalSelector(rawSel)) {
+        const selNorm = normalizeCheck(rawSel);
         targetIdx = curCerts.findIndex(c =>
           normalizeCheck(c.name || '').includes(selNorm) ||
           normalizeCheck(c.issuer || '').includes(selNorm) ||
+          String(c.year || '').trim() === selNorm ||
           selNorm.includes(normalizeCheck(c.name || ''))
         );
         if (targetIdx === -1) {
-          notices.push(`Không tìm thấy chứng chỉ "${selectorText}" trong CV hiện tại.`);
+          notices.push(`Không tìm thấy chứng chỉ "${rawSel}" trong CV hiện tại.`);
           return true;
         }
       } else {
-        const pos = resolveOneBasedIndex(selectorText || raw, curCerts.length);
+        const pos = resolveOneBasedIndex(rawSel || raw, curCerts.length);
         if (pos.outOfRange || pos.index0 === null) {
           notices.push(`CV hiện chỉ có ${curCerts.length} chứng chỉ nên không thể sửa chứng chỉ #${pos.requested1}.`);
           return true;
@@ -2677,8 +2800,6 @@ function applySingleClause(clauseRaw, state) {
         targetIdx = pos.index0;
       }
       if (targetIdx >= 0 && newVal) {
-        const isYearValue = /^\d{4}$/.test(newVal) || explicitSubfield === 'nam';
-        const fieldToUpdate = isYearValue ? 'year' : (/don vi|noi cap/.test(explicitSubfield) ? 'issuer' : 'name');
         const nextCerts = curCerts.map((c, i) => (i === targetIdx ? { ...c, [fieldToUpdate]: newVal } : { ...c }));
         updates.certificates = nextCerts; workingCv.certificates = nextCerts;
         return true;
@@ -2749,16 +2870,46 @@ function applySingleClause(clauseRaw, state) {
 
   if (isEditVerb && /\bgiải thưởng|award/i.test(raw) && Array.isArray(workingCv.awards) && workingCv.awards.length > 0) {
     const curAwards = workingCv.awards;
-    const flexAwMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay)\s+(?:(năm|tên|đơn vị)(?:\s+\d{4})?\s+(?:của\s+|trong\s+)?)?giải thưởng(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
+    const flexAwMatch = raw.match(/(?:sửa|sữa|đổi|cập nhật|thay)\s+(?:(năm|tên|đơn vị)(?:\s+(\d{4}))?\s+(?:của\s+|trong\s+|ở\s+)?)?giải thưởng(?:\s+(.+?))?\s+(?:thành|sang|là|:)\s*([^\n;!?]+)/i);
     if (flexAwMatch) {
-      const selectorText = (flexAwMatch[2] || '').trim();
-      const newVal = sanitizeText(flexAwMatch[3].replace(/[.!?]+$/, ''), 150);
-      let targetIdx = (selectorText && !isPurePositionalSelector(selectorText))
-        ? curAwards.findIndex(a => normalizeCheck(a.name || '').includes(normalizeCheck(selectorText)))
-        : (resolveOneBasedIndex(selectorText || raw, curAwards.length).index0 ?? 0);
-      if (targetIdx === -1) targetIdx = 0;
-      const isYear = /^\d{4}$/.test(newVal) || normalizeCheck(flexAwMatch[1] || '') === 'nam';
-      const nextAwards = curAwards.map((a, i) => (i === targetIdx ? { ...a, [isYear ? 'year' : 'name']: newVal } : { ...a }));
+      const explicitSub = normalizeCheck(flexAwMatch[1] || '');
+      const preYear = (flexAwMatch[2] || '').trim();
+      const selectorText = (flexAwMatch[3] || '').replace(/^năm\s+/i, '').trim();
+      const newVal = sanitizeText(flexAwMatch[4].replace(/[.!?]+$/, ''), 150);
+      const isYear = /^\d{4}$/.test(newVal) || explicitSub === 'nam';
+      const fieldToSet = isYear ? 'year' : (/don vi/.test(explicitSub) ? 'issuer' : 'name');
+      const selectorYear = preYear || (/^\d{4}$/.test(selectorText) ? selectorText : '');
+
+      if (selectorYear && newVal) {
+        const matchedIndices = curAwards
+          .map((a, i) => (String(a.year || '').trim() === selectorYear || normalizeCheck(a.name || '').includes(selectorYear) ? i : -1))
+          .filter(i => i !== -1);
+        if (matchedIndices.length === 0) {
+          notices.push(`Không tìm thấy giải thưởng năm ${selectorYear} trong CV hiện tại.`);
+          return true;
+        }
+        const idxSet = new Set(matchedIndices);
+        const nextAwards = curAwards.map((a, i) => (idxSet.has(i) ? { ...a, [fieldToSet]: newVal } : { ...a }));
+        updates.awards = nextAwards; workingCv.awards = nextAwards;
+        return true;
+      }
+
+      let targetIdx = -1;
+      if (selectorText && !isPurePositionalSelector(selectorText)) {
+        const selNorm = normalizeCheck(selectorText);
+        targetIdx = curAwards.findIndex(a =>
+          normalizeCheck(a.name || '').includes(selNorm) ||
+          normalizeCheck(a.issuer || '').includes(selNorm) ||
+          String(a.year || '').trim() === selNorm
+        );
+        if (targetIdx === -1) {
+          notices.push(`Không tìm thấy giải thưởng "${selectorText}" trong CV hiện tại.`);
+          return true;
+        }
+      } else {
+        targetIdx = resolveOneBasedIndex(selectorText || raw, curAwards.length).index0 ?? 0;
+      }
+      const nextAwards = curAwards.map((a, i) => (i === targetIdx ? { ...a, [fieldToSet]: newVal } : { ...a }));
       updates.awards = nextAwards; workingCv.awards = nextAwards;
       return true;
     }
@@ -2882,26 +3033,37 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  // J5. References
+  // J5. References (supports multi-add "thêm 2 người tham chiếu: Anh A, Chị B", honorifics, semicolons, AND single-ref comma details)
   if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|làm trống)\s+(?:tất cả\s+|toàn bộ\s+|hết\s+|sạch\s+)?(?:các\s+|mục\s+)?(?:người\s+)?tham chiếu\s*[.!?]*$/i.test(raw)) {
     updates.references = []; workingCv.references = []; return true;
   }
   if (/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:người\s+)?tham chiếu(?=$|[\s,:;.!?)])/i.test(raw) && !isEditVerb) {
     const curRefs = Array.isArray(workingCv.references) ? workingCv.references : [];
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:người\s+)?tham chiếu\s*/i, '').trim();
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ|loại bỏ)\s+(?:người\s+)?tham chiếu\s*/i, '').replace(/[.!?]+$/, '').trim();
     if (!tail) { updates.references = []; workingCv.references = []; return true; }
     if (curRefs.length > 0) {
-      const pos = resolveOneBasedIndex(tail, curRefs.length);
-      if (pos.index0 !== null && !pos.outOfRange) {
-        const nextRefs = curRefs.filter((_, i) => i !== pos.index0);
-        updates.references = nextRefs; workingCv.references = nextRefs; return true;
+      if (isPurePositionalSelector(tail)) {
+        const pos = resolveOneBasedIndex(tail, curRefs.length);
+        if (pos.index0 !== null && !pos.outOfRange) {
+          const nextRefs = curRefs.filter((_, i) => i !== pos.index0);
+          updates.references = nextRefs; workingCv.references = nextRefs; return true;
+        }
+      } else {
+        const selNorm = normalizeCheck(tail);
+        const byNameIdx = curRefs.findIndex(r => normalizeCheck(r.name || '').includes(selNorm) || normalizeCheck(r.company || '').includes(selNorm));
+        if (byNameIdx !== -1) {
+          const nextRefs = curRefs.filter((_, i) => i !== byNameIdx);
+          updates.references = nextRefs; workingCv.references = nextRefs; return true;
+        }
       }
     }
     notices.push('Không tìm thấy người tham chiếu phù hợp để xóa.');
     return true;
   }
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|các)\s+)?(?:người\s+)?tham chiếu(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|các)\s+)?(?:người\s+)?tham chiếu\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
+  const addRefCmdMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:người\s+)?tham chiếu(?=$|[\s,:;.!?)])/i);
+  if (addRefCmdMatch) {
+    const reqCount = parseSmallCount(addRefCmdMatch[1]) || (addRefCmdMatch[1] && /cac|nhieu/i.test(normalizeCheck(addRefCmdMatch[1])) ? 2 : 1);
+    const tail = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:(?:\d+|một|hai|ba|bốn|năm|sáu|các|nhiều)\s+)?(?:người\s+)?tham chiếu\s*:?\s*/i, '').replace(/[.!?]+$/, '').trim();
     if (!tail) {
       notices.push('Bạn muốn thêm người tham chiếu nào (họ tên, chức vụ, công ty, email/SĐT)?');
       return true;
@@ -2910,18 +3072,41 @@ function applySingleClause(clauseRaw, state) {
     if (GENERIC_NEW_PLACEHOLDER_RE.test(tail)) {
       nextRefs.push({ id: `ref_ai_${Date.now()}`, name: 'Người tham chiếu', position: '', company: '', email: '', phone: '' });
     } else {
-      const email = (tail.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) || [])[0] || '';
-      const phone = (tail.match(/(?:\+84|0)(?:[\s.-]*\d){8,9}/) || [])[0] || '';
-      const cleaned = tail.replace(email, '').replace(phone, '').replace(/[(),]/g, ' - ');
-      const parts = cleaned.split(/\s*[-–]\s*/).map(p => sanitizeText(p, 120)).filter(Boolean);
-      nextRefs.push({
-        id: `ref_ai_${Date.now()}`,
-        name: parts[0] || sanitizeText(tail, 120),
-        position: parts[1] || '',
-        company: parts[2] || '',
-        email,
-        phone
-      });
+      const parseSingleRefEntry = (entryStr, idx, allowCommaDetail) => {
+        const email = (entryStr.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/) || [])[0] || '';
+        const phone = (entryStr.match(/(?:\+84|0)(?:[\s.-]*\d){8,9}/) || [])[0] || '';
+        let cleaned = entryStr.replace(email, '').replace(phone, '');
+        cleaned = allowCommaDetail ? cleaned.replace(/[(),]/g, ' - ') : cleaned.replace(/[()]/g, ' - ');
+        const parts = cleaned.split(/\s*[-–]\s*/).map(p => sanitizeText(p, 120)).filter(Boolean);
+        const refName = parts[0] || sanitizeText(entryStr, 120);
+        return refName ? {
+          id: `ref_ai_${Date.now()}_${idx}`,
+          name: refName,
+          position: parts[1] || '',
+          company: parts[2] || '',
+          email,
+          phone
+        } : null;
+      };
+
+      const honorificStartRe = /^(?:anh|chị|ông|bà|cô|chú|thầy|ts\.?|ths\.?|pgs\.?|gs\.?|mr\.?|ms\.?|mrs\.?|dr\.?)\s+/i;
+      const roleOrCompKeywordRe = /\b(?:giám\s+đốc|trưởng\s+phòng|phó\s+phòng|quản\s+lý|leader|manager|director|ceo|cto|cfo|hr|chuyên\s+viên|kỹ\s+sư|công\s+ty|tập\s+đoàn|doanh\s+nghiệp|chi\s+nhánh|corp|group|ltd|jsc)\b|@|(?:\+84|0)\d{8,}/i;
+      const commaParts = splitOutsideParens(tail, true);
+      const secondPartsLookLikePeople = commaParts.length >= 2 && (
+        commaParts.slice(1).some(p => honorificStartRe.test(p.trim())) ||
+        !commaParts.slice(1).some(p => roleOrCompKeywordRe.test(p))
+      );
+      const isMultiRef = reqCount >= 2 || /[;\n]|\s+và\s+/i.test(tail) || secondPartsLookLikePeople;
+
+      if (isMultiRef && commaParts.length >= 2) {
+        commaParts.forEach((entry, idx) => {
+          const parsedRef = parseSingleRefEntry(entry, idx, false);
+          if (parsedRef) nextRefs.push(parsedRef);
+        });
+      } else {
+        const parsedRef = parseSingleRefEntry(tail, 0, true);
+        if (parsedRef) nextRefs.push(parsedRef);
+      }
     }
     updates.references = nextRefs; workingCv.references = nextRefs;
     return true;
@@ -3113,14 +3298,14 @@ function applySingleClause(clauseRaw, state) {
     matchedProfile = true;
   }
 
-  const addrMatch = raw.match(/(?:địa chỉ|nơi ở|chỗ ở|quê quán|thành phố|sống tại|ở tại)\s*(?:thành|sang|là|:)?\s*([^;\n!?]{3,120})/i);
+  const addrMatch = raw.match(/(?:(?:địa chỉ|nơi ở|chỗ ở|quê quán|thành phố)\s*(?:thành|sang|là|:)|(?:sống tại|ở tại))\s*([^;\n!?]{2,120})/i);
   if (addrMatch && !/\b(?:kinh nghiệm|làm việc|tốt nghiệp|học tại)\b/i.test(raw)) {
     const addr = sanitizeText(addrMatch[1].replace(/[.!?]+$/, ''), 150);
     if (addr) { profileUpdates.address = addr; matchedProfile = true; }
   }
 
   // Profile Job Title (only when NOT referring to experience index!)
-  const roleMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)?\s*(?:tên\s+)?(?:vị trí(?:\s+ứng tuyển|\s+mục tiêu)?|chức danh|tiêu đề nghề nghiệp)\s*(?:thành|sang|là|:)\s*([^,;\n!?]{2,90})/i);
+  const roleMatch = raw.match(/(?:đổi|sửa|sữa|cập nhật|thay)?\s*(?:tên\s+)?(?:vị trí(?:\s+ứng tuyển|\s+mục tiêu)?|chức danh|tiêu đề nghề nghiệp)\s*(?:thành|sang|là|:)\s*([^,;\n!?]{1,90})/i);
   if (roleMatch && roleMatch[1] && !STYLE_INTENT_RE.test(normalizeCheck(roleMatch[1]))) {
     const role = sanitizeText(roleMatch[1].replace(/[.!?]+$/, ''), 90);
     if (role && !/\b(?:cong ty|tai |email|sdt)\b/i.test(normalizeCheck(role))) {
@@ -3129,7 +3314,7 @@ function applySingleClause(clauseRaw, state) {
   }
 
   if (!/\b(?:cong\s+ty|du\s+an|truong|chung\s+chi|giai\s+thuong|chuc\s+danh|vi\s+tri|ky\s+nang)\b/i.test(norm) && !isNameColorPhrase) {
-    const nameMatch = raw.match(/(?:(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:họ và tên|họ tên|tên tôi|tên của tôi|tên)\s*(?:thành|sang|là|:)|(?:tôi tên(?:\s+là)?|tên(?:\s+tôi)?\s+là|họ tên\s*(?:là|:)))\s*([^,;\n.!?]{2,300})/i);
+    const nameMatch = raw.match(/(?:(?:đổi|sửa|sữa|cập nhật|thay)\s+(?:họ và tên|họ tên|tên tôi|tên của tôi|tên)\s*(?:thành|sang|là|:)|(?:tôi tên(?:\s+là)?|tên(?:\s+tôi)?\s+là|họ tên\s*(?:là|:)))\s*([^,;\n.!?]{1,300})/i);
     if (nameMatch && nameMatch[1]) {
       const candidate = sanitizeText(nameMatch[1], 300);
       const candNorm = normalizeCheck(candidate);
@@ -3152,6 +3337,31 @@ function applySingleClause(clauseRaw, state) {
     workingCv.profile = { ...(workingCv.profile || {}), ...profileUpdates };
   }
   if (matchedProfile) return true;
+
+  // L2. Missing-value prompt when user asks to change field(s) WITHOUT giving new value(s) ("đổi email và điện thoại cùng lúc", "đổi email", "sửa tên và chức danh")
+  if (isEditVerb && !/\b(?:thanh|sang|la)\b|:/i.test(norm) && !STYLE_INTENT_RE.test(norm)) {
+    const fieldSpecs = [
+      { re: /\b(?:email|e-mail|thu\s+dien\s+tu)\b/i, label: 'Email', example: 'email thành ten@gmail.com' },
+      { re: /\b(?:so\s+dien\s+thoai|dien\s+thoai|sdt|phone)\b/i, label: 'Số điện thoại', example: 'số điện thoại thành 0912345678' },
+      { re: /\b(?:ho\s+(?:va\s+)?ten|ten(?:\s+toi|\s+ung\s+vien)?)\b/i, label: 'Họ và tên', example: 'tên thành Nguyễn Văn B', skipRe: /\b(?:cong\s+ty|truong|du\s+an|chung\s+chi)\b/i },
+      { re: /\b(?:chuc\s+danh|vi\s+tri(?:\s+ung\s+tuyen)?)\b/i, label: 'Chức danh ứng tuyển', example: 'chức danh thành Senior Sales' },
+      { re: /\b(?:dia\s+chi|noi\s+o|que\s+quan)\b/i, label: 'Địa chỉ', example: 'địa chỉ thành Quận 1, TP.HCM' },
+      { re: /\b(?:ngay\s+sinh|sinh\s+ngay|dob)\b/i, label: 'Ngày sinh', example: 'ngày sinh thành 15/08/1998' },
+      { re: /\b(?:gioi\s+tinh|gender)\b/i, label: 'Giới tính', example: 'giới tính thành Nữ' },
+      { re: /\b(?:website|portfolio|linkedin|github|behance)\b/i, label: 'Website/Portfolio', example: 'website thành https://portfolio.vn' },
+      { re: /\b(?:anh\s+dai\s+dien|avatar)\b/i, label: 'Ảnh đại diện', example: 'avatar thành https://...' },
+      { re: /\b(?:cong\s+ty)\b/i, label: 'Tên công ty', example: 'tên công ty thứ 1 thành FPT Software' },
+      { re: /\b(?:truong(?:\s+dai\s+hoc)?)\b/i, label: 'Tên trường', example: 'tên trường thành ĐH Kinh tế Quốc dân' },
+      { re: /\b(?:bang\s+cap|chuyen\s+nganh|gpa)\b/i, label: 'Thông tin học vấn', example: 'GPA thành 3.6/4.0' }
+    ];
+    const requestedFields = fieldSpecs.filter(f => f.re.test(norm) && !(f.skipRe && f.skipRe.test(norm)));
+    if (requestedFields.length > 0) {
+      const namesList = requestedFields.map(f => f.label).join(' và ');
+      const exList = `đổi ${requestedFields.slice(0, 3).map(f => f.example).join(' và ')}`;
+      notices.push(`Bạn muốn đổi ${namesList} sang giá trị cụ thể nào? Bạn có thể nhắn trực tiếp (ví dụ: "${exList}") để hệ thống cập nhật ngay nhé!`);
+      return true;
+    }
+  }
 
   // ─── M. SHORTHAND SKILL ADD/REMOVE ("thêm Python" / "xóa React") ───
   const bareRemoveMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:xóa|xoá|bỏ|gỡ)\s+([A-Za-z0-9+#./\s()-]{1,45})$/i);
