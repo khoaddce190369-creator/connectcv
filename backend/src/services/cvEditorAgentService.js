@@ -1768,21 +1768,39 @@ function applySingleClause(clauseRaw, state) {
   // Note: "sửa" and common tone typo "sữa" both normalize to "sua"; also support English edit verbs!
   const isEditVerb = /^(?:hay\s+|vui\s+long\s+|please\s+)?(?:sua|doi|cap\s+nhat|thay(?:\s+doi|\s+the)?|chinh(?:\s+sua)?|chuyen|dat(?:\s+lai)?|change|set|update|edit|modify|rename|replace)\b/i.test(norm);
 
-  // ─── 0. A4 PAGE MARGINS, BORDER RADIUS ("bo góc"), DIVIDER BORDERS ("xóa đường kẻ") & UNSUPPORTED RICH-TEXT CHECKS ───
-  const borderRadiusMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:doi|sua|chinh|dat|bat|them|lam|tao|set|make)\s+)?(?:bo\s+goc|bo\s+tron(?:\s+goc)?|border[\s-]*radius|rounded(?:\s+corners?)?)(?:\s+(?:cv|khung|the|anh|cac\s+muc))?\s*(?:thanh|sang|la|to|:)?\s*(-?\d+(?:\.\d+)?)?\s*(px|mm|rem)?$/i);
-  const removeBorderRadiusMatch = /\b(?:khong\s+bo\s+goc|(?:bo|xoa|tat|huy)\s+bo\s+(?:goc|tron)|vuong\s+goc|goc\s+vuong|sharp\s+corners?|border[\s-]*radius\s*(?::|to|thanh|la)?\s*0(?:px)?)\b/i.test(norm);
+  // ─── 0. A4 PAGE MARGINS, BORDER RADIUS ("bo góc", "đổi bo góc thẻ kỹ năng"), DIVIDER BORDERS ("xóa đường kẻ tiêu đề") & UNSUPPORTED RICH-TEXT CHECKS ───
+  const removeBorderRadiusMatch = /\b(?:khong\s+bo\s+goc|(?:bo|xoa|tat|huy)\s+bo\s+(?:goc|tron)|vuong\s+goc|goc\s+vuong|sharp\s+corners?|border[\s-]*radius\s*(?::|to|thanh|sang|la)?\s*0(?:px|mm|rem)?)\b/i.test(norm) &&
+    (/^(?:hay\s+|vui\s+long\s+|please\s+)?(?:khong\s+bo\s+goc|vuong\s+goc|goc\s+vuong|sharp\s+corners?|border[\s-]*radius)/i.test(norm) || /(?:bỏ|xóa|xoá|tắt|hủy|không)\s+bo\s+(?:góc|tròn)/i.test(raw) || /\b(?:xoa|tat|huy|khong)\s+bo\s+(?:goc|tron)\b/i.test(norm));
   if (removeBorderRadiusMatch) {
+    if (String(workingCv.theme?.borderRadius || '') === '0px') {
+      state.alreadySetNotes.push('Bo góc hiện đã ở mức 0px (vuông góc)');
+    }
     const themeUpdates = { ...(updates.theme || {}), borderRadius: '0px' };
     updates.theme = themeUpdates;
     workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
     return true;
   }
-  if (borderRadiusMatch) {
-    const rawNum = borderRadiusMatch[1] !== undefined ? parseFloat(borderRadiusMatch[1]) : 12;
-    const unit = (borderRadiusMatch[2] || 'px').toLowerCase();
-    const validBr = sanitizeCssBorderRadius(`${rawNum}${unit}`);
+  const hasBorderRadiusIntent = !/\b(?:mau|color)\b/i.test(norm) &&
+    /^(?:hay\s+|vui\s+long\s+|please\s+)?(?:(?:doi|sua|chinh(?:\s+sua)?|thay(?:\s+doi)?|cap\s+nhat|dat|bat|them|lam|tao|tang|giam|set|change|make|adjust)\s+)?(?:do\s+)?(?:bo\s+goc|bo\s+tron(?:\s+goc)?|goc\s+bo(?:\s+tron)?|lam\s+tron\s+goc|border[\s-]*radius|rounded(?:\s+corners?)?)\b/i.test(norm);
+  if (hasBorderRadiusIntent) {
+    const brNumMatch = norm.match(/(?:(?:bo\s+goc|bo\s+tron(?:\s+goc)?|goc\s+bo(?:\s+tron)?|lam\s+tron\s+goc|border[\s-]*radius|rounded(?:\s+corners?)?)(?:\s+[a-z]+){0,6}?\s*(?:(?:thanh|sang|la|len|xuong|muc|to|:)\s*)?)(-?\d+(?:\.\d+)?)\s*(px|mm|rem)?\s*[.!?]*$/i);
+    const curBrPx = parseInt(String(workingCv.theme?.borderRadius || ''), 10);
+    let candidateBrStr;
+    if (brNumMatch && brNumMatch[1] !== undefined) {
+      const rawNum = parseFloat(brNumMatch[1]);
+      const unit = (brNumMatch[2] || 'px').toLowerCase();
+      candidateBrStr = `${rawNum}${unit}`;
+    } else if (/^(?:hay\s+|vui\s+long\s+)?tang\b/i.test(norm)) {
+      candidateBrStr = `${Math.min(36, (Number.isFinite(curBrPx) ? curBrPx : 8) + 4)}px`;
+    } else if (/^(?:hay\s+|vui\s+long\s+)?giam\b/i.test(norm)) {
+      candidateBrStr = `${Math.max(0, (Number.isFinite(curBrPx) ? curBrPx : 12) - 4)}px`;
+    } else {
+      // Default to 12px; if already 12px and user explicitly asks to "đổi/thay/chỉnh bo góc", step to 16px so it is never a no-op
+      candidateBrStr = (curBrPx === 12 && /^(?:hay\s+|vui\s+long\s+|please\s+)?(?:doi|thay|chinh|change)\b/i.test(norm)) ? '16px' : '12px';
+    }
+    const validBr = sanitizeCssBorderRadius(candidateBrStr);
     if (!validBr) {
-      notices.push(`Độ bo góc "${rawNum}${unit}" nằm ngoài phạm vi hợp lệ (0px – 36px).`);
+      notices.push(`Độ bo góc "${candidateBrStr}" nằm ngoài phạm vi hợp lệ (0px – 36px).`);
       return true;
     }
     const themeUpdates = { ...(updates.theme || {}), borderRadius: validBr };
@@ -1791,9 +1809,14 @@ function applySingleClause(clauseRaw, state) {
     return true;
   }
 
-  const hideDividerMatch = /^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|an|tat|khong\s+dung|remove|hide|delete)\s+(?:tat\s+ca\s+|moi\s+|cac\s+)?(?:duong\s+ke(?:\s+ngang|\s+phan\s+cach)?|vach\s+ngan|duong\s+phan\s+cach|duong\s+gach\s+ngang|gach\s+ngang|vien(?:\s+khung|\s+muc)?|borders?|dividers?|lines?)$/i.test(norm);
-  const showDividerMatch = /^(?:hay\s+|vui\s+long\s+)?(?:hien|hien\s+thi|bat|them|khoi\s+phuc|show|add|enable)\s+(?:lai\s+)?(?:cac\s+)?(?:duong\s+ke(?:\s+ngang|\s+phan\s+cach)?|vach\s+ngan|duong\s+phan\s+cach|vien|borders?|dividers?)$/i.test(norm);
+  const hasNoColorWord = !/\b(?:mau|color|rgb\s*\()\b|#[0-9a-f]{3,6}\b/i.test(norm);
+  const dividerNounNormPart = '(?:duong\\s+ke|vach\\s+ngan|duong\\s+phan\\s+cach|duong\\s+gach(?:\\s+ngang|\\s+chan|\\s+duoi)?|gach\\s+ngang|gach\\s+duoi|gach\\s+chan\\s+(?:tieu\\s+de|cac\\s+muc|muc|phan|section)|vien(?:\\s+duoi|\\s+ngang|\\s+tieu\\s+de|\\s+khung|\\s+cac\\s+muc|\\s+muc)?|line\\s+(?:tieu\\s+de|ngang|phan\\s+cach|cac\\s+muc)|(?:section\\s+|heading\\s+|title\\s+|horizontal\\s+)?(?:borders?|dividers?)|divider\\s+lines?|horizontal\\s+lines?)';
+  const hideDividerMatch = hasNoColorWord && new RegExp(`^(?:hay\\s+|vui\\s+long\\s+|please\\s+)?(?:xoa|bo|go|an|tat|khong\\s+dung|lam\\s+mat|remove|hide|delete)\\s+(?:tat\\s+ca\\s+|toan\\s+bo\\s+|moi\\s+|het\\s+|cac\\s+)?${dividerNounNormPart}(?:\\s+.*)?$`, 'i').test(norm);
+  const showDividerMatch = hasNoColorWord && !hideDividerMatch && new RegExp(`^(?:hay\\s+|vui\\s+long\\s+|please\\s+)?(?:hien(?:\\s+thi|\\s+lai)?|bat(?:\\s+lai)?|them|khoi\\s+phuc|mo|show|add|enable)\\s+(?:lai\\s+)?(?:tat\\s+ca\\s+|cac\\s+)?${dividerNounNormPart}(?:\\s+.*)?$`, 'i').test(norm);
   if (hideDividerMatch || showDividerMatch) {
+    if (Boolean(workingCv.theme?.hideBorders) === hideDividerMatch) {
+      state.alreadySetNotes.push(hideDividerMatch ? 'Đường kẻ phân cách hiện đã được ẩn sẵn' : 'Đường kẻ phân cách hiện đang hiển thị sẵn');
+    }
     const themeUpdates = { ...(updates.theme || {}), hideBorders: hideDividerMatch };
     updates.theme = themeUpdates;
     workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
@@ -1951,11 +1974,29 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // ─── B. SHOW / HIDE SECTIONS ("chỉ hiện mục X", "hiện tất cả mục", "ẩn mọi mục", "ẩn mục tiêu và chứng chỉ") ───
-  const onlyShowSecMatch = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:(?:an\s+(?:tat\s+ca|toan\s+bo|het|moi)\s+(?:muc\s+)?)?chi\s+(?:hien(?:\s+thi)?|bat|de\s+hien)|only\s+show)\s+(?:cac\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(.+)$/i);
+  // ─── B. SHOW / HIDE SECTIONS ("chỉ hiện mục X", "chỉ giữ lại mục kinh nghiệm", "hiện tất cả mục", "ẩn mọi mục", "ẩn mục tiêu và chứng chỉ") ───
+  const onlyShowSecMatch = norm.match(/^(?:hay\s+|vui\s+long\s+|please\s+)?(?:(?:(?:an|xoa|bo|tat)\s+(?:tat\s+ca|toan\s+bo|het|moi)\s+(?:cac\s+)?(?:muc\s+|phan\s+)?)?(chi\s+(?:hien(?:\s+thi)?|bat|de\s+hien|(?:giu|de|chua)(?:\s+lai)?)|giu\s+lai(?:\s+duy\s+nhat)?)|only\s+(?:show|keep)|keep\s+only)\s*:?\s*(.+)$/i);
   if (onlyShowSecMatch && !/\b(?:anh\s+dai\s+dien|avatar)\b/i.test(norm)) {
-    const parts = onlyShowSecMatch[1].split(/\s*(?:,|;|\s+(?:va|hoac|cung|and)\s+)\s*/i).filter(Boolean);
-    const matchedKeys = parts.map(p => findSectionKeyFromText(p.replace(/^(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)/i, '')));
+    const isExplicitShowVerb = Boolean(onlyShowSecMatch[1] && /hien|bat/.test(onlyShowSecMatch[1])) || /^only\s+show\b/i.test(norm);
+    const cleanSecTail = onlyShowSecMatch[2].replace(/\s+(?:trong\s+(?:cv|ho\s+so)|tren\s+cv|cua\s+(?:toi|minh)|nhe|nha|di)+[.!?]*$/i, '').replace(/[.!?]+$/, '').trim();
+    const parts = cleanSecTail.split(/\s*(?:,|;|\s+(?:va|voi|hoac|cung|and)\s+)\s*/i).filter(Boolean);
+    const curSkillNormSet = new Set((Array.isArray(workingCv.skills) ? workingCv.skills : []).map(s => normalizeCheck(s?.name || '')).filter(Boolean));
+
+    const resolvePureSecPart = p => {
+      const hasExplicitMucPrefix = /^(?:cac\s+|duy\s+nhat\s+)?(?:muc\s+|phan\s+|sections?\s+)/i.test(p);
+      const stripped = p.replace(/^(?:cac\s+|duy\s+nhat\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|sections?\s+)/i, '').trim();
+      const sk = findSectionKeyFromText(stripped);
+      if (!sk) return null;
+      if (isExplicitShowVerb) return sk;
+      // For "chỉ giữ lại ...", require each part to be a PURE section name (so "chỉ giữ lại kỹ năng UX" goes to skill keep-only, while "chỉ giữ lại mục kinh nghiệm" / "chỉ giữ lại mục kỹ năng" toggles section visibility!)
+      if (!hasExplicitMucPrefix && curSkillNormSet.has(stripped)) return null;
+      const leftover = stripped
+        .replace(/\b(?:muc\s+tieu(?:\s+nghe\s+nghiep|\s+cong\s+viec)?|dinh\s+huong(?:\s+nghe\s+nghiep)?|loi\s+gioi\s+thieu|gioi\s+thieu(?:\s+ban\s+than)?|tom\s+tat|objective|summary|career\s+goal|about\s+me|bio|kinh\s+nghiem(?:\s+lam\s+viec)?|qua\s+trinh\s+(?:lam\s+viec|cong\s+tac)|lich\s+su\s+lam\s+viec|work\s+experience|experience|employment|trinh\s+do\s+hoc\s+van|hoc\s+van|qua\s+trinh\s+hoc\s+tap|giao\s+duc|dao\s+tao|education|academic|ky\s+nang|core\s+skills|tech\s+stack|chuyen\s+mon|nang\s+luc|so\s+truong|the\s+manh|skills?|skill|competencies|expertise|du\s+an(?:\s+noi\s+bat|\s+tieu\s+bieu)?|projects?|project|chung\s+chi|chung\s+nhan|certificates?|certifications?|certs?|giai\s+thuong|khen\s+thuong|thanh\s+tuu|thanh\s+tich|danh\s+hieu|awards?|honors?|achievements?|hoat\s+dong(?:\s+ngoai\s+khoa|\s+xa\s+hoi)?|tinh\s+nguyen|cau\s+lac\s+bo|activities|volunteering|extracurricular|so\s+thich|dam\s+me|thu\s+vui|interests?|hobbies|passions?|nguoi\s+tham\s+chieu|tham\s+chieu|nguoi\s+gioi\s+thieu|references?|referees?|custom\s+sections?|muc\s+tuy\s+chinh|tuy\s+chinh|muc\s+tu\s+tao|tu\s+tao|muc\s+rieng|muc\s+bo\s+sung|muc\s+khac)\b/gi, '')
+        .trim();
+      return leftover.length === 0 ? sk : null;
+    };
+
+    const matchedKeys = parts.map(resolvePureSecPart);
     if (matchedKeys.length > 0 && matchedKeys.every(Boolean)) {
       const keepSet = new Set(matchedKeys);
       const curVis = { ...(workingCv.sectionsVisibility || {}), ...(updates.sectionsVisibility || {}) };
@@ -2525,88 +2566,135 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // ─── E0. BULK N-FIRST / N-LAST RENAME OR EDIT ACROSS ALL ARRAY SECTIONS ("đổi tên 2 chứng chỉ đầu: Sales Pro, Hubspot Pro", "đổi tên 2 chứng chỉ đầu: A, B") ───
-  const bulkSliceEditMatch = raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:đổi|sửa|sữa|cập nhật|thay|đặt|change|update|rename|set)\s+(?:(tên|tiêu\s+đề|năm|đơn\s+vị(?:\s+cấp)?|nơi\s+cấp|vị\s+trí|chức\s+danh|chức\s+vụ|công\s+ty|trường|bằng\s+cấp|chuyên\s+ngành|gpa|vai\s+trò|công\s+nghệ|mô\s+tả|level|mức(?:\s+độ)?)\s+)?(?:của\s+)?(\d{1,3}|một|hai|ba|bốn|tư|năm|sáu|bảy|tám|chín|mười)\s+(?:mục\s+(?!tiêu\b|tùy\s+chỉnh\b|tự\s+tạo\b|riêng\b))?(.+?)\s+(đầu(?:\s+tiên)?|cuối(?:\s+cùng)?|first|last)\s*(?:thành|sang|là|to|:)\s*([^\r\n!?]+)$/i);
-  if (bulkSliceEditMatch) {
-    const subNorm = normalizeCheck(bulkSliceEditMatch[1] || '');
-    const countN = parseSmallCount(bulkSliceEditMatch[2]);
-    let targetPhrase = bulkSliceEditMatch[3].trim();
-    let secKey = findSectionKeyFromText(targetPhrase);
-    if (!secKey && /\bcong\s+ty\b/i.test(normalizeCheck(targetPhrase))) secKey = 'experience';
-    if (!secKey && /\btruong\b/i.test(normalizeCheck(targetPhrase))) secKey = 'education';
-    const isLast = /^(?:cuoi|last)/i.test(normalizeCheck(bulkSliceEditMatch[4]));
-    const vals = splitOutsideParens(bulkSliceEditMatch[5].replace(/[.!?]+$/, ''), true).map(v => sanitizeText(v, 200)).filter(Boolean);
+  // ─── E0. BULK N-FIRST / N-LAST OR EXPLICIT MULTI-INDEX RENAME/EDIT ACROSS ALL ARRAY SECTIONS ("đổi tên 2 chứng chỉ đầu: Sales Pro, Hubspot Pro", "đổi tên chứng chỉ 1 và 2: A, B") ───
+  const applyBulkTargetValues = (secKey, subNorm, indices, rawValsStr) => {
+    if (!secKey || !Array.isArray(workingCv[secKey])) return false;
+    const cleanValsStr = String(rawValsStr || '').replace(/^\s*:\s*/, '').replace(/[.!?]+$/, '').trim();
+    const vals = splitOutsideParens(cleanValsStr, true).map(v => sanitizeText(v.replace(/^\s*:\s*/, ''), 200)).filter(Boolean);
+    if (vals.length === 0) return false;
+    const curArr = workingCv[secKey];
+    const secName = SECTION_VI_NAMES[secKey] || secKey;
+    if (curArr.length === 0) {
+      notices.push(`Mục ${secName} hiện đang trống nên không có phần tử nào để cập nhật.`);
+      return true;
+    }
+    const validIndices = indices.filter(idx => idx >= 0 && idx < curArr.length);
+    if (validIndices.length === 0) {
+      notices.push(`CV hiện chỉ có ${curArr.length} phần tử trong mục ${secName}.`);
+      return true;
+    }
+    const resolveFieldForSec = () => {
+      if (secKey === 'certificates' || secKey === 'awards') {
+        if (/^nam$|^year$/.test(subNorm)) return 'year';
+        if (/don\s+vi|noi\s+cap|issuer/.test(subNorm)) return 'issuer';
+        return 'name';
+      }
+      if (secKey === 'skills') return /level|muc/.test(subNorm) ? 'level' : 'name';
+      if (secKey === 'projects') {
+        if (/vai\s+tro|role/.test(subNorm)) return 'role';
+        if (/cong\s+nghe|tech/.test(subNorm)) return 'technologies';
+        if (/mo\s+ta|desc/.test(subNorm)) return 'description';
+        return 'name';
+      }
+      if (secKey === 'experience') {
+        if (/vi\s+tri|chuc\s+danh|chuc\s+vu|vai\s+tro|position|role/.test(subNorm)) return 'position';
+        return 'company';
+      }
+      if (secKey === 'education') {
+        if (/bang|degree/.test(subNorm)) return 'degree';
+        if (/nganh|major/.test(subNorm)) return 'fieldOfStudy';
+        if (/gpa/.test(subNorm)) return 'gpa';
+        return 'school';
+      }
+      if (secKey === 'activities') return 'role';
+      if (secKey === 'references') return 'name';
+      if (secKey === 'customSections') return 'title';
+      return null;
+    };
+    const fieldKey = resolveFieldForSec();
+    const nextArr = curArr.map((it, idx) => {
+      const posInSlice = validIndices.indexOf(idx);
+      if (posInSlice === -1) return typeof it === 'object' && it !== null ? { ...it } : it;
+      const chosenVal = vals.length === 1 ? vals[0] : vals[posInSlice];
+      if (chosenVal === undefined) return typeof it === 'object' && it !== null ? { ...it } : it;
+      if (secKey === 'interests') return chosenVal;
+      if (fieldKey === 'level') {
+        return { ...it, level: normalizeSkillLevel(chosenVal, it.level || 4), _explicitLevel: true };
+      }
+      if (fieldKey === 'description') {
+        return { ...it, description: [chosenVal] };
+      }
+      return { ...it, [fieldKey]: chosenVal };
+    });
+    updates[secKey] = nextArr;
+    workingCv[secKey] = nextArr;
+    return true;
+  };
 
-    if (countN && countN >= 1 && secKey && Array.isArray(workingCv[secKey]) && vals.length > 0) {
-      const curArr = workingCv[secKey];
-      const secName = SECTION_VI_NAMES[secKey] || secKey;
-      if (curArr.length === 0) {
-        notices.push(`Mục ${secName} hiện đang trống nên không có phần tử nào để cập nhật.`);
+  const bulkSliceEditNormMatch = norm.match(/^(?:hay\s+|vui\s+long\s+|please\s+)?(?:doi|sua|cap\s+nhat|thay(?:\s+doi)?|chinh(?:\s+sua)?|dat|change|update|rename|set|edit)\s+(?:(ten|tieu\s+de|nam|don\s+vi(?:\s+cap)?|noi\s+cap|vi\s+tri|chuc\s+danh|chuc\s+vu|cong\s+ty|truong|bang\s+cap|chuyen\s+nganh|gpa|vai\s+tro|cong\s+nghe|mo\s+ta|level|muc(?:\s+do)?|name|title|year|issuer|role|position|company|school|degree)\s+)?(?:(?:cua|cho|o|trong)\s+)?(\d{1,3}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|one|two|three|four|five)\s+(?:(ten|tieu\s+de|nam|vi\s+tri|chuc\s+danh)\s+)?(?:(?:cac\s+)?(?:muc|cai|phan)\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(.+?)\s+(?:(?:o|phia|ben)\s+)?(dau(?:\s+tien)?|cuoi(?:\s+cung)?|first|last)(?:\s+(?:trong\s+cv|cua\s+toi|lan\s+luot|theo\s+thu\s+tu))*\s*(?:(?:thanh|sang|la|to)\s*:?\s*|:\s*)(.+)$/i) ||
+    norm.match(/^(?:please\s+)?(?:change|update|rename|set|edit)\s+(?:the\s+)?(first|last)\s+(\d{1,3}|one|two|three|four|five)\s+(.+?)(?:\s+(names?|titles?|years?|issuers?|roles?|levels?))?\s*(?:to\s*:?\s*|:\s*)(.+)$/i);
+
+  if (bulkSliceEditNormMatch) {
+    const isEnFirstLastOrder = /^(?:first|last)$/i.test(bulkSliceEditNormMatch[1] || '');
+    const subNorm = isEnFirstLastOrder
+      ? (bulkSliceEditNormMatch[4] || '').replace(/s$/, '')
+      : (bulkSliceEditNormMatch[1] || bulkSliceEditNormMatch[3] || '');
+    const countN = parseSmallCount(bulkSliceEditNormMatch[2]);
+    const targetPhrase = (isEnFirstLastOrder ? bulkSliceEditNormMatch[3] : bulkSliceEditNormMatch[4]).trim();
+    let secKey = findSectionKeyFromText(targetPhrase);
+    if (!secKey && /\bcong\s+ty|company\b/i.test(targetPhrase)) secKey = 'experience';
+    if (!secKey && /\btruong|school\b/i.test(targetPhrase)) secKey = 'education';
+    const isLast = /^(?:cuoi|last)/i.test(isEnFirstLastOrder ? bulkSliceEditNormMatch[1] : bulkSliceEditNormMatch[5]);
+
+    // Extract original-cased values tail from raw
+    const rawSplitRe = isEnFirstLastOrder
+      ? /^(?:please\s+)?(?:change|update|rename|set|edit)\s+(?:the\s+)?(?:first|last)\s+(?:\d{1,3}|one|two|three|four|five)\s+.+?\s*(?:to\s*:?\s*|:\s*)/i
+      : /(?:đầu(?:\s+tiên)?|dau(?:\s+tien)?|cuối(?:\s+cùng)?|cuoi(?:\s+cung)?|first|last)(?:\s+(?:trong\s+cv|của\s+tôi|cua\s+toi|lần\s+lượt|lan\s+luot|theo\s+thứ\s+tự|theo\s+thu\s+tu))*\s*(?:(?:thành|thanh|sang|là|la|to)\s*:?\s*|:\s*)/i;
+    const rawSepExec = rawSplitRe.exec(raw);
+    const rawValsStr = rawSepExec
+      ? (isEnFirstLastOrder ? raw.slice(rawSepExec[0].length) : raw.slice(rawSepExec.index + rawSepExec[0].length))
+      : (isEnFirstLastOrder ? bulkSliceEditNormMatch[5] : bulkSliceEditNormMatch[6]);
+
+    if (countN && countN >= 1 && secKey && Array.isArray(workingCv[secKey])) {
+      const curLen = workingCv[secKey].length;
+      const actualCount = Math.min(countN, curLen);
+      const indices = [];
+      for (let k = 0; k < actualCount; k++) {
+        indices.push(isLast ? curLen - actualCount + k : k);
+      }
+      if (applyBulkTargetValues(secKey, subNorm, curLen === 0 ? [0] : indices, rawValsStr)) {
         return true;
       }
-      const indices = [];
-      const actualCount = Math.min(countN, curArr.length);
-      for (let k = 0; k < actualCount; k++) {
-        indices.push(isLast ? curArr.length - actualCount + k : k);
-      }
-      const resolveFieldForSec = () => {
-        if (secKey === 'certificates' || secKey === 'awards') {
-          if (subNorm === 'nam') return 'year';
-          if (/don\s+vi|noi\s+cap/.test(subNorm)) return 'issuer';
-          return 'name';
-        }
-        if (secKey === 'skills') return /level|muc/.test(subNorm) ? 'level' : 'name';
-        if (secKey === 'projects') {
-          if (/vai\s+tro/.test(subNorm)) return 'role';
-          if (/cong\s+nghe/.test(subNorm)) return 'technologies';
-          if (/mo\s+ta/.test(subNorm)) return 'description';
-          return 'name';
-        }
-        if (secKey === 'experience') {
-          if (/vi\s+tri|chuc\s+danh|chuc\s+vu|vai\s+tro/.test(subNorm)) return 'position';
-          return 'company';
-        }
-        if (secKey === 'education') {
-          if (/bang/.test(subNorm)) return 'degree';
-          if (/nganh/.test(subNorm)) return 'fieldOfStudy';
-          if (/gpa/.test(subNorm)) return 'gpa';
-          return 'school';
-        }
-        if (secKey === 'activities') return 'role';
-        if (secKey === 'references') return 'name';
-        if (secKey === 'customSections') return 'title';
-        return null;
-      };
-      const fieldKey = resolveFieldForSec();
-      const nextArr = curArr.map((it, idx) => {
-        const posInSlice = indices.indexOf(idx);
-        if (posInSlice === -1) return typeof it === 'object' && it !== null ? { ...it } : it;
-        const chosenVal = vals.length === 1 ? vals[0] : vals[posInSlice];
-        if (chosenVal === undefined) return typeof it === 'object' && it !== null ? { ...it } : it;
-        if (secKey === 'interests') return chosenVal;
-        if (fieldKey === 'level') {
-          return { ...it, level: normalizeSkillLevel(chosenVal, it.level || 4), _explicitLevel: true };
-        }
-        if (fieldKey === 'description') {
-          return { ...it, description: [chosenVal] };
-        }
-        return { ...it, [fieldKey]: chosenVal };
-      });
-      updates[secKey] = nextArr;
-      workingCv[secKey] = nextArr;
+    }
+  }
+
+  // Explicit multi-index bulk edit ("đổi tên chứng chỉ 1 và 2: Sales Pro, Hubspot Pro", "đổi tên chứng chỉ thứ 1, 2 thành A, B")
+  const multiIdxBulkNormMatch = norm.match(/^(?:hay\s+|vui\s+long\s+|please\s+)?(?:doi|sua|cap\s+nhat|thay(?:\s+doi)?|dat|change|update|rename|set)\s+(?:(ten|tieu\s+de|nam|don\s+vi(?:\s+cap)?|noi\s+cap|vi\s+tri|chuc\s+danh|cong\s+ty|truong|vai\s+tro|level|muc)\s+)?(?:(?:cua|cho)\s+)?(.+?)\s+(?:thu\s+|so\s+|#)?(\d{1,2})\s*(?:,|&|\b(?:va|voi|cung|and)\b)\s*(?:thu\s+|so\s+|#)?(\d{1,2})(?:\s+(?:lan\s+luot|theo\s+thu\s+tu))*\s*(?:(?:thanh|sang|la|to)\s*:?\s*|:\s*)(.+)$/i);
+  if (multiIdxBulkNormMatch) {
+    const subNorm = multiIdxBulkNormMatch[1] || '';
+    const secKey = findSectionKeyFromText(multiIdxBulkNormMatch[2]);
+    const idx1 = parseInt(multiIdxBulkNormMatch[3], 10) - 1;
+    const idx2 = parseInt(multiIdxBulkNormMatch[4], 10) - 1;
+    const rawIdxSep = /(?:thứ\s+|thu\s+|số\s+|so\s+|#)?\d{1,2}\s*(?:,|&|\b(?:và|va|với|voi|cùng|cung|and)\b)\s*(?:thứ\s+|thu\s+|số\s+|so\s+|#)?\d{1,2}(?:\s+(?:lần\s+lượt|lan\s+luot|theo\s+thứ\s+tự|theo\s+thu\s+tu))*\s*(?:(?:thành|thanh|sang|là|la|to)\s*:?\s*|:\s*)/i.exec(raw);
+    const rawValsStr = rawIdxSep ? raw.slice(rawIdxSep.index + rawIdxSep[0].length) : multiIdxBulkNormMatch[5];
+    if (secKey && idx1 >= 0 && idx2 >= 0 && applyBulkTargetValues(secKey, subNorm, [idx1, idx2], rawValsStr)) {
       return true;
     }
   }
 
   // ─── E. COMPOUND & SINGLE N-FIRST / N-LAST SLICE DELETION ACROSS ALL ARRAY SECTIONS ("xóa 2 kỹ năng đầu và 2 kỹ năng cuối", "xóa 3 kỹ năng cuối") ───
-  const compoundSliceDelNorm = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loai\s+bo|delete|remove)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?([a-z\s]+?)\s+(dau(?:\s+tien)?|cuoi(?:\s+cung)?|first|last)\s+(?:va|cung|and|,)\s*(?:(?:xoa|bo|go|loai\s+bo|delete|remove)\s+)?(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(?:([a-z\s]+?)\s+)?(dau(?:\s+tien)?|cuoi(?:\s+cung)?|first|last)$/);
+  const cleanSliceNorm = norm.replace(/\s+(?:trong\s+(?:cv|ho\s+so)|tren\s+cv|cua\s+(?:toi|minh)|giup\s+(?:toi|minh)|nhe|nha|di)+[.!?]*$/i, '').replace(/[.!?]+$/, '').trim();
+  const compoundSliceDelNorm = cleanSliceNorm.match(/^(?:hay\s+|vui\s+long\s+|please\s+)?(?:xoa|bo|go|loai\s+bo|delete|remove)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|one|two|three|four|five)\s+(?:(?:cac\s+)?(?:muc|cai|phan)\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(.+?)\s+(?:(?:o|phia|ben)\s+)?(dau(?:\s+tien)?|cuoi(?:\s+cung)?|first|last)\s*(?:,|&|\+|\b(?:va|voi|cung|roi|and|with)\b)\s*(?:(?:xoa|bo|go|loai\s+bo|delete|remove)\s+)?(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|one|two|three|four|five)\s+(?:(?:cac\s+)?(?:muc|cai|phan)\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(?:(.+?)\s+)?(?:(?:o|phia|ben)\s+)?(dau(?:\s+tien)?|cuoi(?:\s+cung)?|first|last)$/i) ||
+    cleanSliceNorm.match(/^(?:please\s+)?(?:delete|remove)\s+(?:the\s+)?(first|last)\s+(\d{1,4}|one|two|three|four|five)\s+(.+?)\s*(?:,|&|\+|\band\b)\s*(?:(?:delete|remove)\s+)?(?:the\s+)?(first|last)\s+(\d{1,4}|one|two|three|four|five)(?:\s+(.+))?$/i);
   if (compoundSliceDelNorm) {
-    const count1 = parseSmallCount(compoundSliceDelNorm[1]);
-    const sec1 = findSectionKeyFromText(compoundSliceDelNorm[2]);
-    const isLast1 = /^(?:cuoi|last)/.test(compoundSliceDelNorm[3]);
-    const count2 = parseSmallCount(compoundSliceDelNorm[4]);
-    const sec2 = (compoundSliceDelNorm[5] && findSectionKeyFromText(compoundSliceDelNorm[5])) || sec1;
-    const isLast2 = /^(?:cuoi|last)/.test(compoundSliceDelNorm[6]);
+    const isEnOrder = /^(?:first|last)$/i.test(compoundSliceDelNorm[1] || '');
+    const count1 = parseSmallCount(isEnOrder ? compoundSliceDelNorm[2] : compoundSliceDelNorm[1]);
+    const sec1 = findSectionKeyFromText(isEnOrder ? compoundSliceDelNorm[3] : compoundSliceDelNorm[2]);
+    const isLast1 = /^(?:cuoi|last)/i.test(isEnOrder ? compoundSliceDelNorm[1] : compoundSliceDelNorm[3]);
+    const count2 = parseSmallCount(isEnOrder ? compoundSliceDelNorm[5] : compoundSliceDelNorm[4]);
+    const rawSec2 = isEnOrder ? compoundSliceDelNorm[6] : compoundSliceDelNorm[5];
+    const sec2 = (rawSec2 && findSectionKeyFromText(rawSec2)) || sec1;
+    const isLast2 = /^(?:cuoi|last)/i.test(isEnOrder ? compoundSliceDelNorm[4] : compoundSliceDelNorm[6]);
 
     if (count1 && count2 && sec1 && sec2 && Array.isArray(workingCv[sec1]) && Array.isArray(workingCv[sec2])) {
       if (sec1 === sec2) {
@@ -2630,11 +2718,11 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  const sliceDelNorm = norm.match(/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loai\s+bo|delete|remove)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi)\s+(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(.+?)\s+(cuoi(?:\s+cung)?|dau(?:\s+tien)?|last|first)$/);
-  if (sliceDelNorm) {
+  const sliceDelNorm = cleanSliceNorm.match(/^(?:hay\s+|vui\s+long\s+|please\s+)?(?:xoa|bo|go|loai\s+bo|delete|remove)\s+(\d{1,4}|mot|hai|ba|bon|tu|nam|sau|bay|tam|chin|muoi|one|two|three|four|five)\s+(?:(?:cac\s+)?(?:muc|cai|phan)\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b))?(.+?)\s+(?:(?:o|phia|ben)\s+)?(cuoi(?:\s+cung)?|dau(?:\s+tien)?|last|first)$/i);
+  if (sliceDelNorm && !/\b(?:dau|cuoi|first|last)\b/i.test(sliceDelNorm[2])) {
     const countN = parseSmallCount(sliceDelNorm[1]);
     const secKey = findSectionKeyFromText(sliceDelNorm[2]);
-    const isLast = /^(?:cuoi|last)/.test(sliceDelNorm[3]);
+    const isLast = /^(?:cuoi|last)/i.test(sliceDelNorm[3]);
     if (countN && countN >= 1 && secKey && Array.isArray(workingCv[secKey])) {
       const curArr = workingCv[secKey];
       const secName = SECTION_VI_NAMES[secKey] || secKey;
@@ -2653,7 +2741,7 @@ function applySingleClause(clauseRaw, state) {
   }
 
   // ─── F. SKILLS: TONE-TOLERANT KEEP-ONLY ("chỉ giử lại UX", bare "chỉ giữ lại UX"), CLEAR, POSITIONAL 1-BASED DELETE, RELATIVE & ABSOLUTE LEVEL EDIT, ADD ───
-  // F1. Tone-tolerant conditional keep-only (supports BOTH "xóa hết kỹ năng chỉ giữ lại UX" AND bare "chỉ giữ lại UX" / "keep only UX"!)
+  // F1. Tone-tolerant conditional keep-only (supports BOTH "xóa hết kỹ năng chỉ giữ lại UX" AND bare "chỉ giữ lại UX" / "keep only UX", while NEVER mistaking CV section names like "mục kinh nghiệm" for skills!)
   const keepConnectorRe = /\b(?:chi\s+(?:giu|de|chua)(?:\s+lai)?|giu\s+lai\s+duy\s+nhat|ngoai\s+tru|tru|keep\s+only)\b/i;
   if (/^(?:hay\s+|vui\s+long\s+)?(?:xoa|bo|go|loc|chi\s+(?:giu|de|chua)|giu\s+lai\s+duy\s+nhat|keep\s+only)\b/i.test(norm) && keepConnectorRe.test(norm) && !/\b(?:chi\s+hien|only\s+show)\b/i.test(norm)) {
     const rawKeepMatch =
@@ -2661,23 +2749,44 @@ function applySingleClause(clauseRaw, state) {
       raw.match(/^(?:hãy\s+|vui lòng\s+)?(?:chỉ\s+(?:giữ|giử|giư|giu|để|de|chừa)(?:\s+lại|\s+lai)?|giữ\s+lại\s+duy\s+nhất|keep\s+only)\s+(?:(?:các\s+|mục\s+)?(kỹ\s*năng|kĩ\s*năng|core\s+skills(?:\s*&\s*tech\s+stack)?|tech\s+stack|skills?|skill|chứng\s+chỉ|sở\s+thích|dự\s+án|giải\s+thưởng)\s*)?:?\s*([^\r\n!?]+)$/i);
 
     if (rawKeepMatch) {
+      const hasExplicitSecHeader = Boolean(rawKeepMatch[1] && rawKeepMatch[1].trim());
       const secHeaderStr = rawKeepMatch[1] || 'skills';
       const keepTailStr = rawKeepMatch[2];
+      const tailLooksLikeCvSection = !hasExplicitSecHeader && (
+        Boolean(findSectionKeyFromText(keepTailStr)) ||
+        /^(?:muc|phan|sections?)\b/i.test(normalizeCheck(keepTailStr))
+      );
       const detectedSec = findSectionKeyFromText(secHeaderStr) || 'skills';
-      if (detectedSec === 'skills') {
+      if (!tailLooksLikeCvSection && detectedSec === 'skills') {
         const keepParsed = parseSkillTokens(keepTailStr).filter(kp => !kp.invalidLevel && !kp.invalidLength);
         if (keepParsed.length > 0) {
           const currentSkills = Array.isArray(workingCv.skills) ? workingCv.skills : [];
-          const nextSkills = keepParsed.map((kp, idx) => {
-            const existing = currentSkills.find(cs => String(cs?.name || '').trim().toLowerCase() === kp.name.toLowerCase());
-            if (existing) return kp._explicitLevel ? { ...existing, level: kp.level, _explicitLevel: true } : { ...existing };
-            return { id: `sk_ai_${Date.now()}_${idx}`, name: kp.name, level: kp.level, _explicitLevel: kp._explicitLevel };
-          });
+          const nextSkills = [];
+          for (let idx = 0; idx < keepParsed.length; idx++) {
+            const kp = keepParsed[idx];
+            const kpNorm = normalizeCheck(kp.name);
+            const exactExisting = currentSkills.find(cs => normalizeCheck(cs?.name || '') === kpNorm);
+            if (exactExisting) {
+              nextSkills.push(kp._explicitLevel ? { ...exactExisting, level: kp.level, _explicitLevel: true } : { ...exactExisting });
+              continue;
+            }
+            const tokenMatches = !kp._explicitLevel ? currentSkills.filter(cs => {
+              const csNorm = normalizeCheck(cs?.name || '');
+              return csNorm.split(/[\s/&(),+-]+/).includes(kpNorm);
+            }) : [];
+            if (tokenMatches.length > 0) {
+              tokenMatches.forEach(tm => {
+                if (!nextSkills.some(ns => ns.id === tm.id)) nextSkills.push({ ...tm });
+              });
+              continue;
+            }
+            nextSkills.push({ id: `sk_ai_${Date.now()}_${idx}`, name: kp.name, level: kp.level, _explicitLevel: kp._explicitLevel });
+          }
           updates.skills = nextSkills;
           workingCv.skills = nextSkills;
           return true;
         }
-      } else if (Array.isArray(workingCv[detectedSec])) {
+      } else if (!tailLooksLikeCvSection && Array.isArray(workingCv[detectedSec])) {
         const keepNames = splitOutsideParens(keepTailStr, true).map(x => normalizeCheck(x)).filter(Boolean);
         if (keepNames.length > 0) {
           const curArr = workingCv[detectedSec];
@@ -3067,56 +3176,83 @@ function applySingleClause(clauseRaw, state) {
     }
   }
 
-  // Add experience (supports "... đến nay" -> current: true, and NEVER fabricates location from profile.address!)
-  if (!isEditVerb && /^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?kinh nghiệm(?:\s+làm(?:\s+việc)?)?(?=$|[\s,:;.!?)])/i.test(raw)) {
-    const detailMatch = raw.match(/(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?kinh nghiệm(?:\s+làm(?:\s+việc)?)?\s+(.+?)\s+(?:tại|ở)\s+([^\n;!?]+)/i);
+  // Add 1 or N experiences ("thêm 2 kinh nghiệm tại FPT và VNG", "thêm kinh nghiệm ... đến nay" -> current: true, and NEVER fabricates location from profile.address!)
+  const addExpCmdMatch = !isEditVerb && raw.match(/^(?:hãy\s+|vui lòng\s+|please\s+)?(?:thêm|bổ sung|add)\s+(?:(\d+|một|hai|ba|bốn|tư|năm|sáu|các|nhiều|vài|mục|one|two|three|four|five)\s+)?(?:kinh\s+nghiệm(?:\s+làm(?:\s+việc)?)?|work\s+experiences?|experiences?)(?=$|[\s,:;.!?)])/i);
+  if (addExpCmdMatch) {
+    const rawExpQuant = addExpCmdMatch[1] || '';
+    const reqExpCount = parseSmallCount(rawExpQuant) || (/cac|nhieu|vai/i.test(normalizeCheck(rawExpQuant)) ? 2 : 1);
+    const tailOnly = raw.replace(/^(?:hãy\s+|vui lòng\s+|please\s+)?(?:thêm|bổ sung|add)\s+(?:(?:\d+|một|hai|ba|bốn|tư|năm|sáu|các|nhiều|vài|mục|one|two|three|four|five)\s+)?(?:kinh\s+nghiệm(?:\s+làm(?:\s+việc)?)?|work\s+experiences?|experiences?)\s*:?\s*/i, '').trim();
     const nextExp = Array.isArray(workingCv.experience) ? workingCv.experience.map(e => ({ ...e })) : [];
-    if (detailMatch && !isGenericPlaceholder(detailMatch[1])) {
-      const position = sanitizeText(detailMatch[1].replace(/^làm\s+/i, ''), 120);
-      let compPart = detailMatch[2].trim();
+    const defaultPos = workingCv?.profile?.jobTitle || 'Chuyên viên Kinh doanh / Chuyên môn';
+
+    const buildExpItem = (posStr, compRawStr, idx, isGenericCompanyFallback) => {
+      let compPart = String(compRawStr || '').trim();
       let startDate = '01/2024';
       let endDate = 'Hiện tại';
-      const timeMatch = compPart.match(/\s+(?:từ|giai đoạn)\s+([0-9\/-]+)\s*(?:đến|tới|-|–)\s*([^\n;,.!?]+)/i);
+      const timeMatch = compPart.match(/\s+(?:từ|giai đoạn|from)\s+([0-9\/-]+)\s*(?:đến|tới|to|-|–)\s*([^\n;,.!?]+)/i) ||
+        compPart.match(/\s*\(\s*([0-9\/-]+)\s*(?:đến|tới|to|-|–)\s*([^)]+)\s*\)\s*$/i);
       if (timeMatch) {
         startDate = sanitizeText(timeMatch[1], 30);
         const rawEnd = sanitizeText(timeMatch[2], 30);
-        endDate = /^nay$/i.test(rawEnd) ? 'Hiện tại' : rawEnd;
+        endDate = /^nay|present|now$/i.test(rawEnd) ? 'Hiện tại' : rawEnd;
         compPart = compPart.slice(0, timeMatch.index).trim();
       }
-      const company = sanitizeText(compPart.replace(/[.!?]+$/, ''), 120);
-      const isCur = isCurrentEndDate(endDate) || (timeMatch && isCurrentEndDate(timeMatch[2]));
-      nextExp.unshift({
-        id: `exp_ai_${Date.now()}`,
-        position: position || 'Chuyên viên',
-        company: company || 'Tên Doanh Nghiệp',
+      const cleanComp = sanitizeText(compPart.replace(/^(?:làm(?:\s+việc)?\s+)?(?:tại|ở|at)\s+/i, '').replace(/[.!?]+$/, ''), 120);
+      const finalPos = sanitizeText(posStr || '', 120) || defaultPos;
+      const finalComp = cleanComp || (isGenericCompanyFallback ? 'Tên Công Ty / Tổ Chức' : 'Tên Doanh Nghiệp');
+      const isCur = isCurrentEndDate(endDate) || Boolean(timeMatch && isCurrentEndDate(timeMatch[2]));
+      return {
+        id: `exp_ai_${Date.now()}_${idx}`,
+        position: finalPos,
+        company: finalComp,
         location: '', // NEVER fabricate candidate's home address as company location!
         startDate,
         endDate,
         current: Boolean(isCur),
-        description: [`Đảm nhiệm vai trò ${position || 'chuyên môn'} tại ${company || 'doanh nghiệp'}, triển khai công việc đúng tiến độ và tiêu chuẩn chất lượng.`]
+        description: posStr
+          ? [`Đảm nhiệm vai trò ${finalPos} tại ${finalComp}, triển khai công việc đúng tiến độ và tiêu chuẩn chất lượng.`]
+          : ['Trực tiếp phụ trách các nghiệp vụ chuyên môn trọng tâm và phối hợp cùng đội ngũ hoàn thành chỉ tiêu đề ra.']
+      };
+    };
+
+    const multiSplitParts = splitOutsideParens(tailOnly.replace(/[.!?]+$/, ''), true);
+    const isMultiExp = (reqExpCount >= 2 || /[;\n]/.test(tailOnly) || /\s+(?:và|cùng|and)\s+(?:làm(?:\s+việc)?\s+)?(?:tại|ở|at)\s+\S/i.test(tailOnly)) && multiSplitParts.length >= 2;
+
+    if (isMultiExp) {
+      let sharedRole = '';
+      const parsedEntries = [];
+      multiSplitParts.forEach((part, idx) => {
+        const pTrim = part.trim();
+        if (!pTrim) return;
+        const leadingAtMatch = pTrim.match(/^(?:làm(?:\s+việc)?\s+)?(?:tại|ở|at)\s+(.+)$/i);
+        if (leadingAtMatch) {
+          parsedEntries.push(buildExpItem(sharedRole, leadingAtMatch[1], idx, false));
+          return;
+        }
+        const roleAtMatch = pTrim.match(/^(.+?)\s+(?:tại|ở|at)\s+(.+)$/i);
+        if (roleAtMatch && !isGenericPlaceholder(roleAtMatch[1])) {
+          const r = sanitizeText(roleAtMatch[1].replace(/^làm\s+/i, ''), 120);
+          if (idx === 0) sharedRole = r;
+          parsedEntries.push(buildExpItem(r, roleAtMatch[2], idx, false));
+          return;
+        }
+        parsedEntries.push(buildExpItem(sharedRole, pTrim, idx, false));
       });
-    } else {
-      const tailOnly = raw.replace(/^(?:hãy\s+|vui lòng\s+)?(?:thêm|bổ sung)\s+(?:1\s+|một\s+|mục\s+)?kinh nghiệm(?:\s+làm(?:\s+việc)?)?\s*:?\s*/i, '').trim();
-      let companyOrRole = isGenericPlaceholder(tailOnly) ? '' : sanitizeText(tailOnly.replace(/^(?:tại|ở)\s+/i, '').replace(/[.!?]+$/, ''), 120);
-      let startDate = '01/2024';
-      let endDate = 'Hiện tại';
-      const timeMatch = companyOrRole.match(/\s+(?:từ|giai đoạn)\s+([0-9\/-]+)\s*(?:đến|tới|-|–)\s*([^\n;,.!?]+)/i);
-      if (timeMatch) {
-        startDate = sanitizeText(timeMatch[1], 30);
-        const rawEnd = sanitizeText(timeMatch[2], 30);
-        endDate = /^nay$/i.test(rawEnd) ? 'Hiện tại' : rawEnd;
-        companyOrRole = companyOrRole.slice(0, timeMatch.index).trim();
+      if (parsedEntries.length > 0) {
+        parsedEntries.forEach(pe => nextExp.push(pe));
+        updates.experience = nextExp;
+        workingCv.experience = nextExp;
+        return true;
       }
-      nextExp.unshift({
-        id: `exp_ai_${Date.now()}`,
-        position: workingCv?.profile?.jobTitle || 'Chuyên viên Kinh doanh / Chuyên môn',
-        company: companyOrRole || 'Tên Công Ty / Tổ Chức',
-        location: '',
-        startDate,
-        endDate,
-        current: isCurrentEndDate(endDate),
-        description: ['Trực tiếp phụ trách các nghiệp vụ chuyên môn trọng tâm và phối hợp cùng đội ngũ hoàn thành chỉ tiêu đề ra.']
-      });
+    }
+
+    const detailMatch = tailOnly.match(/^(.+?)\s+(?:tại|ở|at)\s+([^\n;!?]+)/i);
+    if (detailMatch && !/^(?:làm(?:\s+việc)?)$/i.test(detailMatch[1].trim()) && !isGenericPlaceholder(detailMatch[1])) {
+      const position = sanitizeText(detailMatch[1].replace(/^làm\s+/i, ''), 120);
+      nextExp.unshift(buildExpItem(position, detailMatch[2], 0, false));
+    } else {
+      const singleComp = isGenericPlaceholder(tailOnly) ? '' : tailOnly.replace(/^(?:làm(?:\s+việc)?\s+)?(?:tại|ở|at)\s+/i, '');
+      nextExp.unshift(buildExpItem('', singleComp, 0, true));
     }
     updates.experience = nextExp;
     workingCv.experience = nextExp;
@@ -4396,7 +4532,7 @@ NHIỆM VỤ:
 Đọc yêu cầu người dùng và trả về DUY NHẤT JSON hợp lệ {"reply": "...", "updates": {...}}:
 - "reply": Văn bản thuần (KHÔNG dùng ** Markdown), trung thực 100%, chỉ báo đã sửa những gì thực sự thay đổi trong "updates".
 - "updates": CHỈ chứa các khóa thực sự thay đổi:
-  1. "theme": { "primaryColor", "nameColor", "textColor", "bgColor", "headingColor", "companyColor", "schoolColor", "projectColor", "jobTitleColor", "sectionColors": { "experience"|"education"|"skills"|...: "#RRGGBB" }, "fontFamily" CHỈ trong [${SUPPORTED_FONTS_LIST_STR}] (TUYỆT ĐỐI KHÔNG đổi Arial/Times/Calibri sang Roboto/Merriweather — nếu ngoài danh sách thì để {} và giải thích), "fontSize": "small"|"medium"|"large", "fontSizePx": 8..36, "lineSpacing": "compact"|"normal"|"relaxed", "lineSpacingNum": 0.8..3.0, "marginTop"|"marginRight"|"marginBottom"|"marginLeft" }
+  1. "theme": { "primaryColor", "nameColor", "textColor", "bgColor", "headingColor", "companyColor", "schoolColor", "projectColor", "jobTitleColor", "sectionColors": { "experience"|"education"|"skills"|...: "#RRGGBB" }, "fontFamily" CHỈ trong [${SUPPORTED_FONTS_LIST_STR}] (TUYỆT ĐỐI KHÔNG đổi Arial/Times/Calibri sang Roboto/Merriweather — nếu ngoài danh sách thì để {} và giải thích), "fontSize": "small"|"medium"|"large", "fontSizePx": 8..36, "lineSpacing": "compact"|"normal"|"relaxed", "lineSpacingNum": 0.8..3.0, "marginTop"|"marginRight"|"marginBottom"|"marginLeft", "borderRadius": "0px".."36px", "hideBorders": true|false }
   2. "profile": { "fullName" (<=50 ký tự), "jobTitle", "email", "phone", "address", "website", "avatar", "showAvatar", "dateOfBirth", "gender" }
   3. "objective", "experience", "education", "skills" (level 1..5), "projects", "certificates", "awards", "activities", "interests", "references", "customSections", "sectionsVisibility", "sectionOrder".
 - Mọi chỉ số vị trí ("2", "thứ 2", "hai", "đầu tiên", "cuối cùng") đều tính 1-based.

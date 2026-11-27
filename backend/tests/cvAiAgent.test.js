@@ -1167,7 +1167,7 @@ test('Round 5 Audit (All 12 Fail + Partial Cases): schoolColor variants, hiện 
   assert.equal(pt20.body.updates.theme?.fontSizePx, 20);
 
   const indexHtml = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
-  assert.ok(/index-20261127-v\d+\.js/.test(indexHtml), 'index.html must reference cache-proof versioned bundle');
+  assert.ok(/index-2026112\d-v\d+\.js/.test(indexHtml), 'index.html must reference cache-proof versioned bundle');
   const v8Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v8.js'), 'utf8');
   assert.ok(v8Bundle.includes('theme.marginLeft'), 'v8 bundle must reference theme.marginLeft');
   assert.ok(v8Bundle.includes('theme.fontSizePx'), 'v8 bundle must reference theme.fontSizePx');
@@ -1261,7 +1261,7 @@ test('Round 6 Audit (All 7 Fail + Partial Cases): multi-references add, cert yea
   });
   assert.equal(fpx25.body.updates.theme?.fontSizePx, 25);
   const indexHtml = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
-  assert.ok(/index-20261127-v\d+\.js/.test(indexHtml), 'index.html must load cache-busted bundle');
+  assert.ok(/index-2026112\d-v\d+\.js/.test(indexHtml), 'index.html must load cache-busted bundle');
   const v9Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v9.js'), 'utf8');
   assert.ok(v9Bundle.includes('theme.fontSizePx>=8&&theme.fontSizePx<=36'), 'v9 bundle must render fontSizePx up to 36');
   assert.ok(!v9Bundle.includes('fontSizePx<=24'), 'v9 bundle must NOT cap fontSizePx at 24');
@@ -1543,10 +1543,144 @@ test('Round 8 Audit (Groups A Bulk/Multi-Target, B 23+ Synonyms/Aliases, C Valid
   assert.equal(dotSplit.body.updates.skills?.length, 4);
   assert.ok(dotSplit.body.updates.interests?.includes('Bơi lội'));
 
-  // Verify v11 bundle exists and renders borderRadius + hideBorders
+  // Verify v12/v11 bundle exists and renders borderRadius + hideBorders
   const v11Html = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
-  assert.ok(v11Html.includes('index-20261127-v11.js'));
+  assert.ok(v11Html.includes('index-20261128-v12.js'));
   const v11Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v11.js'), 'utf8');
   assert.ok(v11Bundle.includes('theme.borderRadius'));
   assert.ok(v11Bundle.includes('theme.hideBorders===!0'));
+});
+
+test('Round 9 Audit (All 6 Remaining Benchmark Cases: P53, P01, P02, P71, P44, P45 + variants)', async () => {
+  const fourteenSkills = Array.from({ length: 14 }, (_, i) => ({
+    id: `sk_${i + 1}`,
+    name: i === 0 ? 'UX' : (i === 1 ? 'Figma' : `Skill ${i + 1}`),
+    level: 4
+  }));
+  const cv9 = makeRealisticSampleCv({
+    skills: fourteenSkills,
+    certificates: [
+      { id: 'c1', name: 'Chứng chỉ Chuyên gia Bán hàng B2B Xuất sắc', issuer: 'PACE', year: '2023' },
+      { id: 'c2', name: 'HubSpot Inbound Sales Certified', issuer: 'HubSpot Academy', year: '2022' },
+      { id: 'c3', name: 'TOEIC 780/990', issuer: 'IIG', year: '2021' }
+    ]
+  });
+
+  // P53: "chỉ giữ lại mục kinh nghiệm" -> MUST toggle sectionsVisibility (experience: true, all other 10 false) and NEVER touch/wipe the 14 skills!
+  const p53 = await editorAgent.processCvEditorAgent({
+    message: 'chỉ giữ lại mục kinh nghiệm',
+    cvData: cv9
+  });
+  assert.equal(p53.status, 200);
+  assert.equal(p53.body.updates.skills, undefined, 'P53 must NEVER wipe or fabricate skills');
+  assert.equal(p53.body.updates.sectionsVisibility?.experience, true);
+  assert.equal(p53.body.updates.sectionsVisibility?.skills, false);
+  assert.equal(p53.body.updates.sectionsVisibility?.education, false);
+  assert.equal(p53.body.updates.sectionsVisibility?.objective, false);
+  assert.equal(p53.body.updates.sectionsVisibility?.projects, false);
+  assert.equal(p53.body.updates.sectionsVisibility?.certificates, false);
+
+  // Ensure bare skill keep-only ("chỉ giữ lại UX") STILL keeps only UX without regressing!
+  const keepUxStillWorks = await editorAgent.processCvEditorAgent({
+    message: 'chỉ giữ lại UX',
+    cvData: cv9
+  });
+  assert.deepEqual(keepUxStillWorks.body.updates.skills.map(s => s.name), ['UX']);
+  assert.equal(keepUxStillWorks.body.updates.sectionsVisibility, undefined);
+
+  // P01: "đổi tên 2 chứng chỉ đầu: Sales Pro, Hubspot Pro" (+ unaccented / "cho" / "thành:" / explicit index variants)
+  const p01 = await editorAgent.processCvEditorAgent({
+    message: 'đổi tên 2 chứng chỉ đầu: Sales Pro, Hubspot Pro',
+    cvData: cv9
+  });
+  assert.equal(p01.status, 200);
+  assert.equal(p01.body.updates.certificates?.length, 3);
+  assert.equal(p01.body.updates.certificates[0].name, 'Sales Pro');
+  assert.equal(p01.body.updates.certificates[0].issuer, 'PACE');
+  assert.equal(p01.body.updates.certificates[1].name, 'Hubspot Pro');
+  assert.equal(p01.body.updates.certificates[1].issuer, 'HubSpot Academy');
+  assert.equal(p01.body.updates.certificates[2].name, 'TOEIC 780/990');
+
+  const p01Variant = await editorAgent.processCvEditorAgent({
+    message: 'đổi tên cho 2 chứng chỉ đầu lần lượt thành: Cert Alpha, Cert Beta',
+    cvData: cv9
+  });
+  assert.equal(p01Variant.body.updates.certificates[0].name, 'Cert Alpha');
+  assert.equal(p01Variant.body.updates.certificates[1].name, 'Cert Beta');
+
+  // P02: "xóa 2 kỹ năng đầu và 2 kỹ năng cuối" (+ comma without leading space variant)
+  const p02 = await editorAgent.processCvEditorAgent({
+    message: 'xóa 2 kỹ năng đầu và 2 kỹ năng cuối',
+    cvData: cv9
+  });
+  assert.equal(p02.status, 200);
+  assert.equal(p02.body.updates.skills?.length, 10);
+  assert.equal(p02.body.updates.skills[0].name, 'Skill 3');
+  assert.equal(p02.body.updates.skills[9].name, 'Skill 12');
+
+  const p02Comma = await editorAgent.processCvEditorAgent({
+    message: 'xóa 2 kỹ năng đầu, 2 kỹ năng cuối',
+    cvData: cv9
+  });
+  assert.equal(p02Comma.body.updates.skills?.length, 10);
+  assert.equal(p02Comma.body.updates.skills[0].name, 'Skill 3');
+  assert.equal(p02Comma.body.updates.skills[9].name, 'Skill 12');
+
+  // P71: "thêm 2 kinh nghiệm tại FPT và VNG" -> MUST create 2 distinct experience entries (FPT & VNG) with location=""
+  const p71 = await editorAgent.processCvEditorAgent({
+    message: 'thêm 2 kinh nghiệm tại FPT và VNG',
+    cvData: cv9
+  });
+  assert.equal(p71.status, 200);
+  assert.equal(p71.body.updates.experience?.length, cv9.experience.length + 2);
+  const addedExps = p71.body.updates.experience.slice(-2);
+  assert.equal(addedExps[0].company, 'FPT');
+  assert.equal(addedExps[0].location, '');
+  assert.equal(addedExps[1].company, 'VNG');
+  assert.equal(addedExps[1].location, '');
+
+  const p71Role = await editorAgent.processCvEditorAgent({
+    message: 'thêm 2 kinh nghiệm: Backend Dev tại FPT, Tech Lead tại VNG',
+    cvData: cv9
+  });
+  assert.equal(p71Role.body.updates.experience?.length, cv9.experience.length + 2);
+  assert.equal(p71Role.body.updates.experience.at(-2).position, 'Backend Dev');
+  assert.equal(p71Role.body.updates.experience.at(-2).company, 'FPT');
+  assert.equal(p71Role.body.updates.experience.at(-1).position, 'Tech Lead');
+  assert.equal(p71Role.body.updates.experience.at(-1).company, 'VNG');
+
+  // P44: "đổi bo góc thẻ kỹ năng" (+ stateful already-12px step to 16px so never a no-op!)
+  const p44 = await editorAgent.processCvEditorAgent({
+    message: 'đổi bo góc thẻ kỹ năng',
+    cvData: cv9
+  });
+  assert.equal(p44.status, 200);
+  assert.equal(p44.body.updates.theme?.borderRadius, '12px');
+
+  const p44Stateful = await editorAgent.processCvEditorAgent({
+    message: 'đổi bo góc thẻ kỹ năng',
+    cvData: { ...cv9, theme: { ...cv9.theme, borderRadius: '12px' } }
+  });
+  assert.equal(p44Stateful.body.updates.theme?.borderRadius, '16px');
+
+  // P45: "xóa đường kẻ tiêu đề" (+ "bỏ gạch chân tiêu đề")
+  const p45 = await editorAgent.processCvEditorAgent({
+    message: 'xóa đường kẻ tiêu đề',
+    cvData: cv9
+  });
+  assert.equal(p45.status, 200);
+  assert.equal(p45.body.updates.theme?.hideBorders, true);
+
+  const p45Underline = await editorAgent.processCvEditorAgent({
+    message: 'bỏ gạch chân tiêu đề',
+    cvData: cv9
+  });
+  assert.equal(p45Underline.body.updates.theme?.hideBorders, true);
+
+  // Verify v12 bundle file & syntax
+  const v12Html = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
+  assert.ok(v12Html.includes('index-20261128-v12.js'));
+  const v12Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261128-v12.js'), 'utf8');
+  assert.ok(v12Bundle.includes('section[data-cv-section="skills"] span'));
+  assert.ok(v12Bundle.includes('border-top-width:0!important'));
 });
