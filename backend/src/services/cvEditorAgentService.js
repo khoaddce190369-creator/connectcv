@@ -502,6 +502,7 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
       ['primaryColor', 1.35, 'màu chủ đạo'],
       ['textColor', 1.6, 'màu chữ'],
       ['headingColor', 1.35, 'màu tiêu đề mục'],
+      ['borderColor', 1.25, 'màu đường kẻ'],
       ['companyColor', 1.35, 'màu tên công ty'],
       ['schoolColor', 1.35, 'màu tên trường'],
       ['projectColor', 1.35, 'màu tên dự án'],
@@ -641,7 +642,49 @@ function sanitizeEditorUpdates(rawUpdates, currentCvData = {}, warningsOut = [])
       }
     }
 
+    const rawSecBorders = isPlainObject(rawUpdates.theme.sectionBorders)
+      ? rawUpdates.theme.sectionBorders
+      : (isPlainObject(rawUpdates.sectionBorders) ? rawUpdates.sectionBorders : null);
+    if (rawSecBorders) {
+      const curSecBorders = isPlainObject(curTheme.sectionBorders) ? curTheme.sectionBorders : {};
+      if (rawUpdates.theme._resetSectionBorders === true) {
+        if (Object.keys(curSecBorders).length > 0) cleanTheme.sectionBorders = {};
+      } else {
+        const nextSecBorders = { ...curSecBorders };
+        let changedSecBorder = false;
+        for (const [sk, sv] of Object.entries(rawSecBorders)) {
+          if (!ALLOWED_SECTION_COLOR_KEYS.has(sk)) continue;
+          if (sv === null || sv === '') {
+            if (nextSecBorders[sk] !== undefined) {
+              delete nextSecBorders[sk];
+              changedSecBorder = true;
+            }
+          } else if (typeof sv === 'boolean') {
+            if (nextSecBorders[sk] !== sv) {
+              nextSecBorders[sk] = sv;
+              changedSecBorder = true;
+            }
+          } else if (typeof sv === 'string') {
+            const bHex = sanitizeHexColor(sv);
+            if (bHex) {
+              const cr = contrastRatio(bHex, effectiveBg);
+              if (cr < 1.25) {
+                warningsOut.push(`Không thể đổi màu đường kẻ mục ${sk} sang ${bHex} vì trùng màu nền (${effectiveBg}).`);
+              } else if (nextSecBorders[sk] !== bHex) {
+                nextSecBorders[sk] = bHex;
+                changedSecBorder = true;
+              }
+            }
+          }
+        }
+        if (changedSecBorder) cleanTheme.sectionBorders = nextSecBorders;
+      }
+    }
+
     if (Object.keys(cleanTheme).length > 0) clean.theme = cleanTheme;
+  } else if (isPlainObject(rawUpdates.sectionBorders)) {
+    const delegated = sanitizeEditorUpdates({ theme: { sectionBorders: rawUpdates.sectionBorders } }, currentCvData, warningsOut);
+    if (delegated.theme) clean.theme = delegated.theme;
   }
 
   // 1. Profile
@@ -1081,6 +1124,7 @@ function buildGranularDiffAndOps(beforeCv = {}, sanitizedUpdates = {}) {
       textColor: 'Màu chữ nội dung',
       bgColor: 'Màu nền CV',
       headingColor: 'Màu tiêu đề mục',
+      borderColor: 'Màu đường kẻ',
       companyColor: 'Màu tên công ty',
       schoolColor: 'Màu tên trường',
       projectColor: 'Màu tên dự án',
@@ -1110,6 +1154,25 @@ function buildGranularDiffAndOps(beforeCv = {}, sanitizedUpdates = {}) {
               before: trunc(prevSc[sk] || 'mặc định', 24),
               after: trunc(sv, 24)
             });
+          }
+        }
+      } else if (k === 'sectionBorders' && isPlainObject(v)) {
+        const prevSb = isPlainObject(bt.sectionBorders) ? bt.sectionBorders : {};
+        if (Object.keys(v).length === 0 && Object.keys(prevSb).length > 0) {
+          operations.push({ op: 'set', section: 'theme', field: 'sectionBorders', value: {} });
+          diff.push({ section: 'theme', op: 'set', field: 'Đường kẻ riêng từng mục', before: 'Tùy chỉnh', after: 'Mặc định' });
+        } else {
+          for (const [sk, sv] of Object.entries(v)) {
+            if (prevSb[sk] !== sv) {
+              operations.push({ op: 'set', section: 'theme', field: `sectionBorders.${sk}`, value: sv });
+              diff.push({
+                section: 'theme',
+                op: 'set',
+                field: `Đường kẻ mục ${SECTION_VI_NAMES[sk] || sk}`,
+                before: prevSb[sk] === false ? 'Đang ẩn' : (typeof prevSb[sk] === 'string' ? prevSb[sk] : 'Đang hiện'),
+                after: sv === false ? 'Ẩn' : (sv === true ? 'Hiện' : String(sv))
+              });
+            }
           }
         }
       } else {
@@ -1584,7 +1647,7 @@ function parseSkillTokens(str) {
 
 const COLOR_VALUE_NORM_PART = '(?:#[0-9a-f]{3,6}\\b|rgb\\s*\\(|\\b(?:do|xanh|tim|vang|cam|den|trang|hong|xam|nau|kem|red|blue|green|purple|violet|indigo|amber|gold|orange|pink|rose|teal|cyan|navy|gray|grey|slate|black|white|crimson|burgundy)\\b)';
 
-const NEW_CLAUSE_START_NORM_RE = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+|please\s+)?(?:(?:doi|sua|cap\s+nhat|thay(?:\s+doi|\s+the)?|them|bo\s+sung|xoa|loai\s+bo|chinh|lam\s+trong|change|set|update|edit|modify|rename|replace|add|remove|delete|clear|swap|move|sort|uppercase|lowercase|increase|decrease)\s+\S+|(?:bo|go)\s+\S+|viet(?:\s+(?:lai|hoa|thuong))\s+\S+|(?:toi\s+uu|nang\s+cap)\s+(?:muc\s+tieu|phan|cv|mo\s+ta|kinh\s+nghiem)|dat\s+(?:lai|mau|ten|level|muc|font|phong|co\s+chu|thu\s+tu)|(?:tang|nang|giam|ha)\s+(?:co\s+chu|chu|gian\s+dong|dan\s+dong|khoang\s+cach|level|muc)|thu\s+nho|phong\s+to|(?:chi\s+(?:hien|hien\s+thi|bat|giu|de)|only\s+show|keep\s+only)\s+\S+|(?:an|hien|bat|tat|show|hide)\s+(?:tat\s+ca|toan\s+bo|het|moi|all|muc|phan|section|anh|hinh|avatar|duong\s+ke|vien|bo\s+goc|hoc\s+van|kinh\s+nghiem|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|certificates?|giai\s+thuong|awards?|so\s+thich|interests?|hoat\s+dong|activities|tham\s+chieu|references?|nguoi\s+gioi\s+thieu|tuy\s+chinh|custom\s+sections?)|(?:sap\s+xep|hoan\s+doi|doi\s+cho|dao\s+vi\s+tri)\s+\S+|(?:dua|chuyen|day|keo|dich)\s+(?:muc|phan|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|tuy\s+chinh|custom\s+sections?|sang|thanh|font|phong|mau)|(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|giai\s+thuong|hoat\s+dong(?:\s+ngoai\s+khoa)?|so\s+thich|(?:nguoi\s+)?(?:tham\s+chieu|gioi\s+thieu)|muc\s+tuy\s+chinh|tuy\s+chinh|custom\s+sections?)\s+(?:len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau))|canh\s+(?:trai|phai|giua|deu)|in\s+(?:hoa|thuong|dam|nghieng)\b|bo\s+(?:goc|tron)\b|vuong\s+goc\b|khong\s+bo\s+goc\b|gach\s+chan|lam\s+cho|cho\s+(?:chu|ten|mau|co\s+chu|gian\s+dong|muc)|(?:goi\s+(?:toi|minh|em)\s+la|call\s+me|my\s+name\s+is)\s+\S+|(?:toi|minh|em)\s+ten|ten\s+(?:toi\s+|cua\s+toi\s+|hien\s+thi\s+)?(?:la|mau)|ho\s+(?:va\s+)?ten\s*(?:la|thanh|sang|:)|job\s*title\s*(?:la|thanh|sang|to|:)|font(?:[\s-]*size|\s+chu)?\s+\S+|phong(?:\s+chu)?\s+\S+|co\s+(?:chu|font)\s+\S+|(?:gian|dan|cach)\s+dong\s+\S+|khoang\s+cach\s+dong\s+\S+|dark\s*mode|light\s*mode|che\s*do\s*(?:toi|sang)|(?:email|e-mail|mail|sdt|so\s+dien\s+thoai|dien\s+thoai|di\s+dong|phone|dia\s+chi|address|website|linkedin|github|portfolio|avatar|anh\s+dai\s+dien|ngay\s+sinh|nam\s+sinh|sinh\s+nam|dob|gioi\s+tinh|gender)\s*(?:la|thanh|sang|to|:))/i;
+const NEW_CLAUSE_START_NORM_RE = /^(?:hay\s+|vui\s+long\s+|giup\s+(?:toi|minh)\s+|please\s+)?(?:(?:doi|sua|cap\s+nhat|thay(?:\s+doi|\s+the)?|them|bo\s+sung|xoa|loai\s+bo|chinh|lam\s+trong|change|set|update|edit|modify|rename|replace|add|remove|delete|clear|swap|move|sort|uppercase|lowercase|increase|decrease)\s+\S+|(?:bo|go)\s+\S+|viet(?:\s+(?:lai|hoa|thuong))\s+\S+|(?:toi\s+uu|nang\s+cap)\s+(?:muc\s+tieu|phan|cv|mo\s+ta|kinh\s+nghiem)|dat\s+(?:lai|mau|ten|level|muc|font|phong|co\s+chu|thu\s+tu)|(?:tang|nang|giam|ha)\s+(?:co\s+chu|chu|gian\s+dong|dan\s+dong|khoang\s+cach|level|muc)|thu\s+nho|phong\s+to|(?:chi\s+(?:hien|hien\s+thi|bat|giu|de)|only\s+show|keep\s+only)\s+\S+|(?:an|hien|bat|tat|show|hide)\s+(?:tat\s+ca|toan\s+bo|het|moi|all|muc|phan|section|anh|hinh|avatar|duong\s+ke|vach\s+ngan|duong\s+phan\s+cach|gach\s+ngang|gach\s+chan|vien|borders?|dividers?|bo\s+goc|hoc\s+van|kinh\s+nghiem|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|certificates?|giai\s+thuong|awards?|so\s+thich|interests?|hoat\s+dong|activities|tham\s+chieu|references?|nguoi\s+gioi\s+thieu|tuy\s+chinh|custom\s+sections?)|(?:sap\s+xep|hoan\s+doi|doi\s+cho|dao\s+vi\s+tri)\s+\S+|(?:dua|chuyen|day|keo|dich)\s+(?:muc|phan|hoc\s+van|kinh\s+nghiem|ky\s+nang|du\s+an|chung\s+chi|giai\s+thuong|so\s+thich|hoat\s+dong|tham\s+chieu|tuy\s+chinh|custom\s+sections?|sang|thanh|font|phong|mau)|(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|section\s+)?(?:muc\s+tieu(?:\s+nghe\s+nghiep)?|kinh\s+nghiem(?:\s+lam\s+viec)?|hoc\s+van|giao\s+duc|ky\s+nang|skills?|du\s+an|projects?|chung\s+chi|giai\s+thuong|hoat\s+dong(?:\s+ngoai\s+khoa)?|so\s+thich|(?:nguoi\s+)?(?:tham\s+chieu|gioi\s+thieu)|muc\s+tuy\s+chinh|tuy\s+chinh|custom\s+sections?)\s+(?:len\s+(?:dau|tren|truoc)|xuong\s+(?:cuoi|duoi|sau))|canh\s+(?:trai|phai|giua|deu)|in\s+(?:hoa|thuong|dam|nghieng)\b|bo\s+(?:goc|tron)\b|vuong\s+goc\b|khong\s+bo\s+goc\b|gach\s+chan|lam\s+cho|cho\s+(?:chu|ten|mau|co\s+chu|gian\s+dong|muc)|(?:goi\s+(?:toi|minh|em)\s+la|call\s+me|my\s+name\s+is)\s+\S+|(?:toi|minh|em)\s+ten|ten\s+(?:toi\s+|cua\s+toi\s+|hien\s+thi\s+)?(?:la|mau)|ho\s+(?:va\s+)?ten\s*(?:la|thanh|sang|:)|job\s*title\s*(?:la|thanh|sang|to|:)|font(?:[\s-]*size|\s+chu)?\s+\S+|phong(?:\s+chu)?\s+\S+|co\s+(?:chu|font)\s+\S+|(?:gian|dan|cach)\s+dong\s+\S+|khoang\s+cach\s+dong\s+\S+|dark\s*mode|light\s*mode|che\s*do\s*(?:toi|sang)|(?:email|e-mail|mail|sdt|so\s+dien\s+thoai|dien\s+thoai|di\s+dong|phone|dia\s+chi|address|website|linkedin|github|portfolio|avatar|anh\s+dai\s+dien|ngay\s+sinh|nam\s+sinh|sinh\s+nam|dob|gioi\s+tinh|gender)\s*(?:la|thanh|sang|to|:))/i;
 
 function isSafeExplicitClauseStart(afterSep, afterNorm) {
   if (!afterSep || !NEW_CLAUSE_START_NORM_RE.test(afterNorm)) return false;
@@ -1592,7 +1655,7 @@ function isSafeExplicitClauseStart(afterSep, afterNorm) {
   // Prevent ASCII skill/person names ("Go", "Go Microservices", "An", "Bo") from matching Vietnamese accented verbs ("gỡ", "ẩn", "bỏ")!
   if (/^go\b/i.test(afterNorm) && !/^(?:gỡ|go\s+bo\b|gọi\s+)/i.test(trimmedRaw)) return false;
   if (/^bo\b/i.test(afterNorm) && !/^(?:bỏ|bổ\s+sung|bo\s+góc|bo\s+tròn|bo\s+(?:goc|tron)\b)/i.test(trimmedRaw)) return false;
-  if (/^an\b/i.test(afterNorm) && !/^ẩn\b/i.test(trimmedRaw) && !/^an\s+(?:tat\s+ca|toan\s+bo|het|moi|muc|anh|avatar|duong\s+ke)\b/i.test(afterNorm)) return false;
+  if (/^an\b/i.test(afterNorm) && !/^ẩn\b/i.test(trimmedRaw) && !/^an\s+(?:tat\s+ca|toan\s+bo|het|moi|muc|anh|avatar|duong\s+ke|vach\s+ngan|borders?|dividers?)\b/i.test(afterNorm)) return false;
   return true;
 }
 
@@ -1811,13 +1874,78 @@ function applySingleClause(clauseRaw, state) {
 
   const hasNoColorWord = !/\b(?:mau|color|rgb\s*\()\b|#[0-9a-f]{3,6}\b/i.test(norm);
   const dividerNounNormPart = '(?:duong\\s+ke|vach\\s+ngan|duong\\s+phan\\s+cach|duong\\s+gach(?:\\s+ngang|\\s+chan|\\s+duoi)?|gach\\s+ngang|gach\\s+duoi|gach\\s+chan\\s+(?:tieu\\s+de|cac\\s+muc|muc|phan|section)|vien(?:\\s+duoi|\\s+ngang|\\s+tieu\\s+de|\\s+khung|\\s+cac\\s+muc|\\s+muc)?|line\\s+(?:tieu\\s+de|ngang|phan\\s+cach|cac\\s+muc)|(?:section\\s+|heading\\s+|title\\s+|horizontal\\s+)?(?:borders?|dividers?)|divider\\s+lines?|horizontal\\s+lines?)';
-  const hideDividerMatch = hasNoColorWord && new RegExp(`^(?:hay\\s+|vui\\s+long\\s+|please\\s+)?(?:xoa|bo|go|an|tat|khong\\s+dung|lam\\s+mat|remove|hide|delete)\\s+(?:tat\\s+ca\\s+|toan\\s+bo\\s+|moi\\s+|het\\s+|cac\\s+)?${dividerNounNormPart}(?:\\s+.*)?$`, 'i').test(norm);
-  const showDividerMatch = hasNoColorWord && !hideDividerMatch && new RegExp(`^(?:hay\\s+|vui\\s+long\\s+|please\\s+)?(?:hien(?:\\s+thi|\\s+lai)?|bat(?:\\s+lai)?|them|khoi\\s+phuc|mo|show|add|enable)\\s+(?:lai\\s+)?(?:tat\\s+ca\\s+|cac\\s+)?${dividerNounNormPart}(?:\\s+.*)?$`, 'i').test(norm);
-  if (hideDividerMatch || showDividerMatch) {
-    if (Boolean(workingCv.theme?.hideBorders) === hideDividerMatch) {
-      state.alreadySetNotes.push(hideDividerMatch ? 'Đường kẻ phân cách hiện đã được ẩn sẵn' : 'Đường kẻ phân cách hiện đang hiển thị sẵn');
+
+  const onlyDividerSecExec = hasNoColorWord && norm.match(new RegExp(`^(?:hay\\s+|vui\\s+long\\s+|please\\s+)?(?:chi\\s+(?:hien(?:\\s+thi)?|bat|(?:giu|de)(?:\\s+lai)?)|only\\s+(?:show|keep)|keep\\s+only)\\s+${dividerNounNormPart}\\s+(.+)$`, 'i'));
+  if (onlyDividerSecExec) {
+    const parts = onlyDividerSecExec[1].replace(/[.!?]+$/, '').split(/\s*(?:,|;|\s+(?:va|voi|hoac|cung|and)\s+)\s*/i).filter(Boolean);
+    const matchedKeys = parts.map(p => findSectionKeyFromText(p.replace(/^(?:cua\s+|o\s+|trong\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|sections?\s+)/i, '')));
+    if (matchedKeys.length > 0 && matchedKeys.every(Boolean)) {
+      const keepSet = new Set(matchedKeys);
+      const nextSb = { ...(workingCv.theme?.sectionBorders || {}), ...(updates.theme?.sectionBorders || {}) };
+      for (const k of ALLOWED_SECTION_COLOR_KEYS) {
+        nextSb[k] = keepSet.has(k);
+      }
+      const themeUpdates = { ...(updates.theme || {}), sectionBorders: nextSb };
+      updates.theme = themeUpdates;
+      workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+      return true;
     }
-    const themeUpdates = { ...(updates.theme || {}), hideBorders: hideDividerMatch };
+  }
+
+  const hideDividerExec = hasNoColorWord && norm.match(new RegExp(`^(?:hay\\s+|vui\\s+long\\s+|please\\s+)?(?:xoa|bo|go|an|tat|khong\\s+dung|lam\\s+mat|remove|hide|delete)\\s+(?:(tat\\s+ca|toan\\s+bo|moi|het|all|every)\\s+)?(?:cac\\s+)?${dividerNounNormPart}(?:\\s+(.+))?$`, 'i'));
+  const showDividerExec = hasNoColorWord && !hideDividerExec && norm.match(new RegExp(`^(?:hay\\s+|vui\\s+long\\s+|please\\s+)?(?:hien(?:\\s+thi|\\s+lai)?|bat(?:\\s+lai)?|them|khoi\\s+phuc|mo|show|add|enable)\\s+(?:lai\\s+)?(?:(tat\\s+ca|toan\\s+bo|moi|het|all|every)\\s+)?(?:cac\\s+)?${dividerNounNormPart}(?:\\s+(.+))?$`, 'i'));
+  const enScopedDividerExec = hasNoColorWord && !hideDividerExec && !showDividerExec && norm.match(/^(?:please\s+)?(hide|remove|delete|show|enable|add)\s+(?:the\s+)?(.+?)\s+(?:section\s+)?(?:borders?|dividers?|divider\s+lines?|horizontal\s+lines?)\s*[.!?]*$/i);
+
+  if (hideDividerExec || showDividerExec || enScopedDividerExec) {
+    const isHide = enScopedDividerExec ? /^(?:hide|remove|delete)/i.test(enScopedDividerExec[1]) : Boolean(hideDividerExec);
+    const hasGlobalAllPrefix = enScopedDividerExec ? /^(?:all|every)$/i.test(enScopedDividerExec[2].trim()) : Boolean((hideDividerExec || showDividerExec)[1]);
+    let rawScopeTail = enScopedDividerExec ? enScopedDividerExec[2].trim() : (((hideDividerExec || showDividerExec)[2]) || '').trim();
+    rawScopeTail = rawScopeTail
+      .replace(/\s+(?:trong\s+(?:cv|ho\s+so)|tren\s+cv|toan\s+(?:bo\s+)?cv|cua\s+(?:toi|minh)|nhe|nha|di)+[.!?]*$/i, '')
+      .replace(/[.!?]+$/, '')
+      .trim();
+
+    // Strip structural non-section qualifiers ("tiêu đề", "ngang", "dưới tiêu đề", "phân cách", "của") while keeping section phrases ("mục kỹ năng", "mục tiêu", "học vấn")!
+    let cleanedScope = rawScopeTail;
+    let prevScope = '';
+    while (cleanedScope !== prevScope) {
+      prevScope = cleanedScope;
+      cleanedScope = cleanedScope
+        .replace(/^(?:ngang|duoi|tren|phan\s+cach|tieu\s+de(?:\s+(?:cac|moi|tat\s+ca)\s+muc)?|cua|cho|o|trong|heading|title)\b\s*/i, '')
+        .trim();
+    }
+
+    const isGenericGlobalScope = !cleanedScope || hasGlobalAllPrefix || /^(?:tat\s+ca(?:\s+cac)?(?:\s+muc)?|toan\s+(?:bo\s+)?(?:cv|muc)?|moi\s+muc|cac\s+muc|cv|khung|all|every|sections?|headings?|titles?|horizontal)$/i.test(cleanedScope);
+
+    if (!isGenericGlobalScope) {
+      const scopeParts = cleanedScope.split(/\s*(?:,|;|\s+(?:va|voi|hoac|cung|and)\s+)\s*/i).filter(Boolean);
+      const matchedSecKeys = scopeParts.map(sp =>
+        findSectionKeyFromText(sp.replace(/^(?:cua\s+|o\s+|trong\s+)?(?:muc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)|phan\s+|sections?\s+)/i, '').trim())
+      );
+      if (matchedSecKeys.length > 0 && matchedSecKeys.every(Boolean)) {
+        const curSb = { ...(workingCv.theme?.sectionBorders || {}), ...(updates.theme?.sectionBorders || {}) };
+        const visibleVal = !isHide;
+        for (const sk of matchedSecKeys) {
+          if (curSb[sk] === visibleVal) {
+            state.alreadySetNotes.push(`Đường kẻ mục ${SECTION_VI_NAMES[sk] || sk} hiện đã ở trạng thái ${visibleVal ? 'hiển thị' : 'ẩn'}`);
+          }
+          curSb[sk] = visibleVal;
+        }
+        const themeUpdates = { ...(updates.theme || {}), sectionBorders: curSb };
+        updates.theme = themeUpdates;
+        workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
+        return true;
+      }
+    }
+
+    if (Boolean(workingCv.theme?.hideBorders) === isHide) {
+      state.alreadySetNotes.push(isHide ? 'Đường kẻ phân cách hiện đã được ẩn sẵn' : 'Đường kẻ phân cách hiện đang hiển thị sẵn');
+    }
+    const themeUpdates = { ...(updates.theme || {}), hideBorders: isHide };
+    if (!isHide && workingCv.theme?.sectionBorders && Object.keys(workingCv.theme.sectionBorders).length > 0) {
+      themeUpdates.sectionBorders = {};
+      themeUpdates._resetSectionBorders = true;
+    }
     updates.theme = themeUpdates;
     workingCv.theme = { ...(workingCv.theme || {}), ...themeUpdates };
     return true;
@@ -2361,30 +2489,60 @@ function applySingleClause(clauseRaw, state) {
         notices.push(`Mẫu CV chuẩn ATS chỉ hỗ trợ mã màu đơn sắc (không dùng gradient nhiều màu khi xuất PDF), nên hệ thống áp dụng màu đơn sắc ${chosen.label}.`);
       }
 
-      // Accumulate ALL explicitly mentioned sub-targets in the clause (so "đổi màu tiêu đề và tên công ty sang đỏ" sets BOTH!)
+      // Accumulate ALL explicitly mentioned sub-targets in the clause (so "đổi màu tiêu đề và tên công ty sang đỏ" sets BOTH, while "đổi màu đường kẻ tiêu đề sang đỏ" sets borderColor instead of headingColor!)
       let matchedMultiSubTarget = false;
 
-      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+cong\s+ty|cong\s+ty\s+(?:sang\s+|thanh\s+)?mau|company\s+color)\b/i.test(colorSafeNorm)) {
+      const hasDividerColorTarget =
+        /\b(?:duong\s+ke|vach\s+ngan|duong\s+phan\s+cach|duong\s+gach(?:\s+ngang|\s+chan|\s+duoi)?|gach\s+ngang|gach\s+duoi|gach\s+chan|duong\s+vien|(?<!ung\s|nhan\s|sinh\s|thanh\s|hoc\s|benh\s|chuyen\s|giang\s)vien\s+(?:duoi|ngang|tieu\s+de|khung|muc|cac\s+muc|section)|line(?!\s*(?:spacing|height))\s*(?:tieu\s+de|ngang|phan\s+cach|muc)?|borders?|dividers?)\b/i.test(colorSafeNorm) ||
+        /(?:^|[\s,:;(])viền(?!\s+trang\b)(?=$|[\s,:;.!?)])/i.test(raw);
+
+      const nonDividerColorNorm = hasDividerColorTarget
+        ? colorSafeNorm
+            .replace(/\b(?:duong\s+ke|vach\s+ngan|duong\s+phan\s+cach|duong\s+gach(?:\s+ngang|\s+chan|\s+duoi)?|gach\s+ngang|gach\s+duoi|gach\s+chan|duong\s+vien|vien|line(?!\s*(?:spacing|height))|borders?|dividers?)(?:\s+(?:ngang|duoi|tren|phan\s+cach|cua|cho|o|trong))*\s+(?:tieu\s+de(?:\s+(?:cac\s+|tat\s+ca\s+)?muc)?|heading|title)\b/gi, ' ')
+            .replace(/\b(?:heading|title|section)\s+(?:borders?|dividers?|lines?)\b/gi, ' ')
+        : colorSafeNorm;
+
+      if (hasDividerColorTarget) {
+        const dividerColorCleanSecStr = nonDividerColorNorm
+          .replace(/#[0-9a-f]{3,6}\b|rgb\([^)]*\)/gi, ' ')
+          .replace(/\b(?:doi|sua|chinh|thay|chuyen|to|dat|mau|color|sang|thanh|la|qua|cua|cho|o|trong|duoi|tren|phan|tieu\s+de|cac\s+muc|cv|khung|duong\s+ke|ngang|phan\s+cach|vach\s+ngan|duong\s+gach|gach\s+chan|gach\s+duoi|duong\s+vien|vien|borders?|dividers?|lines?|do|xanh|la|cay|duong|bien|ngoc|navy|dam|tim|vang|dong|cam|den|trang|hong|xam|ghi|nau|kem|red|blue|green|purple|violet|indigo|amber|gold|orange|pink|rose|teal|cyan|gray|grey|slate|black|white|crimson|burgundy)\b|\bmuc\s+(?!tieu\b|tuy\s+chinh\b|tu\s+tao\b|rieng\b)/gi, ' ');
+        const scopedDividerColorSec = !/\b(?:tat\s+ca|toan\s+bo|moi|chu\s+dao)\b/i.test(colorSafeNorm)
+          ? findSectionKeyFromText(dividerColorCleanSecStr)
+          : null;
+        if (scopedDividerColorSec) {
+          themeUpdates.sectionBorders = {
+            ...(workingCv.theme?.sectionBorders || {}),
+            ...(themeUpdates.sectionBorders || {}),
+            [scopedDividerColorSec]: chosen.hex
+          };
+          matchedMultiSubTarget = true;
+        } else {
+          themeUpdates.borderColor = chosen.hex;
+          matchedMultiSubTarget = true;
+        }
+      }
+
+      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+cong\s+ty|cong\s+ty\s+(?:sang\s+|thanh\s+)?mau|company\s+color)\b/i.test(nonDividerColorNorm)) {
         themeUpdates.companyColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+truong|truong(?:\s+dai\s+hoc|\s+hoc)?\s+(?:sang\s+|thanh\s+)?mau|school\s+color)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:(?:ten|mau)(?:\s+cua)?(?:\s+cac|\s+tat\s+ca)?\s+truong|truong(?:\s+dai\s+hoc|\s+hoc)?\s+(?:sang\s+|thanh\s+)?mau|school\s+color)\b/i.test(nonDividerColorNorm)) {
         themeUpdates.schoolColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:ten\s+du\s+an|mau\s+(?:ten\s+)?du\s+an|project\s+color)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:ten\s+du\s+an|mau\s+(?:ten\s+)?du\s+an|project\s+color)\b/i.test(nonDividerColorNorm)) {
         themeUpdates.projectColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:mau\s+(?:chuc\s+danh|vi\s+tri(?:\s+ung\s+tuyen)?)|(?:chuc\s+danh|vi\s+tri\s+ung\s+tuyen)\s+(?:thanh\s+|sang\s+)?mau|job\s*title\s+color)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:mau\s+(?:chuc\s+danh|vi\s+tri(?:\s+ung\s+tuyen)?)|(?:chuc\s+danh|vi\s+tri\s+ung\s+tuyen)\s+(?:thanh\s+|sang\s+)?mau|job\s*title\s+color)\b/i.test(nonDividerColorNorm)) {
         themeUpdates.jobTitleColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:tieu\s+de(?:\s+(?:cac\s+|tat\s+ca\s+)?muc)?|mau\s+tieu\s+de|heading\s+color)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:tieu\s+de(?:\s+(?:cac\s+|tat\s+ca\s+)?muc)?|mau\s+tieu\s+de|heading\s+color)\b/i.test(nonDividerColorNorm)) {
         themeUpdates.headingColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
-      if (/\b(?:ho\s+(?:va\s+)?ten|ten\s+(?:toi|ung\s+vien)|name\s+color)\b/i.test(colorSafeNorm)) {
+      if (/\b(?:ho\s+(?:va\s+)?ten|ten\s+(?:toi|ung\s+vien)|name\s+color)\b/i.test(nonDividerColorNorm)) {
         themeUpdates.nameColor = chosen.hex;
         matchedMultiSubTarget = true;
       }
@@ -2549,11 +2707,11 @@ function applySingleClause(clauseRaw, state) {
     if (Object.keys(themeUpdates).length > 0) {
       const curTheme = workingCv.theme || {};
       const allUnchanged = Object.entries(themeUpdates).every(([tk, tv]) =>
-        tk !== 'sectionColors' && String(curTheme[tk] ?? '').toLowerCase() === String(tv ?? '').toLowerCase()
+        tk !== 'sectionColors' && tk !== 'sectionBorders' && String(curTheme[tk] ?? '').toLowerCase() === String(tv ?? '').toLowerCase()
       );
       if (allUnchanged) {
         for (const [tk, tv] of Object.entries(themeUpdates)) {
-          const tNames = { primaryColor: 'Màu chủ đạo', nameColor: 'Màu tên', textColor: 'Màu chữ', bgColor: 'Màu nền', headingColor: 'Màu tiêu đề mục', companyColor: 'Màu tên công ty', schoolColor: 'Màu tên trường', fontFamily: 'Font chữ', fontSize: 'Cỡ chữ', fontSizePx: 'Cỡ chữ (px)', lineSpacing: 'Giãn dòng', lineSpacingNum: 'Giãn dòng chi tiết' };
+          const tNames = { primaryColor: 'Màu chủ đạo', nameColor: 'Màu tên', textColor: 'Màu chữ', bgColor: 'Màu nền', headingColor: 'Màu tiêu đề mục', borderColor: 'Màu đường kẻ', companyColor: 'Màu tên công ty', schoolColor: 'Màu tên trường', fontFamily: 'Font chữ', fontSize: 'Cỡ chữ', fontSizePx: 'Cỡ chữ (px)', lineSpacing: 'Giãn dòng', lineSpacingNum: 'Giãn dòng chi tiết' };
           state.alreadySetNotes.push(`${tNames[tk] || tk} hiện đã ở sẵn giá trị ${tv}`);
         }
       }
@@ -4532,7 +4690,7 @@ NHIỆM VỤ:
 Đọc yêu cầu người dùng và trả về DUY NHẤT JSON hợp lệ {"reply": "...", "updates": {...}}:
 - "reply": Văn bản thuần (KHÔNG dùng ** Markdown), trung thực 100%, chỉ báo đã sửa những gì thực sự thay đổi trong "updates".
 - "updates": CHỈ chứa các khóa thực sự thay đổi:
-  1. "theme": { "primaryColor", "nameColor", "textColor", "bgColor", "headingColor", "companyColor", "schoolColor", "projectColor", "jobTitleColor", "sectionColors": { "experience"|"education"|"skills"|...: "#RRGGBB" }, "fontFamily" CHỈ trong [${SUPPORTED_FONTS_LIST_STR}] (TUYỆT ĐỐI KHÔNG đổi Arial/Times/Calibri sang Roboto/Merriweather — nếu ngoài danh sách thì để {} và giải thích), "fontSize": "small"|"medium"|"large", "fontSizePx": 8..36, "lineSpacing": "compact"|"normal"|"relaxed", "lineSpacingNum": 0.8..3.0, "marginTop"|"marginRight"|"marginBottom"|"marginLeft", "borderRadius": "0px".."36px", "hideBorders": true|false }
+  1. "theme": { "primaryColor", "nameColor", "textColor", "bgColor", "headingColor", "borderColor", "companyColor", "schoolColor", "projectColor", "jobTitleColor", "sectionColors": { "experience"|"education"|"skills"|...: "#RRGGBB" }, "sectionBorders": { "experience"|"education"|"skills"|...: true|false|"#RRGGBB" }, "fontFamily" CHỈ trong [${SUPPORTED_FONTS_LIST_STR}] (TUYỆT ĐỐI KHÔNG đổi Arial/Times/Calibri sang Roboto/Merriweather — nếu ngoài danh sách thì để {} và giải thích), "fontSize": "small"|"medium"|"large", "fontSizePx": 8..36, "lineSpacing": "compact"|"normal"|"relaxed", "lineSpacingNum": 0.8..3.0, "marginTop"|"marginRight"|"marginBottom"|"marginLeft", "borderRadius": "0px".."36px", "hideBorders": true|false }
   2. "profile": { "fullName" (<=50 ký tự), "jobTitle", "email", "phone", "address", "website", "avatar", "showAvatar", "dateOfBirth", "gender" }
   3. "objective", "experience", "education", "skills" (level 1..5), "projects", "certificates", "awards", "activities", "interests", "references", "customSections", "sectionsVisibility", "sectionOrder".
 - Mọi chỉ số vị trí ("2", "thứ 2", "hai", "đầu tiên", "cuối cùng") đều tính 1-based.
@@ -4655,6 +4813,12 @@ async function processCvEditorAgent(body, options = {}) {
       const mergedUpdates = { ...llmUpdates, ...detResult.updates };
       if (llmUpdates.theme || detResult.updates.theme) {
         mergedUpdates.theme = { ...(llmUpdates.theme || {}), ...(detResult.updates.theme || {}) };
+        if (llmUpdates.theme?.sectionColors || detResult.updates.theme?.sectionColors) {
+          mergedUpdates.theme.sectionColors = { ...(llmUpdates.theme?.sectionColors || {}), ...(detResult.updates.theme?.sectionColors || {}) };
+        }
+        if (llmUpdates.theme?.sectionBorders || detResult.updates.theme?.sectionBorders) {
+          mergedUpdates.theme.sectionBorders = { ...(llmUpdates.theme?.sectionBorders || {}), ...(detResult.updates.theme?.sectionBorders || {}) };
+        }
       }
       if (llmUpdates.profile || detResult.updates.profile) {
         mergedUpdates.profile = { ...(llmUpdates.profile || {}), ...(detResult.updates.profile || {}) };

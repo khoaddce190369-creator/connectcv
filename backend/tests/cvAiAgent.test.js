@@ -1543,9 +1543,9 @@ test('Round 8 Audit (Groups A Bulk/Multi-Target, B 23+ Synonyms/Aliases, C Valid
   assert.equal(dotSplit.body.updates.skills?.length, 4);
   assert.ok(dotSplit.body.updates.interests?.includes('Bơi lội'));
 
-  // Verify v12/v11 bundle exists and renders borderRadius + hideBorders
+  // Verify versioned bundle exists and renders borderRadius + hideBorders
   const v11Html = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
-  assert.ok(v11Html.includes('index-20261128-v12.js'));
+  assert.ok(/index-2026112\d-v\d+\.js/.test(v11Html));
   const v11Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261127-v11.js'), 'utf8');
   assert.ok(v11Bundle.includes('theme.borderRadius'));
   assert.ok(v11Bundle.includes('theme.hideBorders===!0'));
@@ -1677,10 +1677,97 @@ test('Round 9 Audit (All 6 Remaining Benchmark Cases: P53, P01, P02, P71, P44, P
   });
   assert.equal(p45Underline.body.updates.theme?.hideBorders, true);
 
-  // Verify v12 bundle file & syntax
+  // Verify v12+ bundle file & syntax
   const v12Html = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
-  assert.ok(v12Html.includes('index-20261128-v12.js'));
+  assert.ok(/index-2026112\d-v\d+\.js/.test(v12Html));
   const v12Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261128-v12.js'), 'utf8');
   assert.ok(v12Bundle.includes('section[data-cv-section="skills"] span'));
   assert.ok(v12Bundle.includes('border-top-width:0!important'));
+});
+
+test('Round 10 Audit (BD09 theme.borderColor & BD10 theme.sectionBorders + multi-section/color/stateful variants)', async () => {
+  const cv10 = makeRealisticSampleCv();
+
+  // BD09: "đổi màu đường kẻ tiêu đề sang đỏ" -> MUST set theme.borderColor = "#dc2626" and NEVER touch headingColor!
+  const bd09 = await editorAgent.processCvEditorAgent({
+    message: 'đổi màu đường kẻ tiêu đề sang đỏ',
+    cvData: cv10
+  });
+  assert.equal(bd09.status, 200);
+  assert.equal(bd09.body.updates.theme?.borderColor, '#dc2626');
+  assert.equal(bd09.body.updates.theme?.headingColor, undefined, 'BD09 must NOT mistakenly change headingColor');
+  assert.equal(bd09.body.updates.theme?.primaryColor, undefined);
+
+  // Pure heading color ("đổi màu tiêu đề sang đỏ") MUST still set headingColor and NOT borderColor!
+  const pureHeading = await editorAgent.processCvEditorAgent({
+    message: 'đổi màu tiêu đề sang đỏ',
+    cvData: cv10
+  });
+  assert.equal(pureHeading.body.updates.theme?.headingColor, '#dc2626');
+  assert.equal(pureHeading.body.updates.theme?.borderColor, undefined);
+
+  // Combined heading + divider color ("đổi màu tiêu đề và đường kẻ sang tím") sets BOTH!
+  const bothHeadingAndBorder = await editorAgent.processCvEditorAgent({
+    message: 'đổi màu tiêu đề và đường kẻ sang tím',
+    cvData: cv10
+  });
+  assert.equal(bothHeadingAndBorder.body.updates.theme?.headingColor, '#7c3aed');
+  assert.equal(bothHeadingAndBorder.body.updates.theme?.borderColor, '#7c3aed');
+
+  // Ensure "đổi màu tên ứng viên sang đỏ" does NOT collide with "vien" ("viền")!
+  const candNameColor = await editorAgent.processCvEditorAgent({
+    message: 'đổi màu tên ứng viên sang đỏ',
+    cvData: cv10
+  });
+  assert.equal(candNameColor.body.updates.theme?.nameColor, '#dc2626');
+  assert.equal(candNameColor.body.updates.theme?.borderColor, undefined);
+
+  // BD10: "ẩn border mục kỹ năng" -> MUST set theme.sectionBorders = { skills: false } and NEVER set global hideBorders!
+  const bd10 = await editorAgent.processCvEditorAgent({
+    message: 'ẩn border mục kỹ năng',
+    cvData: cv10
+  });
+  assert.equal(bd10.status, 200);
+  assert.deepEqual(bd10.body.updates.theme?.sectionBorders, { skills: false });
+  assert.equal(bd10.body.updates.theme?.hideBorders, undefined, 'BD10 must NOT hide borders globally across CV');
+
+  // Show border back on a specific section ("hiện border mục kỹ năng")
+  const showSkillBorder = await editorAgent.processCvEditorAgent({
+    message: 'hiện border mục kỹ năng',
+    cvData: { ...cv10, theme: { ...cv10.theme, sectionBorders: { skills: false } } }
+  });
+  assert.deepEqual(showSkillBorder.body.updates.theme?.sectionBorders, { skills: true });
+  assert.equal(showSkillBorder.body.updates.theme?.hideBorders, undefined);
+
+  // Multi-section scoped border hide ("xóa đường kẻ mục học vấn và dự án")
+  const multiSecBorderHide = await editorAgent.processCvEditorAgent({
+    message: 'xóa đường kẻ mục học vấn và dự án',
+    cvData: cv10
+  });
+  assert.deepEqual(multiSecBorderHide.body.updates.theme?.sectionBorders, { education: false, projects: false });
+  assert.equal(multiSecBorderHide.body.updates.theme?.hideBorders, undefined);
+
+  // Scoped border color for a single section ("đổi màu đường kẻ mục kỹ năng sang xanh lá")
+  const scopedSecBorderCol = await editorAgent.processCvEditorAgent({
+    message: 'đổi màu đường kẻ mục kỹ năng sang xanh lá',
+    cvData: cv10
+  });
+  assert.deepEqual(scopedSecBorderCol.body.updates.theme?.sectionBorders, { skills: '#059669' });
+  assert.equal(scopedSecBorderCol.body.updates.theme?.borderColor, undefined);
+
+  // Global "xóa đường kẻ" and "xóa đường kẻ tiêu đề" MUST still set hideBorders: true!
+  const globalHide1 = await editorAgent.processCvEditorAgent({ message: 'xóa đường kẻ', cvData: cv10 });
+  assert.equal(globalHide1.body.updates.theme?.hideBorders, true);
+  assert.equal(globalHide1.body.updates.theme?.sectionBorders, undefined);
+
+  const globalHide2 = await editorAgent.processCvEditorAgent({ message: 'xóa đường kẻ tiêu đề', cvData: cv10 });
+  assert.equal(globalHide2.body.updates.theme?.hideBorders, true);
+  assert.equal(globalHide2.body.updates.theme?.sectionBorders, undefined);
+
+  // Verify v13 bundle references theme.borderColor and theme.sectionBorders
+  const v13Html = fs.readFileSync(path.join(__dirname, '../public/cv-assets/index.html'), 'utf8');
+  assert.ok(v13Html.includes('index-20261128-v13.js'));
+  const v13Bundle = fs.readFileSync(path.join(__dirname, '../public/cv-assets/assets/index-20261128-v13.js'), 'utf8');
+  assert.ok(v13Bundle.includes('theme.borderColor'));
+  assert.ok(v13Bundle.includes('theme.sectionBorders'));
 });
