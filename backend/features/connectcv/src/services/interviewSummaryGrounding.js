@@ -1,62 +1,235 @@
 'use strict';
-function summaryVersionError(body){
- if (body && body.reportVersion !== undefined && body.reportVersion !== 2) {
-  return {success:false,code:'INTERVIEW_REPORT_CLIENT_OUTDATED',message:'Bản luyện phỏng vấn đã được cập nhật. Hãy lưu hoặc sao chép hội thoại hiện tại trước khi tải lại trang để nhận báo cáo mới.'};
- }
- return null;
-}
-function answeredPairs(history) {
- const bank=require('./interviewQuestionBank'), records=require('../../assets/interview-bank/seed.json').records;
- const pairs=[];let question='',questionId='';
- for(const turn of history.slice(-20)){
-  const text=String(turn.message||turn.content||'').trim();if(!text)continue;
-  if(turn.role==='interviewer'){question=text;questionId=turn.questionId||'';}
-  else if(turn.role==='candidate'&&question){const byId=questionId?bank.getQuestion(questionId):null;
-   const source=byId&&question.endsWith(byId.question)?byId:records.find(row=>question===row.question||question.endsWith(' '+row.question));
-   const intent=require('./interviewTurnPolicy').detectTurnIntent(text);
-   pairs.push({answerId:'answer-'+(pairs.length+1),question:source?.question||question,candidateAnswer:text,
-    ...(source?{questionId:source.id,answerType:source.answerType}:{}),...(intent.type!=='answer'?{skipped:true}:{})});question='';questionId='';}
-  else if(turn.role==='candidate'&&pairs.length)pairs[pairs.length-1].candidateAnswer+='\n'+text;
- }
- return pairs;
-}
-function groundSummary(result,pairs){
- if(!pairs.length)throw Error('No answered interview turns');
- const {groundEvaluation}=require('./interviewEvaluationService');
- const rows=Array.isArray(result.qaBreakdown)?result.qaBreakdown:[];
- const qaBreakdown=pairs.map(pair=>{
-  if(pair.skipped)return {...pair,score:null,status:'skipped',suggestedStarAnswer:null,strengths:[],verifiedComponents:[],rejectedComponents:[],followUpQuestions:[],critique:'Đã bỏ qua hoặc chưa có câu trả lời. Không chấm điểm và không yêu cầu bổ sung STAR cho lượt này.'};
-  // Unknown/free-form questions have no trusted rubric. Do not classify them
-  // from client metadata or ask a STAR evaluator to invent their question type.
-  if(!pair.answerType)return {...pair,score:null,status:'unclassified',suggestedStarAnswer:null,strengths:[],verifiedComponents:[],rejectedComponents:[],followUpQuestions:[],
-   critique:'Chưa xác định được loại câu hỏi từ ngân hàng. Giữ nguyên câu trả lời, chưa chấm điểm hoặc áp dụng STAR; cần đối chiếu đúng loại câu hỏi trước khi đánh giá.'};
-  if(pair.answerType&&pair.answerType!=='behavioral'){
-   const source=require('./interviewQuestionBank').getQuestion(pair.questionId);
-   return {...pair,score:null,status:'reference_only',suggestedStarAnswer:null,strengths:[],verifiedComponents:[],rejectedComponents:[],followUpQuestions:[],
-    keyPoints:source.keyPoints,redFlags:source.redFlags,referenceAnswer:source.answerSample,
-    critique:'Câu hỏi kiến thức hoặc tình huống: đối chiếu trực tiếp với các ý cần có; không ép khung STAR. Chưa xác minh độ đúng chuyên môn chỉ từ bản tổng kết.',
-    referenceNotice:'Đáp án tham khảo đang biên soạn; điều chỉnh theo trải nghiệm thật, không nhận thành tích giả định là của bạn.'};
+
+function summaryVersionError(body) {
+  if (body && body.reportVersion !== undefined && body.reportVersion !== 2) {
+    return {
+      success: false,
+      code: 'INTERVIEW_REPORT_CLIENT_OUTDATED',
+      message: 'Bản luyện phỏng vấn đã được cập nhật. Hãy lưu hoặc sao chép hội thoại hiện tại trước khi tải lại trang để nhận báo cáo mới.'
+    };
   }
-  const matches=rows.filter(row=>row.answerId===pair.answerId);
-  if(matches.length!==1||typeof matches[0].score!=='number'||!Number.isFinite(matches[0].score)||matches[0].score<0||matches[0].score>10)throw Error('AI evaluation does not match answered turns');
-  // Apply the same complete-sentence/negation rule as single-answer evaluation.
-  // Facts and scores cannot borrow evidence from another turn. Model prose and
-  // unknown fields are omitted; practice guidance is derived from verified gaps.
-  const grounded=groundEvaluation(matches[0],pair);
-  return {...pair,score:grounded.score,scoreNote:grounded.scoreNote,
-   suggestedStarAnswer:grounded.suggestedStarAnswer,
-   verifiedComponents:grounded.verifiedComponents,rejectedComponents:grounded.rejectedComponents,
-   strengths:grounded.strengths,followUpQuestions:grounded.followUpQuestions,
-   practiceTask:grounded.practiceTask,critique:grounded.practiceTask};
- });
- const overallScore=qaBreakdown.every(row=>typeof row.score==='number')?Math.round(qaBreakdown.reduce((sum,row)=>sum+row.score,0)/qaBreakdown.length*10)/10:null;
- return {qaBreakdown,overallScore,
-  scoreNote:'Điểm là ước lượng của AI để luyện tập dựa trên trích dẫn đã kiểm tra. Chất lượng rubric vẫn cần đánh giá bởi người thử.',
-  strengths:[],
-  improvements:qaBreakdown.flatMap((row,i)=>row.followUpQuestions.map(q=>`Câu ${i+1}: ${q}`)),
-  finalAdvice:'Chọn một câu cần làm rõ, bổ sung thông tin thực tế rồi luyện lại. Giữ nguyên phủ định và chỉ dùng số liệu có bằng chứng.',
-  rating:overallScore===null?'Chưa xác minh':overallScore>=8.5?'Xuất Sắc':overallScore>=7?'Rất Tốt':'Cần Trau Dồi Thêm',
-  summary:`Đã ghi nhận ${pairs.length} lượt, trong đó ${pairs.filter(p=>p.skipped).length} lượt bỏ qua/chưa trả lời không được chấm. Chỉ câu hỏi hành vi dùng STAR; câu hỏi kiến thức và tình huống được đối chiếu trực tiếp với đáp án tham khảo. Điểm chưa xác minh được để trống.`};
+  return null;
 }
-function needsModel(pair){return !pair.skipped&&pair.answerType==='behavioral';}
-module.exports={answeredPairs,groundSummary,summaryVersionError,needsModel};
+
+function findSourceQuestion(questionText, questionId, bank, allRecords) {
+  if (questionId) {
+    const byId = bank.getQuestion(questionId);
+    if (byId) return byId;
+  }
+  const cleanText = String(questionText || '').trim();
+  if (!cleanText) return null;
+  const exactOrSuffix = allRecords.find(row =>
+    cleanText === row.question ||
+    cleanText.endsWith(' ' + row.question) ||
+    cleanText.endsWith(': ' + row.question) ||
+    cleanText.includes(row.question)
+  );
+  return exactOrSuffix || null;
+}
+
+function answeredPairs(history) {
+  const bank = require('./interviewQuestionBank');
+  const records = require('../../assets/interview-bank/seed.json').records;
+  const policy = require('./interviewTurnPolicy');
+  const pairs = [];
+  let question = '';
+  let questionId = '';
+
+  let lastWasHint = false;
+  for (const turn of history.slice(-40)) {
+    if (!turn || typeof turn !== 'object') continue;
+    const text = String(turn.message ?? turn.content ?? '').trim();
+    if (!text) continue;
+    const isInterviewer = turn.role === 'interviewer' || turn.role === 'assistant';
+    if (isInterviewer) {
+      if (lastWasHint && question) {
+        if (turn.questionId) questionId = turn.questionId;
+        lastWasHint = false;
+      } else {
+        question = text;
+        questionId = turn.questionId || '';
+      }
+    } else if (question) {
+      const source = findSourceQuestion(question, questionId, bank, records);
+      const intent = policy.detectTurnIntent(text);
+      if (intent.type === 'hint') {
+        // Hint request is not a final answer to score; wait for subsequent answer on the same question
+        lastWasHint = true;
+        continue;
+      }
+      lastWasHint = false;
+      pairs.push({
+        answerId: 'answer-' + (pairs.length + 1),
+        question: source?.question || question,
+        candidateAnswer: text,
+        ...(source ? { questionId: source.id, answerType: source.answerType } : {}),
+        ...(intent.type !== 'answer' ? { skipped: true } : {})
+      });
+      question = '';
+      questionId = '';
+    } else if (pairs.length && !pairs[pairs.length - 1].skipped) {
+      pairs[pairs.length - 1].candidateAnswer += '\n' + text;
+    }
+  }
+  return pairs;
+}
+
+function groundSummary(result, pairs) {
+  if (!pairs.length) throw Error('No answered interview turns');
+  const bank = require('./interviewQuestionBank');
+  const { groundEvaluation, analyzeAnswerAgainstRubric } = require('./interviewEvaluationService');
+  const rows = Array.isArray(result?.qaBreakdown) ? result.qaBreakdown : [];
+
+  const qaBreakdown = pairs.map(pair => {
+    const source = pair.questionId ? bank.getQuestion(pair.questionId) : null;
+
+    if (pair.skipped) {
+      return {
+        ...pair,
+        score: null,
+        ratingBand: 'Đã bỏ qua',
+        status: 'skipped',
+        suggestedStarAnswer: null,
+        strengths: [],
+        verifiedComponents: [],
+        rejectedComponents: source?.keyPoints ? source.keyPoints.map(kp => `Chưa trả lời ý trọng tâm: ${kp}`) : [],
+        followUpQuestions: [],
+        keyPoints: source?.keyPoints || [],
+        redFlags: source?.redFlags || [],
+        referenceAnswer: source?.answerSample || '',
+        critique: source?.keyPoints?.length
+          ? `Bạn đã bỏ qua câu hỏi này. Khi luyện lại, hãy tập trung làm rõ: ${source.keyPoints.join('; ')}.`
+          : 'Đã bỏ qua hoặc chưa có câu trả lời cho câu hỏi này.'
+      };
+    }
+
+    // Behavioral question: combine optional model row with deterministic STAR + rubric grounding (never throws 500 if model is null!)
+    if (pair.answerType === 'behavioral') {
+      const modelMatch = rows.find(row => row && row.answerId === pair.answerId) || null;
+      const grounded = groundEvaluation(modelMatch, {
+        question: pair.question,
+        candidateAnswer: pair.candidateAnswer,
+        answerType: 'behavioral',
+        keyPoints: source?.keyPoints || [],
+        redFlags: source?.redFlags || [],
+        referenceAnswer: source?.answerSample || ''
+      });
+      return {
+        ...pair,
+        status: 'evaluated',
+        score: grounded.score,
+        ratingBand: grounded.ratingBand,
+        scoreNote: grounded.scoreNote,
+        suggestedStarAnswer: grounded.suggestedStarAnswer,
+        verifiedComponents: grounded.verifiedComponents,
+        rejectedComponents: grounded.rejectedComponents,
+        strengths: grounded.strengths,
+        followUpQuestions: grounded.followUpQuestions,
+        keyPoints: source?.keyPoints || [],
+        redFlags: source?.redFlags || [],
+        referenceAnswer: source?.answerSample || grounded.improvedAnswer,
+        practiceTask: grounded.practiceTask,
+        critique: grounded.critique
+      };
+    }
+
+    // Scenario, Knowledge, or Freeform question: evaluate candidateAnswer directly against rubric keyPoints & redFlags (Fixes H5!)
+    const det = analyzeAnswerAgainstRubric({
+      question: pair.question,
+      candidateAnswer: pair.candidateAnswer,
+      answerType: pair.answerType || 'scenario',
+      keyPoints: source?.keyPoints || [],
+      redFlags: source?.redFlags || [],
+      referenceAnswer: source?.answerSample || ''
+    });
+
+    return {
+      ...pair,
+      status: 'evaluated',
+      score: det.score,
+      ratingBand: det.ratingBand,
+      scoreNote: 'Điểm đối chiếu trực tiếp câu trả lời của bạn với các ý trọng tâm (keyPoints) và lỗi cần tránh (redFlags).',
+      suggestedStarAnswer: null,
+      strengths: det.score >= 6.5 ? det.verifiedComponents.slice(0, 3) : [],
+      verifiedComponents: det.verifiedComponents,
+      rejectedComponents: det.rejectedComponents,
+      followUpQuestions: det.followUpQuestions,
+      keyPoints: source?.keyPoints || [],
+      redFlags: source?.redFlags || [],
+      referenceAnswer: source?.answerSample || '',
+      critique: det.critique,
+      referenceNotice: 'Đáp án mẫu dùng để đối chiếu phương pháp lập luận; hãy trình bày bằng trải nghiệm thực tế của bạn.'
+    };
+  });
+
+  const scoredRows = qaBreakdown.filter(row => typeof row.score === 'number' && Number.isFinite(row.score));
+  const skippedCount = qaBreakdown.filter(row => row.status === 'skipped').length;
+
+  let overallScore = null;
+  if (scoredRows.length > 0) {
+    const rawAvg = scoredRows.reduce((sum, row) => sum + row.score, 0) / scoredRows.length;
+    // Honest adjustment if candidate skipped more than half of the attempted turns
+    const answeredRatio = scoredRows.length / qaBreakdown.length;
+    const adjusted = answeredRatio < 0.5 ? rawAvg * (0.75 + answeredRatio * 0.5) : rawAvg;
+    overallScore = Math.round(adjusted * 10) / 10;
+  }
+
+  // Honest strengths (ZERO fake praise when all skipped or all weak!)
+  const collectedStrengths = [];
+  qaBreakdown.forEach((row, idx) => {
+    if (typeof row.score === 'number' && row.score >= 6.5 && row.verifiedComponents?.length > 0) {
+      collectedStrengths.push(`Câu ${idx + 1} (${row.score}/10): ${row.verifiedComponents[0]}`);
+    }
+  });
+
+  // Actionable, question-specific improvements
+  const collectedImprovements = [];
+  qaBreakdown.forEach((row, idx) => {
+    if (row.status === 'skipped') {
+      const kp = row.keyPoints?.[0] ? ` (cần nắm: ${row.keyPoints[0]})` : '';
+      collectedImprovements.push(`Câu ${idx + 1}: Đã bỏ qua — xem đáp án mẫu bên dưới để bổ sung kiến thức${kp}.`);
+    } else if (row.rejectedComponents?.length > 0) {
+      collectedImprovements.push(`Câu ${idx + 1} (${row.score}/10): ${row.rejectedComponents[0]}`);
+    } else if (row.followUpQuestions?.length > 0 && row.score < 8.5) {
+      collectedImprovements.push(`Câu ${idx + 1}: ${row.followUpQuestions[0]}`);
+    }
+  });
+
+  let rating = 'Chưa đủ dữ liệu chấm điểm';
+  if (overallScore !== null) {
+    if (overallScore >= 8.5) rating = 'Xuất sắc';
+    else if (overallScore >= 7.0) rating = 'Khá / Tốt';
+    else if (overallScore >= 5.0) rating = 'Trung bình (Cần bổ sung chiều sâu)';
+    else rating = 'Yếu (Cần luyện tập lại cách lập luận)';
+  }
+
+  let finalAdvice = '';
+  if (overallScore === null) {
+    finalAdvice = 'Bạn đã bỏ qua tất cả các câu hỏi trong phiên này nên hệ thống không chấm điểm khống. Hãy đọc kỹ phần Trọng tâm cần nêu & Đáp án mẫu của từng câu bên dưới, sau đó bấm Luyện Tập Lại và tự diễn đạt bằng lời của mình.';
+  } else if (overallScore < 5.0) {
+    finalAdvice = 'Các câu trả lời hiện còn quá ngắn hoặc cảm tính, chưa chạm vào quy trình xử lý và tiêu chí kiểm chứng mà HR tìm kiếm. Hãy xem chi tiết các ý bị thiếu (Rejected/Missing) ở từng câu bên dưới và tập trả lời theo cấu trúc Nguyên nhân → Hành động cụ thể → Kết quả thực tế.';
+  } else if (overallScore < 7.5) {
+    finalAdvice = 'Bạn đã nắm được hướng xử lý cơ bản nhưng còn bỏ sót một số điều kiện biên, đánh đổi rủi ro hoặc kết quả đo lường cụ thể. Hãy rà lại các ý còn thiếu trong từng câu bên dưới để nâng mức điểm lên 8+.';
+  } else {
+    finalAdvice = 'Lập luận của bạn bám sát trọng tâm chuyên môn và có hành động thực chứng rõ ràng. Khi vào phỏng vấn thật, hãy chuẩn bị sẵn 1–2 số liệu thực tế từ dự án của bạn để sẵn sàng cho các câu hỏi đào sâu của Hiring Manager.';
+  }
+
+  return {
+    qaBreakdown,
+    overallScore,
+    scoreNote: 'Điểm số là ước lượng tham khảo dựa trên đối chiếu câu trả lời với các tiêu chí trọng tâm (keyPoints & STAR), không phải quyết định tuyển dụng chính thức.',
+    strengths: collectedStrengths.slice(0, 6),
+    improvements: collectedImprovements.slice(0, 8),
+    finalAdvice,
+    rating,
+    summary: overallScore === null
+      ? `Phiên gồm ${pairs.length} câu hỏi và cả ${skippedCount} câu đều được bỏ qua/chưa trả lời, vì vậy hệ thống giữ nguyên trạng thái chưa chấm điểm.`
+      : `Đã đánh giá ${scoredRows.length}/${pairs.length} câu trả lời thực tế${skippedCount ? ` (${skippedCount} câu bỏ qua không tính điểm khống)` : ''}, điểm trung bình đạt ${overallScore}/10 (${rating}).`
+  };
+}
+
+function needsModel(pair) {
+  return !pair.skipped && pair.answerType === 'behavioral';
+}
+
+module.exports = { answeredPairs, groundSummary, summaryVersionError, needsModel };

@@ -20,11 +20,28 @@ app.use(helmet({
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));
 
-// Middleware CORS
+// Middleware CORS (Origin whitelist an toàn thay vì wildcard *)
+const ALLOWED_CORS_ORIGINS = new Set([
+  'https://connectcv.id.vn',
+  'https://www.connectcv.id.vn',
+  ...(process.env.WEB_ORIGINS ? process.env.WEB_ORIGINS.split(',').map(s => s.trim()).filter(Boolean) : [])
+]);
 app.use(cors({
-  origin: '*',
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (
+      ALLOWED_CORS_ORIGINS.has(origin) ||
+      /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin) ||
+      /^https:\/\/[a-z0-9-]+\.onrender\.com$/i.test(origin) ||
+      /^https:\/\/([a-z0-9-]+\.)?connectcv\.id\.vn$/i.test(origin)
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'If-Match']
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'If-Match'],
+  exposedHeaders: ['RateLimit-Limit', 'RateLimit-Remaining', 'RateLimit-Reset', 'Retry-After']
 }));
 
 // Body Parsers

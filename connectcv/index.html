@@ -1080,7 +1080,7 @@
         </div>
         <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-600">
           <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-          <span>4 chặng · Giọng nói AI</span>
+          <span>4 chặng · Giọng nói AI · Chấm điểm &amp; Góp ý thực chiến</span>
         </div>
       </div>
 
@@ -1088,26 +1088,55 @@
       <div class="space-y-2.5">
         <div class="flex flex-wrap items-center gap-1.5">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">Gợi ý:</span>
-          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">UI/UX Designer</button>
-          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Frontend Developer</button>
-          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Backend Developer</button>
-          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Product Manager</button>
-          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Sales B2B</button>
-          <button type="button" onclick="document.getElementById('intJobTitleInput').value=this.innerText" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Marketing</button>
+          <button type="button" onclick="selectSpaRoleChip('UI/UX Designer','creative-design')" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">UI/UX Designer</button>
+          <button type="button" onclick="selectSpaRoleChip('Frontend Developer','software-engineering')" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Frontend Developer</button>
+          <button type="button" onclick="selectSpaRoleChip('Backend Developer','software-engineering')" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Backend Developer</button>
+          <button type="button" onclick="selectSpaRoleChip('Product Manager','product-project')" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Product Manager</button>
+          <button type="button" onclick="selectSpaRoleChip('Data Analyst','data-analytics')" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Data Analyst</button>
+          <button type="button" onclick="selectSpaRoleChip('Sales B2B','sales')" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Sales B2B</button>
+          <button type="button" onclick="selectSpaRoleChip('Marketing','marketing')" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Marketing</button>
+          <button type="button" onclick="selectSpaRoleChip('Điều dưỡng','healthcare-medical')" class="px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-xs font-medium text-slate-600 transition-all hover:-translate-y-0.5 active:scale-95">Điều dưỡng</button>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Vị trí</label>
-          <input id="intJobTitleInput" type="text" value="UI/UX Designer" placeholder="Nhập vị trí..." class="input-upwork w-full font-semibold transition-all focus:ring-2 focus:ring-blue-500/20" />
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Vị trí ứng tuyển</label>
+          <input id="intJobTitleInput" type="text" value="UI/UX Designer" oninput="document.getElementById('intIndustrySelect').value=''" placeholder="VD: Product Manager, Kế toán..." class="input-upwork w-full font-semibold transition-all focus:ring-2 focus:ring-blue-500/20" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Ngành nghề</label>
+          <select id="intIndustrySelect" class="input-upwork w-full font-semibold cursor-pointer">
+            <option value="" selected>Tự động theo vị trí / JD</option>
+            <option value="software-engineering">CNTT &amp; Phần mềm</option>
+            <option value="data-analytics">Phân tích Dữ liệu (Data/BI)</option>
+            <option value="product-project">Product, BA &amp; Quản lý Dự án</option>
+            <option value="cybersecurity">An toàn thông tin (Cybersecurity)</option>
+            <option value="creative-design">Thiết kế, UI/UX &amp; Đa phương tiện</option>
+            <option value="marketing">Marketing, Nội dung &amp; Truyền thông</option>
+            <option value="sales">Kinh doanh &amp; Bán hàng (Sales)</option>
+            <option value="finance-accounting">Tài chính, Kế toán &amp; Ngân hàng</option>
+            <option value="human-resources">Nhân sự, Tuyển dụng &amp; Văn phòng</option>
+            <option value="education">Giáo dục, Đào tạo &amp; Biên phiên dịch</option>
+            <option value="hospitality">Khách sạn, Nhà hàng, F&amp;B &amp; Du lịch</option>
+            <option value="retail-ecommerce">TMĐT, Bán lẻ &amp; Thu mua</option>
+            <option value="customer-service">Tư vấn &amp; Chăm sóc khách hàng</option>
+            <option value="healthcare-medical">Y tế, Điều dưỡng &amp; Dược</option>
+            <option value="engineering-manufacturing">Kỹ thuật, Cơ khí, Xây dựng &amp; SX</option>
+            <option value="logistics-supply-chain">Logistics, Kho vận &amp; XNK</option>
+            <option value="legal-real-estate">Pháp chế, Luật &amp; Bất động sản</option>
+            <option value="general-professional">Đa ngành / Năng lực chung theo JD</option>
+          </select>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Cấp độ</label>
           <select id="intDifficultySelect" class="input-upwork w-full font-semibold cursor-pointer">
-            <option value="Intern">Intern</option>
-            <option value="Fresher">Fresher</option>
-            <option value="Junior" selected>Junior / Mid</option>
+            <option value="intern">Intern (Thực tập — nền tảng Fresher)</option>
+            <option value="fresher">Fresher (Mới vào nghề)</option>
+            <option value="junior" selected>Junior (1 – 2 năm)</option>
+            <option value="middle">Middle (2 – 4 năm)</option>
+            <option value="senior">Senior (Trên 4 năm)</option>
+            <option value="lead">Lead / Manager (Quản lý nhóm)</option>
           </select>
         </div>
         <div>
@@ -1118,6 +1147,8 @@
           </select>
         </div>
       </div>
+
+      <div id="intSetupErrorBox" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium"></div>
 
       <div>
         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">JD hoặc yêu cầu (tùy chọn)</label>
@@ -1209,9 +1240,21 @@
             </p>
           </div>
 
-          <!-- Nhận xét nhanh -->
-          <div id="spaQuickFeedback" class="hidden p-2.5 bg-amber-900/60 rounded-xl border border-amber-500 text-amber-200 text-xs font-medium">
-            <span id="spaQuickFeedbackText">Gợi ý phản hồi</span>
+          <!-- Nhận xét & Hướng dẫn ăn điểm sau mỗi lượt -->
+          <div id="spaQuickFeedback" class="hidden p-3.5 bg-slate-800/95 rounded-xl border border-amber-400/60 text-left space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-300">Nhận xét &amp; Hướng dẫn từ HR</span>
+              <button id="btnToggleSampleAnswer" type="button" onclick="toggleSpaSampleAnswer()" class="hidden text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-400/40 hover:bg-sky-500/30">Xem đáp án mẫu</button>
+            </div>
+            <p id="spaQuickFeedbackText" class="text-amber-100 text-xs leading-relaxed">Gợi ý phản hồi</p>
+            <ul id="spaCoachingMissingList" class="hidden list-disc pl-4 text-[11px] text-slate-300 space-y-0.5"></ul>
+            <div id="spaSampleAnswerBox" class="hidden p-2.5 rounded-lg bg-slate-900/90 border border-slate-700 text-[11px] text-emerald-200 leading-relaxed"></div>
+          </div>
+
+          <!-- Cảnh báo lỗi kết nối / dịch vụ + Nút Thử lại (chống mất câu trả lời) -->
+          <div id="spaErrorBanner" class="hidden p-3 bg-rose-950/90 rounded-xl border border-rose-500/80 text-rose-100 text-xs flex flex-wrap items-center justify-between gap-2 text-left">
+            <span id="spaErrorBannerText">Chưa nhận được phản hồi từ máy chủ.</span>
+            <button type="button" onclick="retryLastSpaAction()" class="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shrink-0">Thử lại</button>
           </div>
         </div>
 
@@ -1226,10 +1269,16 @@
             <button id="btnSpaMicToggle" onclick="toggleSpaMic()" class="btn-primary text-xs font-bold px-5 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
               Bật Micro
             </button>
-            <button onclick="toggleSpaKeyboardInput()" class="btn-secondary text-xs font-bold px-4 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+            <button onclick="toggleSpaKeyboardInput()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
               Gõ chữ
             </button>
-            <button onclick="replaySpaLastQuestion()" class="btn-secondary text-xs font-bold px-4 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+            <button id="btnSpaHint" onclick="sendSpaHint()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 text-amber-700 border-amber-200 bg-amber-50 hover:bg-amber-100 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+              Gợi ý trả lời
+            </button>
+            <button id="btnSpaSkip" onclick="skipSpaCurrentQuestion()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 text-slate-700 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+              Bỏ qua câu này
+            </button>
+            <button onclick="replaySpaLastQuestion()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
               Nghe lại
             </button>
           </div>
@@ -1251,10 +1300,13 @@
 
         <!-- Danh sách hội thoại đối thoại -->
         <div class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-          <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2.5">
-            Nội dung hội thoại
-          </h4>
-          <div id="spaTranscriptList" class="space-y-3 max-h-[320px] overflow-y-auto text-xs pr-1">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+            <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-500">
+              Nội dung hội thoại
+            </h4>
+            <span id="spaAssessmentNotice" class="text-[11px] text-slate-400">Bộ câu hỏi biên tập luyện tập · Nhận xét đối chiếu theo rubric chuyên môn</span>
+          </div>
+          <div id="spaTranscriptList" class="space-y-3 max-h-[340px] overflow-y-auto text-xs pr-1">
             <!-- Messages rendered dynamically -->
           </div>
         </div>
@@ -1396,7 +1448,7 @@
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                <span><strong>01 phiên</strong> phỏng vấn thử AI ngắn (3–5 phút)</span>
+                <span><strong>01 phiên</strong> phỏng vấn thử AI (10–15 phút)</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
@@ -1695,29 +1747,42 @@
         <button onclick="closeSpaSummaryModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold p-1">&times;</button>
       </div>
 
+      <!-- Lỗi tạo báo cáo (nếu có) -->
+      <div id="spaReportErrorBox" class="hidden p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs flex items-center justify-between gap-3">
+        <span id="spaReportErrorText">Không thể tải báo cáo đánh giá.</span>
+        <button type="button" onclick="endSpaInterview()" class="px-3 py-1.5 rounded-lg bg-rose-600 text-white font-bold text-xs shrink-0">Thử lại</button>
+      </div>
+
       <!-- Điểm tổng thể -->
-      <div class="p-5 bg-sky-50 rounded-2xl border border-sky-100 flex items-center justify-between">
+      <div class="p-5 bg-sky-50 rounded-2xl border border-sky-100 flex items-center justify-between gap-4">
         <div>
           <span class="text-xs uppercase font-bold text-slate-500">Xếp loại chung:</span>
-          <p id="spaReportRating" class="text-base font-extrabold text-sky-800 mt-0.5">Xuất sắc</p>
+          <p id="spaReportRating" class="text-base font-extrabold text-sky-800 mt-0.5">Chưa chấm điểm</p>
           <p id="spaReportSummary" class="text-xs text-slate-700 mt-1 max-w-md leading-relaxed"></p>
+          <p id="spaReportScoreNote" class="text-[11px] text-slate-500 mt-1.5"></p>
         </div>
-        <div class="text-right bg-white px-5 py-3 rounded-xl border border-sky-200">
-          <span class="text-3xl font-extrabold text-sky-600" id="spaReportScore">8.5</span>
-          <span class="text-xs text-slate-500">/10</span>
+        <div class="text-right bg-white px-5 py-3 rounded-xl border border-sky-200 shrink-0">
+          <span class="text-2xl sm:text-3xl font-extrabold text-sky-600" id="spaReportScore">--</span>
+          <span id="spaReportScoreSuffix" class="text-xs text-slate-500 hidden">/10</span>
         </div>
       </div>
 
       <!-- Điểm mạnh & Điểm cần cải thiện -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
         <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100 space-y-1.5">
-          <span class="font-bold text-emerald-900 uppercase">Điểm mạnh:</span>
+          <span class="font-bold text-emerald-900 uppercase">Điểm đạt được thực tế:</span>
           <ul id="spaReportStrengths" class="list-disc pl-4 space-y-1 text-slate-700"></ul>
         </div>
         <div class="p-4 bg-amber-50 rounded-xl border border-amber-100 space-y-1.5">
-          <span class="font-bold text-amber-900 uppercase">Cần hoàn thiện:</span>
+          <span class="font-bold text-amber-900 uppercase">Điểm cần hoàn thiện:</span>
           <ul id="spaReportImprovements" class="list-disc pl-4 space-y-1 text-slate-700"></ul>
         </div>
+      </div>
+
+      <!-- Phân tích chi tiết từng câu hỏi (qaBreakdown) -->
+      <div class="space-y-3">
+        <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-slate-700">Phân tích chi tiết từng câu hỏi &amp; Đáp án mẫu</h4>
+        <div id="spaReportQaBreakdown" class="space-y-3 text-xs"></div>
       </div>
 
       <!-- Lời khuyên chiến lược -->
@@ -3037,10 +3102,16 @@
     // --- State Phỏng vấn giọng nói ---
     let spaIntHistory = [];
     let spaCurrentJobTitle = 'UI/UX Designer';
-    let spaCurrentDifficulty = 'Junior';
+    let spaCurrentIndustry = '';
+    let spaCurrentJdText = '';
+    let spaCurrentDifficulty = 'junior';
     let spaCurrentVoice = 'vi-VN-HoaiMyNeural';
     let spaCurrentQuestion = null;
     let spaAskedQuestionIds = [];
+    let spaSkippedTopics = [];
+    let spaFollowUpDepth = 0;
+    let spaConsecutiveSkips = 0;
+    let spaLastFailedAction = null;
     let spaCurrentAudio = null;
     let spaWebSpeech = null;
     let spaSpeechBuffer = '';
@@ -5437,56 +5508,192 @@
     }
 
     // --- 3. LOGIC PHỎNG VẤN GIỌNG NÓI AI (VOICE INTERVIEW) ---
+    function selectSpaRoleChip(roleTitle, industrySlug) {
+      const titleEl = document.getElementById('intJobTitleInput');
+      const indEl = document.getElementById('intIndustrySelect');
+      const errEl = document.getElementById('intSetupErrorBox');
+      if (titleEl) titleEl.value = roleTitle;
+      if (indEl) indEl.value = industrySlug || '';
+      if (errEl) { errEl.classList.add('hidden'); errEl.textContent = ''; }
+    }
+
+    function toggleSpaSampleAnswer() {
+      const box = document.getElementById('spaSampleAnswerBox');
+      const btn = document.getElementById('btnToggleSampleAnswer');
+      if (!box || !btn) return;
+      const nowHidden = box.classList.toggle('hidden');
+      btn.textContent = nowHidden ? 'Xem đáp án mẫu' : 'Ẩn đáp án mẫu';
+    }
+
+    function renderSpaCoachingPanel(data) {
+      const fbBox = document.getElementById('spaQuickFeedback');
+      const fbText = document.getElementById('spaQuickFeedbackText');
+      const missList = document.getElementById('spaCoachingMissingList');
+      const sampleBtn = document.getElementById('btnToggleSampleAnswer');
+      const sampleBox = document.getElementById('spaSampleAnswerBox');
+      if (!fbBox || !fbText) return;
+
+      const coaching = data && data.coaching ? data.coaching : null;
+      const mainText = (coaching && coaching.critique) || data?.quickFeedback || '';
+      if (!mainText) {
+        fbBox.classList.add('hidden');
+        return;
+      }
+
+      const bandPrefix = coaching && typeof coaching.scoreEstimate === 'number'
+        ? `[${coaching.ratingBand || 'Đánh giá'} · ~${coaching.scoreEstimate}/10] `
+        : '';
+      fbText.textContent = bandPrefix + mainText;
+      fbBox.classList.remove('hidden');
+
+      if (missList) {
+        missList.replaceChildren();
+        const misses = Array.isArray(coaching?.missingPoints) ? coaching.missingPoints.filter(Boolean) : [];
+        if (misses.length > 0) {
+          misses.slice(0, 3).forEach(mp => {
+            const li = document.createElement('li');
+            li.textContent = 'Ý cần làm rõ để ăn điểm: ' + String(mp);
+            missList.appendChild(li);
+          });
+          missList.classList.remove('hidden');
+        } else {
+          missList.classList.add('hidden');
+        }
+      }
+
+      if (sampleBtn && sampleBox) {
+        const sampleText = String(coaching?.sampleAnswer || '').trim();
+        if (sampleText) {
+          sampleBox.textContent = 'Đáp án mẫu tham khảo: ' + sampleText;
+          sampleBtn.classList.remove('hidden');
+          // Auto-expand sample answer when user skipped / didn't know; collapse by default on normal answers so practice stays active
+          if (coaching?.verdict === 'skipped') {
+            sampleBox.classList.remove('hidden');
+            sampleBtn.textContent = 'Ẩn đáp án mẫu';
+          } else {
+            sampleBox.classList.add('hidden');
+            sampleBtn.textContent = 'Xem đáp án mẫu';
+          }
+        } else {
+          sampleBtn.classList.add('hidden');
+          sampleBox.classList.add('hidden');
+          sampleBox.textContent = '';
+        }
+      }
+    }
+
+    function showSpaTurnError(messageText, retryActionObj) {
+      spaLastFailedAction = retryActionObj || null;
+      const banner = document.getElementById('spaErrorBanner');
+      const txt = document.getElementById('spaErrorBannerText');
+      if (txt) txt.textContent = messageText || 'Không thể nhận phản hồi từ máy chủ AI. Câu trả lời của bạn được giữ nguyên để thử lại.';
+      if (banner) banner.classList.remove('hidden');
+    }
+
+    function clearSpaTurnError() {
+      spaLastFailedAction = null;
+      const banner = document.getElementById('spaErrorBanner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    function retryLastSpaAction() {
+      if (!spaLastFailedAction) return;
+      const payload = spaLastFailedAction;
+      clearSpaTurnError();
+      executeSpaTurnRequest(payload.action, payload.answerText);
+    }
+
     async function startSpaVoiceInterview() {
       const jobTitle = document.getElementById('intJobTitleInput').value.trim() || 'UI/UX Designer';
-      const difficulty = document.getElementById('intDifficultySelect').value || 'Junior';
+      const selectedIndustry = (document.getElementById('intIndustrySelect')?.value || '').trim();
+      const difficultySel = document.getElementById('intDifficultySelect');
+      const difficulty = (difficultySel?.value || 'junior').toLowerCase();
+      const difficultyLabel = difficultySel?.options?.[difficultySel.selectedIndex]?.text || difficulty;
       const voice = document.getElementById('intVoiceSelect').value;
       const jdText = document.getElementById('intJdInput').value.trim();
+      const setupErr = document.getElementById('intSetupErrorBox');
+      if (setupErr) { setupErr.classList.add('hidden'); setupErr.textContent = ''; }
 
       spaCurrentJobTitle = jobTitle;
+      spaCurrentIndustry = selectedIndustry;
+      spaCurrentJdText = jdText;
       spaCurrentDifficulty = difficulty;
       spaCurrentVoice = voice;
       spaCurrentQuestion = null;
       spaAskedQuestionIds = [];
-      document.getElementById('spaIntJobTitle').innerText = jobTitle;
-      document.getElementById('spaIntDifficulty').innerText = `Cấp độ: ${difficulty}`;
+      spaSkippedTopics = [];
+      spaFollowUpDepth = 0;
+      spaConsecutiveSkips = 0;
+      clearSpaTurnError();
+
+      document.getElementById('spaIntJobTitle').textContent = jobTitle;
+      document.getElementById('spaIntDifficulty').textContent = 'Cấp độ: ' + difficultyLabel;
+      document.getElementById('spaTranscriptList')?.replaceChildren();
+      document.getElementById('spaQuickFeedback')?.classList.add('hidden');
 
       const btn = document.getElementById('btnStartSpaVoice');
-      btn.innerText = 'Đang kết nối AI...';
+      const origLabel = 'Bắt đầu phỏng vấn';
+      btn.textContent = 'Đang kết nối AI...';
       btn.disabled = true;
 
       try {
+        const reqBody = {
+          jobTitle,
+          level: difficulty,
+          jdText,
+          action: 'start'
+        };
+        if (selectedIndustry) reqBody.industry = selectedIndustry;
+
         const res = await fetch('/api/interview/live-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jobTitle,
-            level: difficulty.toLowerCase(),
-            jdText,
-            action: 'start'
-          })
+          body: JSON.stringify(reqBody)
         });
-        const data = await res.json();
-        if (data.success && data.data) {
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success && data.data) {
           spaCurrentQuestion = data.data.currentQuestion;
-          if (data.data.askedQuestionIds) spaAskedQuestionIds = data.data.askedQuestionIds;
+          spaCurrentIndustry = data.data.industry || selectedIndustry;
+          spaAskedQuestionIds = Array.isArray(data.data.askedQuestionIds) ? data.data.askedQuestionIds : [];
+          spaSkippedTopics = Array.isArray(data.data.skippedTopics) ? data.data.skippedTopics : [];
+          spaFollowUpDepth = data.data.followUpDepth || 0;
+          spaConsecutiveSkips = data.data.consecutiveSkips || 0;
+
+          if (data.data.assessmentNotice) {
+            const noticeEl = document.getElementById('spaAssessmentNotice');
+            if (noticeEl) noticeEl.textContent = data.data.assessmentNotice;
+          }
+
           const opening = data.data.interviewerReply || data.data.reply;
           spaIntHistory = [{ role: 'interviewer', message: opening, questionId: spaCurrentQuestion?.id }];
 
           document.getElementById('intSetupBox').classList.add('hidden');
           document.getElementById('intRoomBox').classList.remove('hidden');
           renderSpaTranscriptMessage('interviewer', opening);
-          setSpaStage(1);
+          setSpaStage(data.data.stage || 1);
 
-          // Phát âm thanh giọng nói câu hỏi mở đầu bằng TTS
           await speakSpaAIVoice(opening);
         } else {
-          alert('Không thể bắt đầu phỏng vấn: ' + (data.message || 'Lỗi không xác định'));
+          const errMsg = data?.message || 'Không thể bắt đầu phiên phỏng vấn.';
+          if (setupErr) {
+            setupErr.textContent = errMsg;
+            setupErr.classList.remove('hidden');
+          } else {
+            alert('Không thể bắt đầu phỏng vấn: ' + errMsg);
+          }
+          if (data?.fieldErrors?.industry) {
+            document.getElementById('intIndustrySelect')?.focus();
+          }
         }
       } catch (e) {
-        alert('Lỗi khởi động phỏng vấn: ' + e.message);
+        if (setupErr) {
+          setupErr.textContent = 'Lỗi kết nối máy chủ phỏng vấn: ' + e.message;
+          setupErr.classList.remove('hidden');
+        } else {
+          alert('Lỗi khởi động phỏng vấn: ' + e.message);
+        }
       } finally {
-        btn.innerText = 'Bắt Đầu Buổi Phỏng Vấn Giọng Nói';
+        btn.textContent = origLabel;
         btn.disabled = false;
       }
     }
@@ -5710,60 +5917,115 @@
       if (box) { box.classList.add('hidden'); box.classList.remove('flex'); }
     }
 
-    async function sendSpaAnswer(answerText) {
-      if (!answerText || !answerText.trim()) return;
+    async function executeSpaTurnRequest(actionType, answerText) {
+      if (actionType === 'reply' && (!answerText || !answerText.trim())) return;
+      if (!spaCurrentQuestion && spaIntHistory.length === 0) return;
+
       stopSpaListening();
+      clearSpaTurnError();
       spaIsAISpeaking = true;
       spaSpeechBuffer = '';
 
-      renderSpaTranscriptMessage('candidate', answerText);
-      spaIntHistory.push({ role: 'candidate', message: answerText });
+      const displayCandidateMsg = actionType === 'skip'
+        ? '[Bỏ qua câu hỏi này — Xem hướng dẫn trả lời]'
+        : (actionType === 'hint' ? '[Xin gợi ý hướng trả lời cho câu hiện tại]' : answerText.trim());
 
-      setSpaStatus('AI Đang Lắng Nghe & Suy Luận...');
-      setSpaCaption('AI đang phân tích câu trả lời của bạn...');
+      // Render pending bubble WITHOUT mutating spaIntHistory until server confirms 200 OK (Fixes H4!)
+      const pendingNode = renderSpaTranscriptMessage('candidate', displayCandidateMsg, true);
+      const draftHistory = [...spaIntHistory, { role: 'candidate', message: displayCandidateMsg }];
+
+      setSpaStatus(actionType === 'hint' ? 'AI Đang Chuẩn Bị Gợi Ý...' : 'AI Đang Đánh Giá & Phản Hồi...');
+      setSpaCaption('AI đang đối chiếu câu trả lời của bạn với tiêu chí chuyên môn...');
 
       try {
+        const payload = {
+          jobTitle: spaCurrentJobTitle,
+          industry: spaCurrentIndustry || undefined,
+          level: (spaCurrentDifficulty || 'junior').toLowerCase(),
+          jdText: spaCurrentJdText || '',
+          history: draftHistory,
+          message: actionType === 'reply' ? answerText.trim() : '',
+          action: actionType,
+          currentQuestionId: spaCurrentQuestion?.id || null,
+          askedQuestionIds: spaAskedQuestionIds,
+          skippedTopics: spaSkippedTopics,
+          followUpDepth: spaFollowUpDepth,
+          consecutiveSkips: spaConsecutiveSkips
+        };
+
         const res = await fetch('/api/interview/live-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jobTitle: spaCurrentJobTitle,
-            level: (spaCurrentDifficulty || 'junior').toLowerCase(),
-            history: spaIntHistory,
-            message: answerText,
-            action: 'reply',
-            currentQuestionId: spaCurrentQuestion?.id,
-            askedQuestionIds: spaAskedQuestionIds
-          })
+          body: JSON.stringify(payload)
         });
-        const data = await res.json();
-        if (data.success && data.data) {
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.success && data.data) {
+          if (pendingNode) pendingNode.classList.remove('opacity-70');
+          spaIntHistory = draftHistory;
           spaCurrentQuestion = data.data.currentQuestion;
-          if (data.data.askedQuestionIds) spaAskedQuestionIds = data.data.askedQuestionIds;
+          if (data.data.industry) spaCurrentIndustry = data.data.industry;
+          if (Array.isArray(data.data.askedQuestionIds)) spaAskedQuestionIds = data.data.askedQuestionIds;
+          if (Array.isArray(data.data.skippedTopics)) spaSkippedTopics = data.data.skippedTopics;
+          spaFollowUpDepth = data.data.followUpDepth || 0;
+          spaConsecutiveSkips = data.data.consecutiveSkips || 0;
+
           const reply = data.data.interviewerReply || data.data.reply;
           spaIntHistory.push({ role: 'interviewer', message: reply, questionId: spaCurrentQuestion?.id });
           renderSpaTranscriptMessage('interviewer', reply);
+          renderSpaCoachingPanel(data.data);
 
-          if (data.data.quickFeedback) {
-            const fbBox = document.getElementById('spaQuickFeedback');
-            document.getElementById('spaQuickFeedbackText').innerText = data.data.quickFeedback;
-            fbBox.classList.remove('hidden');
-          }
+          setSpaStage(data.data.stage || (data.data.sessionComplete ? 4 : 2));
 
-          const turnCount = spaIntHistory.filter(h => h.role === 'candidate').length;
-          const nextStage = data.data.sessionComplete ? 4 : Math.min(4, Math.max(1, turnCount + 1));
-          setSpaStage(nextStage);
+          const skipBtn = document.getElementById('btnSpaSkip');
+          const hintBtn = document.getElementById('btnSpaHint');
+          if (skipBtn) skipBtn.disabled = Boolean(data.data.sessionComplete);
+          if (hintBtn) hintBtn.disabled = Boolean(data.data.sessionComplete);
 
-          // Phát âm thanh giọng nói câu hỏi tiếp theo
           await speakSpaAIVoice(reply);
         } else {
+          // Rollback pending DOM bubble; keep spaIntHistory untouched and restore user's draft input!
+          if (pendingNode && pendingNode.parentNode) pendingNode.parentNode.removeChild(pendingNode);
+          if (actionType === 'reply' && answerText) {
+            const input = document.getElementById('spaTypedAnswerInput');
+            if (input && !input.value) input.value = answerText;
+            document.getElementById('spaKeyboardInputCard')?.classList.remove('hidden');
+          }
           spaIsAISpeaking = false;
-          setSpaStatus('AI sẵn sàng');
+          setSpaStatus('Tạm gián đoạn — Hãy bấm Thử lại');
+          showSpaTurnError(data?.message || `Máy chủ trả về lỗi (${res.status}). Câu trả lời của bạn chưa bị mất — hãy bấm Thử lại.`, {
+            action: actionType,
+            answerText
+          });
         }
       } catch (e) {
+        if (pendingNode && pendingNode.parentNode) pendingNode.parentNode.removeChild(pendingNode);
+        if (actionType === 'reply' && answerText) {
+          const input = document.getElementById('spaTypedAnswerInput');
+          if (input && !input.value) input.value = answerText;
+          document.getElementById('spaKeyboardInputCard')?.classList.remove('hidden');
+        }
         spaIsAISpeaking = false;
-        setSpaStatus('AI sẵn sàng');
+        setSpaStatus('Mất kết nối — Hãy bấm Thử lại');
+        showSpaTurnError('Không thể kết nối tới máy chủ phỏng vấn (' + e.message + '). Hãy bấm Thử lại.', {
+          action: actionType,
+          answerText
+        });
       }
+    }
+
+    async function sendSpaAnswer(answerText) {
+      return executeSpaTurnRequest('reply', answerText);
+    }
+
+    async function skipSpaCurrentQuestion() {
+      if (!spaCurrentQuestion) return;
+      return executeSpaTurnRequest('skip', '');
+    }
+
+    async function sendSpaHint() {
+      if (!spaCurrentQuestion) return;
+      return executeSpaTurnRequest('hint', '');
     }
 
     function sendSpaTypedAnswer() {
@@ -5783,17 +6045,121 @@
       }
     }
 
+    function resetSpaSummaryModalPlaceholders() {
+      document.getElementById('spaReportErrorBox')?.classList.add('hidden');
+      document.getElementById('spaReportScore').textContent = '--';
+      document.getElementById('spaReportScoreSuffix')?.classList.add('hidden');
+      document.getElementById('spaReportRating').textContent = 'Đang tổng hợp đánh giá...';
+      document.getElementById('spaReportSummary').textContent = 'Hệ thống đang đối chiếu từng câu trả lời của bạn với tiêu chí chuyên môn...';
+      const noteEl = document.getElementById('spaReportScoreNote');
+      if (noteEl) noteEl.textContent = '';
+      document.getElementById('spaReportStrengths')?.replaceChildren();
+      document.getElementById('spaReportImprovements')?.replaceChildren();
+      document.getElementById('spaReportQaBreakdown')?.replaceChildren();
+      document.getElementById('spaReportAdvice').textContent = '';
+    }
+
+    function renderSpaQaBreakdownCards(qaList) {
+      const container = document.getElementById('spaReportQaBreakdown');
+      if (!container) return;
+      container.replaceChildren();
+      if (!Array.isArray(qaList) || qaList.length === 0) return;
+
+      qaList.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2.5';
+
+        const topRow = document.createElement('div');
+        topRow.className = 'flex items-start justify-between gap-3';
+        const qTitle = document.createElement('p');
+        qTitle.className = 'font-bold text-slate-900 leading-snug';
+        qTitle.textContent = `Câu ${idx + 1}: ${item.question || ''}`;
+
+        const badge = document.createElement('span');
+        const hasScore = typeof item.score === 'number' && Number.isFinite(item.score);
+        const badgeTone = !hasScore
+          ? 'bg-slate-200 text-slate-700'
+          : (item.score >= 7.5 ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : (item.score >= 5.0 ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-rose-100 text-rose-800 border border-rose-200'));
+        badge.className = `px-2.5 py-0.5 rounded-full text-[11px] font-extrabold shrink-0 ${badgeTone}`;
+        badge.textContent = hasScore ? `${item.score}/10 · ${item.ratingBand || ''}` : 'Đã bỏ qua';
+        topRow.appendChild(qTitle);
+        topRow.appendChild(badge);
+        card.appendChild(topRow);
+
+        const ansLine = document.createElement('p');
+        ansLine.className = 'text-slate-600 italic bg-white p-2.5 rounded-lg border border-slate-200/80';
+        ansLine.textContent = 'Câu trả lời của bạn: ' + String(item.candidateAnswer || '(Đã bỏ qua)');
+        card.appendChild(ansLine);
+
+        if (item.critique) {
+          const critLine = document.createElement('p');
+          critLine.className = 'text-slate-800 font-medium leading-relaxed';
+          critLine.textContent = 'Nhận xét: ' + String(item.critique);
+          card.appendChild(critLine);
+        }
+
+        if (Array.isArray(item.verifiedComponents) && item.verifiedComponents.length > 0) {
+          const vWrap = document.createElement('ul');
+          vWrap.className = 'list-disc pl-4 text-emerald-800 space-y-0.5';
+          item.verifiedComponents.forEach(vc => {
+            const li = document.createElement('li');
+            li.textContent = String(vc);
+            vWrap.appendChild(li);
+          });
+          card.appendChild(vWrap);
+        }
+
+        if (Array.isArray(item.rejectedComponents) && item.rejectedComponents.length > 0) {
+          const rWrap = document.createElement('ul');
+          rWrap.className = 'list-disc pl-4 text-rose-800 space-y-0.5';
+          item.rejectedComponents.forEach(rc => {
+            const li = document.createElement('li');
+            li.textContent = String(rc);
+            rWrap.appendChild(li);
+          });
+          card.appendChild(rWrap);
+        }
+
+        if (item.referenceAnswer) {
+          const details = document.createElement('details');
+          details.className = 'bg-white rounded-lg border border-sky-200 p-2.5';
+          const sum = document.createElement('summary');
+          sum.className = 'font-bold text-sky-700 cursor-pointer select-none';
+          sum.textContent = 'Xem đáp án mẫu & Ý trọng tâm ăn điểm';
+          const refBody = document.createElement('div');
+          refBody.className = 'mt-2 space-y-1.5 text-slate-700 leading-relaxed';
+          if (Array.isArray(item.keyPoints) && item.keyPoints.length > 0) {
+            const kpP = document.createElement('p');
+            kpP.className = 'font-semibold text-slate-800';
+            kpP.textContent = 'Ý cốt lõi cần có: ' + item.keyPoints.join(' · ');
+            refBody.appendChild(kpP);
+          }
+          const sampleP = document.createElement('p');
+          sampleP.textContent = String(item.referenceAnswer);
+          refBody.appendChild(sampleP);
+          details.appendChild(sum);
+          details.appendChild(refBody);
+          card.appendChild(details);
+        }
+
+        container.appendChild(card);
+      });
+    }
+
     async function endSpaInterview() {
       if (spaCurrentAudio) { spaCurrentAudio.pause(); spaCurrentAudio = null; }
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       stopSpaListening();
 
-      const candidateReplies = spaIntHistory.filter(h => h.role === 'candidate');
+      const candidateReplies = spaIntHistory.filter(h =>
+        h.role === 'candidate' && !/^\[?\s*(?:em\s+)?xin gợi ý hướng trả lời/i.test(String(h.message || '').trim())
+      );
       if (candidateReplies.length === 0) {
-        alert('Bạn chưa trả lời câu hỏi nào. Hãy trò chuyện hoặc gõ câu trả lời với AI trước khi kết thúc nhé!');
+        alert('Bạn chưa hoàn thành lượt trả lời hay bỏ qua câu hỏi nào (mới xin gợi ý). Hãy trả lời hoặc bấm Bỏ qua ít nhất 1 câu hỏi trước khi xem báo cáo nhé!');
         return;
       }
 
+      resetSpaSummaryModalPlaceholders();
       const modal = document.getElementById('spaSummaryModal');
       modal.classList.remove('hidden');
 
@@ -5803,31 +6169,66 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             jobTitle: spaCurrentJobTitle,
+            jdText: spaCurrentJdText || '',
             history: spaIntHistory,
             reportVersion: 2
           })
         });
-        const data = await res.json();
-        if (data.success && data.data) {
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success && data.data) {
           const rep = data.data;
-          document.getElementById('spaReportScore').innerText = rep.overallScore !== null && rep.overallScore !== undefined ? rep.overallScore : 'Chưa chấm';
-          document.getElementById('spaReportRating').innerText = rep.rating || 'Hoàn thành';
-          document.getElementById('spaReportSummary').innerText = rep.summary || '';
+          const hasNumScore = typeof rep.overallScore === 'number' && Number.isFinite(rep.overallScore);
+          document.getElementById('spaReportScore').textContent = hasNumScore ? String(rep.overallScore) : 'Chưa chấm';
+          const suffixEl = document.getElementById('spaReportScoreSuffix');
+          if (suffixEl) suffixEl.classList.toggle('hidden', !hasNumScore);
 
-          const strengths = rep.strengths && rep.strengths.length ? rep.strengths : ['Đã hoàn thành các câu hỏi trong phiên phỏng vấn.'];
+          document.getElementById('spaReportRating').textContent = rep.rating || (hasNumScore ? 'Đã đánh giá' : 'Chưa đủ dữ liệu chấm điểm');
+          document.getElementById('spaReportSummary').textContent = rep.summary || '';
+          const noteEl = document.getElementById('spaReportScoreNote');
+          if (noteEl) noteEl.textContent = rep.scoreNote || '';
+
           const strEl = document.getElementById('spaReportStrengths');
-          strEl.textContent = '';
-          strengths.forEach(s => { const li = document.createElement('li'); li.textContent = String(s || ''); strEl.appendChild(li); });
-          const improvements = (rep.improvements && rep.improvements.length ? rep.improvements : (rep.areasForImprovement || ['Tiếp tục rèn luyện thêm các kỹ năng trả lời có số liệu thực tế.']));
+          strEl.replaceChildren();
+          const strengths = Array.isArray(rep.strengths) ? rep.strengths.filter(Boolean) : [];
+          if (strengths.length > 0) {
+            strengths.forEach(s => { const li = document.createElement('li'); li.textContent = String(s); strEl.appendChild(li); });
+          } else {
+            const li = document.createElement('li');
+            li.className = 'text-slate-500 italic';
+            li.textContent = 'Chưa ghi nhận điểm mạnh nổi bật trong phiên này (cần câu trả lời cụ thể có hành động và kết quả thực tế).';
+            strEl.appendChild(li);
+          }
+
           const impEl = document.getElementById('spaReportImprovements');
-          impEl.textContent = '';
-          improvements.forEach(i => { const li = document.createElement('li'); li.textContent = String(i || ''); impEl.appendChild(li); });
-          document.getElementById('spaReportAdvice').innerText = rep.finalAdvice || '';
+          impEl.replaceChildren();
+          const improvements = Array.isArray(rep.improvements) && rep.improvements.length > 0
+            ? rep.improvements
+            : (Array.isArray(rep.areasForImprovement) ? rep.areasForImprovement : []);
+          if (improvements.length > 0) {
+            improvements.forEach(i => { const li = document.createElement('li'); li.textContent = String(i); impEl.appendChild(li); });
+          } else {
+            const li = document.createElement('li');
+            li.textContent = 'Tiếp tục duy trì cách trả lời có dẫn chứng thực tế cho các câu hỏi chuyên sâu hơn.';
+            impEl.appendChild(li);
+          }
+
+          renderSpaQaBreakdownCards(rep.qaBreakdown || []);
+          document.getElementById('spaReportAdvice').textContent = rep.finalAdvice || '';
         } else {
-          alert('Lỗi tạo báo cáo: ' + (data.message || 'Không thể tạo báo cáo.'));
+          document.getElementById('spaReportRating').textContent = 'Tạm thời chưa tạo được báo cáo';
+          document.getElementById('spaReportSummary').textContent = '';
+          const errBox = document.getElementById('spaReportErrorBox');
+          const errTxt = document.getElementById('spaReportErrorText');
+          if (errTxt) errTxt.textContent = data?.message || 'Không thể tạo báo cáo đánh giá lúc này.';
+          if (errBox) errBox.classList.remove('hidden');
         }
       } catch (e) {
-        alert('Lỗi tạo báo cáo STAR: ' + e.message);
+        document.getElementById('spaReportRating').textContent = 'Lỗi kết nối khi tạo báo cáo';
+        document.getElementById('spaReportSummary').textContent = '';
+        const errBox = document.getElementById('spaReportErrorBox');
+        const errTxt = document.getElementById('spaReportErrorText');
+        if (errTxt) errTxt.textContent = 'Lỗi kết nối: ' + e.message;
+        if (errBox) errBox.classList.remove('hidden');
       }
     }
 
@@ -5840,19 +6241,28 @@
       spaSpeechBuffer = '';
       spaCurrentQuestion = null;
       spaAskedQuestionIds = [];
-      document.getElementById('spaTranscriptList').innerHTML = '';
+      spaSkippedTopics = [];
+      spaFollowUpDepth = 0;
+      spaConsecutiveSkips = 0;
+      clearSpaTurnError();
+      const skipBtn = document.getElementById('btnSpaSkip');
+      const hintBtn = document.getElementById('btnSpaHint');
+      if (skipBtn) skipBtn.disabled = false;
+      if (hintBtn) hintBtn.disabled = false;
+      document.getElementById('spaTranscriptList')?.replaceChildren();
+      document.getElementById('spaQuickFeedback')?.classList.add('hidden');
       document.getElementById('intRoomBox').classList.add('hidden');
       document.getElementById('intSetupBox').classList.remove('hidden');
     }
 
     function setSpaStatus(text) {
       const el = document.getElementById('spaLiveStatusText');
-      if (el) el.innerText = text;
+      if (el) el.textContent = text;
     }
 
     function setSpaCaption(text) {
       const el = document.getElementById('spaLiveCaption');
-      if (el) el.innerText = text;
+      if (el) el.textContent = text;
     }
 
     function setSpaStage(stageNum) {
@@ -5869,15 +6279,15 @@
       }
     }
 
-    function renderSpaTranscriptMessage(role, text) {
+    function renderSpaTranscriptMessage(role, text, isPending = false) {
       const list = document.getElementById('spaTranscriptList');
-      if (!list) return;
+      if (!list) return null;
       const safeText = String(text || '');
       const isAI = role === 'interviewer';
       const div = document.createElement('div');
-      div.className = isAI
+      div.className = (isAI
         ? 'p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1'
-        : 'p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-right space-y-1';
+        : 'p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-right space-y-1') + (isPending ? ' opacity-70' : '');
 
       if (isAI) {
         const header = document.createElement('div');
@@ -5909,6 +6319,7 @@
       }
       list.appendChild(div);
       list.scrollTop = list.scrollHeight;
+      return div;
     }
 
     // --- 4. LOGIC SÀN ỨNG VIÊN ---
@@ -6081,7 +6492,7 @@
         freeFeatures: [
           '<strong>01 Master Profile</strong> &amp; xuất 01 mẫu CV chuẩn ATS',
           '<strong>01 lượt</strong> kiểm tra độ khớp JD / tuần',
-          '<strong>01 phiên</strong> phỏng vấn thử AI ngắn (3–5 phút)',
+          '<strong>01 phiên</strong> phỏng vấn thử AI (10–15 phút)',
           'Tham gia cộng đồng &amp; tìm việc làm'
         ],
         proTopBadge: 'Phổ biến nhất', proBadge: 'Ưu Đãi Sinh Viên', proTitle: 'Student Pass',

@@ -1,23 +1,78 @@
+'use strict';
+
 const { MsEdgeTTS, OUTPUT_FORMAT } = require('msedge-tts');
 const https = require('https');
 
 const audioCache = new Map();
 const MAX_CACHE_ENTRIES = 200;
-const EDGE_TTS_TIMEOUT_MS = 3500;
-const GOOGLE_TTS_TIMEOUT_MS = 3500;
+const EDGE_TTS_TIMEOUT_MS = 4500;
+const GOOGLE_TTS_TIMEOUT_MS = 4500;
 const EDGE_COOLDOWN_MS = 300000;
 let edgeCooldownUntil = 0;
 
 function cleanTextForSpeech(text) {
-  if (!text) return '';
-  return text
-    .replace(/[*_~`#>]/g, '')
-    .replace(/\[(?:S|T|A|R)\]/g, ' ')
-    .replace(/[\[\]()]/g, '')
+  if (!text || typeof text !== 'string') return '';
+  let out = text
+    // Strip HTML/XML/SSML comments & tags completely so SSML injection (<speak>, <prosody>, <voice>) is neutralized
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<\s*\/?\s*[a-zA-Z][a-zA-Z0-9:-]*(?:\s+[^<>]*)?\/?\s*>/g, ' ')
+    .replace(/[<>]/g, ' ')
+    .replace(/[*_~`#]/g, '')
+    .replace(/\[(?:S|T|A|R)\]|\((?:S|T|A|R)\)/g, ' ')
+    .replace(/[\[\]()]/g, ' ')
     .replace(/https?:\/\/\S+/g, '')
     .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+    // Cap pathological single-character repetition (e.g. "A" x 3000) and break ultra-long unbroken tokens (>80 chars)
+    .replace(/(.)\1{49,}/gu, (_, ch) => Array(10).fill(ch.repeat(5)).join(' '))
+    .replace(/\S{81,}/g, token => (token.match(/.{1,60}/g) || [token]).join(' '))
     .replace(/\s+/g, ' ')
     .trim();
+  return out;
+}
+
+function splitIntoSafeTtsChunks(text, maxLen = 150) {
+  const rawUnits = text.match(/[^.!?;,\n]+[.!?;,]?|\S+/g) || [text];
+  const parts = [];
+  let current = '';
+
+  const flushCurrent = () => {
+    if (current.trim()) parts.push(current.trim());
+    current = '';
+  };
+
+  for (const unit of rawUnits) {
+    const trimmedUnit = unit.trim();
+    if (!trimmedUnit) continue;
+
+    if (trimmedUnit.length > maxLen) {
+      flushCurrent();
+      const words = trimmedUnit.split(/\s+/);
+      let sub = '';
+      for (const w of words) {
+        if (w.length > maxLen) {
+          if (sub) { parts.push(sub.trim()); sub = ''; }
+          const slices = w.match(new RegExp(`.{1,${maxLen}}`, 'g')) || [w];
+          slices.forEach(sl => parts.push(sl));
+        } else if ((sub ? sub.length + 1 + w.length : w.length) > maxLen) {
+          parts.push(sub.trim());
+          sub = w;
+        } else {
+          sub = sub ? `${sub} ${w}` : w;
+        }
+      }
+      if (sub.trim()) parts.push(sub.trim());
+      continue;
+    }
+
+    if ((current ? current.length + 1 + trimmedUnit.length : trimmedUnit.length) > maxLen) {
+      flushCurrent();
+      current = trimmedUnit;
+    } else {
+      current = current ? `${current} ${trimmedUnit}` : trimmedUnit;
+    }
+  }
+  flushCurrent();
+  return parts;
 }
 
 function getGoogleTTSChunk(text) {
@@ -42,21 +97,20 @@ function getGoogleTTSChunk(text) {
 }
 
 async function generateGoogleTTSFallback(text) {
-  const sentences = text.match(/[^.!?]+[.!?]+|\S+/g) || [text];
-  const parts = [];
-  let current = '';
-  for (const s of sentences) {
-    if ((current + ' ' + s).length > 160) {
-      if (current) parts.push(current.trim());
-      current = s;
-    } else {
-      current = current ? current + ' ' + s : s;
+  const parts = splitIntoSafeTtsChunks(text, 145);
+  const audioBuffers = new Array(parts.length);
+  const concurrency = 4;
+  let cursor = 0;
+
+  async function worker() {
+    while (cursor < parts.length) {
+      const idx = cursor++;
+      audioBuffers[idx] = await getGoogleTTSChunk(parts[idx]);
     }
   }
-  if (current) parts.push(current.trim());
 
-  const audioBuffers = await Promise.all(parts.map(p => getGoogleTTSChunk(p)));
-  return Buffer.concat(audioBuffers);
+  await Promise.all(Array.from({ length: Math.min(concurrency, parts.length) }, () => worker()));
+  return Buffer.concat(audioBuffers.filter(Boolean));
 }
 
 function fetchEdgeTTS(cleaned, voiceName, timeoutMs = EDGE_TTS_TIMEOUT_MS) {
@@ -70,7 +124,7 @@ function fetchEdgeTTS(cleaned, voiceName, timeoutMs = EDGE_TTS_TIMEOUT_MS) {
       settled = true;
       clearTimeout(timer);
       if (streamRef) {
-        try { streamRef.destroy(); } catch (e) {}
+        try { streamRef.destroy(); } catch {}
       }
       if (err) return reject(err);
       resolve(buffer);
@@ -125,23 +179,23 @@ async function generateSpeechMP3(text, voiceName = 'vi-VN-NamMinhNeural') {
 
   let buffer = null;
 
-  if (Date.now() >= edgeCooldownUntil) {
+  if (Date.now() >= edgeCooldownUntil && cleaned.length <= 2200) {
     try {
-      buffer = await fetchEdgeTTS(cleaned, voiceName);
-      if (!buffer || buffer.length < 1000) {
+      buffer = await fetchEdgeTTS(cleaned, voiceName, cleaned.length > 900 ? 7000 : EDGE_TTS_TIMEOUT_MS);
+      if (!buffer || buffer.length < 500) {
         edgeCooldownUntil = Date.now() + EDGE_COOLDOWN_MS;
         buffer = null;
       }
-    } catch (err) {
+    } catch {
       edgeCooldownUntil = Date.now() + EDGE_COOLDOWN_MS;
       console.warn('[TTS] Edge TTS unavailable, using Google TTS fallback');
     }
   }
 
-  if (!buffer || buffer.length < 1000) {
+  if (!buffer || buffer.length < 500) {
     try {
       buffer = await generateGoogleTTSFallback(cleaned);
-    } catch (gErr) {
+    } catch {
       console.error('[TTS] fallback_unavailable');
       throw new Error('Không thể tạo âm thanh giọng đọc từ tất cả nguồn TTS.');
     }
@@ -162,5 +216,6 @@ async function generateSpeechMP3(text, voiceName = 'vi-VN-NamMinhNeural') {
 module.exports = {
   generateSpeechMP3,
   cleanTextForSpeech,
+  splitIntoSafeTtsChunks,
   fetchEdgeTTS
 };

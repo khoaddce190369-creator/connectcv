@@ -5144,8 +5144,7 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
       const quickInput = document.getElementById('live-quick-input');
       if (quickInput) quickInput.value = '';
 
-      appendTranscriptMessage('candidate', answerText);
-      liveInterviewHistory.push({ role: 'candidate', message: answerText });
+      const pendingDraftHistory = [...liveInterviewHistory, { role: 'candidate', message: answerText }];
 
       setLiveOrbState('thinking');
       updateLiveCaption('thinking', 'AI đang lắng nghe và suy luận câu hỏi tiếp theo...');
@@ -5158,18 +5157,25 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
             jobTitle: document.getElementById('int-title').value,
             jdText: document.getElementById('int-jd').value,
             candidateProfile: document.getElementById('int-exp').value,
-            history: liveInterviewHistory,
+            history: pendingDraftHistory,
             message: answerText,
-            action: 'reply'
+            action: 'reply',
+            currentQuestionId: window.liveCurrentQuestionId || null,
+            askedQuestionIds: window.liveAskedQuestionIds || [],
+            allowFreeformQuestion: Boolean(window.liveIsFreeformPractice)
           })
         });
 
         const data = await res.json();
         if (!ownsLiveReply(operation)) return;
-        if (data.success && data.data) {
+        if (res.ok && data.success && data.data) {
+          appendTranscriptMessage('candidate', answerText);
+          liveInterviewHistory = pendingDraftHistory;
+          window.liveCurrentQuestionId = data.data.currentQuestion?.id || null;
+          window.liveAskedQuestionIds = data.data.askedQuestionIds || [];
           const reply = data.data.interviewerReply || data.data.reply;
           appendTranscriptMessage('interviewer', reply);
-          liveInterviewHistory.push({ role: 'interviewer', message: reply });
+          liveInterviewHistory.push({ role: 'interviewer', message: reply, questionId: window.liveCurrentQuestionId });
 
           if (data.data.quickFeedback) {
             showLiveFeedback(data.data.quickFeedback);
@@ -5228,9 +5234,12 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
 
         const data = await res.json();
         if (!ownsLiveReply(operation)) return;
-        if (data.success && data.data) {
+        if (res.ok && data.success && data.data) {
+          window.liveIsFreeformPractice = false;
+          window.liveCurrentQuestionId = data.data.currentQuestion?.id || null;
+          window.liveAskedQuestionIds = data.data.askedQuestionIds || [];
           const reply = data.data.interviewerReply || data.data.reply;
-          liveInterviewHistory = [{ role: 'interviewer', message: reply }];
+          liveInterviewHistory = [{ role: 'interviewer', message: reply, questionId: window.liveCurrentQuestionId }];
           
           document.getElementById('transcript-drawer-messages').innerHTML = '';
           appendTranscriptMessage('interviewer', reply);
@@ -5274,6 +5283,9 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
         window.speechSynthesis.cancel();
       }
 
+      window.liveIsFreeformPractice = true;
+      window.liveCurrentQuestionId = null;
+      window.liveAskedQuestionIds = [];
       const promptText = `Chào bạn, chúng ta hãy cùng luyện tập câu hỏi này: "${question}". Bạn đã sẵn sàng chưa, hãy trình bày câu trả lời của mình nhé!`;
       liveInterviewHistory = [{ role: 'interviewer', message: promptText }];
       
