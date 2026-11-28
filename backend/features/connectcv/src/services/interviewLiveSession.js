@@ -135,6 +135,40 @@ function prepareLiveInput(body) {
     };
   }
 
+  const totalBankQuestions = bank.pairRows(value.industry, value.level).length;
+  const preAskedIds = new Set(value.action === 'start' ? [] : value.askedQuestionIds);
+  for (const h of value.action === 'start' ? [] : history) {
+    if (h.questionId) preAskedIds.add(h.questionId);
+  }
+  const last = [...history].reverse().find(h => ['interviewer', 'assistant'].includes(h.role));
+  const lastInterviewerText = String(last?.message || last?.content || '');
+  const sessionAlreadyEnded = value.action !== 'start' && !value.currentQuestionId && (
+    (totalBankQuestions > 0 && preAskedIds.size >= totalBankQuestions) ||
+    (history.length >= 2 && /(?:câu hỏi cuối cùng của phiên|câu hỏi cuối cùng trong phiên|phiên phỏng vấn hiện tại đã hoàn thành)/i.test(lastInterviewerText))
+  );
+
+  if (sessionAlreadyEnded) {
+    value.message = answer;
+    value.history = history;
+    return {
+      value,
+      plan: {
+        current: null,
+        next: null,
+        intent: { type: 'complete', reason: 'session_already_completed' },
+        alreadyCompleted: true,
+        allowFollowUp: false,
+        consecutiveSkips: value.consecutiveSkips || 0,
+        difficultyAdjusted: false,
+        totalBankQuestions,
+        question: '',
+        askedQuestionIds: [...preAskedIds],
+        skippedTopics: [...(value.skippedTopics || [])],
+        local: true
+      }
+    };
+  }
+
   if (value.action !== 'start') {
     if (!hasExplicitHistoryProp || history.length === 0) {
       return { error: invalid('history', 'Thiếu lịch sử hội thoại phỏng vấn (history). Hãy bắt đầu phiên phỏng vấn trước.') };
@@ -149,18 +183,14 @@ function prepareLiveInput(body) {
   }
 
   const current = value.currentQuestionId ? bank.getQuestion(value.currentQuestionId) : null;
-  if (value.currentQuestionId && (!current || current.industry !== value.industry || current.level !== value.level)) {
-    return { error: invalid('currentQuestionId', 'Câu hỏi không thuộc ngành và cấp độ của phiên hiện tại. Hãy bắt đầu lại phiên.') };
+  if (value.currentQuestionId && (!current || current.industry !== value.industry)) {
+    return { error: invalid('currentQuestionId', 'Câu hỏi không thuộc ngành của phiên hiện tại. Hãy bắt đầu lại phiên.') };
   }
-  const last = [...history].reverse().find(h => ['interviewer', 'assistant'].includes(h.role));
   if (value.action !== 'start' && !current && !last) {
     return { error: invalid('history', 'Chưa có câu hỏi để đánh giá. Hãy bắt đầu phiên trước.') };
   }
 
-  const ids = new Set(value.action === 'start' ? [] : value.askedQuestionIds);
-  for (const h of value.action === 'start' ? [] : history) {
-    if (h.questionId) ids.add(h.questionId);
-  }
+  const ids = new Set(preAskedIds);
   if (current) ids.add(current.id);
 
   let intent;
@@ -174,9 +204,33 @@ function prepareLiveInput(body) {
   const skippedTopics = new Set(value.action === 'start' ? [] : value.skippedTopics);
   if (current && isSkipOrNoAnswer) skippedTopics.add(current.topic);
 
-  const next = intent.type === 'hint'
-    ? current
-    : bank.selectQuestion({
+  const LEVEL_LADDER = ['fresher', 'junior', 'middle', 'senior', 'lead'];
+  let next = null;
+  let difficultyAdjusted = false;
+
+  if (intent.type === 'hint') {
+    next = current;
+  } else if (value.action === 'start' || ids.size < totalBankQuestions) {
+    if (nextConsecutiveSkips >= 2) {
+      const baseIdx = Math.max(0, LEVEL_LADDER.indexOf(value.level));
+      const stepOffset = nextConsecutiveSkips >= 3 ? 2 : 1;
+      const targetIdx = Math.max(0, baseIdx - stepOffset);
+      for (let idx = targetIdx; idx <= baseIdx && !next; idx++) {
+        next = bank.selectQuestion({
+          industry: value.industry,
+          level: LEVEL_LADDER[idx],
+          excludeIds: [...ids],
+          excludeTopics: [...skippedTopics, ...(current ? [current.topic] : [])],
+          jobTitle: value.jobTitle,
+          jdText: value.jdText,
+          candidateProfile: value.candidateProfile,
+          preferFoundational: true
+        });
+      }
+      difficultyAdjusted = Boolean(next && (next.level !== value.level || nextConsecutiveSkips >= 2));
+    }
+    if (!next) {
+      next = bank.selectQuestion({
         industry: value.industry,
         level: value.level,
         excludeIds: [...ids],
@@ -185,6 +239,8 @@ function prepareLiveInput(body) {
         jdText: value.jdText,
         candidateProfile: value.candidateProfile
       });
+    }
+  }
 
   const allowFollowUp = Boolean(
     value.action === 'reply' &&
@@ -194,8 +250,6 @@ function prepareLiveInput(body) {
     answer.length >= 20
   );
 
-  const totalBankQuestions = bank.pairRows(value.industry, value.level).length;
-
   value.message = answer;
   value.history = history;
   return {
@@ -204,8 +258,10 @@ function prepareLiveInput(body) {
       current,
       next,
       intent,
+      alreadyCompleted: false,
       allowFollowUp,
       consecutiveSkips: nextConsecutiveSkips,
+      difficultyAdjusted,
       totalBankQuestions,
       question: current?.question || (last?.message || last?.content || '').slice(0, 1500),
       askedQuestionIds: [...ids],
@@ -275,6 +331,8 @@ function decorateTurn(data, input, plan) {
     skippedTopics: plan.skippedTopics,
     followUpDepth: 0,
     consecutiveSkips: plan.consecutiveSkips || 0,
+    difficultyAdjusted: Boolean(plan.difficultyAdjusted),
+    effectiveQuestionLevel: next?.level || input.level,
     sessionComplete: complete,
     industry: input.industry,
     level: input.level,

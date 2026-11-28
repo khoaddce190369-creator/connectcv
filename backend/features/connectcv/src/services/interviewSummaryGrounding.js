@@ -62,7 +62,13 @@ function answeredPairs(history) {
         answerId: 'answer-' + (pairs.length + 1),
         question: source?.question || question,
         candidateAnswer: text,
-        ...(source ? { questionId: source.id, answerType: source.answerType } : {}),
+        ...(source ? {
+          questionId: source.id,
+          answerType: source.answerType,
+          level: source.level,
+          keyPoints: source.keyPoints || [],
+          redFlags: source.redFlags || []
+        } : {}),
         ...(intent.type !== 'answer' ? { skipped: true } : {})
       });
       question = '';
@@ -77,11 +83,13 @@ function answeredPairs(history) {
 function groundSummary(result, pairs) {
   if (!pairs.length) throw Error('No answered interview turns');
   const bank = require('./interviewQuestionBank');
-  const { groundEvaluation, analyzeAnswerAgainstRubric } = require('./interviewEvaluationService');
+  const { groundEvaluation, analyzeAnswerAgainstRubric, computeUnifiedScore } = require('./interviewEvaluationService');
   const rows = Array.isArray(result?.qaBreakdown) ? result.qaBreakdown : [];
 
   const qaBreakdown = pairs.map(pair => {
     const source = pair.questionId ? bank.getQuestion(pair.questionId) : null;
+    const modelMatch = rows.find(row => row && row.answerId === pair.answerId) || null;
+    const effectiveLevel = source?.level || pair.level || '';
 
     if (pair.skipped) {
       return {
@@ -103,13 +111,13 @@ function groundSummary(result, pairs) {
       };
     }
 
-    // Behavioral question: combine optional model row with deterministic STAR + rubric grounding (never throws 500 if model is null!)
+    // Behavioral question: combine optional model row with deterministic STAR + rubric + anti-fabrication grounding
     if (pair.answerType === 'behavioral') {
-      const modelMatch = rows.find(row => row && row.answerId === pair.answerId) || null;
       const grounded = groundEvaluation(modelMatch, {
         question: pair.question,
         candidateAnswer: pair.candidateAnswer,
         answerType: 'behavioral',
+        level: effectiveLevel,
         keyPoints: source?.keyPoints || [],
         redFlags: source?.redFlags || [],
         referenceAnswer: source?.answerSample || ''
@@ -133,31 +141,41 @@ function groundSummary(result, pairs) {
       };
     }
 
-    // Scenario, Knowledge, or Freeform question: evaluate candidateAnswer directly against rubric keyPoints & redFlags (Fixes H5!)
+    // Scenario, Knowledge, or Freeform question: unified rubric + anti-fabrication + optional model calibration!
     const det = analyzeAnswerAgainstRubric({
       question: pair.question,
       candidateAnswer: pair.candidateAnswer,
       answerType: pair.answerType || 'scenario',
+      level: effectiveLevel,
       keyPoints: source?.keyPoints || [],
       redFlags: source?.redFlags || [],
       referenceAnswer: source?.answerSample || ''
     });
+    const isFabricated = Boolean(det.fabricationDetected || modelMatch?.fabricationDetected === true);
+    const unifiedScore = computeUnifiedScore(det, modelMatch);
+    const unifiedBand = unifiedScore >= 8.0 ? 'Tốt' : (unifiedScore >= 6.5 ? 'Khá' : (unifiedScore >= 4.5 ? 'Trung bình' : 'Yếu'));
+    const verifiedOut = isFabricated ? [] : det.verifiedComponents;
+    const rejectedOut = (isFabricated && !det.fabricationDetected)
+      ? ['Dấu hiệu phóng đại thành tích hoặc nêu số liệu thiếu cơ sở kiểm chứng thực tế', ...det.rejectedComponents]
+      : det.rejectedComponents;
 
     return {
       ...pair,
       status: 'evaluated',
-      score: det.score,
-      ratingBand: det.ratingBand,
-      scoreNote: 'Điểm đối chiếu trực tiếp câu trả lời của bạn với các ý trọng tâm (keyPoints) và lỗi cần tránh (redFlags).',
+      score: unifiedScore,
+      ratingBand: unifiedBand,
+      scoreNote: 'Điểm đối chiếu trực tiếp câu trả lời của bạn với các ý trọng tâm (keyPoints), lỗi cần tránh (redFlags) và tính khả tín của dữ kiện.',
       suggestedStarAnswer: null,
-      strengths: det.score >= 6.5 ? det.verifiedComponents.slice(0, 3) : [],
-      verifiedComponents: det.verifiedComponents,
-      rejectedComponents: det.rejectedComponents,
+      strengths: (!isFabricated && unifiedScore >= 6.5) ? verifiedOut.slice(0, 3) : [],
+      verifiedComponents: verifiedOut,
+      rejectedComponents: rejectedOut,
       followUpQuestions: det.followUpQuestions,
       keyPoints: source?.keyPoints || [],
       redFlags: source?.redFlags || [],
       referenceAnswer: source?.answerSample || '',
-      critique: det.critique,
+      critique: (isFabricated && !det.fabricationDetected)
+        ? 'Câu trả lời có dấu hiệu phóng đại hoặc nêu số liệu thiếu cơ sở kiểm chứng thực tế. Hãy trình bày lại bằng dự án thật, số liệu gốc (baseline) và cách đo lường cụ thể.'
+        : det.critique,
       referenceNotice: 'Đáp án mẫu dùng để đối chiếu phương pháp lập luận; hãy trình bày bằng trải nghiệm thực tế của bạn.'
     };
   });
@@ -229,7 +247,7 @@ function groundSummary(result, pairs) {
 }
 
 function needsModel(pair) {
-  return !pair.skipped && pair.answerType === 'behavioral';
+  return !pair.skipped;
 }
 
 module.exports = { answeredPairs, groundSummary, summaryVersionError, needsModel };

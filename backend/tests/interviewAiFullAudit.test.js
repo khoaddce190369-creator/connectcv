@@ -12,7 +12,10 @@ const mountFeatures = require('../features/connectcv/mount');
 const bank = require('../features/connectcv/src/services/interviewQuestionBank');
 const { cleanTextForSpeech, splitIntoSafeTtsChunks } = require('../features/connectcv/src/services/ttsService');
 
+let serverSeq = 0;
+
 function buildTestServer() {
+  const serverId = ++serverSeq;
   const app = express();
   app.use(cors({
     origin(origin, cb) {
@@ -23,7 +26,7 @@ function buildTestServer() {
   }));
   app.use(express.json({ limit: '15mb' }));
   const guestAuth = (req, _res, next) => {
-    req.user = { id: 'test_guest_interview', role: 'Student', isPro: false };
+    req.user = { id: `test_guest_interview_${serverId}`, role: 'Student', isPro: false };
     next();
   };
   mountFeatures(app, { authenticate: guestAuth });
@@ -482,10 +485,18 @@ test('M6 & H2/H4 Frontend Static Guards: TTS voice whitelist, SSML stripping, sa
     assert.equal(hugeTts.status, 400);
     assert.equal(hugeTts.body.code, 'TTS_TEXT_TOO_LONG');
 
-    // M6.3: SSML tags stripped completely; pure empty SSML tag returns 400
+    // M6.3: ALL SSML / HTML markup (<speak>...</speak>, <prosody>, <voice>, <break/>) MUST be rejected with 400 TTS_SSML_NOT_ALLOWED!
     assert.equal(cleanTextForSpeech('<speak><prosody rate="fast">Xin chào bạn</prosody></speak>'), 'Xin chào bạn');
-    const emptySsml = await postJson(baseUrl, '/api/interview/tts', { text: '<speak><break time="5s"/></speak>' });
-    assert.equal(emptySsml.status, 400);
+    for (const ssmlPayload of [
+      '<speak>Xin chào ứng viên</speak>',
+      '<speak><prosody rate="fast">Xin chào ứng viên vị trí quản lý sản phẩm</prosody></speak>',
+      '<break time="5s"/>',
+      '<voice name="en-US">Hello</voice>'
+    ]) {
+      const ssmlRes = await postJson(baseUrl, '/api/interview/tts', { text: ssmlPayload });
+      assert.equal(ssmlRes.status, 400, `SSML "${ssmlPayload}" must return 400`);
+      assert.equal(ssmlRes.body.code, 'TTS_SSML_NOT_ALLOWED');
+    }
 
     // M6.4: Unbroken "A".repeat(350) & "A".repeat(1500) chunk cleanly into <=145 char segments (never >200 chars!)
     for (const len of [250, 350, 1500, 3000]) {
@@ -495,10 +506,9 @@ test('M6 & H2/H4 Frontend Static Guards: TTS voice whitelist, SSML stripping, sa
       assert.ok(chunks.every(c => c.length <= 145), `Chunk exceeded 145 chars for len=${len}`);
     }
 
-    // M6.5: Live HTTP POST /api/interview/tts returns 200 audio/mpeg for normal text, SSML-stripped text, and unbroken "A".repeat(300)
+    // M6.5: Live HTTP POST /api/interview/tts returns 200 audio/mpeg for plain Vietnamese text and unbroken "A".repeat(300)
     for (const ttsText of [
       'Xin chào bạn, hãy giới thiệu ngắn gọn về kinh nghiệm làm việc của bạn.',
-      '<speak><prosody rate="fast">Xin chào ứng viên vị trí quản lý sản phẩm</prosody></speak>',
       'A'.repeat(300)
     ]) {
       const ttsRes = await fetch(`${baseUrl}/api/interview/tts`, {
@@ -515,16 +525,237 @@ test('M6 & H2/H4 Frontend Static Guards: TTS voice whitelist, SSML stripping, sa
     server.close();
   }
 
-  // H2, H4, M1, M8 Static UI Verification on connectcv/index.html
+  // H2, H4, M1, M8 + Session Completion Input Lock Static UI Verification on connectcv/index.html
   const indexHtml = fs.readFileSync(path.join(__dirname, '../../connectcv/index.html'), 'utf8');
   assert.ok(indexHtml.includes('id="intIndustrySelect"'), 'UI must include Industry selector');
   assert.ok(indexHtml.includes('<option value="senior">'), 'UI must include Senior level');
   assert.ok(indexHtml.includes('<option value="lead">'), 'UI must include Lead level');
   assert.ok(indexHtml.includes('id="btnSpaSkip"'), 'UI must include Skip button');
   assert.ok(indexHtml.includes('id="btnSpaHint"'), 'UI must include Hint button');
+  assert.ok(indexHtml.includes('id="btnSpaToggleKeyboard"'), 'UI must include Keyboard Toggle id for disabling');
+  assert.ok(indexHtml.includes('function setSpaSessionCompletedState(done)'), 'UI must lock mic/keyboard/input when session completes');
   assert.ok(indexHtml.includes('id="spaErrorBanner"'), 'UI must include Error + Retry banner');
   assert.ok(indexHtml.includes('id="spaReportQaBreakdown"'), 'Summary modal must render qaBreakdown');
   assert.equal(indexHtml.includes('id="spaReportScore">8.5<'), false, 'Hardcoded 8.5 score placeholder must be removed');
   assert.equal(indexHtml.includes('Đã hoàn thành các câu hỏi trong phiên phỏng vấn.'), false, 'Fake flattery default strength must be removed');
   assert.equal(indexHtml.includes('phỏng vấn thử AI ngắn (3–5 phút)'), false, 'Misleading 3-5 minute copy must be updated');
+});
+
+test('Round 2 Audit (All 4 Remaining Findings): Anti-fabrication & live-chat===summary parity, evidence/semantic invariant, post-complete safety, and consecutive skips 1->2->3 difficulty step-down', async () => {
+  const server = buildTestServer();
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+
+  try {
+    // ── FINDING 1: Fabricated / exaggerated claims ("20 năm KN, thiết kế cho NASA, tăng 9000%") ──
+    const startJr = await postJson(baseUrl, '/api/interview/live-chat', {
+      action: 'start',
+      jobTitle: 'UI/UX Designer',
+      level: 'junior'
+    });
+    assert.equal(startJr.status, 200);
+    const q1 = startJr.body.data.currentQuestion;
+    const opening = startJr.body.data.interviewerReply;
+
+    const fabricatedCases = [
+      'Em có 20 năm KN, từng thiết kế cho NASA, giúp tăng 9000% doanh thu và chuyển đổi.',
+      'Tôi có 25 năm kinh nghiệm làm cho SpaceX, tối ưu giao diện giảm 350% tỷ lệ lỗi.',
+      'Em cam kết thiết kế hệ thống 100% không bao giờ có lỗi hay rủi ro trong 50 năm làm nghề.'
+    ];
+
+    for (const fabAns of fabricatedCases) {
+      const chatRes = await postJson(baseUrl, '/api/interview/live-chat', {
+        action: 'reply',
+        jobTitle: 'UI/UX Designer',
+        industry: 'creative-design',
+        level: 'junior',
+        currentQuestionId: q1.id,
+        history: [
+          { role: 'interviewer', message: opening, questionId: q1.id },
+          { role: 'candidate', message: fabAns }
+        ],
+        message: fabAns
+      });
+      assert.equal(chatRes.status, 200);
+      const chatData = chatRes.body.data;
+      assert.ok(chatData.coaching.scoreEstimate <= 3.0, `Fabricated answer must score <=3.0 in live-chat, got ${chatData.coaching.scoreEstimate}`);
+      assert.equal(chatData.coaching.verdict, 'weak', 'Fabricated answer must NEVER get verdict "good"');
+      assert.equal(chatData.assessment.correctness, 'incorrect');
+      assert.equal(chatData.assessment.fabricationDetected, true);
+      assert.deepEqual(chatData.assessment.evidence, []);
+      assert.equal(chatData.assessment.sourceEvidenceVerified, false);
+      assert.equal(chatData.assessment.semanticAssessmentVerified, false, 'semanticAssessmentVerified MUST be false when evidence is []');
+
+      // Compare against /api/interview/live-summary on the EXACT same turn -> consistent score & zero flattery!
+      const sumRes = await postJson(baseUrl, '/api/interview/live-summary', {
+        jobTitle: 'UI/UX Designer',
+        reportVersion: 2,
+        history: [
+          { role: 'interviewer', message: opening, questionId: q1.id },
+          { role: 'candidate', message: fabAns }
+        ]
+      });
+      assert.equal(sumRes.status, 200);
+      const sumRow = sumRes.body.data.qaBreakdown[0];
+      assert.equal(sumRow.score, chatData.coaching.scoreEstimate, 'live-chat and live-summary scores must be consistent!');
+      assert.equal(sumRes.body.data.strengths.length, 0, 'Fabricated session must have ZERO strengths');
+      assert.equal(sumRow.verifiedComponents.length, 0);
+      assert.ok(sumRow.rejectedComponents.some(r => /phóng đại|thiếu cơ sở kiểm chứng/i.test(r)));
+    }
+
+    // Verify invariant on non-fabricated answer too: whenever evidence is empty, semanticAssessmentVerified === false; and live-chat === summary score!
+    const honestGoodAns = 'Trong 2 năm làm UI/UX cho sản phẩm thương mại điện tử, em chịu trách nhiệm chuẩn hóa bộ Design System trên Figma; em trực tiếp kiểm thử usability với 6 người dùng để tối ưu luồng giỏ hàng giúp giảm 18% thao tác thừa, và em ứng tuyển vì muốn gắn bó sâu với đội ngũ sản phẩm.';
+    const honestChat = await postJson(baseUrl, '/api/interview/live-chat', {
+      action: 'reply',
+      jobTitle: 'UI/UX Designer',
+      industry: 'creative-design',
+      level: 'junior',
+      currentQuestionId: q1.id,
+      history: [{ role: 'interviewer', message: opening, questionId: q1.id }, { role: 'candidate', message: honestGoodAns }],
+      message: honestGoodAns
+    });
+    const honestSum = await postJson(baseUrl, '/api/interview/live-summary', {
+      jobTitle: 'UI/UX Designer',
+      reportVersion: 2,
+      history: [{ role: 'interviewer', message: opening, questionId: q1.id }, { role: 'candidate', message: honestGoodAns }]
+    });
+    assert.equal(honestChat.body.data.coaching.scoreEstimate, honestSum.body.data.qaBreakdown[0].score, 'Honest good answer must also score identically across live-chat and live-summary');
+    assert.ok(honestChat.body.data.assessment.evidence.length > 0, 'Verified honest answer should extract verbatim evidence quotes');
+    assert.equal(honestChat.body.data.assessment.sourceEvidenceVerified, true);
+    if (honestChat.body.data.assessment.evidence.length === 0) {
+      assert.equal(honestChat.body.data.assessment.semanticAssessmentVerified, false);
+    }
+
+    // ── FINDING 3: Consecutive skips 1 → 2 → 3 step down difficulty AND use distinct coaching templates ──
+    const startSr = await postJson(baseUrl, '/api/interview/live-chat', {
+      action: 'start',
+      jobTitle: 'UI/UX Designer',
+      level: 'senior'
+    });
+    assert.equal(startSr.status, 200);
+    let qCur = startSr.body.data.currentQuestion;
+    let askedSr = startSr.body.data.askedQuestionIds;
+    let consec = 0;
+
+    // Skip 1 (streak = 1)
+    const sk1 = await postJson(baseUrl, '/api/interview/live-chat', {
+      action: 'skip',
+      jobTitle: 'UI/UX Designer',
+      industry: 'creative-design',
+      level: 'senior',
+      currentQuestionId: qCur.id,
+      askedQuestionIds: askedSr,
+      consecutiveSkips: consec,
+      history: [{ role: 'interviewer', message: qCur.question, questionId: qCur.id }, { role: 'candidate', message: 'Bỏ qua câu này' }],
+      message: ''
+    });
+    assert.equal(sk1.status, 200);
+    assert.equal(sk1.body.data.consecutiveSkips, 1);
+    assert.equal(sk1.body.data.currentQuestion.level, 'senior');
+
+    // Skip 2 (streak = 2 -> steps down 1 level from senior to middle + invites Hint!)
+    qCur = sk1.body.data.currentQuestion;
+    askedSr = sk1.body.data.askedQuestionIds;
+    consec = sk1.body.data.consecutiveSkips;
+    const sk2 = await postJson(baseUrl, '/api/interview/live-chat', {
+      action: 'skip',
+      jobTitle: 'UI/UX Designer',
+      industry: 'creative-design',
+      level: 'senior',
+      currentQuestionId: qCur.id,
+      askedQuestionIds: askedSr,
+      consecutiveSkips: consec,
+      history: [{ role: 'interviewer', message: qCur.question, questionId: qCur.id }, { role: 'candidate', message: 'Bỏ qua câu này' }],
+      message: ''
+    });
+    assert.equal(sk2.status, 200);
+    assert.equal(sk2.body.data.consecutiveSkips, 2);
+    assert.equal(sk2.body.data.difficultyAdjusted, true);
+    assert.equal(sk2.body.data.currentQuestion.level, 'middle', 'Skip #2 must step down difficulty from senior to middle');
+    assert.ok(sk2.body.data.interviewerReply.includes('bỏ qua 2 câu liên tiếp'), 'Skip #2 must use distinct streak-2 template');
+    assert.ok(sk2.body.data.interviewerReply.includes('Gợi ý trả lời'), 'Skip #2 must offer hint guidance');
+
+    // Skip 3 (streak = 3 -> steps down 2 levels from senior to junior + includes proactive starter hint!)
+    qCur = sk2.body.data.currentQuestion;
+    askedSr = sk2.body.data.askedQuestionIds;
+    consec = sk2.body.data.consecutiveSkips;
+    const sk3 = await postJson(baseUrl, '/api/interview/live-chat', {
+      action: 'skip',
+      jobTitle: 'UI/UX Designer',
+      industry: 'creative-design',
+      level: 'senior',
+      currentQuestionId: qCur.id,
+      askedQuestionIds: askedSr,
+      consecutiveSkips: consec,
+      history: [{ role: 'interviewer', message: qCur.question, questionId: qCur.id }, { role: 'candidate', message: 'Bỏ qua câu này' }],
+      message: ''
+    });
+    assert.equal(sk3.status, 200);
+    assert.equal(sk3.body.data.consecutiveSkips, 3);
+    assert.equal(sk3.body.data.difficultyAdjusted, true);
+    assert.equal(sk3.body.data.currentQuestion.level, 'junior', 'Skip #3 must step down 2 levels from senior to junior');
+    assert.ok(sk3.body.data.interviewerReply.includes('bỏ qua 3 câu liên tiếp'), 'Skip #3 must use distinct streak-3 template');
+    assert.ok(sk3.body.data.interviewerReply.includes('Gợi ý mở đầu'), 'Skip #3 must include proactive starter hint');
+
+    // Answering the stepped-down question on the next turn must succeed (200 OK) and reset consecutiveSkips to 0!
+    const ansAfterStepDown = await postJson(baseUrl, '/api/interview/live-chat', {
+      action: 'reply',
+      jobTitle: 'UI/UX Designer',
+      industry: 'creative-design',
+      level: 'senior',
+      currentQuestionId: sk3.body.data.currentQuestion.id,
+      askedQuestionIds: sk3.body.data.askedQuestionIds,
+      consecutiveSkips: sk3.body.data.consecutiveSkips,
+      history: [{ role: 'interviewer', message: sk3.body.data.interviewerReply, questionId: sk3.body.data.currentQuestion.id }, { role: 'candidate', message: 'Em từng trao đổi trực tiếp với developer để làm rõ nguyên nhân lệch giao diện và thống nhất giải pháp sửa lỗi trong 1 ngày.' }],
+      message: 'Em từng trao đổi trực tiếp với developer để làm rõ nguyên nhân lệch giao diện và thống nhất giải pháp sửa lỗi trong 1 ngày.'
+    });
+    assert.equal(ansAfterStepDown.status, 200);
+    assert.equal(ansAfterStepDown.body.data.consecutiveSkips, 0);
+
+    // ── FINDING 2: Sending an extra message AFTER sessionComplete:true does NOT fail with 400 "Thiếu mã câu hỏi hiện tại" ──
+    let qWalk = ansAfterStepDown.body.data.currentQuestion;
+    let askedWalk = ansAfterStepDown.body.data.askedQuestionIds;
+    let completedTurn = null;
+    for (let i = 0; i < 20 && qWalk; i++) {
+      const r = await postJson(baseUrl, '/api/interview/live-chat', {
+        action: 'skip',
+        jobTitle: 'UI/UX Designer',
+        industry: 'creative-design',
+        level: 'senior',
+        currentQuestionId: qWalk.id,
+        askedQuestionIds: askedWalk,
+        history: [{ role: 'interviewer', message: qWalk.question, questionId: qWalk.id }, { role: 'candidate', message: 'skip' }],
+        message: ''
+      });
+      assert.equal(r.status, 200);
+      askedWalk = r.body.data.askedQuestionIds;
+      if (r.body.data.sessionComplete) {
+        completedTurn = r.body.data;
+        break;
+      }
+      qWalk = r.body.data.currentQuestion;
+    }
+    assert.ok(completedTurn && completedTurn.sessionComplete === true);
+    assert.equal(completedTurn.currentQuestion, null);
+
+    // Extra post-completion message (currentQuestionId: null) returns 200 sessionComplete:true instead of 400!
+    const postCompleteRes = await postJson(baseUrl, '/api/interview/live-chat', {
+      action: 'reply',
+      jobTitle: 'UI/UX Designer',
+      industry: 'creative-design',
+      level: 'senior',
+      currentQuestionId: null,
+      askedQuestionIds: completedTurn.askedQuestionIds,
+      history: [
+        { role: 'interviewer', message: completedTurn.interviewerReply },
+        { role: 'candidate', message: 'Dạ em cảm ơn anh chị đã phỏng vấn ạ.' }
+      ],
+      message: 'Dạ em cảm ơn anh chị đã phỏng vấn ạ.'
+    });
+    assert.equal(postCompleteRes.status, 200, `Expected 200 on post-complete turn, got ${postCompleteRes.status}: ${JSON.stringify(postCompleteRes.body)}`);
+    assert.equal(postCompleteRes.body.data.sessionComplete, true);
+    assert.equal(postCompleteRes.body.data.currentQuestion, null);
+  } finally {
+    server.close();
+  }
 });

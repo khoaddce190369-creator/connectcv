@@ -4,6 +4,7 @@
 // This module owns feature admission, input validation ordering (ALWAYS validate BEFORE rate-limit/quota!), and rate-limit headers.
 
 const VALID_TTS_VOICES = ['vi-VN-HoaiMyNeural', 'vi-VN-NamMinhNeural'];
+const SSML_OR_HTML_MARKUP_RE = /<\/?(?:speak|prosody|voice|break|audio|phoneme|say-as|sub|mark|lexicon|lang|emphasis|mstts:[a-z0-9_-]+|ssml|script|iframe|img|svg|style|html|body|div|span|p|s|xml)\b[^<>]*>|<\?xml|<!DOCTYPE|<!--/i;
 
 function validateLiveSummaryRequest(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
@@ -34,6 +35,9 @@ function validateTtsRequest(body) {
   }
   if (body.text.length > 3500) {
     return { status: 400, payload: { success: false, code: 'TTS_TEXT_TOO_LONG', message: `Văn bản đọc quá dài (${body.text.length}/3.500 ký tự). Vui lòng rút gọn dưới 3.500 ký tự.` } };
+  }
+  if (SSML_OR_HTML_MARKUP_RE.test(body.text)) {
+    return { status: 400, payload: { success: false, code: 'TTS_SSML_NOT_ALLOWED', message: 'TTS chỉ chấp nhận văn bản thuần túy, không hỗ trợ thẻ đánh dấu SSML hoặc HTML.' } };
   }
   if (body.voice !== undefined && body.voice !== null && body.voice !== '') {
     if (typeof body.voice !== 'string' || !VALID_TTS_VOICES.includes(body.voice.trim())) {

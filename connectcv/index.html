@@ -1266,16 +1266,16 @@
           </label>
 
           <div class="flex flex-wrap items-center gap-2">
-            <button id="btnSpaMicToggle" onclick="toggleSpaMic()" class="btn-primary text-xs font-bold px-5 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+            <button id="btnSpaMicToggle" onclick="toggleSpaMic()" class="btn-primary text-xs font-bold px-5 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
               Bật Micro
             </button>
-            <button onclick="toggleSpaKeyboardInput()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+            <button id="btnSpaToggleKeyboard" onclick="toggleSpaKeyboardInput()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
               Gõ chữ
             </button>
-            <button id="btnSpaHint" onclick="sendSpaHint()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 text-amber-700 border-amber-200 bg-amber-50 hover:bg-amber-100 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+            <button id="btnSpaHint" onclick="sendSpaHint()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 text-amber-700 border-amber-200 bg-amber-50 hover:bg-amber-100 hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
               Gợi ý trả lời
             </button>
-            <button id="btnSpaSkip" onclick="skipSpaCurrentQuestion()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 text-slate-700 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
+            <button id="btnSpaSkip" onclick="skipSpaCurrentQuestion()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 text-slate-700 hover:-translate-y-0.5 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
               Bỏ qua câu này
             </button>
             <button onclick="replaySpaLastQuestion()" class="btn-secondary text-xs font-bold px-3.5 py-2.5 hover:-translate-y-0.5 active:scale-[0.98] transition-all">
@@ -5596,8 +5596,32 @@
       if (banner) banner.classList.add('hidden');
     }
 
+    let spaSessionComplete = false;
+
+    function setSpaSessionCompletedState(done) {
+      spaSessionComplete = Boolean(done);
+      const ids = ['btnSpaMicToggle', 'btnSpaToggleKeyboard', 'btnSpaHint', 'btnSpaSkip', 'spaTypedAnswerInput', 'btnSpaSendTyped'];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = spaSessionComplete;
+      });
+      const input = document.getElementById('spaTypedAnswerInput');
+      if (input) {
+        input.placeholder = spaSessionComplete
+          ? 'Bộ câu hỏi đã hoàn tất — hãy bấm "Kết thúc & Xem đánh giá" để xem báo cáo.'
+          : 'Nhập câu trả lời của bạn...';
+        if (spaSessionComplete) input.value = '';
+      }
+      if (spaSessionComplete) {
+        stopSpaListening();
+        document.getElementById('spaKeyboardInputCard')?.classList.add('hidden');
+        setSpaStatus('Đã hoàn tất bộ câu hỏi');
+        setSpaCaption('Bộ câu hỏi phỏng vấn đã hoàn thành. Hãy bấm "Kết thúc & Xem đánh giá" ở cột trái để nhận bảng điểm chi tiết.');
+      }
+    }
+
     function retryLastSpaAction() {
-      if (!spaLastFailedAction) return;
+      if (!spaLastFailedAction || spaSessionComplete) return;
       const payload = spaLastFailedAction;
       clearSpaTurnError();
       executeSpaTurnRequest(payload.action, payload.answerText);
@@ -5624,6 +5648,7 @@
       spaSkippedTopics = [];
       spaFollowUpDepth = 0;
       spaConsecutiveSkips = 0;
+      setSpaSessionCompletedState(false);
       clearSpaTurnError();
 
       document.getElementById('spaIntJobTitle').textContent = jobTitle;
@@ -5727,10 +5752,10 @@
         audio.onended = () => {
           spaIsAISpeaking = false;
           spaCurrentAudio = null;
-          setSpaStatus('AI sẵn sàng');
+          setSpaStatus(spaSessionComplete ? 'Đã hoàn tất bộ câu hỏi' : 'AI sẵn sàng');
           const isHandsFree = document.getElementById('spaHandsfreeToggle').checked;
-          if (isHandsFree) {
-            setTimeout(() => { if (!spaIsAISpeaking) startSpaListening(); }, 400);
+          if (isHandsFree && !spaSessionComplete) {
+            setTimeout(() => { if (!spaIsAISpeaking && !spaSessionComplete) startSpaListening(); }, 400);
           }
         };
 
@@ -5750,14 +5775,14 @@
         utter.lang = 'vi-VN';
         utter.onend = () => {
           spaIsAISpeaking = false;
-          setSpaStatus('AI sẵn sàng');
+          setSpaStatus(spaSessionComplete ? 'Đã hoàn tất bộ câu hỏi' : 'AI sẵn sàng');
           const isHandsFree = document.getElementById('spaHandsfreeToggle').checked;
-          if (isHandsFree && !spaIsAISpeaking) startSpaListening();
+          if (isHandsFree && !spaIsAISpeaking && !spaSessionComplete) startSpaListening();
         };
         window.speechSynthesis.speak(utter);
       } else {
         spaIsAISpeaking = false;
-        setSpaStatus('AI sẵn sàng');
+        setSpaStatus(spaSessionComplete ? 'Đã hoàn tất bộ câu hỏi' : 'AI sẵn sàng');
       }
     }
 
@@ -5769,6 +5794,7 @@
     }
 
     function toggleSpaMic() {
+      if (spaSessionComplete) return;
       if (spaIsAISpeaking) {
         if (spaCurrentAudio) { spaCurrentAudio.pause(); spaCurrentAudio = null; }
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -5790,7 +5816,7 @@
     }
 
     function startSpaListening() {
-      if (spaIsAISpeaking) return;
+      if (spaIsAISpeaking || spaSessionComplete) return;
       stopSpaListening();
 
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -5918,6 +5944,7 @@
     }
 
     async function executeSpaTurnRequest(actionType, answerText) {
+      if (spaSessionComplete) return;
       if (actionType === 'reply' && (!answerText || !answerText.trim())) return;
       if (!spaCurrentQuestion && spaIntHistory.length === 0) return;
 
@@ -5976,11 +6003,7 @@
           renderSpaCoachingPanel(data.data);
 
           setSpaStage(data.data.stage || (data.data.sessionComplete ? 4 : 2));
-
-          const skipBtn = document.getElementById('btnSpaSkip');
-          const hintBtn = document.getElementById('btnSpaHint');
-          if (skipBtn) skipBtn.disabled = Boolean(data.data.sessionComplete);
-          if (hintBtn) hintBtn.disabled = Boolean(data.data.sessionComplete);
+          setSpaSessionCompletedState(Boolean(data.data.sessionComplete));
 
           await speakSpaAIVoice(reply);
         } else {
@@ -6038,6 +6061,7 @@
     }
 
     function toggleSpaKeyboardInput() {
+      if (spaSessionComplete) return;
       const card = document.getElementById('spaKeyboardInputCard');
       card.classList.toggle('hidden');
       if (!card.classList.contains('hidden')) {
@@ -6244,11 +6268,8 @@
       spaSkippedTopics = [];
       spaFollowUpDepth = 0;
       spaConsecutiveSkips = 0;
+      setSpaSessionCompletedState(false);
       clearSpaTurnError();
-      const skipBtn = document.getElementById('btnSpaSkip');
-      const hintBtn = document.getElementById('btnSpaHint');
-      if (skipBtn) skipBtn.disabled = false;
-      if (hintBtn) hintBtn.disabled = false;
       document.getElementById('spaTranscriptList')?.replaceChildren();
       document.getElementById('spaQuickFeedback')?.classList.add('hidden');
       document.getElementById('intRoomBox').classList.add('hidden');

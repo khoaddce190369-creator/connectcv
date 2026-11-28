@@ -362,7 +362,7 @@ function scoreRowForProfile(row, profileCtx) {
   return score;
 }
 
-function selectQuestion({ industry, level, excludeIds = [], excludeTopics = [], seed: selectionSeed, jobTitle = '', jdText = '', candidateProfile = '' } = {}) {
+function selectQuestion({ industry, level, excludeIds = [], excludeTopics = [], seed: selectionSeed, jobTitle = '', jdText = '', candidateProfile = '', preferFoundational = false } = {}) {
   const industryId = normalizeIndustry(industry), levelId = normalizeLevel(level);
   if (!industryId || !levelId) return null;
   const ids = new Set(Array.isArray(excludeIds) ? excludeIds.filter(x => typeof x === 'string').slice(0, 10000) : []);
@@ -371,9 +371,22 @@ function selectQuestion({ industry, level, excludeIds = [], excludeTopics = [], 
   if (!available.length) return null;
 
   // Stage 1 Opening: start every fresh session with the natural Self-Introduction & Role Motivation question!
-  if (ids.size === 0 && !selectionSeed) {
+  if (ids.size === 0 && !selectionSeed && !preferFoundational) {
     const introQ = available.find(r => r.topic === 'opening-self-intro');
     if (introQ) return copy(introQ);
+  }
+
+  // When stepping down after consecutive skips, prioritize shorter, approachable foundational/behavioral questions
+  if (preferFoundational) {
+    const gentlePool = available
+      .filter(r => r.topic !== 'opening-self-intro')
+      .sort((a, b) => {
+        const aEasy = (a.answerType === 'behavioral' ? 0 : 1);
+        const bEasy = (b.answerType === 'behavioral' ? 0 : 1);
+        if (aEasy !== bEasy) return aEasy - bEasy;
+        return a.question.length - b.question.length;
+      });
+    if (gentlePool.length) return copy(gentlePool[0]);
   }
 
   // Alternate naturally between domain/technical questions and HR behavioral STAR questions across turns

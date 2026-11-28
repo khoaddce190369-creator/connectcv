@@ -5181,6 +5181,12 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
             showLiveFeedback(data.data.quickFeedback);
           }
 
+          if (data.data.sessionComplete) {
+            window.liveSessionComplete = true;
+            const qi = document.getElementById('live-quick-input');
+            if (qi) { qi.disabled = true; qi.placeholder = 'Đã hết câu hỏi — bấm Kết thúc để xem báo cáo'; }
+          }
+
           // Phát câu trả lời bằng giọng đọc tự nhiên
           await playNaturalVoice(reply);
         } else {
@@ -5235,6 +5241,9 @@ Em xử lý race condition thế nào khi có 1000 request?" rows="4"></textarea
         const data = await res.json();
         if (!ownsLiveReply(operation)) return;
         if (res.ok && data.success && data.data) {
+          window.liveSessionComplete = false;
+          const qi = document.getElementById('live-quick-input');
+          if (qi) { qi.disabled = false; qi.placeholder = 'Hoặc gõ nhanh câu trả lời tại đây...'; }
           window.liveIsFreeformPractice = false;
           window.liveCurrentQuestionId = data.data.currentQuestion?.id || null;
           window.liveAskedQuestionIds = data.data.askedQuestionIds || [];

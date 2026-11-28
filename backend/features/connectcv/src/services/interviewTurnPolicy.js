@@ -1,6 +1,6 @@
 'use strict';
 
-const { analyzeAnswerAgainstRubric } = require('./interviewEvaluationService');
+const { analyzeAnswerAgainstRubric, computeUnifiedScore } = require('./interviewEvaluationService');
 
 const normalize = value => String(value || '').normalize('NFKC').replace(/\s+/gu, ' ').trim();
 const fold = value => normalize(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
@@ -126,9 +126,10 @@ QUY TẮC BẮT BUỘC:
 4. Viết "coachingTip" (1–2 câu <= 40 từ): hướng dẫn cụ thể cách trả lời để ăn điểm câu này.
 5. "followUpQuestion": chỉ điền 1 câu hỏi đào sâu ngắn (15–200 ký tự, kết thúc bằng ?) khi allowFollowUp = true VÀ câu trả lời đang thiếu chi tiết thực chứng cần hỏi rõ thêm; ngược lại để "".
 6. "questionEvidence" là NGUYÊN VĂN câu hỏi. "answerEvidence" là mảng câu nguyên văn từ candidateAnswer.
+7. CHỐNG BỊA THÀNH TÍCH: Nếu ứng viên phóng đại phi thực tế hoặc nêu con số vô lý không có cơ sở kiểm chứng (VD: "20 năm KN" cho cấp Junior/Fresher, "thiết kế cho NASA/SpaceX" cụt lủn, "tăng 9000%", "giảm >100%", "100% không bao giờ lỗi"), BẮT BUỘC đặt "fabricationDetected": true, "correctness": "incorrect", "score" <= 2.5, "answerEvidence": [], và nhận xét thẳng thắn về Red Flag thiếu tính khả tín trong "hrReply" (tuyệt đối không khen).
 
 Trả DUY NHẤT JSON:
-{"relevance":"on_topic|off_topic|unclear","correctness":"adequate|partial|incorrect|not_assessed","hrReply":"...","coachingTip":"...","followUpQuestion":"","missingPoints":["..."],"questionEvidence":"...","answerEvidence":["..."]}
+{"relevance":"on_topic|off_topic|unclear","correctness":"adequate|partial|incorrect|not_assessed","score":0,"fabricationDetected":false,"hrReply":"...","coachingTip":"...","followUpQuestion":"","missingPoints":["..."],"questionEvidence":"...","answerEvidence":["..."]}
 DỮ LIỆU:\n${JSON.stringify(data)}`;
 }
 
@@ -204,29 +205,52 @@ function groundLiveAssessment(model, input) {
     };
   }
 
-  // ── CASE 2: SKIP or "KHÔNG BIẾT / CHƯA TỪNG LÀM" (H1 Fix: Explain keyPoints + sample answer BEFORE moving to next question!) ──
+  // ── CASE 2: SKIP or "KHÔNG BIẾT / CHƯA TỪNG LÀM" (H1 + Adaptive Consecutive Skips 1 → 2 → 3+!) ──
   if (intent.type === 'skip' || intent.type === 'no_answer') {
     const next = questionText(input.nextQuestion);
     const complete = !next;
+    const streak = Math.max(1, Number(input.consecutiveSkips || 1));
     const kpExplain = rubricPoints.length > 0
       ? `Ở câu hỏi vừa rồi, ý ăn điểm mà nhà tuyển dụng tìm kiếm là: ${rubricPoints.join('; ')}.`
       : 'Ở câu hỏi vừa rồi, nhà tuyển dụng muốn xem cách bạn phân tích vấn đề, hành động cụ thể và kiểm chứng kết quả.';
     const sampleExplain = sampleSpeech
       ? ` Một hướng trả lời mẫu ngắn gọn bạn có thể tham khảo là: ${sampleSpeech}`
       : '';
-    const multiSkipCue = (input.consecutiveSkips || 0) >= 2 && !complete
-      ? ' Nếu câu tiếp theo hơi mới với bạn, bạn có thể bấm nút Gợi ý trả lời để mình mở hướng trước khi trả lời nhé.'
-      : '';
 
-    const leadIn = intent.type === 'skip'
-      ? 'Mình ghi nhận bỏ qua câu này, nhưng trước khi qua câu mới mình chia sẻ nhanh cách trả lời để bạn nắm bài nhé.'
-      : 'Không sao nếu bạn chưa từng gặp tình huống này, mình giải thích nhanh trọng tâm để lần sau đi phỏng vấn bạn biết cách gỡ điểm nhé.';
+    let reply = '';
+    let quickFeedback = '';
 
-    const reply = complete
-      ? `${leadIn} ${kpExplain}${sampleExplain} Đây cũng là câu hỏi cuối cùng của phiên phỏng vấn hôm nay — bạn hãy bấm Kết thúc & Xem đánh giá để xem lại toàn bộ phân tích và đáp án tham khảo nhé.`
-      : `${leadIn} ${kpExplain}${sampleExplain}${multiSkipCue} Bây giờ mình sang câu hỏi tiếp theo ở một chủ đề khác nhé: ${next}`;
-
-    const quickFeedback = `Hướng dẫn câu vừa bỏ qua — Trọng tâm cần nêu: ${rubricPoints.join(' | ') || structureGuide}`;
+    if (complete) {
+      const closeLead = intent.type === 'skip'
+        ? 'Mình ghi nhận bỏ qua câu cuối này và chia sẻ nhanh đáp án chuẩn để bạn lưu lại nhé.'
+        : 'Không sao nếu phần cuối này còn mới với bạn, mình tóm tắt nhanh ý cốt lõi để bạn tham khảo nhé.';
+      reply = `${closeLead} ${kpExplain}${sampleExplain} Đây cũng là câu hỏi cuối cùng của phiên phỏng vấn hôm nay — bạn hãy bấm Kết thúc & Xem đánh giá để xem lại toàn bộ phân tích và đáp án tham khảo nhé.`;
+      quickFeedback = `Đã hoàn tất bộ câu hỏi — Trọng tâm câu vừa bỏ qua: ${rubricPoints.join(' | ') || structureGuide}`;
+    } else if (streak === 1) {
+      const leadIn = intent.type === 'skip'
+        ? 'Mình ghi nhận bỏ qua câu này, nhưng trước khi qua câu mới mình chia sẻ nhanh cách trả lời để bạn nắm bài nhé.'
+        : 'Không sao nếu bạn chưa từng gặp tình huống này, mình giải thích nhanh trọng tâm để lần sau đi phỏng vấn bạn biết cách gỡ điểm nhé.';
+      reply = `${leadIn} ${kpExplain}${sampleExplain} Bây giờ mình sang câu hỏi tiếp theo ở một chủ đề khác nhé: ${next}`;
+      quickFeedback = `Hướng dẫn câu vừa bỏ qua — Trọng tâm cần nêu: ${rubricPoints.join(' | ') || structureGuide}`;
+    } else if (streak === 2) {
+      const concisePrev = rubricPoints[0]
+        ? `Với câu vừa rồi, mấu chốt cần nhớ là: ${rubricPoints[0]}${sampleSpeech ? ' (hướng trả lời mẫu: ' + sampleSpeech + ')' : ''}.`
+        : `${kpExplain}${sampleExplain}`;
+      const easierLabel = input.difficultyAdjusted
+        ? 'mình hạ độ khó xuống một câu hỏi nền tảng dễ tiếp cận hơn nhé'
+        : 'mình đổi sang một câu hỏi thực tế gần gũi hơn để bạn dễ triển khai ý nhé';
+      reply = `Bạn vừa bỏ qua 2 câu liên tiếp nên ${easierLabel}. ${concisePrev} Trước khi bỏ qua tiếp, bạn có muốn bấm nút "Gợi ý trả lời" (hoặc nhắn "cho em gợi ý") để mình mở khung ý cho bạn thử sức không? Câu hỏi mới như sau: ${next}`;
+      quickFeedback = `Đã giảm độ khó sau 2 lần bỏ qua — Mẹo: Bấm "Gợi ý trả lời" nếu bạn muốn xem sườn ý trước khi trả lời.`;
+    } else {
+      const concisePrev = rubricPoints[0]
+        ? `Ý chính của câu trước là ${rubricPoints[0].toLowerCase()}.`
+        : kpExplain;
+      const nextStarterKp = Array.isArray(input.nextQuestion?.keyPoints) && input.nextQuestion.keyPoints[0]
+        ? ` Gợi ý mở đầu sẵn cho câu mới: bạn chỉ cần tập trung nêu "${input.nextQuestion.keyPoints[0].toLowerCase()}" bằng 2–3 câu ngắn từ trải nghiệm học tập hoặc làm việc của bạn.`
+        : ' Gợi ý mở đầu: bạn chỉ cần chia sẻ thật ngắn gọn theo 2 ý "Bạn đã làm gì" và "Kết quả ra sao".';
+      reply = `Mình thấy bạn đã bỏ qua ${streak} câu liên tiếp — đừng áp lực nhé, mình chuyển hẳn về câu hỏi mức cơ bản và kèm sẵn gợi ý để bạn dễ bắt nhịp lại. ${concisePrev} Câu hỏi cơ bản dành cho bạn: ${next}${nextStarterKp} Bạn muốn thử trả lời ngắn theo gợi ý trên, hay muốn mình hướng dẫn chi tiết từng bước?`;
+      quickFeedback = `Chế độ hỗ trợ chủ động (${streak} câu bỏ qua liên tiếp) — Đã chuyển về câu cơ bản kèm gợi ý mở đầu trực tiếp.`;
+    }
 
     return {
       interviewerReply: reply,
@@ -251,20 +275,29 @@ function groundLiveAssessment(model, input) {
         evidence: [],
         sourceEvidenceVerified: false,
         semanticAssessmentVerified: false,
-        note: 'Đã giải thích trọng tâm và đáp án tham khảo trước khi chuyển chủ đề mới.'
+        note: 'Đã giải thích trọng tâm và điều chỉnh độ khó/gợi ý phù hợp trước khi chuyển câu.'
       }
     };
   }
 
-  // ── CASE 3: REAL CANDIDATE ANSWER — Deterministic Rubric Evaluation + Optional LLM Enhancement (H3 & C1 Fix!) ──
+  // ── CASE 3: REAL CANDIDATE ANSWER — Unified Anti-Fabrication + Rubric + LLM Evaluation ──
   const detEval = analyzeAnswerAgainstRubric({
     question: input.question,
     candidateAnswer: input.candidateAnswer,
     answerType: input.answerType || 'scenario',
+    level: input.level || '',
     keyPoints: rubricPoints,
     redFlags,
     referenceAnswer: input.expectedAnswer || ''
   });
+
+  const isFabricated = Boolean(detEval.fabricationDetected || model?.fabricationDetected === true);
+  const finalScore = computeUnifiedScore(detEval, model);
+  const finalBand = finalScore >= 8.0 ? 'Tốt' : (finalScore >= 6.5 ? 'Khá' : (finalScore >= 4.5 ? 'Trung bình' : 'Yếu'));
+  const finalCorrectness = (isFabricated || finalScore < 4.5) ? 'incorrect' : (finalScore >= 7.2 ? 'adequate' : 'partial');
+  const finalCritique = (isFabricated && !detEval.fabricationDetected)
+    ? 'Câu trả lời có dấu hiệu phóng đại thành tích hoặc nêu số liệu đột biến không kèm số liệu gốc (baseline) và quy trình kiểm chứng thực tế. Hãy trình bày lại bằng dự án thật và phần việc cụ thể của bạn.'
+    : detEval.critique;
 
   // Check if candidate asked a counter-question about salary mid-interview (IM21)
   const ansFold = fold(input.candidateAnswer);
@@ -274,7 +307,12 @@ function groundLiveAssessment(model, input) {
 
   const chunks = new Set(String(input.candidateAnswer || '').split(/(?<=[.!?;])\s+|\n+/u).map(matchKey).filter(Boolean));
   const proposed = Array.isArray(model?.answerEvidence) ? model.answerEvidence : [];
-  const evidence = proposed.filter(quote => typeof quote === 'string' && matchKey(quote).length >= 4 && chunks.has(matchKey(quote)));
+  const modelEvidence = !isFabricated
+    ? proposed.filter(quote => typeof quote === 'string' && matchKey(quote).length >= 4 && chunks.has(matchKey(quote)))
+    : [];
+  const evidence = modelEvidence.length > 0
+    ? modelEvidence
+    : ((!isFabricated && finalScore >= 4.5 && Array.isArray(detEval.evidenceQuotes)) ? detEval.evidenceQuotes : []);
 
   const rawHrReply = sanitizeNaturalText(model?.hrReply, 420);
   const rawTip = sanitizeNaturalText(model?.coachingTip, 240);
@@ -305,17 +343,19 @@ function groundLiveAssessment(model, input) {
     const kpBrief = rubricPoints[0] ? ` Với câu hỏi chuyên môn hiện tại, nhà tuyển dụng đang muốn nghe về ${rubricPoints[0].toLowerCase()}.` : '';
     spokenFeedback = `Phần khung lương và đãi ngộ mình sẽ trao đổi kỹ ở phần cuối buổi phỏng vấn để đối chiếu tương xứng với năng lực nhé.${kpBrief}`;
     quickFeedback = `Góp ý: Trong phỏng vấn thực tế, hãy trả lời trọn vẹn câu hỏi chuyên môn trước rồi đặt câu hỏi về chế độ đãi ngộ ở chặng cuối.`;
-  } else if (conversationalValid && detEval.score > 2.0) {
+  } else if (isFabricated) {
+    spokenFeedback = finalCritique;
+    quickFeedback = `Cảnh báo tính khả tín (${finalBand} · ~${finalScore}/10): ${finalCritique}`;
+  } else if (conversationalValid && finalScore > 2.2) {
     spokenFeedback = rawHrReply;
-    quickFeedback = tipSafe ? rawTip : detEval.critique;
+    quickFeedback = tipSafe ? `Đánh giá (${finalBand} · ~${finalScore}/10): ${rawTip}` : `Đánh giá (${finalBand} · ~${finalScore}/10): ${finalCritique}`;
   } else {
-    // High-precision deterministic HR spoken feedback tailored directly to detEval!
-    if (detEval.score >= 7.5) {
+    if (finalScore >= 7.5) {
       const minorAdd = detEval.missingKeyPoints[0]
         ? ` Nếu bổ sung thêm góc nhìn về ${detEval.missingKeyPoints[0].toLowerCase()} nữa thì câu trả lời sẽ trọn vẹn hơn.`
         : '';
       spokenFeedback = `Bạn đã đi thẳng vào trọng tâm xử lý thực tế${detEval.matchedKeyPoints[0] ? ' (' + detEval.matchedKeyPoints[0].toLowerCase() + ')' : ''}.${minorAdd}`;
-    } else if (detEval.score >= 4.5) {
+    } else if (finalScore >= 4.5) {
       const hitStr = detEval.matchedKeyPoints[0]
         ? `Bạn đã nêu được ý về ${detEval.matchedKeyPoints[0].toLowerCase()}, tuy nhiên `
         : 'Hướng tiếp cận của bạn mới dừng ở mức khái quát, ';
@@ -324,33 +364,36 @@ function groundLiveAssessment(model, input) {
         : 'bạn cần nêu rõ hơn các bước thực thi cụ thể và cách đo lường kết quả.';
       spokenFeedback = `${hitStr}${missStr}`;
     } else {
-      spokenFeedback = detEval.critique;
+      spokenFeedback = finalCritique;
     }
-    quickFeedback = `Đánh giá (${detEval.ratingBand} · ~${detEval.score}/10): ${detEval.critique}`;
+    quickFeedback = `Đánh giá (${finalBand} · ~${finalScore}/10): ${finalCritique}`;
   }
 
-  // Decide follow-up: either safe LLM follow-up OR deterministic probing follow-up when answer is on-topic but partial/brief!
+  // Decide follow-up: either safe LLM follow-up OR deterministic probing follow-up when answer is fabricated or partial/brief!
   const candidateWordCount = normalize(input.candidateAnswer).split(/\s+/).filter(Boolean).length;
   const deterministicFollowUp = (
     input.allowFollowUp &&
     !isMidSalaryQuestion &&
-    detEval.relevance === 'on_topic' &&
-    detEval.score >= 3.0 &&
-    detEval.score < 7.2 &&
-    candidateWordCount >= 5 &&
-    candidateWordCount <= 45 &&
-    (input.evidencePrompts?.[0] || detEval.followUpQuestions[0])
-  ) ? sanitizeNaturalText(input.evidencePrompts?.[0] || detEval.followUpQuestions[0], 220) : '';
+    (
+      (isFabricated && detEval.followUpQuestions[0]) ||
+      (detEval.relevance === 'on_topic' && finalScore >= 3.0 && finalScore < 7.2 && candidateWordCount >= 5 && candidateWordCount <= 45 && (input.evidencePrompts?.[0] || detEval.followUpQuestions[0]))
+    )
+  ) ? sanitizeNaturalText(isFabricated ? detEval.followUpQuestions[0] : (input.evidencePrompts?.[0] || detEval.followUpQuestions[0]), 220) : '';
 
   const chosenFollowUpRaw = (
     input.allowFollowUp &&
+    !isFabricated &&
     conversationalValid &&
     rawFollowUp.length >= 15 &&
     !BANNED_FLATTERY_RE.test(rawFollowUp) &&
     !hasInventedMetrics(rawFollowUp, combinedSource)
   ) ? rawFollowUp : deterministicFollowUp;
 
-  const verdict = detEval.score >= 7.5 ? 'good' : (detEval.score >= 4.5 ? 'partial' : (detEval.relevance === 'off_topic' ? 'off_topic' : 'weak'));
+  const verdict = (!isFabricated && finalScore >= 7.5)
+    ? 'good'
+    : ((!isFabricated && finalScore >= 4.5) ? 'partial' : (detEval.relevance === 'off_topic' ? 'off_topic' : 'weak'));
+  const sourceEvidenceVerified = evidence.length > 0;
+  const semanticAssessmentVerified = Boolean(conversationalValid && sourceEvidenceVerified && !isFabricated);
 
   if (chosenFollowUpRaw) {
     const followUp = chosenFollowUpRaw.endsWith('?') ? chosenFollowUpRaw : `${chosenFollowUpRaw}?`;
@@ -366,22 +409,25 @@ function groundLiveAssessment(model, input) {
       followUpQuestion: followUp,
       coaching: {
         verdict,
-        scoreEstimate: detEval.score,
-        ratingBand: detEval.ratingBand,
-        critique: detEval.critique,
-        matchedPoints: detEval.matchedKeyPoints,
-        missingPoints: detEval.missingKeyPoints,
+        scoreEstimate: finalScore,
+        ratingBand: finalBand,
+        critique: finalCritique,
+        matchedPoints: isFabricated ? [] : detEval.matchedKeyPoints,
+        missingPoints: isFabricated ? rubricPoints : detEval.missingKeyPoints,
         sampleAnswer: sampleFull,
         starGuide: structureGuide
       },
       assessment: {
         status: detEval.relevance,
-        correctness: detEval.correctness,
-        scoreEstimate: detEval.score,
+        correctness: finalCorrectness,
+        scoreEstimate: finalScore,
+        fabricationDetected: isFabricated,
         evidence,
-        sourceEvidenceVerified: evidence.length > 0,
-        semanticAssessmentVerified: true,
-        note: 'Nhận xét đối chiếu câu trả lời của bạn với các ý trọng tâm của câu hỏi.'
+        sourceEvidenceVerified,
+        semanticAssessmentVerified,
+        note: isFabricated
+          ? 'Phát hiện số liệu hoặc thành tích thiếu cơ sở kiểm chứng thực tế.'
+          : 'Nhận xét đối chiếu câu trả lời của bạn với các ý trọng tâm của câu hỏi.'
       }
     };
   }
@@ -402,22 +448,25 @@ function groundLiveAssessment(model, input) {
     isFollowUp: false,
     coaching: {
       verdict,
-      scoreEstimate: detEval.score,
-      ratingBand: detEval.ratingBand,
-      critique: detEval.critique,
-      matchedPoints: detEval.matchedKeyPoints,
-      missingPoints: detEval.missingKeyPoints,
+      scoreEstimate: finalScore,
+      ratingBand: finalBand,
+      critique: finalCritique,
+      matchedPoints: isFabricated ? [] : detEval.matchedKeyPoints,
+      missingPoints: isFabricated ? rubricPoints : detEval.missingKeyPoints,
       sampleAnswer: sampleFull,
       starGuide: structureGuide
     },
     assessment: {
       status: detEval.relevance,
-      correctness: detEval.correctness,
-      scoreEstimate: detEval.score,
+      correctness: finalCorrectness,
+      scoreEstimate: finalScore,
+      fabricationDetected: isFabricated,
       evidence,
-      sourceEvidenceVerified: evidence.length > 0,
-      semanticAssessmentVerified: true,
-      note: 'Nhận xét đối chiếu câu trả lời của bạn với các ý trọng tâm của câu hỏi.'
+      sourceEvidenceVerified,
+      semanticAssessmentVerified,
+      note: isFabricated
+        ? 'Phát hiện số liệu hoặc thành tích thiếu cơ sở kiểm chứng thực tế.'
+        : 'Nhận xét đối chiếu câu trả lời của bạn với các ý trọng tâm của câu hỏi.'
     }
   };
 }
